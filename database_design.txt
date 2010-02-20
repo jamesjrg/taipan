@@ -1,0 +1,34 @@
+So, we have tables for:
+
+trading house (id, name, director, balance)
+
+historical data maintained for the balances, somehow
+
+port (id, name, country)
+country (id, name, currency, population, corruption level, )
+
+historical data maintained for the above values, somehow
+
+currency (id, name, value [relative to dollar])
+
+historical data maintained for the currency values, somehow
+
+journey (departure_time, arrival_time, departure_port, arrival_port, commodity, quantity
+commodity (id, name, description)
+
+some intermediary table linking each port + commodity to a current value in USD
+some intermediary table linking each port + commodity to a current stock level
+some intermediary table linking each port + commodity to a production level
+some intermediary table linking each port + commodity to a current consumption level
+
+historical data maintained for the above four, somehow
+
+freighter_category (id, small, medium, large, ultra-large)
+some intermediary table linking each trading house + freighter_category to the number owned
+
+somehow - either via tables or data collation - keep track of
+a) turnover of production sector in each country (mining, manufacturing, etc), which is calculated via amount of stuff exported in last week/month/year * (sale price of the stuff exported - cost of that stuff to produce)
+b) turnover of service sector in each country (retail, marketing, etc), which is calculated via amount of stuff imported, and also amount of stuff produced for local consumption. higher buy price of imports relative to local buy price reduces turnover.
+
+
+

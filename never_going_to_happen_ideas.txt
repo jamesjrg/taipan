@@ -1,0 +1,83 @@
+﻿////
+
+maths stuff abandoned:
+
+- Try to use differential equations to properly optimise trading houses choices of route (either on basis of profit, or in way to redistribute goods most efficiently to places where they are most needed, however needed is defined)
+- add mathematical modelling to wolfie (set analyser, too)
+- describe mathematical aspects in doc
+
+/////
+
+make it a game idea abandoned:
+
+- GalaxyHack-ify it - allow pluggable AIs for trading houses (probably written in Python), and allow people to submit AIs. Change the rules a bit so it's a competitive game like GH or CoreWars. I guess this would work by making the algorithms for the prices at different places + changing exchange rates conform to certain definite guidelines, and the objective of AIs would be to work out these algorithms and so predict where and when to trade. Then there would need to be some delay between deciding on a trade and the trade actually taking place, to give an advantage to those who can predict the algorithms. There would also have to be strict limits on how much processor time each process got.
+
+REALLY doubt there'd be much interest, though. Even if I managed to implement this (which would be no small task), the target niche of possible players would be so small it would never get enough players to make it work
+
+///
+
+complex concurrency idea abandoned:
+
+- a process representing the market, producing lots of available "contracts" to move goods from one planet to another
+- several (20?) number of java processes that represent "trading houses", which accept these contracts by sending messages saying as such to the contract process. It takes an arbitrary length of time (say, 5 seconds) for a contract to be signed
+- these acceptances can sometimes conflict, so the contract process must lock resources with threads, or use message passing, or generally something like that
+- at the point when a contract is signed, its details are entered into the database by the contract process, also money is added to the companies account balance in the database, and fuel+crew are paid for, requiring a debit from database account balance
+computer science idea abandoned:
+
+///
+
+complex C++ and hardcore comp sci idea abandoned:
+
+- Write a small custom database system in C++ to replace SQL Server
+
+///
+
+political idea abandoned:
+
+Have it so natural distribution of wealth follows a particular curve in all countries, but have this curve affected by goverment action (e.g. % of spending on health/education/social security). At same time, have higher government spending reduce efficiency of economy overall (do this by making it weaken value of currency and/or reducing level of wealth citizerns have available to spend on consumption) and also keep track of each country's level of corruption (just a general figure which meant in incredibly general sense of "level to which money distribtution is determined neither by market nor by government, but rather by people with political power just directly taking it from state funds)
+
+Based on the income distribution curve,
+1. Keep track of the number of people in poverty in each country (both absolute poverty, and country-based relative poverty, e.g. with account to the country's median wealth)
+2. Keep track of the number of people starving in each country
+3. Have it so if a resource is in very high demand and only found in a small number of places, short wars take place
+4. Have it so the consumption of certain resources creates environmental problems, that increases number of people poverty + numver of people starving
+
+Collate turnover of production + service sectors along with government spending to calculate GDP, and also GDP per capita? Maybe add in concept of national debt, and link to value of both government spending and value of currency?
+
+news_event (id, category, description, country)
+news_event_category (id, name)
+
+have port servers broadcast stupid news events
+
+Have option for trading houses to move goods from places with high stocks and low need (however need is defined) to places with low stocks and high need, ignoring price
+
+///
+
+complex macro economics idea abandoned:
+
+each country needs to have a turnover held separetely for its production sector (mining, manufacturing, etc), which is dependent on export level+export price, and its service sector (retail, marketing, etc), which is dependent on consumption level + import price.
+
+To make this actually simulate an economy rather than a solid state system, I need some (delayed) feedback loops. E.g.:
+1. as a country becomes wealthier its improved education system means it starts producing more high value goods (like electronics + financial services) and less low value goods (like mining)
+2. At same time, higher value goods rely on cheap, plentiful supply of lower value goods
+2. Need to ensure the key feedback loop is "more wealth = more demand", such that production and consumption are both ever-increasing
+
+trade in financial services, IT software and support
+
+keep track of balance of trade
+
+/////
+
+complex micro economics idea abandoned:
+
+Then start making the finance/economics stuff properly complex:
+- add a stock market, with the trading companies, as well as mines, retail and marketing companies in all countries, all trading on a public stock exchange. Then have share price affected by how much profit/loss/turnover the trading companies/production sector/service sector is making. Then allow companies, countries and sectors to have debt, and allow trading in derivatives and futures contracts etc.
+
+Wikipedia on complex financial stuff:
+
+If I wanted to add in some financial complexity:
+http://en.wikipedia.org/wiki/Derivative_(finance)
+	http://en.wikipedia.org/wiki/Futures_contract
+	http://en.wikipedia.org/wiki/Option_(finance)
+	http://en.wikipedia.org/wiki/Swap_%28finance%29
+		http://en.wikipedia.org/wiki/Interest_rate_swap

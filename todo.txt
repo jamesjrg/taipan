@@ -1,0 +1,84 @@
+todo now:
+- make project "web project test"
+- sub projects are: Player, Bank, View
+- Player project consists of Player class which is subclassed as TradingHouse and Port
+- Bank project consists of Bank class
+
+/////
+
+Overall plan:
+
+- several C# server processes producing data in XML format. Make their decisions on basis of information accesses in database. Several processes represent trading houses which produce data on freighter journeys and the goods they carry, a whole bunch of other processes representing ports output their production (= goods produced in vicinity of port for export) and consumption of various commodities.
+- another process (the Bank process) polls this data and shoves it in a SQL server database. Where neccessary the data is collated - e.g. if a freighter company moves some goods, then the amount of that good left at a planet is updated.
+- the SQL Server database also contains a whole load of basic data about the way the world is, which doesn't fluctuate
+- Another program is a Windows Form app, which:
+a) allows you to view the current stream of real time data
+b) allows you to view and edit the contents of the unfluctuating data in database, and 
+c) displays diagnostic system information on the current status of all the process
+
+Note (and explain in doc) that the principle all the processes are allowed read access to database, but only Bank process has write access. The processes broadcast their actions in XML format, and the Bank process listens to these XML broadcasts and updates the database accordingly.
+
+The whole thing should be slightly inspired by Tai Pan, that is the general point is that there are several large trading houses which ferry various goods very long distances.
+
+/////
+
+Design:
+
+Mini project:
+- write a program that backs up a folder with a date appended to file name, and then sends it to an ftp server - remembers values for folders + ftp servers, has bookmarking system for both. Probably use 7-zip, see http://programmingforpeople.blogspot.com/2009/03/zipping-in-c.html
+
+Trading house servers:
+- broadcast data on freighter journeys - departures, arrivals (using UTC), where from and to, the goods they transported and in what quantity. They try their best to move goods along the most profitable routes, and prefer shorter journeys.-
+- Algorithm for this should be very simple at first
+
+Port servers:
+- broadcast information about the production, consumption and price of different commodoties. Go up and down via geometric brownian motion: http://en.wikipedia.org/wiki/Geometric_Brownian_motion
+
+Bank process:
+- depending on distance between the ports of a trade (= fuel cost, this is also affected by oil price) and value of the goods at each port (affects difference between buy and sell price), the value earned by each transaction is calculated and the bank accounts of the trading houses updated. 
+
+Data in the database unaffected by updates:
+- each company's inventory of freighters, and data about capacity, speed, etc
+- each company's director
+- various commodities (steel, paper, electronics, cereal, textiles, oil, opium, precious gems, look on wikipedia for main exports of various countries), descriptions of what they are used for
+- various ports, with info on their location, which country they are part of, which currency they use
+
+FX server:
+- there is a selection of currencies and an FX market. Just use real world currencies - yen, renminbi, euro, dollar. This requires an FX server which broadcasts information about the fluctuating price of the different currencies. Then an FX multiplier will affect the profit on moving goods between ports with different currencies.
+
+/////
+
+Documentation
+
+Make a brief webpage explaining how it works, including:
+
+- UML diagrams
+- unit tests
+- add UML to wolfie
+- describe database design aspects
+- link to all my abandoned Vapour-ware "would be nice" ideas, not on same page though
+- talk about both web and gui interface
+- add web stuff to wolfie
+- section labelled "The name, economics, and politics" - briefly explain where name came from. State that whilst Clavell was hugely pro free-trade, and his books were written from this perspective, this program is not meant to have any normative political element. It is simply meant as an exercise in software development and mathematics.
+
+////
+
+- need to add a web interface once basic version is working
+- add this to doc and wolfie (subclass view as WebView and FormView)
+
+////
+
+Things that could be added without too much extra work:
+- make GUI optionally output current stream of real time data to an Excel spreadsheet, updating the spreadsheet at regular ticks, add excel to 
+wolfie
+- fix anki-maemi and submit patch
+
+//////
+
+Keeping track of time:
+* is lots of work (e.g. 8), / is some work (e.g. 3)
+
+I'd say that prior to 12 Feb, I have done maybe 12 hours work
+13 Feb: /
+20 Feb: *
+
