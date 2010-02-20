@@ -1,84 +1,194 @@
 todo now:
-- make project "web project test"
-- sub projects are: Player, Bank, View
-- Player project consists of Player class which is subclassed as TradingHouse and Port
-- Bank project consists of Bank class
 
-/////
+UML diagrams:
 
-Overall plan:
+Sequence View:
+- it should have title "Tai-Pan: sequence diagrams"
+- should have several separate sections
 
-- several C# server processes producing data in XML format. Make their decisions on basis of information accesses in database. Several processes represent trading houses which produce data on freighter journeys and the goods they carry, a whole bunch of other processes representing ports output their production (= goods produced in vicinity of port for export) and consumption of various commodities.
-- another process (the Bank process) polls this data and shoves it in a SQL server database. Where neccessary the data is collated - e.g. if a freighter company moves some goods, then the amount of that good left at a planet is updated.
-- the SQL Server database also contains a whole load of basic data about the way the world is, which doesn't fluctuate
-- Another program is a Windows Form app, which:
-a) allows you to view the current stream of real time data
-b) allows you to view and edit the contents of the unfluctuating data in database, and 
-c) displays diagnostic system information on the current status of all the process
+Implementation view:
+- it should have title "Tai-Pan: implementation diagram"
+- note yahoo is <<service>>
 
-Note (and explain in doc) that the principle all the processes are allowed read access to database, but only Bank process has write access. The processes broadcast their actions in XML format, and the Bank process listens to these XML broadcasts and updates the database accordingly.
+Database ER diagram:
+It should have the title "Tai-Pan database: ER diagram"
 
-The whole thing should be slightly inspired by Tai Pan, that is the general point is that there are several large trading houses which ferry various goods very long distances.
-
-/////
-
-Design:
+Add unit testing project(s) + classes before writing any code
 
 Mini project:
 - write a program that backs up a folder with a date appended to file name, and then sends it to an ftp server - remembers values for folders + ftp servers, has bookmarking system for both. Probably use 7-zip, see http://programmingforpeople.blogspot.com/2009/03/zipping-in-c.html
 
-Trading house servers:
-- broadcast data on freighter journeys - departures, arrivals (using UTC), where from and to, the goods they transported and in what quantity. They try their best to move goods along the most profitable routes, and prefer shorter journeys.-
-- Algorithm for this should be very simple at first
+////
 
-Port servers:
-- broadcast information about the production, consumption and price of different commodoties. Go up and down via geometric brownian motion: http://en.wikipedia.org/wiki/Geometric_Brownian_motion
+Overall plan: lots of C# processes representing entities in a trading economy communicate with each other via XML, some as servers, some as clients, some as both. Most state is contained within a SQL server database, and only one of the processes (the "Bank", the name being a nod to Monopoly). The name is a nod to book Tai Pan, that is the general point is that there are several large trading houses which ferry various goods very long distances, though actually here the trading houses have been split into two distinct entities, the "transporters" who do the actual transporting of goods, and the "traders" who predict changes in the market and buy and sell goods accordingly.
+
+GenericServer
+Class that acts as generic server, any project which acts as a server has an instance of this class, which it can configure as to what information to broadcast and when
+
+GenericClient
+Class that acts as generic client that polls servers, any project which acts as a client has an instance of this class, which it can configure as to what information to broadcast and when
+
+GenericSQLReader
+Class that acts as a generic read-only interface to the database, any project which reads from db has an instance of this class, which it can configure as to what information to read
+
+GenericSQLReadWriter
+Derived from: GenericSQLReader
+Class that acts as a generic read/write interface to the database, any project which reads and writes to db has an instance of this class, which it can configure as to what information to read
+
+EconomicPlayer:
+Maybe a base class for most of the projects? But maybe not needed. Could have e.g. shared ability to start up from command line and enter a main loop that exits on control-c. Might have a bunch of utility methods.
+
+LibUtil:
+Library of utility methods?
+
+Company:
+Associated state in database: (id, name, director, balance (also historical values))
+
+PublicCompany
+State in memory: none
+Database entity derived from: Company
+Associated state in database: type (primary sector, manufacturing, service sector), number of stocks, stock price (also historical values), port (relation)
+Servers it polls for input as client:
+1. FateAndGuesswork: it discovers which goods it wishes to buy and which goods it has available to sell, at what prices
+2. ShippingCompany - it discovers when goods it ordered have arrived
+Information it broadcasts as server: Contracts for movement of goods (from, to, expires)
+Things it calculates: Semi-randomly calculates whether it has either a) goods available for sale or b) goods it is willing to buy. Primary sector companies more usually have goods available for sale, service sector usually have requests for goods to buy, manufacturing sector more a mixture of the two
+Things it reads from database:
+Things it writes to database:
+Things it edits in database:
+If it is primary sector company it puts out what goods it has available and at what price
+
+Trader
+State in memory: locks on contracts for movement of goods - 
+Database entity derived from: Company
+Associated state in database: 
+Servers it polls for input as client: FateAndGuesswork for predicted future prices
+Information it broadcasts as server: decision to buy goods at a given port
+Things it calculates: On basis of distance between ports and price of commodity at each port, it uses its information on future price fluctuations to calculate the most profitable places to buy goods to warehouse in readiness to sell (i.e. somewhere nearby to and cheap for predicted future demand, possibly the same port), or to organise a futures contract to buy goods in future in readiness to buy (i.e. at the actual port of the predicted future supply). Then when price fluctuation actually happens, warehoused goods are sold to most profitable location given distance they would have to be transported, or futures contract is fufilled and goods are again sold in most profitable way possible. Though unforseen variation could still lead to them losing money.
+Things it reads from database: fx price, distance between ports
+Things it writes to database: none
+Things it edits in database: none
+
+ShippingCompany
+State in memory: none
+Database entity derived from: Company
+Associated state in database: none
+Servers it polls for input as client: available contracts for movement of goods from traders
+Information it broadcasts as server: when it has collected goods, when it has delivered goods. See "Trade" database entity for attributes to broadcast.
+Things it calculates:
+Things it reads from database:
+Things it writes to database:
+Things it edits in database:
+
+Port
+State in memory: current price
+State in database (id, name, country), relation with commodity values. At each port some commodities will have null value, i.e. there is neither any production of good for export neither any demand for the good to be imported.
+Servers it polls for input as client: PublicCompany - on hearing of a new demand for goods or new production of goods from a company, the price is heavily knocked up or down accordingly
+Information it broadcasts as server: current open market value for all the commodities at this port. Go up and down via geometric brownian motion - http://en.wikipedia.org/wiki/Geometric_Brownian_motion
+
+Bank:
+State in memory: none
+State in database: none
+Servers it polls for input as client:
+1. Yahoo finance FX prices. Updated currency value then written to database.
+2. Shipping company departures and arrivals. On arrivals money is debited from buying company and credited to 
+3. Port servers broadcasting open market prices. Commodity/port relation prices in database are updated accordingly.
+
+, trader decisions to buy
+Information it broadcasts as server: 
+Things it calculates:
+Things it reads from database:
+Things it writes to database: currency prices (
+Things it edits in database:
+
+FateAndGuesswork
+State in memory: none
+State in database: none
+Servers it polls for input as client: none
+Information it broadcasts as server:
+Calculated future requirements for movement of goods are broadcast. These are broadcast on two channels: 
+1. Guesswork, with an added degree of error, is for Traders to pick up. The next Trader to poll FateAndGuesswork is given the information, and this information is then removed from the queue. two, without any error
+2. Fate, it will also broadcast this same information, but without any error, to be picked up by the PublicCompanies. Once received this too is removed from the queue.
+Things it calculates: Semi-randomly calculates which PublicCompanies will in future have a) goods available for sale or b) goods it is willing to buy. Primary sector companies more usually have goods available for sale, service sector usually have requests for goods to buy, manufacturing sector more a mixture of the two
+Things it reads from database:
+Things it writes to database: none
+Things it edits in database:
+
+Form View
+a) allows you to view the current stream of real time data (though this is read from database, form view doesn't itself poll any servers)
+can see for instance:
+- both turnover and profit over any given time period for any given economic actor
+b) allows you to view and edit the contents of the unfluctuating data in database, and 
+c) displays diagnostic system information on the current status of all the process
+
+Trade:
+Soley in database (departure_time, arrival_time, departure_port, arrival_port, commodity, quantity, which freighter, company goods sold by, company goods bought by, company goods transported by, buy price per unit and sell price per unit)
+
+Currency
+Soley in database (id, name, current value [relative to dollar])
+Plus record historical data, somehow
+
+Commodity
+Soley in database (id, name, description)
+(steel, paper, electronics, cereal, textiles, oil, opium, precious gems, look on wikipedia for main exports of various countries)
+
+PortCommodity
+intermediary table linking each port + commodity to a current value in USD. make sure there is a constraint: every commodity must have a value at every port. Also historical values.
+
+Country
+Soley in database (id, name, currency, population)
+
+Freighter
+Soley in database (id, company belonging to relation, capacity, speed)
+
+Unit Testing:
+- make sure all this concurrency stuff still survives even if any one server goes down
+
+////
+
+- the prices at ports cannot be totally random, otherwise everything will be massively out of whack. Instead, have ports interact such that natural price variation always maks it so any price differential that naturally arises cannot lead to profit unless transport were much cheaper.
+
+- another process (the Bank process) polls this data and shoves it in a SQL server database. Where neccessary the data is collated - e.g. if a freighter company moves some goods, then the amount of that goods left at a planet is updated. Also, bank process gets FX data from Yahoo finance
+
+At point trader makes a futures contract, they place a request for contract of movement of goods. These requests are broadcasted by a "Movement of goods" server. The transporter companies periodically check for open requests, and if there is one there then they accept it. However, each request obviously only requires one company, but at same time it takes one second between contract for movement being agreed and it being taken off requests, so a system of locking is required.
+
+Though it should be configurable, a reasonable ball park figure might be that we want to have running 20 ports, 100 companies, 20 transporters, and 20 traders.
+
+- each publiccompany has a share price, which goes up and down depending on the money they have in their bank account
 
 Bank process:
-- depending on distance between the ports of a trade (= fuel cost, this is also affected by oil price) and value of the goods at each port (affects difference between buy and sell price), the value earned by each transaction is calculated and the bank accounts of the trading houses updated. 
-
-Data in the database unaffected by updates:
-- each company's inventory of freighters, and data about capacity, speed, etc
-- each company's director
-- various commodities (steel, paper, electronics, cereal, textiles, oil, opium, precious gems, look on wikipedia for main exports of various countries), descriptions of what they are used for
-- various ports, with info on their location, which country they are part of, which currency they use
-
-FX server:
-- there is a selection of currencies and an FX market. Just use real world currencies - yen, renminbi, euro, dollar. This requires an FX server which broadcasts information about the fluctuating price of the different currencies. Then an FX multiplier will affect the profit on moving goods between ports with different currencies.
-
-/////
-
-Documentation
-
-Make a brief webpage explaining how it works, including:
-
-- UML diagrams
-- unit tests
-- add UML to wolfie
-- describe database design aspects
-- link to all my abandoned Vapour-ware "would be nice" ideas, not on same page though
-- talk about both web and gui interface
-- add web stuff to wolfie
-- section labelled "The name, economics, and politics" - briefly explain where name came from. State that whilst Clavell was hugely pro free-trade, and his books were written from this perspective, this program is not meant to have any normative political element. It is simply meant as an exercise in software development and mathematics.
+- depending on distance between the ports of a trade (= fuel cost, this is also affected by oil price) and value of the goods at each port (affects difference between buy and sell price), and the current FX multiplier (from database) the value earned by each transaction is calculated and the bank accounts of the trading houses updated. 
 
 ////
 
-- need to add a web interface once basic version is working
-- add this to doc and wolfie (subclass view as WebView and FormView)
+Additional things that could be added that are not too massive in scale:
 
-////
-
-Things that could be added without too much extra work:
+- ensure database makes use of views, stored procedures, and triggers, and add all this to doc
+- read a bit of concurrency theory, and then put this into practice with regard to having it vey clear how concurrency features of my system are well designed and error-resistant, and then add this to doc
+- "disasters" - sometimes purposefully knock out a Trader, FateAndGuessWork, ShippingCompany, Bank, or any other process - indeed could even have a GUI button to do so. Then watch system cope. Or financial disaster - massive crash or massive boom in prices could make a load of trader's predictions wrong and they all lose loads of money
 - make GUI optionally output current stream of real time data to an Excel spreadsheet, updating the spreadsheet at regular ticks, add excel to 
-wolfie
+wolfie + doc
+- class diagram (hopefully this can just be exported from Visual Studio?)
 - fix anki-maemi and submit patch
+- make fluctuating fuel cost affect profit/lost of transporters on a trade
+- make different freighters travel at different speeds, and take this into account in logic in some places
+- have the GUI draw pretty line graphs of price changes etc
+- calculate balance of commodity trade for each port, and for each country, both in terms of physical quantity and in terms of money. Include a note that balance of trade for services is totally not accounted for.
+- make it so traders can gamble on stock prices, as well as commodity prices, using same system as commodities currently use
+- make it possible for companies and trading houses to go into debt, at which point they have to pay interest charges. if they ever get to a certain point of debt, they are bailed out by the government and their debt is reset to zero
+- make it such that ships must sometimes go in for maintenance, which temporarily reduces trading house's number of freighters, and also costs money
+- leave the simulation running for a long time to create a load of historical data (i.e. try to build up some historical data tables with thousands of rows), and then save this data so that I am forced to make sure the system can at all times cope with these very large tables
+- have an ASP web interface (WebView), add to wolfie + doc
+- see ideas_removed_for_time_being.txt for maths stuff I could feasibly do after MS221
 
 //////
 
 Keeping track of time:
-* is lots of work (e.g. 8), / is some work (e.g. 3)
 
-I'd say that prior to 12 Feb, I have done maybe 12 hours work
-13 Feb: /
-20 Feb: *
+I'd say that prior to 12 Feb, I have done maybe 16 hours work (including assessing textbooks and what not)
+12-19: 8
+20 Feb: 10
+
+
+
 

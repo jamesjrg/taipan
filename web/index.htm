@@ -2,7 +2,7 @@
 <html>
 <head>
 
-<title>SQL and Maths and Boats and Stuff</title>
+<title>Tai-Pan</title>
 <meta http-equiv="content-type" content="text/html;charset=iso-8859-1">
 
 <style type="text/css">
@@ -13,27 +13,34 @@ body {font: 100% Sans-serif; background-color: #D2DEFF; width: 94%; margin: auto
 
 <body>
 
-<h2>SQL and Maths and Boats and Stuff</h2>
+<h2>Tai-Pan</h2>
 
 <h3>Intro</h3>
 
-<p>"SQL and Maths and Boats and Stuff" is a complex C# project designed to demonstrate my knowledge of:</p>
+<p>"Tai-Pan" is a C# project designed to demonstrate my knowledge of:</p>
 <ul>
 <li>C#</li>
 <li>.NET</li>
+<li>SQL and SQL Server</li>
 <li>Concurrency</li>
-<li>SQL</li>
-<li>Mathematical modelling</li>
-<li>Excel integration</li>
 <li>Windows Forms</li>
-<li>Software Engineering (UML, unit testing, source control, etc)</li>
+<li>Software Engineering (software design, UML, unit testing, source control, etc)</li>
 </ul>
+
+<p>Jump to:</p>
+<ul>
+<li><a href="#hsystemdesign">Outline of system design</a></li>
+<li><a href="#hdatabasedesign">Outline of database design</a></li>
+<li><a href="#huserviews">Outline of user views</a></li>
+<li><a href="#htechdetails">Source code and technical details</a></li>
+</ul>
+</p>
 
 <p>&nbsp;</p>
 
-<h3>Outline of project</h3>
+<h3 id="hsystemdesign">Outline of system design</h3>
 
-<p>[UML diagram of overall layout - several processes, XML, SQL, database, excel spreadsheets]</p>
+<p>[UML diagram of overall layout - several processes, XML, SQL, database]</p>
 
 <p>A large number of C# processes simulate an economy where various commodities are traded and shipped by freighter between ports across the world. Some of these processes represent "Ports", which broadcast the fluctuating production, consumption and price of various commodoties in their vicinity via XML. Some of these processes represent "Trading Houses", and on the basis of differing price differentials at different ports, they attempt to move goods around the world in the most profitable way possible. These processes also broadcast XML, containing information on their actions.</p>
 
@@ -41,39 +48,26 @@ body {font: 100% Sans-serif; background-color: #D2DEFF; width: 94%; margin: auto
 
 <p>A "Bank" process listens to these broadcasts, collates the data, and performs inserts and updates on a SQL Server database. This database contains all the information on the current state of the world. The "Trading House" processes have read-only access to the database, and use the information which it contains to make their decisions on the most profitable trade routes.</p>
 
-<p>Finally, another process hooks into a running copy of Excel. The current data stream is displayed and updated in one sheet, whilst another sheet can be used to view or edit the data in the database which represents the unfluctuating state of the world.</p>
+<p>blah blah concurrency</p>
 
-<p>The whole system is covered by an extensive array of unit tests.</p>
+<p>xxx blah blah test driven development</p>
+<p>The whole system is covered by an extensive array of unit tests (xxx say how many, or say what % coverage, and say coverage gradually increasing).</p>
 
-<h3>Trading House processes</h3>
+<h3 id="hdatabasedesign">Outline of database design</h3>
 
-<p>blah blah blah</p>
+<p>[diagram of database design]</p>
 
-<h3>Port processes</h3>
-
-<p>blah blah blah</p>
-
-<h3>FX process</h3>
-
-<p>blah blah blah</p>
-
-<h3>Bank process</h3>
-
-<p>blah blah blah</p>
-
-<h3>SQL Server</h3>
-
-<p>[image of database design]</p>
-
+<p>blah blah blah ER design</p>
 <p>blah blah blah normal forms</p>
+<p>blah blah blah tuning and efficiency and very large tables</p>
+<p>blah blah blah triggers, inheritance (whatever correct term is), stored procedures, etc</p>
 
-<h3>Excel interface</h3>
+<h3 id="huserviews">Outline of user views</h3>
 
-<p>blah blah blah</p>
+<h3 id="htechdetails">Source code and technical details</h3>
 
-<h3>Other</h3>
-
-<p>blah blah mention unit tests
+<p>blah blah link to git hub</p>
+<p>blah blah link to wolfie for list of technologies used</p>
 
 
 </body>
