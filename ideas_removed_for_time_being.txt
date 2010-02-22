@@ -1,10 +1,8 @@
 ﻿////
 
-complex maths and micro economics stuff that could feasibly happen one day:
+complex micro economics stuff removed for time being:
 
-- Try to use differential equations to properly optimise trading houses choices of route (either on basis of profit, or in way to redistribute goods most efficiently to places where they are most needed, however needed is defined)
-- add mathematical modelling to wolfie (for set analyser, too)
-- describe mathematical aspects in doc
+- add more complex ideas of debt and interest payments - e.g. dividends on shares, or interest payments on loans to buy goods to warehouse
 - add trading in more complex derivatives
 
 Wikipedia on complex financial stuff:
@@ -13,10 +11,48 @@ If I wanted to add in some financial complexity:
 http://en.wikipedia.org/wiki/Derivative_(finance)
 	http://en.wikipedia.org/wiki/Futures_contract
 	http://en.wikipedia.org/wiki/Option_(finance)
+    http://en.wikipedia.org/wiki/Black%E2%80%93Scholes
+    http://en.wikipedia.org/wiki/Wiener_process
 	http://en.wikipedia.org/wiki/Swap_%28finance%29
 		http://en.wikipedia.org/wiki/Interest_rate_swap
+        
+/////
+
+mathematical/algorithmic stuff removed for time being:
+        
+- Make prices different at all ports all the time, and then try to make an algorithm such that traders are constantly choosing the most efficient routes to transport goods, with their future knowledge of the market a separate way to make money. 
+- keep track of positions of freighters, and then alter system that creates a problem involving the most efficient routing pattern for them
+- add mathematical modelling to wolfie (for set analyser, too)
 
 /////
+
+things that could be done to make it more complicated for the sake of it removed for time being:
+
+- have each shipping company only cover certain ports
+- sometimes have contracts for movement of goods not be finalized, and then the lock is removed and other shipping companies can take up the offer
+- "disasters" - sometimes purposefully knock out a Trader, FateAndGuessWork, ShippingCompany, Bank, or any other process - indeed could even have a GUI button to do so. Then watch system cope. Or financial disaster - massive crash or massive boom in prices could make a load of trader's predictions wrong and they all lose loads of money
+- perhaps make traders take FX differences into account in choosing where to sell goods to? This would probably require making the FX model more complicated - e.g. add commission charges for changing between currencies
+- make fluctuating fuel cost affect profit/lost of transporters on a trade, and maybe have oil tankers
+- make different freighters travel at different speeds, and take this into account in logic in some places
+- make it so traders can gamble on stock prices, as well as commodity prices, using same system as commodities currently use
+- make it possible for companies and trading houses to go into debt, at which point they have to pay interest charges. if they ever get to a certain point of debt, they are bailed out by the government and their debt is reset to zero
+- make it such that ships must sometimes go in for maintenance, which temporarily reduces trading house's number of freighters, and also costs money
+
+///
+
+front end stuff removed for the time being:
+- add a tab in formview/page in web view that is IE tab with MS maps or Google maps integration, with pins on the ports, and perhaps info boxes/some other visualisation of what is going on
+- add some new processes that use WPF rather than sockets, and maybe LINQ rather than straight SQL
+- make GUI optionally output current stream of real time data to an Excel spreadsheet, updating the spreadsheet at regular ticks, add excel to 
+wolfie + doc
+- have the GUI draw pretty line graphs and charts of price changes etc
+
+/////
+
+.NET stuff removed for time being:
+- add some new processes that use WCF rather than sockets, and maybe LINQ rather than straight SQL
+
+///
 
 make it a game idea never going to happen:
 
@@ -26,14 +62,15 @@ REALLY doubt there'd be much interest, though. Even if I managed to implement th
 
 ///
 
-complex C++ and hardcore comp sci ideas not going to happen:
+hardcore comp sci ideas not going to happen:
 
 - Write a small custom database system in C++ to replace SQL Server
-- Write custom low level network code
+- add some processes that use UDP rather than TCP
+- Write custom low level network code in C++
 
 ///
 
-political idea not going to happen:
+international politics ideas not going to happen:
 
 Have it so natural distribution of wealth follows a particular curve in all countries, but have this curve affected by goverment action (e.g. % of spending on health/education/social security). At same time, have higher government spending reduce efficiency of economy overall (do this by making it weaken value of currency and/or reducing level of wealth citizerns have available to spend on consumption) and also keep track of each country's level of corruption (just a general figure which meant in incredibly general sense of "level to which money distribtution is determined neither by market nor by government, but rather by people with political power just directly taking it from state funds)
 
@@ -65,8 +102,13 @@ To make this actually simulate an economy rather than a solid state system, I ne
 
 trade in financial services, IT software and support
 
-keep track of balance of trade
+keep track of balance of trade and make it affect currency prices
 
 /////
+
+interaction of markets and psychology and everyday life stuff never going to happen:
+
+Factor in marketing and advertising increasing demand, increasing salaries leading to increasing prices for real estate and living costs, perhaps have a level of satisfaction which is calculated by how well someone considers them off compared to those around them.
+
         
         
