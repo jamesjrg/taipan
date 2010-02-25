@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "bank", "bank\bank.csproj", "{0805EE52-A229-4287-96F3-B01004AE8BBD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bank", "Bank\Bank.csproj", "{0805EE52-A229-4287-96F3-B01004AE8BBD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "formview", "formview\formview.csproj", "{976FEF3D-0E2E-4E6E-86C7-9023F48B4C9E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WpfView", "WpfView\WpfView.csproj", "{0B14E994-DCE6-4BED-87AF-04DDFB9E25CA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,10 +15,10 @@ Global
 		{0805EE52-A229-4287-96F3-B01004AE8BBD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0805EE52-A229-4287-96F3-B01004AE8BBD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0805EE52-A229-4287-96F3-B01004AE8BBD}.Release|Any CPU.Build.0 = Release|Any CPU
-		{976FEF3D-0E2E-4E6E-86C7-9023F48B4C9E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{976FEF3D-0E2E-4E6E-86C7-9023F48B4C9E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{976FEF3D-0E2E-4E6E-86C7-9023F48B4C9E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{976FEF3D-0E2E-4E6E-86C7-9023F48B4C9E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0B14E994-DCE6-4BED-87AF-04DDFB9E25CA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0B14E994-DCE6-4BED-87AF-04DDFB9E25CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0B14E994-DCE6-4BED-87AF-04DDFB9E25CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0B14E994-DCE6-4BED-87AF-04DDFB9E25CA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

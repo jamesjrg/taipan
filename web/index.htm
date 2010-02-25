@@ -15,60 +15,81 @@ body {font: 100% Sans-serif; background-color: #D2DEFF; width: 94%; margin: auto
 
 <h2>Tai-Pan</h2>
 
-<h3>Intro</h3>
+<h3>Introduction</h3>
 
-<p>"Tai-Pan" is a C# project designed to demonstrate my knowledge of:</p>
-<ul>
-<li>C#</li>
-<li>.NET</li>
-<li>SQL and SQL Server</li>
-<li>Concurrency</li>
-<li>Windows Forms</li>
-<li>Software Engineering (software design, UML, unit testing, source control, etc)</li>
-</ul>
+<p>"Tai-Pan" is a C# .NET project that simulates a trading economy. In order to improve my knowledge of .NET, as well as the theory behind SQL database design, concurrency, software engineering, and mathematics, the project was purposefully designed to be fairly complex. As such there are a large number of heterogeneous client and server processes broadcasting and polling XML messages, whilst simultaneously interacting with a SQL Server database that holds most of the underlying state of the system. xxx maths. A WPF GUI provides analysis of the real-time data. 
 
-<p>Jump to:</p>
+<p>The purpose of this web page is to demonstrate what I learnt. Click one of the headings below to jump to a section which interests you:</p>
 <ul>
-<li><a href="#hsystemdesign">Outline of system design</a></li>
-<li><a href="#hdatabasedesign">Outline of database design</a></li>
-<li><a href="#huserviews">Outline of user views</a></li>
-<li><a href="#htechdetails">Source code and technical details</a></li>
+<li><a href="#heng">Software Engineering (software design, UML, unit testing, source control, etc)</a></li>
+<li><a href="#hsql">SQL and SQL Server</a></li>
+<li><a href="#hconcurrency">Concurrency and networking</a></li>
+<li><a href="#hdotnet">C# and .NET</a></li>
+<li><a href="#hmath">A little of the mathematics behind the finance industry (though this isn't the main focus)</a></li>
 </ul>
 </p>
 
 <p>&nbsp;</p>
 
-<h3 id="hsystemdesign">Outline of system design</h3>
+<h3 id="heng">Software Engineering</h3>
 
 <p>[UML diagram of overall layout - several processes, XML, SQL, database]</p>
 
-<p>A large number of C# processes simulate an economy where various commodities are traded and shipped by freighter between ports across the world. Some of these processes represent "Ports", which broadcast the fluctuating production, consumption and price of various commodoties in their vicinity via XML. Some of these processes represent "Trading Houses", and on the basis of differing price differentials at different ports, they attempt to move goods around the world in the most profitable way possible. These processes also broadcast XML, containing information on their actions.</p>
+<p>xxx see more UML diagrams in later sections on concurrency and SQL</p>
 
-<p>A foreign exchange process broadcasts information on the fluctuating exchange rate between various currencies.</p>
+<p>xxx brief explanation of diagram</p>
 
-<p>A "Bank" process listens to these broadcasts, collates the data, and performs inserts and updates on a SQL Server database. This database contains all the information on the current state of the world. The "Trading House" processes have read-only access to the database, and use the information which it contains to make their decisions on the most profitable trade routes.</p>
+<p>xxx blah blah test driven development (Isotoma, concurrency, etc)</p>
 
-<p>blah blah concurrency</p>
+<p>blah blah compare git to svn and cvs, and talk about how i've used them both loads</p>
+<p>blah blah link to git hub</p>
 
-<p>xxx blah blah test driven development</p>
-<p>The whole system is covered by an extensive array of unit tests (xxx say how many, or say what % coverage, and say coverage gradually increasing).</p>
-
-<h3 id="hdatabasedesign">Outline of database design</h3>
+<h3 id="hsql">SQL and SQL Server</h3>
 
 <p>[diagram of database design]</p>
+
+<p>blah blah explanation of diagram</p>
 
 <p>blah blah blah ER design</p>
 <p>blah blah blah normal forms</p>
 <p>blah blah blah tuning and efficiency and very large tables</p>
-<p>blah blah blah triggers, inheritance (whatever correct term is), stored procedures, etc</p>
+<p>blah blah blah triggers, inheritance (whatever correct term is), stored procedures, etc, talk about where I've used any of these things before</p>
 
-<h3 id="huserviews">Outline of user views</h3>
+<p>blah blah didn't use LINQ because I wanted the practice with raw SQL. My prior experience of object-relation mappers in Python is that they aren't much use for complex queries anyway, though it is possible LINQ is better.</p>
 
-<h3 id="htechdetails">Source code and technical details</h3>
+<h3 id="hconcurrency">Concurrency and networking</h3>
 
-<p>blah blah link to git hub</p>
-<p>blah blah link to wolfie for list of technologies used</p>
+<p>[UML diagram of interactions]
 
+<p>blah blah explanation of diagram</p>
+
+<p>blah blah concurrency</p>
+
+<p>blah blah reliability, testing. Considering spending a some time working on improving the system in this area.</p>
+
+<p>blah blah done some slightly more complex networking stuff before (blah blah mention Twisted and my threaded Java app and TCP at Opera), I decided to focus on the more general ideas of multi-process programming and so despite initially planning on writing the networking code at TCP socket level, or possibly going even more low level and building on top of UDP, I decided to let WCF handle the details of network communication.</p>
+
+<h3 id="hdotnet">C# and .NET</h3>
+
+<p>blah blah compare to C++ and Java and Python</p>
+<p>blah blah WPF. blah blah considered web front end, but I wanted an interactive interface to large amounts of real time data, whilst maintaining a responsive GUI. This set of requirements is very difficult to meet with Javascript, Flash, Silverlight, etc. I also wanted to have the option of one day adding more complex visualisations such as graphs and charts, which makes WPF attractive, and which pretty much rules out HTML/CSS/Javascript altogether. 
+
+<h3 id="hmath">A little of the mathematics behind the finance industry</h3>
+
+<p>xx image of equations that are used</p>
+
+<p>maybe a UML diagram</p>
+
+<p>blah blah brownian motion, options, etc</p>
+
+<p>blah blah choice of finance as basis of project not due to any particular affinity with the finance industry, I am interested in developing challenging software projects, whatever the domain. blah blah wanted to try to model some sort of relatively complex underlying system to add to the challenge and interest level. Considered either
+
+<p>a) modelling some sort totally ridiculous science-fiction universe involving spaceships, robots, and philosophy<br>
+or<br>
+b) modelling a complex system of transport routes for various goods between various locations, and then trying to optimise the system to find the most efficient routes, with the optimisation process purposefully hindered by a large number of rules (this idea being mostly inspired by the crew rostering system that I helped maintain when working at Thomson Airways)
+</p>
+
+I decided that the first option was too geeky and silly even for me, and the second option would really require another year or two of studying applied mathematics before I could create any sort of interesting solutions. So I chose finance.</p>
 
 </body>
 </html>
