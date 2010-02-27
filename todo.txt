@@ -6,7 +6,7 @@ todo now:
 Overall plan: lots of C# processes representing entities in a trading economy communicate with each other via XML, some as servers, some as clients, some as both. Most state is contained within a SQL server database, and only one of the processes (the "Bank", the name being a nod to Monopoly). The name is a nod to book Tai Pan, that is the general point is that there are several large trading houses which ferry various goods very long distances, though actually here the trading houses have been split into two distinct entities, the "Shipping companies" who do the actual transporting of goods, and the "traders" who predict surpluses and shortages in the market and buy and sell goods accordingly.
 One day the description here, description in index.htm, description on CV, and description in Wolfie will all need to be synced...
 
-Though some of this should be configurable, a reasonable ball park figure might be that we want to have running 30 Public Companies, 10 Shipping Companies, 5 Traders, 1 FateAndGuesswork, 1 Bank, 1 WPFView, 1 SQL Server instance.
+Though some of this should be configurable, a reasonable ball park figure might be that we want to have running 30 Public Companies, 10 Shipping Companies, 5 Traders, 1 FateAndGuesswork, 1 FXServer, 1 Bank, 1 WPFView, 1 SQL Server instance.
 
 GenericServer
 Class that acts as generic server, any project which acts as a server has an instance of this class, which it can configure as to what information to broadcast and when
@@ -29,17 +29,7 @@ Maybe a base class for most of the projects? But maybe not needed. Could have e.
 LibUtil:
 Library of utility methods?
 
-Company:
-Base table for db representation of all companies.
-Associated state in database: (id, name, director, balance (also historical values)
-
-PublicCompany
-Database entity derived from: Company
-number of stocks, stock price (also historical values)
-
 CompanyWithLocation
-Database entity derived from: PublicCompany
-Associated state in database: type (primary sector, manufacturing, service sector), port, also which commodities are imported and which are exported by this company - for some one or the other will have null value, i.e. there is neither any production of good for export neither any demand for the good to be imported.
 Servers it polls for input as client:
 1. FateAndGuesswork: it discovers when it will have a shortage or surplus of a given commodity, and at what price it will be wish to buy/sell to make up for this
 Information it broadcasts as server:
@@ -48,8 +38,6 @@ Things it reads from database:
 Things it writes to database: nothing
 
 Trader
-Database entity derived from: Company
-Associated state in database: country
 Servers it polls for input as client: FateAndGuesswork for predicted future prices
 Information it broadcasts as server:
 1. decisions to buy goods at a given port, and decisions to organise a futures contract
@@ -62,9 +50,7 @@ Things it reads from database: distance between ports, which ports import/export
 Things it writes to database: none
 
 ShippingCompany
-Database entity derived from: PublicCompany
-Associated state in database: country
-Servers it polls for input as client:#
+Servers it polls for input as client:
 1. Available contracts for movement of goods from traders
 2. Whether acceptance of movement of goods has been confirmed
 Information it broadcasts as server:
@@ -75,10 +61,13 @@ Things it reads from database:
 Things it writes to database:
 Things it edits in database:
 
+FX Server
+Information it broadcasts as server: fluctuating currency prices
+Things it calculates: fluctuating currency prices via GBM
+
 Bank:
-State in database: none
 Servers it polls for input as client:
-1. Yahoo finance FX prices. Updated currency value then written to database.
+1. FX Server for FX prices. Updated currency value then written to database.
 2. Shipping company departures and arrivals. On departure money is debited from trader and credited to both shipping company and seller, on basis of distance of journey. On arrival money is debited from buying company and credited to trader.
 3. FateAndGuesswork market prices. Commodity prices in database are updated accordingly.
 4. FateAndGuesswork stock prices. Database updated accordingly
@@ -89,17 +78,16 @@ Things it reads from database: nothing
 Things it writes to database: see above
 
 FateAndGuesswork
-State in database: none
 Servers it polls for input as client: none
 Information it broadcasts as server:
 Four different broadcasts. Firstly, calculated future shortages or surpluses of a given commodity for a given company are broadcast (note only companies_with_location which actually import/export a given commodity will ever produce a surplus/suffer shortage). These are broadcast on two channels: 
 a) Guesswork, with an added degree of error, is for Traders to pick up. The next Trader to poll FateAndGuesswork is given the information, and this information is then removed from the queue. two, without any error
 b) Fate, it will also broadcast this same information, but without any error, to be picked up by the PublicCompanies. Once received this too is removed from the queue.
 Furthermore, there is:
-c) Current market price of all commodities. Goes up and down via simple algorithm of time being
-d) Stock prices of each company. Goes up and down via simple algorithm of time being.
+c) Current market price of all commodities. Goes up and down via GBM. Make sure places which neither import nor export a commodity have a price created (unit test this, also take account of this in GUI)
+d) Stock prices of each company. Goes up and down via GBM.
 Things it calculates:
-Semi-randomly calculates which PublicCompanies will in future have a) have surplus of a commodity or b) have shortage of a commodity, and at what price they will wish to buy/sell above/below market to make up for this. Primary sector companies more usually have goods available for sale, service sector usually have requests for goods to buy, manufacturing sector more a mixture of the two
+Semi-randomly calculates which PublicCompanies will in future have a) have surplus of a commodity or b) have shortage of a commodity, of how much quantity (though never more than can fit in one freighter), and at what price they will wish to buy/sell above/below market to make up for this. Primary sector companies more usually have goods available for sale, service sector usually have requests for goods to buy, manufacturing sector more a mixture of the two
 Things it reads from database:
 Things it writes to database: none
 Things it edits in database:
@@ -108,30 +96,28 @@ WpfView
 a) able to view constantly updated real time data from the database
 b) able to view some statistics and charts built using more complex SQL queries.
 For instance:i) both turnover and profit over any given time period for any given economic actor
-c) maybe displays diagnostic system information on the current status of all the processes and their interactions. Maybe also a green or red light next to each one to show all are responding? This would require processes to keep records in the database of when they last communicated with each other.
+ii) charts of time vs price for commodoties and stocks
 
-Port
-Soley in the database (id, name, country)
+////
 
-Trade:
-Soley in database (departure_time, arrival_time, departure_port, arrival_port, commodity, quantity, which freighter, company goods sold by, company goods bought by, company goods transported by, buy price per unit and sell price per unit)
+Database stuff not currently accounted for in UML diagram:
 
-Currency
-Soley in database (id, name, current value [relative to dollar])
-Plus record historical data, somehow
+** Warehoused purchases table/s
 
-Commodity
-Soley in database (id, name, description, current_price)
-(steel, paper, electronics, cereal, textiles, oil, opium, precious gems, look on wikipedia for main exports of various countries)
+** Futures contracts table/s
 
-PortCommodity
-intermediary table linking each port + commodity to a current value in USD. make sure there is a constraint: every commodity must have a value at every port. Also historical values.
+- For all tables with historical values, have the current value updated via a trigger linked to a new record being inserted into the main table
+- constraint on linking ports + commodities + prices: every commodity for every port must appear in link table, no null values allowed for either FK
+- some commodities: steel, paper, electronics, cereal, textiles, oil, opium, precious gems, look on wikipedia for main exports of various countries
+- constraints to ensure CompanyType is correctly enforced and instances can be neither multiple base classes nor multiple sub classes
+- same with PublicCompanyType
 
-Country
-Soley in database (id, name, currency, population)
+- maybe add some views for use by the various processes that need info from database?
 
-Freighter
-Soley in database (id, company belonging to relation, capacity, speed)
+- do some normalisation some time after the design has changed a bit, and doc how I carried this out, and doc what normal form the db is in
+- tuning/optimisation - faff about with different sorts of indexes etc, maybe also so totally pointless striping, clustering, etc
+
+////
 
 Unit Testing/concurrency testing:
 - Database interaction and calculations based on database data well suited to unit testing, do these parts via TDD (and doc this fact). Maybe also the gui section to some extent? However multi-process concurrent aspects of program are not naturally suited to standard unit testing frameworks. There surely are recognised ways for automated testing of multi-process concurrent programs, and I may add such a system in future, but there are only so many things you can do at once.
@@ -150,33 +136,24 @@ Sequence views:
 
 Deployment view:
 - it should have title "Tai-Pan: deployment diagram"
-- note yahoo is <<service>>
 
 Database ER diagram:
 It should have the title "Tai-Pan database: ER diagram"
 
-- UML class diagram (hopefully this can just be exported from Visual Studio?)
-- UML diagram showing links between DB entities and C# classes
+- UML class diagram (hopefully this can just be exported from Visual Studio? Or otherwise imported from C# code to MagicDraw)
 
 - in doc, say that because I was the sole participant in the project, and because project was liable to change greatly during development, a heavyweight desing process featuring lots of UML diagrams from the beginnign didn't make sense. Therefore the only diagram I drew prior to writing the code that implemented was a database ER diagram - the intial planning for process interaction and class structure was just done in natural language in a text editor. The UML diagrams here were drawn towards the end of the development process as a way to explain how the system is as opposed to a way to plan how the system would be.
 
 ////
 
-Priority 1 extra stuff to do:
-- get all the above working
+Variation of price of stocks and commodities
 
-Priority 2 extra stuff to do:
-- make the prices of stocks go up and down via geometric brownian motion, not my current simple algorithm, and doc this. Do the same with the prices of commodities
-- in database make use of views, stored procedures, and triggers, and add all this to doc
-- read a bit of concurrency theory, and then put this into practice with regard to having it vey clear how concurrency features of my system are well designed and error-resistant, and then add this to doc
-- calculate balance of commodity trade for each port, and for each country, both in terms of physical quantity and in terms of money. Include a note that balance of trade for services is totally not accounted for.
-- leave the simulation running for a long time to create a load of historical data (i.e. try to build up some historical data tables with thousands of rows), and then save this data so that I am forced to make sure the system can at all times cope with these very large tables
-- do some database normalisation/tuning, doc this
-- have stock prices affected by recent profit/loss and bank balance of each company
-- add more complex finance stuff (more details in ideas_removed_for_time_being.txt)
+http://en.wikipedia.org/wiki/Geometric_Brownian_motion
 
-Priority 3 extra stuff to do:
-ideas removed for time being.txt
+I think this is right:
+
+a) use the analytic solution of the equation for GBM, which requires an initial value, two constants, the explanatory variable (time) and Wt
+b) make Wt a random variable chosen from a normal distribution with mean 0 and standard deviation equal to the tick time
 
 //////
 
@@ -184,9 +161,7 @@ Keeping track of time:
 
 prior to 12 Feb: 30
 12-19: 8
-20 Feb: 9
-21 Feb: 4
-23-24 feb: 7
-25: 5
-
-
+20-24 Feb: 20
+25: 8
+26: 2
+27: 3

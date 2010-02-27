@@ -2,8 +2,10 @@
 
 complex finance stuff removed for time being:
 
+- have stock prices affected by recent profit/loss and bank balance of each company
 - add more complex ideas of debt and interest payments - e.g. dividends on shares, or interest payments on loans to buy goods to warehouse
 - add trading in more complex derivatives
+- make sure my GBM calculations for stock/commodity price variation are are exactly as they should be
 
 Wikipedia on complex financial stuff:
 
@@ -12,6 +14,7 @@ http://en.wikipedia.org/wiki/Derivative_(finance)
 	http://en.wikipedia.org/wiki/Futures_contract
 	http://en.wikipedia.org/wiki/Option_(finance)
     http://en.wikipedia.org/wiki/Black%E2%80%93Scholes
+    http://en.wikipedia.org/wiki/Geometric_Brownian_motion
     http://en.wikipedia.org/wiki/Wiener_process
 	http://en.wikipedia.org/wiki/Swap_%28finance%29
 		http://en.wikipedia.org/wiki/Interest_rate_swap
@@ -28,6 +31,9 @@ mathematical/algorithmic stuff removed for time being:
 
 things that could be done to make it more complicated for the sake of it removed for time being:
 
+- make it so freighters have different capacities, and make the bidding for contracts to move goods take account of this
+- make it so sometimes quanity transported won't fit in a single freigher, so multiple freighters are involved in a single transport (perhaps from two seperate companies)
+- add bumpf to database - company director names, commodity descriptions, country populations, etc
 - have each shipping company only cover certain ports
 - sometimes have contracts for movement of goods not be finalized, and then the lock is removed and other shipping companies can take up the offer
 - "disasters" - sometimes purposefully knock out a Trader, FateAndGuessWork, ShippingCompany, Bank, or any other process - indeed could even have a GUI button to do so. Then watch system cope. Or financial disaster - massive crash or massive boom in prices could make a load of trader's predictions wrong and they all lose loads of money
@@ -43,15 +49,15 @@ things that could be done to make it more complicated for the sake of it removed
 front end stuff removed for the time being:
 - have an ASP web interface (WebView), add to wolfie + doc
 - add a tab in formview/page in web view that is IE tab with MS maps or Google maps integration, with pins on the ports, and perhaps info boxes/some other visualisation of what is going on
-- add some new processes that use WPF rather than sockets, and maybe LINQ rather than straight SQL
 - make GUI optionally output current stream of real time data to an Excel spreadsheet, updating the spreadsheet at regular ticks, add excel to 
 wolfie + doc
 - have the GUI draw pretty line graphs and charts of price changes etc
+- GUI displays diagnostic system information on the current status of all the processes and their interactions. Maybe also a green or red light next to each one to show all are responding? This would require processes to keep records in the database of when they last communicated with each other.
 
 /////
 
 .NET stuff removed for time being:
-- add some new processes that use WCF rather than sockets, and maybe LINQ rather than straight SQL
+- make use of LINQ
 
 ///
 
@@ -66,7 +72,7 @@ REALLY doubt there'd be much interest, though. Even if I managed to implement th
 hardcore comp sci ideas not going to happen:
 
 - Write a small custom database system in C++ to replace SQL Server
-- add some processes that use UDP rather than TCP
+- add some processes that use UDP and/or TCP rather than WCF, and make them incredibly scalable
 - Write custom low level network code in C++
 
 ///
@@ -126,3 +132,35 @@ proc.WaitForExit();
 Totally pointless given availability of things like dropbox
 
 //
+
+UML
+
+do yet more diagrams
+
+///
+
+SQL:
+
+- views
+- stored procedures
+- yet more normalisation
+- yet more tuning
+- set up some sort of OLAP functionality for large scale data analysis of historical data
+
+////
+
+Concurrency:
+
+- read a bit of concurrency theory, and then put this into practice with regard to having it vey clear how concurrency features of my system are well designed and error-resistant, and then add this to doc
+- improve concurrency aspects
+
+///
+
+web services:
+
+get finance data from yahoo api rather than creating it myself - though tick rate could be an issue
+
+///
+
+
+
