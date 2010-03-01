@@ -135,7 +135,8 @@ Totally pointless given availability of things like dropbox
 
 UML
 
-do yet more diagrams
+- UML class diagram (hopefully this can just be exported from Visual Studio? Or otherwise imported from C# code to MagicDraw)
+- do yet more diagrams
 
 ///
 

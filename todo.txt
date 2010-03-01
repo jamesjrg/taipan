@@ -1,12 +1,23 @@
 todo now:
 - work through comp_study_plan.txt
 
+concurrency now:
+- service which continuously broadcasts contents of a queue of simple structs
+
+
+sql now:
+- set correct roles for taipan-r and taipan-rw
+- a SQL script which dumps and then recreates database schema
+- a SQL script which creates some SQL test data
+- util methods to connect to, disconnect from, and possibly query and/or update db
+
+
 ///
 
 Overall plan: lots of C# processes representing entities in a trading economy communicate with each other via XML, some as servers, some as clients, some as both. Most state is contained within a SQL server database, and only one of the processes (the "Bank", the name being a nod to Monopoly). The name is a nod to book Tai Pan, that is the general point is that there are several large trading houses which ferry various goods very long distances, though actually here the trading houses have been split into two distinct entities, the "Shipping companies" who do the actual transporting of goods, and the "traders" who predict surpluses and shortages in the market and buy and sell goods accordingly.
 One day the description here, description in index.htm, description on CV, and description in Wolfie will all need to be synced...
 
-Though some of this should be configurable, a reasonable ball park figure might be that we want to have running 30 Public Companies, 10 Shipping Companies, 5 Traders, 1 FateAndGuesswork, 1 FXServer, 1 Bank, 1 WPFView, 1 SQL Server instance.
+Though some of this should be configurable, a reasonable ball park figure might be that we want to have running 30 Public Companies, 10 Shipping Companies, 5 Traders, 1 FateAndGuesswork, 1 FXService, 1 Bank, 1 WPFView, 1 SQL Server instance.
 
 GenericServer
 Class that acts as generic server, any project which acts as a server has an instance of this class, which it can configure as to what information to broadcast and when
@@ -29,22 +40,25 @@ Maybe a base class for most of the projects? But maybe not needed. Could have e.
 LibUtil:
 Library of utility methods?
 
-CompanyWithLocation
+DomesticCompany
 Servers it polls for input as client:
 1. FateAndGuesswork: it discovers when it will have a shortage or surplus of a given commodity, and at what price it will be wish to buy/sell to make up for this
-Information it broadcasts as server:
+Information it broadcasts as server: that is has a shortage/surplus of a given commodity, and the price at wish it wishes to buy/sell to make up for this
 Things it calculates:
 Things it reads from database:
 Things it writes to database: nothing
 
 Trader
-Servers it polls for input as client: FateAndGuesswork for predicted future prices
+Servers it polls for input as client:
+1. FateAndGuesswork for predicted future prices
+2. DomesticCompany declarations of shortage
 Information it broadcasts as server:
 1. decisions to buy goods at a given port, and decisions to organise a futures contract
 2. Contracts for movement of goods (from, to, expires)
 3. Acceptances and denials of contracts for movement of goods (to shipping companies)
+4. Decision to sell warehoused goods
 Things it calculates:
-1. On basis of distance between ports and also predicted information on future shortage or surplus of a given commodity for a given company, they calculate the most profitable places to buy goods to warehouse in readiness to sell (i.e. somewhere nearby to and cheap for predicted future shortage, possibly the same port), or to organise a futures contract to buy goods in future in readiness to buy (i.e. at the actual port of the predicted future surplus). Then when price fluctuation actually happens, warehoused goods are sold to nearest place that has a demand for those goods, or otherwise futures contract is fufilled and goods are again sold in most profitable way possible. Though unforseen variation could still lead to them losing money.
+1. On basis of distance between ports and also predicted information on future shortage or surplus of a given commodity for a given company, they calculate the most profitable places to buy goods to warehouse in readiness to sell (i.e. somewhere nearby to and cheap for predicted future shortage, possibly the same port), or to organise a futures contract to buy goods in future in readiness to buy (i.e. at the actual port of the predicted future surplus). Then when price fluctuation actually happens, warehoused goods are sold to nearest place that has a demand for those goods, or otherwise futures contract is fufilled and goods are again sold in most profitable way possible. Though unforseen variation and/or the error in the prediction by fate and guesswork could still lead to them losing money.
 2. Between contract for movement of goods being accepted and the contract being removed from broadcast, there is a 10 second delay (represents e.g. finalizing negociations). Therefore has to maintain locks on open contracts for movement of goods.
 Things it reads from database: distance between ports, which ports import/export a given commodity
 Things it writes to database: none
@@ -61,7 +75,7 @@ Things it reads from database:
 Things it writes to database:
 Things it edits in database:
 
-FX Server
+FXService
 Information it broadcasts as server: fluctuating currency prices
 Things it calculates: fluctuating currency prices via GBM
 
@@ -71,9 +85,15 @@ Servers it polls for input as client:
 2. Shipping company departures and arrivals. On departure money is debited from trader and credited to both shipping company and seller, on basis of distance of journey. On arrival money is debited from buying company and credited to trader.
 3. FateAndGuesswork market prices. Commodity prices in database are updated accordingly.
 4. FateAndGuesswork stock prices. Database updated accordingly
-5. trader decisions to buy goods for warehouse or to organise a futures contract. db updated accordingly.
+5. trader decisions to buy goods to warehouse or to organise a futures contract. db updated accordingly.
+6. domestic company declarations of shortage/surplus
+7. trader decisions to sell warehoused goods
 Information it broadcasts as server: none
-Things it calculates: whenever updating bank balances after an economic transaction, if movement it applies modifier from distance (= greater profit to freighter company, greater expense to trader), if trade in goods on open market takes into account current commodity price, if different currencues applies current FX multiplier
+Things it calculates:
+1. whenever updating bank balances after an economic transaction, if movement it applies modifier from distance (= greater profit to freighter company, greater expense to trader), if trade in goods on open market takes into account current commodity price, if different currencues applies current FX multiplier
+2. carries out futures contracts at point in time specified
+3. sells warehoused goods at point traders decide to do so
+
 Things it reads from database: nothing
 Things it writes to database: see above
 
@@ -102,12 +122,8 @@ ii) charts of time vs price for commodoties and stocks
 
 Database stuff not currently accounted for in UML diagram:
 
-** Warehoused purchases table/s
-
-** Futures contracts table/s
-
 - For all tables with historical values, have the current value updated via a trigger linked to a new record being inserted into the main table
-- constraint on linking ports + commodities + prices: every commodity for every port must appear in link table, no null values allowed for either FK
+- maybe constraint on linking ports + commodities + prices: every commodity for every port must appear in link table, no null values allowed for either FK
 - some commodities: steel, paper, electronics, cereal, textiles, oil, opium, precious gems, look on wikipedia for main exports of various countries
 - constraints to ensure CompanyType is correctly enforced and instances can be neither multiple base classes nor multiple sub classes
 - same with PublicCompanyType
@@ -122,6 +138,7 @@ Database stuff not currently accounted for in UML diagram:
 Unit Testing/concurrency testing:
 - Database interaction and calculations based on database data well suited to unit testing, do these parts via TDD (and doc this fact). Maybe also the gui section to some extent? However multi-process concurrent aspects of program are not naturally suited to standard unit testing frameworks. There surely are recognised ways for automated testing of multi-process concurrent programs, and I may add such a system in future, but there are only so many things you can do at once.
 
+for testing concurrent aspects between different processes, should have a text file of manual checks. Like, an extrapolated version of:
 - if any one server goes down, can other servers cope as well as can possibly be expected?
 - can different servers get out of sync?
 - if one server goes down and then comes back up again, can information accidentally be lost in the crash?
@@ -130,19 +147,23 @@ Unit Testing/concurrency testing:
 
 UML diagrams:
 
-Sequence views:
-- it should have title "Tai-Pan: sequence diagram(s)"
-- perhaps have several separate sections
+SQL:
+- add constraints
+
+Sequence view:
+- it should have title "Tai-Pan: ????"
+- should show how the interaction between traders and shipping companies regarding signing contracts for movements of goods works
+
+Communication view:
+- it should have title "Tai-Pan: ????"
+- should be much the same as the deployment view, except without repeating the things there can be multiple of, and it should show which directions each communication can go in, and briefly describe the data transferred by each link
 
 Deployment view:
-- it should have title "Tai-Pan: deployment diagram"
+- add the correct protocol labels
+- there need to be more communication links
 
-Database ER diagram:
-It should have the title "Tai-Pan database: ER diagram"
-
-- UML class diagram (hopefully this can just be exported from Visual Studio? Or otherwise imported from C# code to MagicDraw)
-
-- in doc, say that because I was the sole participant in the project, and because project was liable to change greatly during development, a heavyweight desing process featuring lots of UML diagrams from the beginnign didn't make sense. Therefore the only diagram I drew prior to writing the code that implemented was a database ER diagram - the intial planning for process interaction and class structure was just done in natural language in a text editor. The UML diagrams here were drawn towards the end of the development process as a way to explain how the system is as opposed to a way to plan how the system would be.
+Also:
+a UML diagram for internal working of FateAndGuesswork - showing threads and data created and served by them
 
 ////
 
@@ -157,11 +178,17 @@ b) make Wt a random variable chosen from a normal distribution with mean 0 and s
 
 //////
 
+Concurrency:
+
+choose WCF protocol and doc + put on UML diagram
+
+////
+
 Keeping track of time:
 
-prior to 12 Feb: 30
+prior to 12 Feb: 20
 12-19: 8
 20-24 Feb: 20
-25: 8
-26: 2
-27: 3
+25-27: 15
+28: 3
+1: 3

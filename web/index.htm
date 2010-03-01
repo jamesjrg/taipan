@@ -34,26 +34,33 @@ div.wrapper {font: 100% Sans-serif; background-color: #D2DEFF; width: 94%; paddi
 
 <h3 id="heng">Software Engineering</h3>
 
-<p>[UML diagram of overall layout - several processes, XML, SQL, database]</p>
+<p>[UML communication diagram - several processes, XML, SQL, database]</p>
 
-<p>xxx see more UML diagrams in later sections on concurrency and SQL</p>
+<p>xxx brief explanation of diagram. xxx explain messaging protocol - xml.</p>
 
-<p>xxx brief explanation of diagram</p>
+<p>blah blah all the processes are enitrely seperate and communicate via [netowork protocol], and so the system is (or at least could be) very distributed. The following deployment diagram demonstrates this:</p>
+
+<p><img src="images/Deployment.png"/></p>
+
+<p>xxx in the concurrency section of this document there is a UML sequence diagram which models in closer detail the communication between the Traders and the DomesticCompanies, and another UML diagram showing the database schema in the SQL section. I haven't exported a class diagram for the C# code because a) it would be very easy to do and so I wouldn't learn anything by doing so and b) due to the distributed nature of the system the class structure for each individual process is actually pretty simple. I have dealt with more complicated class hierarchies on other projects.</p>
 
 <p>xxx blah blah test driven development (Isotoma, concurrency, etc)</p>
 
-<p>blah blah compare git to svn and cvs, and talk about how i've used them both loads</p>
-<p>blah blah link to git hub</p>
+<p>For source control I used Git. I have used source control on almost every single software project I have been involved in since 2004, both commercial and non-commercial. I have mostly used SVN and CVS, but for a few recent projects, including this one, I have used Git. I can see how the distributed nature of Git, and it's emphasis on branching and merging, makes it very well suited to distributed open source projects. For projects like this one, with just one developer - or in fact any project which doesn't make substantial use of branching and merging - I'm not convinced Git is any more productive to use than SVN.</p>
+
+<p>The git repository for the project is at <a href="http://github.com/jamesjrg/taipan">http://github.com/jamesjrg/taipan</a></p>
 
 <h3 id="hsql">SQL and SQL Server</h3>
 
-<p>[diagram of database design]</p>
+<p><img src="images/DB Schema.png"/></p>
 
-<p>blah blah explanation of diagram</p>
+<p>The tangle of foreign key arrows here is a total mess, possibly I should do something to make the diagram more readable, but nevermind.</p>
 
-<p>blah blah blah ER design</p>
-<p>blah blah blah normal forms</p>
-<p>blah blah blah triggers, inheritance (whatever correct term is), stored procedures, views, etc, talk about where I've used any of these things before (sde, forkd, tui).</p>
+<p>In the centre of the diagram are some classes which hold entries for the Trader, DomesticCompany and ShippingCompany C# processes. "Company" is a base table for "Public Company" and for "Trader". "Public Company" is in turn a base table for "DomesticCompany". blah blah explanation of diagram.</p>
+
+<p>There are four tables containing historical data on monetary balances and values, each of which uses a trigger to update the current price attribute in the table for which they are recording historical data. xxx therefore there are four redunadntly stored values, as a search of the historical data tables whenever a value or balance was required would be very inefficient. Within individual tables there are no repeating groups, no non-prime attributes that are functionally determined by only part of a candidate key, no non-prime attributes transitively dependent on a candidate key, and no prime attributes functionally determined by a proper subset of a candidate key. As such the schema is in Boyce-Codd normal form.</p>
+
+<p>blah blah stored procedures, views, etc, talk about where I've used any of these things before (sde, forkd, tui).</p>
 <p>blah blah blah tuning and efficiency and indexes very large tables</p>
 
 <p>blah blah didn't use LINQ because I wanted to use some fairly complex SQL. My prior experience of object-relation mappers (in Python) is that they aren't much use for complex queries, though it is possible LINQ is better, and I may attempt to convert some of the queries to LINQ in future.</p>
