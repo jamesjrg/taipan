@@ -5,12 +5,12 @@ using System.Text;
 
 namespace TaiPan.Bank
 {
-    class Program
+    class Program : TaiPan.EconomicPlayer.Program
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Press enter to continue...");
-            Console.ReadLine();
-        }
+            ConnectToDb();
+            EndMain();
+        }        
     }
 }

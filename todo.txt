@@ -10,7 +10,7 @@ sql now:
 - a SQL script which dumps and then recreates database schema
 - a SQL script which creates some SQL test data
 - util methods to connect to, disconnect from, and possibly query and/or update db
-
+- add database connection strings to some sort of config file
 
 ///
 
@@ -90,7 +90,7 @@ Servers it polls for input as client:
 7. trader decisions to sell warehoused goods
 Information it broadcasts as server: none
 Things it calculates:
-1. whenever updating bank balances after an economic transaction, if movement it applies modifier from distance (= greater profit to freighter company, greater expense to trader), if trade in goods on open market takes into account current commodity price, if different currencues applies current FX multiplier
+1. whenever updating bank balances after an economic transaction, if movement it applies modifier from distance (= greater profit to freighter company, greater expense to trader), if trade in goods on open market takes into account current commodity price, if different currencies applies current FX multiplier
 2. carries out futures contracts at point in time specified
 3. sells warehoused goods at point traders decide to do so
 
@@ -112,7 +112,7 @@ Things it reads from database:
 Things it writes to database: none
 Things it edits in database:
 
-WpfView
+ResolverView
 a) able to view constantly updated real time data from the database
 b) able to view some statistics and charts built using more complex SQL queries.
 For instance:i) both turnover and profit over any given time period for any given economic actor
@@ -136,7 +136,8 @@ Database stuff not currently accounted for in UML diagram:
 ////
 
 Unit Testing/concurrency testing:
-- Database interaction and calculations based on database data well suited to unit testing, do these parts via TDD (and doc this fact). Maybe also the gui section to some extent? However multi-process concurrent aspects of program are not naturally suited to standard unit testing frameworks. There surely are recognised ways for automated testing of multi-process concurrent programs, and I may add such a system in future, but there are only so many things you can do at once.
+- Database interaction and calculations based on database data well suited to unit testing, do these parts via TDD (and doc this fact). However multi-process concurrent aspects of program are not naturally suited to standard unit testing frameworks. There surely are recognised ways for automated testing of multi-process concurrent programs, and I may add such a system in future, but there are only so many things you can do at once.
+- taipan-r cannot write to db
 
 for testing concurrent aspects between different processes, should have a text file of manual checks. Like, an extrapolated version of:
 - if any one server goes down, can other servers cope as well as can possibly be expected?
@@ -149,10 +150,6 @@ UML diagrams:
 
 SQL:
 - add constraints
-
-Sequence view:
-- it should have title "Tai-Pan: ????"
-- should show how the interaction between traders and shipping companies regarding signing contracts for movements of goods works
 
 Communication view:
 - it should have title "Tai-Pan: ????"
@@ -192,3 +189,6 @@ prior to 12 Feb: 20
 25-27: 15
 28: 3
 1: 3
+mar 31: 2
+
+
