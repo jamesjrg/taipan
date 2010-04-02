@@ -1,23 +1,61 @@
-todo now:
-- work through comp_study_plan.txt
+* Read Professional C# 2008 chapters 1/2 12 (memory management), 14 (exceptions), 26 (ADO)
+Starts at pdf page 64
+- currently at pdf page 264
+* quick read about clustered indexing
+* write SQL to create database schema + data
+* write basic interface between C# processes and the database (once the absolute basic are working, create unit tests before creating functions)
+- est 2 weeks full time
 
-concurrency now:
+* Read Professional C# 2008 chapters 19 (threading), 42 (WCF)
+* write a very small client/server test
+* write first attempt at networked and threaded parts of taipan
+- est 2 weeks full time
+
+* Read a bit more of learning UML
+* do some UML diagrams for taipan
+- est 2 days full time
+
+* write first attempt at Resolver One view
+- est 1 week full time
+
+* Get all basic functionality of TaiPan working
+- est 3 weeks full time
+
+* Read database management systems chapters 3, 4, 5
+* do pretty graphs of GBM, and maybe add some more complicated SQL queries for display. Maybe add a bit to SQL schema to do so
+- est 2 weeks full time
+
+////
+
+fairly immediate stuff:
+
+concurrency:
 - service which continuously broadcasts contents of a queue of simple structs
 
+sql:
+- correct syntax for many to many primary keys - e.g. DomesticCompanyCommodity
+- add more to SQL script which dumps and then recreates database schema
+- add more SQL script which creates all the initial data
+- add triggers (see uml)
+- add all foreign keys
+- add companytypecheck for freighter (see uml)
+- add checks on interface between base + derived tables (see web page bookmark)
 
-sql now:
-- set correct roles for taipan-r and taipan-rw
-- a SQL script which dumps and then recreates database schema
-- a SQL script which creates some SQL test data
+C# to sql interface:
 - util methods to connect to, disconnect from, and possibly query and/or update db
 - add database connection strings to some sort of config file
+
+batch scripting:
+- why does batch script only work if copy and pasted, not if run directly?
+- a batch script that a) runs sql schema script b) runs sql data creation script b) starts all the processes
+
 
 ///
 
 Overall plan: lots of C# processes representing entities in a trading economy communicate with each other via XML, some as servers, some as clients, some as both. Most state is contained within a SQL server database, and only one of the processes (the "Bank", the name being a nod to Monopoly). The name is a nod to book Tai Pan, that is the general point is that there are several large trading houses which ferry various goods very long distances, though actually here the trading houses have been split into two distinct entities, the "Shipping companies" who do the actual transporting of goods, and the "traders" who predict surpluses and shortages in the market and buy and sell goods accordingly.
 One day the description here, description in index.htm, description on CV, and description in Wolfie will all need to be synced...
 
-Though some of this should be configurable, a reasonable ball park figure might be that we want to have running 30 Public Companies, 10 Shipping Companies, 5 Traders, 1 FateAndGuesswork, 1 FXService, 1 Bank, 1 WPFView, 1 SQL Server instance.
+Though some of this should be configurable, a reasonable ball park figure might be that we want to have running 10 Domestic Companies, 5 Shipping Companies, 5 Traders, 1 FateAndGuesswork, 1 FXService, 1 Bank, 1 Resolver One spreadsheet, 1 SQL Server instance.
 
 GenericServer
 Class that acts as generic server, any project which acts as a server has an instance of this class, which it can configure as to what information to broadcast and when
@@ -43,10 +81,10 @@ Library of utility methods?
 DomesticCompany
 Servers it polls for input as client:
 1. FateAndGuesswork: it discovers when it will have a shortage or surplus of a given commodity, and at what price it will be wish to buy/sell to make up for this
-Information it broadcasts as server: that is has a shortage/surplus of a given commodity, and the price at wish it wishes to buy/sell to make up for this
+Information it broadcasts as server:
+1. that is has a shortage/surplus of a given commodity, and the price at wish it wishes to buy/sell to make up for this
 Things it calculates:
-Things it reads from database:
-Things it writes to database: nothing
+Things it reads from database: nothing?
 
 Trader
 Servers it polls for input as client:
@@ -71,13 +109,13 @@ Information it broadcasts as server:
 1. Acceptance of contract to move goods
 2. when it has collected goods, when it has delivered goods. Once bank confirms receipt of message, sent info can be removed from broadcast. See "Trade" database entity for attributes to broadcast.
 Things it calculates:
-Things it reads from database:
-Things it writes to database:
-Things it edits in database:
+Things it reads from database: 
 
 FXService
-Information it broadcasts as server: fluctuating currency prices
+Information it broadcasts as server:
+1. fluctuating currency prices
 Things it calculates: fluctuating currency prices via GBM
+Things it reads from db: info on currencies (at startup only?)
 
 Bank:
 Servers it polls for input as client:
@@ -100,46 +138,43 @@ Things it writes to database: see above
 FateAndGuesswork
 Servers it polls for input as client: none
 Information it broadcasts as server:
-Four different broadcasts. Firstly, calculated future shortages or surpluses of a given commodity for a given company are broadcast (note only companies_with_location which actually import/export a given commodity will ever produce a surplus/suffer shortage). These are broadcast on two channels: 
-a) Guesswork, with an added degree of error, is for Traders to pick up. The next Trader to poll FateAndGuesswork is given the information, and this information is then removed from the queue. two, without any error
-b) Fate, it will also broadcast this same information, but without any error, to be picked up by the PublicCompanies. Once received this too is removed from the queue.
+Calculated future shortages or surpluses of a given commodity for a given company are broadcast (note only companies_with_location which actually import/export a given commodity will ever produce a surplus/suffer shortage). These are broadcast on two channels: 
+1. Guesswork, with an added degree of error, is for Traders to pick up. The next Trader to poll FateAndGuesswork is given the information, and this information is then removed from the queue. two, without any error
+2. Fate, it will also broadcast this same information, but without any error, to be picked up by the PublicCompanies. Once received this too is removed from the queue.
 Furthermore, there is:
-c) Current market price of all commodities. Goes up and down via GBM. Make sure places which neither import nor export a commodity have a price created (unit test this, also take account of this in GUI)
-d) Stock prices of each company. Goes up and down via GBM.
+3. Current market price of all commodities. Goes up and down via GBM. Make sure places which neither import nor export a commodity do not have a price created (unit test this, also take account of this in GUI)
+4. Stock prices of each company. Goes up and down via GBM.
 Things it calculates:
 Semi-randomly calculates which PublicCompanies will in future have a) have surplus of a commodity or b) have shortage of a commodity, of how much quantity (though never more than can fit in one freighter), and at what price they will wish to buy/sell above/below market to make up for this. Primary sector companies more usually have goods available for sale, service sector usually have requests for goods to buy, manufacturing sector more a mixture of the two
-Things it reads from database:
+Things it reads from database: info on commodities (at startup only?).
 Things it writes to database: none
-Things it edits in database:
 
 ResolverView
-a) able to view constantly updated real time data from the database
+a) able to view constantly updated real time data from the database - update once per second (though tick rate can be modified by modifying a cell)
 b) able to view some statistics and charts built using more complex SQL queries.
 For instance:i) both turnover and profit over any given time period for any given economic actor
 ii) charts of time vs price for commodoties and stocks
 
 ////
 
-Database stuff not currently accounted for in UML diagram:
+Database stuff (needs adding to both a) UML diagram and b) actual SQL scripts):
 
 - For all tables with historical values, have the current value updated via a trigger linked to a new record being inserted into the main table
 - maybe constraint on linking ports + commodities + prices: every commodity for every port must appear in link table, no null values allowed for either FK
 - some commodities: steel, paper, electronics, cereal, textiles, oil, opium, precious gems, look on wikipedia for main exports of various countries
 - constraints to ensure CompanyType is correctly enforced and instances can be neither multiple base classes nor multiple sub classes
 - same with PublicCompanyType
-
 - maybe add some views for use by the various processes that need info from database?
-
 - do some normalisation some time after the design has changed a bit, and doc how I carried this out, and doc what normal form the db is in
 - tuning/optimisation - faff about with different sorts of indexes etc, maybe also so totally pointless striping, clustering, etc
 
 ////
 
 Unit Testing/concurrency testing:
-- Database interaction and calculations based on database data well suited to unit testing, do these parts via TDD (and doc this fact). However multi-process concurrent aspects of program are not naturally suited to standard unit testing frameworks. There surely are recognised ways for automated testing of multi-process concurrent programs, and I may add such a system in future, but there are only so many things you can do at once.
-- taipan-r cannot write to db
+- Database interaction and calculations on that data based on database data well suited to unit testing, do these parts via TDD (and doc this fact). However multi-process concurrent aspects of program are not naturally suited to standard unit testing frameworks. There surely are recognised ways for automated testing of multi-process concurrent programs, and I may add such a system in future, but there are only so many things you can do at once.
+- test taipan-r cannot write to db
 
-for testing concurrent aspects between different processes, should have a text file of manual checks. Like, an extrapolated version of:
+for testing concurrent aspects between different processes, should have a text file of manual checks, possibly supported by some batch file automation. Like, as a start:
 - if any one server goes down, can other servers cope as well as can possibly be expected?
 - can different servers get out of sync?
 - if one server goes down and then comes back up again, can information accidentally be lost in the crash?
@@ -157,7 +192,7 @@ Communication view:
 
 Deployment view:
 - add the correct protocol labels
-- there need to be more communication links
+- maybe there need to be more communication links?
 
 Also:
 a UML diagram for internal working of FateAndGuesswork - showing threads and data created and served by them
@@ -177,18 +212,21 @@ b) make Wt a random variable chosen from a normal distribution with mean 0 and s
 
 Concurrency:
 
-choose WCF protocol and doc + put on UML diagram
+mention wcf in doc
+
+////
+
+Would be nice to get done:
+
+* Read database management systems chapters 19, 20, 21
+* do some database normalisation and tuning, and security management
 
 ////
 
 Keeping track of time:
 
-prior to 12 Feb: 20
-12-19: 8
-20-24 Feb: 20
-25-27: 15
-28: 3
-1: 3
-mar 31: 2
-
+up to 28 feb: 66
+mar 1: 5
+apr 1: 2
+2: from 10:30 - 14:00, 14:45-18:00
 

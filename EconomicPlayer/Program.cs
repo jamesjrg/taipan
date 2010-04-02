@@ -26,14 +26,14 @@ namespace TaiPan.EconomicPlayer
 
         protected static void ConnectToDb(bool readOnly)
         {
-            String user = "taipan-rw";
+            string user = "taipan-rw";
             if (readOnly)
-                String user = "taipan-r";
+                user = "taipan-r";
                 
             Console.WriteLine("Connecting to database as " + user);
             string source = "server=DAPHNE-DURON\\SQLEXPRESS;" +
             "User Id="+user+";Password=fakepass;" +
-            "database=taipan";
+            "database=TaiPan";
             SqlConnection conn = new SqlConnection(source);
             conn.Open();
             // Do something useful

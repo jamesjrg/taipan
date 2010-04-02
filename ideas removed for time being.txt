@@ -43,11 +43,11 @@ things that could be done to make it more complicated for the sake of it removed
 - make it so traders can gamble on stock prices, as well as commodity prices, using same system as commodities currently use
 - make it possible for companies and trading houses to go into debt, at which point they have to pay interest charges. if they ever get to a certain point of debt, they are bailed out by the government and their debt is reset to zero
 - make it such that ships must sometimes go in for maintenance, which temporarily reduces trading house's number of freighters, and also costs money
+- haev processes broadcast i'm-alive pings, and then on basis of these pings have bank create or delete database entries for the various economic players on the fly
 
 ///
 
 front end stuff removed for the time being:
-<p>blah blah WPF. blah blah considered web front end, but I wanted an interactive interface to large amounts of real time data, whilst maintaining a responsive GUI. This set of requirements is very difficult to meet with Javascript, Flash, Silverlight, etc. I also wanted to have the option of one day adding more complex visualisations such as graphs and charts, which makes WPF attractive, and which pretty much rules out HTML/CSS/Javascript altogether. </p>
 - have a WPF view with pretty charts and graphs and such like
 - have an ASP web interface (WebView), add to wolfie + doc
 - add a tab in formview/page in web view that is IE tab with MS maps or Google maps integration, with pins on the ports, and perhaps info boxes/some other visualisation of what is going on

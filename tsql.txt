@@ -1,0 +1,57 @@
+- disable constraints
+
+-- disable all constraints
+BEGIN TRANSACTION
+GO
+
+SELECT 'ALTER TABLE ' + QUOTENAME(TABLE_SCHEMA) + '.' + QUOTENAME(TABLE_NAME) + ' NOCHECK CONSTRAINT ALL'
+FROM INFORMATION_SCHEMA.TABLES
+WHERE
+OBJECTPROPERTY(OBJECT_ID(QUOTENAME(TABLE_SCHEMA) + '.' + QUOTENAME(TABLE_NAME)), 'IsMSShipped') = 0
+AND TABLE_TYPE = 'BASE TABLE'
+GO
+
+COMMIT
+
+///
+
+- show tables
+select name from <database name>..sysobjects where xtype = 'U';
+
+////
+
+- drop all constraints
+DECLARE @sql nvarchar(255)
+WHILE EXISTS(select * from INFORMATION_SCHEMA.TABLE_CONSTRAINTS)
+BEGIN
+    select    @sql = 'ALTER TABLE ' + TABLE_NAME + ' DROP CONSTRAINT ' + CONSTRAINT_NAME 
+    from    INFORMATION_SCHEMA.TABLE_CONSTRAINTS
+    exec    sp_executesql @sql
+END
+
+////
+
+IF OBJECT_ID('dbo.Company', 'U') IS NOT NULL
+DROP TABLE dbo.Company
+
+/////
+
+IF OBJECT_ID('dbo.spDropIfExists', 'P') IS NOT NULL
+DROP PROCEDURE dbo.spDropIfExists
+GO
+CREATE PROCEDURE dbo.spDropIfExists
+@tableName varchar(20)
+AS
+BEGIN
+    IF OBJECT_ID(@tableName, 'U') IS NOT NULL
+    EXEC('DROP TABLE ' + @tableName)
+END;
+GO
+
+////
+
+-- drop all tables
+EXEC sp_MSforeachtable @command1 = "DROP TABLE ?"
+COMMIT
+
+

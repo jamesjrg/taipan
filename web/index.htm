@@ -19,7 +19,7 @@ div.wrapper {font: 100% Sans-serif; background-color: #D2DEFF; width: 94%; paddi
 
 <h3>Introduction</h3>
 
-<p>"Tai-Pan" is a C# .NET project that simulates a trading economy. In order to improve my knowledge of .NET, as well as the theory behind relational database design and management, concurrency, and software engineering, the project was purposefully designed to be fairly complex. As such there are a large number of heterogeneous, multi-threaded client and server processes broadcasting and polling XML messages, whilst simultaneously interacting with a SQL Server database that holds most of the underlying state of the system. The front end makes use of a commercial spreadsheet/Python IDE "mashup" called Resolver One, which allows for a Python program that constantly executes SQL queries on the database and displays the results in spreadsheet cells.</p>
+<p>"Tai-Pan" is a C# .NET project that simulates a trading economy. In order to improve my knowledge of the theory behind relational databases, concurrency, and software engineering, the project was purposefully designed to be fairly complex. As such there are a large number of heterogeneous, multi-threaded client and server processes broadcasting and polling XML messages, whilst simultaneously interacting with a SQL Server database that holds most of the underlying state of the system. The front end makes use of a spreadsheet/Python IDE "mash up" called Resolver One, and consists of Python program that displays constantly updating analysis of the data from the database.</p>
 
 <p>The purpose of this web page is to demonstrate what I learnt. Click one of the headings below to jump to a section which interests you:</p>
 <ul>
@@ -27,6 +27,7 @@ div.wrapper {font: 100% Sans-serif; background-color: #D2DEFF; width: 94%; paddi
 <li><a href="#hsql">SQL and SQL Server</a></li>
 <li><a href="#hconcurrency">Concurrency and networking</a></li>
 <li><a href="#hdotnet">C# and .NET</a></li>
+<li><a href="#hpython">Python and the user front-end</a></li>
 </ul>
 </p>
 
@@ -56,22 +57,29 @@ div.wrapper {font: 100% Sans-serif; background-color: #D2DEFF; width: 94%; paddi
 
 <p>The tangle of foreign key arrows here is a total mess, possibly I should do something to make the diagram more readable, but nevermind.</p>
 
-<p>In the centre of the diagram are some classes which hold entries for the Trader, DomesticCompany and ShippingCompany C# processes. "Company" is a base table for "Public Company" and for "Trader". "Public Company" is in turn a base table for "DomesticCompany". blah blah explanation of diagram.</p>
+<p>In the centre of the diagram are some classes which hold entries for the economic players represented as C# processes - Trader, PublicCompany (which includes Shipping Companies) and DomesticCompany. "Company" is a base table for "Public Company" and for "Trader". "Public Company" is in turn a base table for "DomesticCompany". blah blah explanation of diagram.</p>
 
 <p>There are four tables containing historical data on monetary balances and values, each of which uses a trigger to update the current price attribute in the table for which they are recording historical data. xxx therefore there are four redunadntly stored values, as a search of the historical data tables whenever a value or balance was required would be very inefficient. Within individual tables there are no repeating groups, no non-prime attributes that are functionally determined by only part of a candidate key, no non-prime attributes transitively dependent on a candidate key, and no prime attributes functionally determined by a proper subset of a candidate key. As such the schema is in Boyce-Codd normal form.</p>
 
-<p>blah blah stored procedures, views, etc, talk about where I've used any of these things before (sde, forkd, tui).</p>
+<p>blah blah stored procedures (briefly toyed with some util sps but found not needed), talk about where I've used before (sde, setanalyser, forkd). blah blah some basic security and permissions - seperate r and rw logins to db, only bank and sql creation scripts use rw. but given there is in reality only one user, myself, complex security permissions schemes applying to different tables, sql views and such like would be complexity even more contrived than the rest of the project.</p>
+
 <p>blah blah blah tuning and efficiency and indexes very large tables</p>
 
-<p>blah blah didn't use LINQ because I wanted to use some fairly complex SQL. My prior experience of object-relation mappers (in Python) is that they aren't much use for complex queries, though it is possible LINQ is better, and I may attempt to convert some of the queries to LINQ in future.</p>
+<p>I have just used standard ADO.NET rather than LINQ for various reasons:
+<ul>
+<li>most of the database queries are actually executed by the Python-based front-end, where LINQ is irrelevant</li>
+<li>the project was meant as an exercise to learn about some of the theory of complex software design, not as an exercise in memorising the syntax of a particular object relational mapper</li>
+<li>my prior experience of object-relation mappers (in Python) is that they aren't much use for complex queries anyway</li>
+</ul>
+</p>
 
 <h3 id="hconcurrency">Concurrency and networking</h3>
 
-<p>[UML diagram of interactions]
+<p>blah blah concurrency with processes and within processes with threading, blah blah contract for movements of goods and locking process</p>
+
+<p>[UML diagram of locking process]
 
 <p>blah blah explanation of diagram</p>
-
-<p>blah blah concurrency with processes and within processes with threading, blah blah contract for movements of goods and locking process</p>
 
 <p>blah blah in terms of formal testing and guarantees of reliability regarding the concurrent aspects of the system, I have not currently done much serious work. Concurrency is not well suited to normal unit testing, and effectively setting up automated tests of concurrent systems is a very large topic. I may do further reading on this subject in future.</p>
 
@@ -85,7 +93,10 @@ div.wrapper {font: 100% Sans-serif; background-color: #D2DEFF; width: 94%; paddi
 <p>blah blah GBM</p>
 
 <p>blah blah compare to C++ and Java and Python</p>
-<p>blah blah Resolver One. blah blah considered web front end, but I wanted an interactive interface to large amounts of real time data, whilst maintaining a responsive GUI. This set of requirements is very difficult to meet with Javascript, Flash, Silverlight, etc. I also wanted to have the option of one day adding more complex visualisations such as graphs and charts, which makes WPF attractive, and which pretty much rules out HTML/CSS/Javascript altogether. </p>
+
+<h3 id="#hpython">Python and the user front-end</h3>
+
+<p>I considered various options for the user front end. I wanted to display and analyse large amounts of real time data, with the possibility of creating pretty graphs and charts, as well as the possibility of some minor user interaction. These requirements are possible with pretty much any front-end library or framework, but some make it much easier than others. The most instantly accessible yet also most difficult option would have been to use some sort of web front end using AJAX. It is possible to display, analyse and visualise large amounts of real time data using Javascript, but it's extremely time consuming and difficult. More reasonable options are Windows Forms and WPF (including Silverlight), but though both technologies are well suited to the task, they are large, complex frameworks, and probably overkill for a small hobby/demo project which was designed as a learning exericise in back-end design and programming, not as an exercise in memorising a particular GUI API. I eventually settled on Resolver One, a spreadsheet program that is a "mash up" of a conventional spreadsheet, a Python program, and a Python IDE. It can display and visualise the results of relatively complex database queries and Python calculations in the form of a spreadsheet, removing the need to get involved in user interface design.</p>
 
 </div>
 </body>
