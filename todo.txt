@@ -48,7 +48,11 @@ C# to sql interface:
 batch scripting:
 - why does batch script only work if copy and pasted, not if run directly?
 - a batch script that a) runs sql schema script b) runs sql data creation script b) starts all the processes
+- rename project file to use correct case in git repository
 
+resolver:
+- get an os licence
+- timer? ask on forum.
 
 ///
 
@@ -154,6 +158,9 @@ a) able to view constantly updated real time data from the database - update onc
 b) able to view some statistics and charts built using more complex SQL queries.
 For instance:i) both turnover and profit over any given time period for any given economic actor
 ii) charts of time vs price for commodoties and stocks
+c) try to do some clever maths stuff such that it can assess the data from a GBM and work out the variables that were used. Ideally I would use scipy, but if it doesn't work properly R1 then could use MS Solver Foundation Express instead. either way, add to doc+wolfie
+http://www.scipy.org/Cookbook/FittingData
+http://code.msdn.microsoft.com/solverfoundation
 
 ////
 
@@ -228,5 +235,8 @@ Keeping track of time:
 up to 28 feb: 66
 mar 1: 5
 apr 1: 2
-2: from 10:30 - 14:00, 14:45-18:00
+2: 8
+4: 2
+5: before 17:30: 2
+
 

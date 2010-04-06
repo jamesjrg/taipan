@@ -19,15 +19,14 @@ div.wrapper {font: 100% Sans-serif; background-color: #D2DEFF; width: 94%; paddi
 
 <h3>Introduction</h3>
 
-<p>"Tai-Pan" is a C# .NET project that simulates a trading economy. In order to improve my knowledge of the theory behind relational databases, concurrency, and software engineering, the project was purposefully designed to be fairly complex. As such there are a large number of heterogeneous, multi-threaded client and server processes broadcasting and polling XML messages, whilst simultaneously interacting with a SQL Server database that holds most of the underlying state of the system. The front end makes use of a spreadsheet/Python IDE "mash up" called Resolver One, and consists of Python program that displays constantly updating analysis of the data from the database.</p>
+<p>"Tai-Pan" is a C# .NET, SQL Server and Python project that simulates certain features of a global trading economy, written to improve my knowledge of the theory behind relational databases, distributed systems, software engineering, and analysing numerical data. A large number of C# client and server processes, some of which are multi-threaded, broadcast and poll XML messages, whilst simultaneously interacting with a SQL Server database that holds most of the underlying state of the system. A Python program makes use of a spreadsheet/Python IDE "mash up" called Resolver One to manipulate and analyse the real time data from the database.</p>
 
-<p>The purpose of this web page is to demonstrate what I learnt. Click one of the headings below to jump to a section which interests you:</p>
+<p>This web page provides an outline of the project, divided into the following sections:</p>
 <ul>
-<li><a href="#heng">Software Engineering (software design, UML, unit testing, source control, etc)</a></li>
-<li><a href="#hsql">SQL and SQL Server</a></li>
-<li><a href="#hconcurrency">Concurrency and networking</a></li>
-<li><a href="#hdotnet">C# and .NET</a></li>
-<li><a href="#hpython">Python and the user front-end</a></li>
+<li><a href="#heng">Software Engineering</a></li>
+<li><a href="#hsql">Relational databases</a></li>
+<li><a href="#hconcurrency">Concurrency and distributed systems</a></li>
+<li><a href="#hdataanalysis">Data analysis</a></li>
 </ul>
 </p>
 
@@ -35,23 +34,26 @@ div.wrapper {font: 100% Sans-serif; background-color: #D2DEFF; width: 94%; paddi
 
 <h3 id="heng">Software Engineering</h3>
 
-<p>[UML communication diagram - several processes, XML, SQL, database]</p>
-
-<p>xxx brief explanation of diagram. xxx explain messaging protocol - xml.</p>
-
-<p>blah blah all the processes are enitrely seperate and communicate via [netowork protocol], and so the system is (or at least could be) very distributed. The following deployment diagram demonstrates this:</p>
-
 <p><img src="images/Deployment.png"/></p>
 
-<p>xxx in the concurrency section of this document there is a UML sequence diagram which models in closer detail the communication between the Traders and the DomesticCompanies, and another UML diagram showing the database schema in the SQL section. I haven't exported a class diagram for the C# code because a) it would be very easy to do and so I wouldn't learn anything by doing so and b) due to the distributed nature of the system the class structure for each individual process is actually pretty simple. I have dealt with more complicated class hierarchies on other projects.</p>
+<p>blah blah the system is entirely contrived to solve a non-existent problem, but division into multiple processes that communicate via asynchronous messages means that:</p>
 
-<p>xxx blah blah test driven development (Isotoma, concurrency, etc)</p>
+<ul>
+<li>could be v distributed across multiple computers</li>
+<li>there is a clear seperation of concerns, which means each sub system need not know any of the details of any other sub system. could change or replace one sub-system without affecting the others</li>
+</ul>
+
+<p>blah blah asynchronous nature of messaging, blah blah bank only guy with db write access, etc</p>
+
+<p>Blah blah more UML diagrams describing other aspects of the system in following sections</p>
+
+<p>xxx blah blah test driven development (proper test-first strategy on most sections of the program, but not on concurrent/networked aspects, could be asomething I look at another time. semi-followed before at Isotoma</p>
 
 <p>For source control I used Git. I have used source control on almost every single software project I have been involved in since 2004, both commercial and non-commercial. I have mostly used SVN and CVS, but for a few recent projects, including this one, I have used Git. I can see how the distributed nature of Git, and it's emphasis on branching and merging, makes it very well suited to distributed open source projects. For projects like this one, with just one developer - or in fact any project which doesn't make substantial use of branching and merging - I'm not convinced Git is any more productive to use than SVN.</p>
 
 <p>The git repository for the project is at <a href="http://github.com/jamesjrg/taipan">http://github.com/jamesjrg/taipan</a></p>
 
-<h3 id="hsql">SQL and SQL Server</h3>
+<h3 id="hsql">Relational databases</h3>
 
 <p><img src="images/DB Schema.png"/></p>
 
@@ -67,13 +69,17 @@ div.wrapper {font: 100% Sans-serif; background-color: #D2DEFF; width: 94%; paddi
 
 <p>I have just used standard ADO.NET rather than LINQ for various reasons:
 <ul>
-<li>most of the database queries are actually executed by the Python-based front-end, where LINQ is irrelevant</li>
+<li>most of the database queries are actually executed by the Python-based data analysis program, where LINQ is irrelevant</li>
 <li>the project was meant as an exercise to learn about some of the theory of complex software design, not as an exercise in memorising the syntax of a particular object relational mapper</li>
 <li>my prior experience of object-relation mappers (in Python) is that they aren't much use for complex queries anyway</li>
 </ul>
 </p>
 
-<h3 id="hconcurrency">Concurrency and networking</h3>
+<h3 id="hconcurrency">Concurrency and distributed systems</h3>
+
+<p>[UML communication diagram - several processes, XML, SQL, database]</p>
+
+<p>xxx brief explanation of diagram. xxx explain messaging protocol - wpf, xml.</p>
 
 <p>blah blah concurrency with processes and within processes with threading, blah blah contract for movements of goods and locking process</p>
 
@@ -81,22 +87,23 @@ div.wrapper {font: 100% Sans-serif; background-color: #D2DEFF; width: 94%; paddi
 
 <p>blah blah explanation of diagram</p>
 
+<p>blah blah wcf - quick and easy, though not really suitable for any project for which speed and scalability are an issue</p>
+
 <p>blah blah in terms of formal testing and guarantees of reliability regarding the concurrent aspects of the system, I have not currently done much serious work. Concurrency is not well suited to normal unit testing, and effectively setting up automated tests of concurrent systems is a very large topic. I may do further reading on this subject in future.</p>
 
-<p>As far as networking efficiency is concerned, here too I have done limited work - I have just let WCF handle the details of network communication. Here too I could do more work in future, though in reality any network code below the application level is generally written in C++ or Java, not C#. blah still, might be nice to build on what I have learnt about networking blah blah mention I have done some slightly complex networking stuff before (blah blah mention Twisted at Isotoma and my threaded Java app and TCP at Opera).</p>
+<p>As far as networking efficiency is concerned, here too I have done limited work - I have just let WCF handle the details of network communication. Here too I could do more work in future, though writing efficient low level network code is a major undertaking. blah still, might be nice to build on what I have learnt about networking blah blah mention I have done some slightly complex networking stuff before (blah blah mention Twisted at Isotoma and my threaded Java app and TCP at Opera).</p>
 
-<h3 id="hdotnet">C# and .NET</h3>
+<h3 id="#hdataanalysis">Data analysis</h3>
 
-<p>[image of some sort of interactive real time data stream]</p>
-<p>[image of commodity price variation graph]</p>
+<p>[screenshot of spreadsheet maths stuff]</p>
 
-<p>blah blah GBM</p>
+<p>[screenshot of graph]</p>
 
-<p>blah blah compare to C++ and Java and Python</p>
+<p>I considered various options for a user front end that analysed the data. It needed to display large amounts of real time data, to carry out some mathematical analysis on that data, and also to display graphs and charts. There would be some user interaction with regard to selecting the current view of the data or variables used in its analysis, but a complex GUI was not required. The most instantly accessible yet also most difficult option would have been to use some sort of web front end using AJAX. It is possible to display, analyse and visualise large amounts of real time data using Javascript, but it's extremely time consuming and difficult. A more reasonable option would be C# combined with either Windows Forms and WPF (including Silverlight). However, WPF and WinForms are large, complex GUI frameworks, and would be overkill for the simplistic user interaction the program required, whilst complex data analysis code written in C# would require spending lots of time in a code-compile-test cycle.<p>
 
-<h3 id="#hpython">Python and the user front-end</h3>
+<p>I eventually settled instead on Resolver One, a spreadsheet program that is a "mash up" of a conventional spreadsheet, a Python program, and a Python IDE. This looks at first site like a conventional spreadsheet program, but in fact the entire spreadsheet is exposed as a Python program, making it very easy to write code that performs complex data analysis.</p>
 
-<p>I considered various options for the user front end. I wanted to display and analyse large amounts of real time data, with the possibility of creating pretty graphs and charts, as well as the possibility of some minor user interaction. These requirements are possible with pretty much any front-end library or framework, but some make it much easier than others. The most instantly accessible yet also most difficult option would have been to use some sort of web front end using AJAX. It is possible to display, analyse and visualise large amounts of real time data using Javascript, but it's extremely time consuming and difficult. More reasonable options are Windows Forms and WPF (including Silverlight), but though both technologies are well suited to the task, they are large, complex frameworks, and probably overkill for a small hobby/demo project which was designed as a learning exericise in back-end design and programming, not as an exercise in memorising a particular GUI API. I eventually settled on Resolver One, a spreadsheet program that is a "mash up" of a conventional spreadsheet, a Python program, and a Python IDE. It can display and visualise the results of relatively complex database queries and Python calculations in the form of a spreadsheet, removing the need to get involved in user interface design.</p>
+<p>blah blah GBM, solving equations, real time data, analysis, etc</p>
 
 </div>
 </body>
