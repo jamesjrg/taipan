@@ -69,7 +69,7 @@ GO
 
 CREATE TABLE dbo.PublicCompany
 	(
-	ID int PRIMARY KEY REFERENCES Company(ID),
+	CompanyID int PRIMARY KEY REFERENCES Company(ID),
     NStocks int NOT NULL,
     StockPrice int NOT NULL,
     CountryID int NOT NULL,
@@ -78,14 +78,14 @@ GO
 
 CREATE TABLE dbo.Trader
 	(
-	ID int PRIMARY KEY REFERENCES Company(ID),
+	CompanyID int PRIMARY KEY REFERENCES Company(ID),
     CountryID int NOT NULL,
 	)  ON [PRIMARY]
 GO
 
 CREATE TABLE dbo.DomesticCompany
 	(
-	ID int PRIMARY KEY REFERENCES PublicCompany(ID),
+	PublicCompanyID int PRIMARY KEY REFERENCES PublicCompany(CompanyID),
     PortID int NOT NULL,
     DomesticCompanyTypeID int NOT NULL,
 	)  ON [PRIMARY]
@@ -160,19 +160,46 @@ CREATE TABLE dbo.DomesticCompanyCommodity
 	(
 	CompanyID int NOT NULL,
     CommodityID int NOT NULL,
+    CONSTRAINT PK_DCC PRIMARY KEY (CompanyID, CommodityID)
 	)  ON [PRIMARY]
+GO
+
+CREATE NONCLUSTERED INDEX IX_DCC ON dbo.[DomesticCompanyCommodity] 
+(
+	CommodityID,
+	CompanyID
+) ON [PRIMARY]
 GO
 
 CREATE TABLE dbo.CommodityTransport
 	(
 	ID int NOT NULL IDENTITY (1, 1) PRIMARY KEY CLUSTERED,
+    ShippingCompanyID int NOT NULL,
+    TraderID int NOT NULL,
+    CommodityID int NOT NULL,
+    DepartureTime datetime NOT NULL,
+    ArrivalTime datetime NOT NULL,
+    DeparturePort int NOT NULL,
+    ArrivalPort int NOT NULL,
+    Quantity int NOT NULL,
+    FreighterID int NOT NULL,
 	)  ON [PRIMARY]
 GO
 
 CREATE TABLE dbo.PortCommodityPrice
 	(
-	ID int NOT NULL IDENTITY (1, 1) PRIMARY KEY CLUSTERED,
+	PortID int NOT NULL,
+    CommodityID int NOT NULL,
+    Price int NOT NULL,
+    CONSTRAINT PK_DCC PRIMARY KEY (CompanyID, CommodityID)
 	)  ON [PRIMARY]
+GO
+
+CREATE NONCLUSTERED INDEX IX_PCP ON dbo.[PortCommodityPrice] 
+(
+	CommodityID,
+	PortID
+) ON [PRIMARY]
 GO
 
 -- historical data
@@ -180,28 +207,41 @@ GO
 CREATE TABLE dbo.HistoricalStockPrice
 	(
 	ID int NOT NULL IDENTITY (1, 1) PRIMARY KEY CLUSTERED,
+    CompanyID int NOT NULL,
+    PriceDate datetime NOT NULL,
+    Price int NOT NULL,
 	)  ON [PRIMARY]
 GO
 
 CREATE TABLE dbo.HistoricalBalance
 	(
 	ID int NOT NULL IDENTITY (1, 1) PRIMARY KEY CLUSTERED,
-	)  ON [PRIMARY]
+    CompanyID int NOT NULL,
+    BalanceDate datetime NOT NULL,
+    Balance int NOT NULL,
+    )  ON [PRIMARY]
 GO
 
 CREATE TABLE dbo.HistoricalCurrencyPrice
 	(
 	ID int NOT NULL IDENTITY (1, 1) PRIMARY KEY CLUSTERED,
-	)  ON [PRIMARY]
+    CurrencyID int NOT NULL,
+    ValueDate datetime NOT NULL,
+    USDValue int NOT NULL,    
+    )  ON [PRIMARY]
 GO
 
 CREATE TABLE dbo.HistoricalPortCommodityPrice
 	(
 	ID int NOT NULL IDENTITY (1, 1) PRIMARY KEY CLUSTERED,
-	)  ON [PRIMARY]
+    PortID int NOT NULL,
+    CommodityID int NOT NULL,
+    ValueDate datetime NOT NULL,
+    Price int NOT NULL,    
+    )  ON [PRIMARY]
 GO
 
--- foreign keys
+-- foreign keys (except those used for base table/inheritance concept, already declared)
 ALTER TABLE dbo.Company ADD CONSTRAINT
 	FK_Company_CompanyType FOREIGN KEY
 	(

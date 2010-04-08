@@ -1,4 +1,6 @@
-﻿////
+﻿++++
+Section 1: vaguely reasonable ideas:
+++++
 
 complex finance stuff removed for time being:
 
@@ -6,6 +8,8 @@ complex finance stuff removed for time being:
 - add more complex ideas of debt and interest payments - e.g. dividends on shares, or interest payments on loans to buy goods to warehouse
 - add trading in more complex derivatives
 - make sure my GBM calculations for stock/commodity price variation are are exactly as they should be
+- investigate R1 docs/example sheets for more complex finance ideas
+- along with all this, maybe add some complex sql queries/views which summarize data in various ways
 
 Wikipedia on complex financial stuff:
 
@@ -21,13 +25,103 @@ http://en.wikipedia.org/wiki/Derivative_(finance)
         
 /////
 
-mathematical/algorithmic stuff removed for time being:
-        
-- Make prices different at all ports all the time, and then try to make an algorithm such that traders are constantly choosing the most efficient routes to transport goods, with their future knowledge of the market a separate way to make money. 
-- keep track of positions of freighters, and then alter system that creates a problem involving the most efficient routing pattern for them
-- add mathematical modelling to wolfie (for set analyser, too)
+shipping route optimization stuff removed for time being:
+- represent all shipping lanes between ports as a network of vectors (also do a UML diagram for this), or even have a system of shipping routes with multiple ways between two points, and represent it as a network of matrices
+- keep track of positions of freighters
+- use Resolver One and MS Solver Foundation/scipy to find optimal routing strategy for freighters
+- could make the idea more complicated, by making prices of commodities different at all ports, plus fluctuating, then would have very difficult and non-deterministic optimization problem of getting traders to choose the most efficient trades, taking into account the fuel costs involved in transporting over various distances, and the expected change in prices during that time
+- add mathematical modelling to wolfie (for set analyser, too, and that old GCSE program)
+- have a web app with MS maps or Google maps integration, with pins on the ports and also maybe on the freighters, and perhaps info boxes/some other visualisation of what is going on
 
 /////
+
+stats analysis stuff:
+- make graphs which provide various possible future outcomes of GBM (i.e. after present data as a solid line, add a bunch of dashed lines for various possibilities) with Markov Chain monte carlo methods
+- Ideally I would use scipy, but if it doesn't work properly in R1, or if the functionality isn't advanced enough, then maybe could use MS Solver Foundation Express instead. either way, add to doc+wolfie
+http://www.scipy.org/Cookbook/FittingData
+http://code.msdn.microsoft.com/solverfoundation
+
+http://en.wikipedia.org/wiki/Markov_chain_Monte_Carlo
+
+///
+
+SQL stuff:
+* Read database management systems chapters 19, 20, 21
+* do some database normalisation and tuning, and security management
+* faff about with different sorts of indexes etc, maybe also so totally pointless striping, clustering, etc
+- est 1.5 weeks full time
+
+other ideas:
+- views
+- stored procedures
+- faff with permissions and security and security schemas
+
+////
+
+hardcore comp sci custom db idea:
+
+- Write a small custom database system in to replace SQL Server, either in C# or C++. Would probably just have it manage a small part of the state data, and leave most to SQL server. Would have to implement threaded network connections/cursors complete with locking during file system access, transactions, query parsing and execution, permissions, indexing
+- would use UDP or TCP for connections, would ideally be very fast and scalable, either in C# or C++
+
+//
+
+UML
+
+- UML class diagram (hopefully this can just be exported from Visual Studio? Or otherwise imported from C# code to MagicDraw)
+- do yet more diagrams
+
+///
+
+Concurrency:
+- add some more complicated threading stuff - mutexes, semaphores, system events, etc
+- read a bit of abstract concurrency theory, and then put this into practice with regard to having it vey clear how concurrency features of my system are well designed and error-resistant, and then add this to doc
+- formal testing system
+
+++++
+Section 2: not especially reasonable ideas:
+++++
+
+mini project:
+
+Program that backs up a folder with a date appended to file name, and then sends it to an ftp server - remembers values for folders + ftp servers, has bookmarking system for both. Use 7-zip:
+
+String zipper = @"F:\Program Files\7-Zip\7z.exe";
+//type 7z, ignore pyc files
+String args = "a -t7z -x!.pyc" + compressPath + " " + compressFolder;
+Process proc = Process.Start(zipper, args);
+proc.WaitForExit();          
+
+Generally pointless given availability of things like dropbox
+
+///
+
+web services:
+
+- get some finance data from yahoo api rather than creating it myself
+
+/////
+
+machine learning stuff:
+
+- read a bit of AI book
+- also http://en.wikipedia.org/wiki/Bayesian_inference
+- also http://webuser.bus.umich.edu/plenk/downloads.htm
+- do something with analysing data using Bayesian inference
+- set up some sort of OLAP functionality for large scale data analysis of historical data in database - i.e. denormalization, useful indexes, etc
+
+////
+
+front end stuff removed for the time being:
+- have a WPF view with pretty real-time charts and graphs and such like
+- have an ASP web interface (WebView), add to wolfie + doc
+- GUI displays diagnostic system information on the current status of all the processes and their interactions. Maybe also a green or red light next to each one to show all are responding? This would require processes to keep records in the database of when they last communicated with each other.
+
+////
+
+.NET stuff removed for time being:
+- make use of LINQ
+
+///
 
 things that could be done to make it more complicated for the sake of it removed for time being:
 
@@ -43,57 +137,13 @@ things that could be done to make it more complicated for the sake of it removed
 - make it so traders can gamble on stock prices, as well as commodity prices, using same system as commodities currently use
 - make it possible for companies and trading houses to go into debt, at which point they have to pay interest charges. if they ever get to a certain point of debt, they are bailed out by the government and their debt is reset to zero
 - make it such that ships must sometimes go in for maintenance, which temporarily reduces trading house's number of freighters, and also costs money
-- haev processes broadcast i'm-alive pings, and then on basis of these pings have bank create or delete database entries for the various economic players on the fly
+- have processes broadcast i'm-alive pings, and then on basis of these pings have bank create or delete database entries for the various economic players on the fly
 
-///
+++++
+Section 3: silly ideas:
+++++
 
-front end stuff removed for the time being:
-- have a WPF view with pretty charts and graphs and such like
-- have an ASP web interface (WebView), add to wolfie + doc
-- add a tab in formview/page in web view that is IE tab with MS maps or Google maps integration, with pins on the ports, and perhaps info boxes/some other visualisation of what is going on
-- make GUI optionally output current stream of real time data to an Excel spreadsheet, updating the spreadsheet at regular ticks, add excel to 
-wolfie + doc
-- have the GUI draw pretty line graphs and charts of price changes etc
-- GUI displays diagnostic system information on the current status of all the processes and their interactions. Maybe also a green or red light next to each one to show all are responding? This would require processes to keep records in the database of when they last communicated with each other.
-
-/////
-
-.NET stuff removed for time being:
-- make use of LINQ
-
-///
-
-sql server stuff removed:
-- faff with permissions and security and security schemas
-
-////
-
-make it a game idea:
-
-- GalaxyHack-ify it - allow people to take control of trading houses with custom logic code. I imagine this would work thusly:
-1. Make trader logic optionally take decisions on the basis of instructions via UDP or TCP messages
-2. Make trader's output all the data they receive via UDP or TCP messages
-3. This would technically allow control in any language or program, but I would take advantage of already having worked with Resolver One to make a template ResolverOne spreadsheet for controlling trader logic
-4. For this to make any sense as a game, I would have to make the algorithms for the prices at different places + changing exchange rates conform to certain definite guidelines, and the objective of people's logic code would be to predict results on the basis of these algorithms to make the best trades. This would clearly involve a massive amount of research into financial mathematics.
-5. If it were to be truly competitive game as opposed to just single player, the rules would have to be set such that there is no ultimately "correct" answer. Also, there would either a) need to be a central server running the game to which players connect or b) if it is done corewars/galaxyhack style and the game is not continuous, there would need to be strict limits on how much processor time each process got.
-6. Could keep certain price change and behaviour algorithms for certain actors closed source and ony allow people to access their results via a web server. This would stop cheating by looking at the source code.
-7. Or alternatively could make it single player, in which case if people cheat then that is up to them.
-8. Could have a continuous multiplayer game where the idea is to make the maximum amount of money possible each day with a given amount to invest, or could instead make it a single player game of with "levels", whereby with each level you have to work out a particular algorithm plus its parameters.
-9. Possibly ideas for challenges include: 1. work out the parameters of GBM 2. parameters of GBM are constantly changing, and see who has the best algorithm for quickly working out these changes 3. have a variety of different factors affecting profit/loss (e.g. fluctuations in currency, shares, commodities, various things you can do like futures contracts and warehousing), and then the challenge is to come up with the best "AI" which takes all these things into account to make the most money
-
-REALLY doubt there'd be much interest, though. Even if I managed to implement this (which would be no small task), the target niche of possible players would be so small it would never get enough players to make it work. But could be interesting to try to implement?
-
-///
-
-hardcore comp sci ideas not going to happen:
-
-- Write a small custom database system in C++ to replace SQL Server
-- add some processes that use UDP and/or TCP rather than WCF, and make them incredibly scalable
-- Write custom low level network code in C++
-
-///
-
-international politics ideas not going to happen:
+international politics idea:
 
 Have it so natural distribution of wealth follows a particular curve in all countries, but have this curve affected by goverment action (e.g. % of spending on health/education/social security). At same time, have higher government spending reduce efficiency of economy overall (do this by making it weaken value of currency and/or reducing level of wealth citizerns have available to spend on consumption) and also keep track of each country's level of corruption (just a general figure which meant in incredibly general sense of "level to which money distribtution is determined neither by market nor by government, but rather by people with political power just directly taking it from state funds)
 
@@ -114,7 +164,7 @@ Have option for trading houses to move goods from places with high stocks and lo
 
 ///
 
-complex macro economics idea not going to happen:
+complex macro economics idea:
 
 each country needs to have a turnover held separetely for its production sector (mining, manufacturing, etc), which is dependent on export level+export price, and its service sector (retail, marketing, etc), which is dependent on consumption level + import price.
 
@@ -135,49 +185,22 @@ Factor in marketing and advertising increasing demand, increasing salaries leadi
 
 ///
 
-mini project:
+make it a game idea:
 
-Program that backs up a folder with a date appended to file name, and then sends it to an ftp server - remembers values for folders + ftp servers, has bookmarking system for both. Use 7-zip:
+- GalaxyHack-ify it - allow people to take control of trading houses with custom logic code. I imagine this would work thusly:
+1. Make trader logic optionally take decisions on the basis of instructions via UDP or TCP messages
+2. Make trader's output all the data they receive via UDP or TCP messages
+3. This would technically allow control in any language or program, but I would take advantage of already having worked with Resolver One to make a template ResolverOne spreadsheet for controlling trader logic
+4. For this to make any sense as a game, I would have to make the algorithms for the prices at different places + changing exchange rates conform to certain definite guidelines, and the objective of people's logic code would be to predict results on the basis of these algorithms to make the best trades. This would clearly involve a massive amount of research into financial mathematics.
+5. If it were to be truly competitive game as opposed to just single player, the rules would have to be set such that there is no ultimately "correct" answer. Also, there would either a) need to be a central server running the game to which players connect or b) if it is done corewars/galaxyhack style and the game is not continuous, there would need to be strict limits on how much processor time each process got.
+6. Could keep certain price change and behaviour algorithms for certain actors closed source and ony allow people to access their results via a web server. This would stop cheating by looking at the source code.
+7. Or alternatively could make it single player, in which case if people cheat then that is up to them.
+8. Could have a continuous multiplayer game where the idea is to make the maximum amount of money possible each day with a given amount to invest, or could instead make it a single player game of with "levels", whereby with each level you have to work out a particular algorithm plus its parameters.
+9. Possibly ideas for challenges include: 1. work out the parameters of GBM 2. parameters of GBM are constantly changing, and see who has the best algorithm for quickly working out these changes 3. have a variety of different factors affecting profit/loss (e.g. fluctuations in currency, shares, commodities, various things you can do like futures contracts and warehousing), and then the challenge is to come up with the best "AI" which takes all these things into account to make the most money
 
-String zipper = @"F:\Program Files\7-Zip\7z.exe";
-//type 7z, ignore pyc files
-String args = "a -t7z -x!.pyc" + compressPath + " " + compressFolder;
-Process proc = Process.Start(zipper, args);
-proc.WaitForExit();          
+REALLY doubt there'd be much interest, though. Even if I managed to implement this (which would be no small task), the target niche of possible players would be so small it would never get enough players to make it work. But could be interesting to try to implement?
 
-Totally pointless given availability of things like dropbox
 
-//
-
-UML
-
-- UML class diagram (hopefully this can just be exported from Visual Studio? Or otherwise imported from C# code to MagicDraw)
-- do yet more diagrams
-
-///
-
-SQL:
-
-- views
-- stored procedures
-- yet more normalisation
-- yet more tuning
-- set up some sort of OLAP functionality for large scale data analysis of historical data
-
-////
-
-Concurrency:
-
-- read a bit of concurrency theory, and then put this into practice with regard to having it vey clear how concurrency features of my system are well designed and error-resistant, and then add this to doc
-- improve concurrency aspects
-
-///
-
-web services:
-
-get finance data from yahoo api rather than creating it myself - though tick rate could be an issue
-
-///
 
 
 

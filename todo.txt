@@ -1,28 +1,25 @@
-* Read Professional C# 2008 chapters 1/2 12 (memory management), 14 (exceptions), 26 (ADO)
+* Read Professional C# 2008 chapters 1/2 26 (ADO), 42 (WCF)
 Starts at pdf page 64
-- currently at pdf page 264
-* quick read about clustered indexing
-* write SQL to create database schema + data
-* write basic interface between C# processes and the database (once the absolute basic are working, create unit tests before creating functions)
-- est 2 weeks full time
-
-* Read Professional C# 2008 chapters 19 (threading), 42 (WCF)
-* write a very small client/server test
-* write first attempt at networked and threaded parts of taipan
-- est 2 weeks full time
+- currently at pdf page 916
+* write sql for foreign keys and triggers
+* write SQL to create starting data
+* write basic interface between C# processes and the database (once the absolute basics are working, create unit tests before creating functions)
+* write first attempt at networked and threaded parts of taipan (once the absolute basic are working, create unit tests before creating functions)
+- est 3 weeks full time
 
 * Read a bit more of learning UML
-* do some UML diagrams for taipan
+* do some more UML diagramming
 - est 2 days full time
 
 * write first attempt at Resolver One view
-- est 1 week full time
+- est 5 days full time
 
 * Get all basic functionality of TaiPan working
 - est 3 weeks full time
 
-* Read database management systems chapters 3, 4, 5
-* do pretty graphs of GBM, and maybe add some more complicated SQL queries for display. Maybe add a bit to SQL schema to do so
+* Read database management systems chapters 3 (almost read already), 4, 5
+* read about finance stuff and maths stuff
+* make data analysis part considerably more advanced
 - est 2 weeks full time
 
 ////
@@ -31,6 +28,7 @@ fairly immediate stuff:
 
 concurrency:
 - service which continuously broadcasts contents of a queue of simple structs
+- each console program takes an integer argument, this argument is appended to windows title bar so you can keep track of various programs
 
 sql:
 - correct syntax for many to many primary keys - e.g. DomesticCompanyCommodity
@@ -40,6 +38,7 @@ sql:
 - add all foreign keys
 - add companytypecheck for freighter (see uml)
 - add checks on interface between base + derived tables (see web page bookmark)
+- add constraint on currency to have short name 3 upper case chars (UML and sql)
 
 C# to sql interface:
 - util methods to connect to, disconnect from, and possibly query and/or update db
@@ -51,8 +50,11 @@ batch scripting:
 - rename project file to use correct case in git repository
 
 resolver:
-- get an os licence
-- timer? ask on forum.
+
+doc:
+- describe use of bank as mediator to db as design pattern (mayvbe mediator?), mention any other patterns used
+- one possible way to summarize project would be "pointlessly complicated, buzzword-based design", and list all the design strategies and buzzwords I have munged together into a single system - something like:
+"x interacting processes (x heterogenous), x threads (x heterogenous), x UML diagrams, mediator design pattern, list names of design patterns used, test-driven design, markov chain monte carlo methods, list stats methods used, list mathematical optimization methods used, 2 database servers (one custom), x database tables, x database queries, list some more database schema, query, normalization, tuning stuff, list financial instruments included, something on inter process locking, something on the vectors of shipping routes, something on semaphores, something on network code and protocols"
 
 ///
 
@@ -154,13 +156,13 @@ Things it reads from database: info on commodities (at startup only?).
 Things it writes to database: none
 
 ResolverView
-a) able to view constantly updated real time data from the database - update once per second (though tick rate can be modified by modifying a cell)
-b) able to view some statistics and charts built using more complex SQL queries.
-For instance:i) both turnover and profit over any given time period for any given economic actor
+- able to view constantly updated real time data from the database
+
+- able to view some statistics and charts built using more complex SQL queries - maybe based on complex sql queries/views which summarize data in various ways
+For instance:
+i) both turnover and profit over any given time period for any given economic actor
 ii) charts of time vs price for commodoties and stocks
-c) try to do some clever maths stuff such that it can assess the data from a GBM and work out the variables that were used. Ideally I would use scipy, but if it doesn't work properly R1 then could use MS Solver Foundation Express instead. either way, add to doc+wolfie
-http://www.scipy.org/Cookbook/FittingData
-http://code.msdn.microsoft.com/solverfoundation
+Use WPF Resolver One example as a basis for some pretty graphs
 
 ////
 
@@ -173,7 +175,9 @@ Database stuff (needs adding to both a) UML diagram and b) actual SQL scripts):
 - same with PublicCompanyType
 - maybe add some views for use by the various processes that need info from database?
 - do some normalisation some time after the design has changed a bit, and doc how I carried this out, and doc what normal form the db is in
-- tuning/optimisation - faff about with different sorts of indexes etc, maybe also so totally pointless striping, clustering, etc
+- note that publiccompany includes countryid and then this info repeated as portid in derived domesticcompany. however, countryid needed to know what currency stock pirce is in. i think maybe this lack of normalisation needs to be noted and accepted. or otherwise, could make seperate shippingcompany table with countryid, and then remove countryid from publiccompany.
+- make sure indexes, triggers, fks and pks, and constraints match up UML <-> sql and vice versa
+- maybe make constraint that ensures PortCommodityPrice includes each commodity and port combination exactly once?
 
 ////
 
@@ -191,7 +195,9 @@ for testing concurrent aspects between different processes, should have a text f
 UML diagrams:
 
 SQL:
-- add constraints
+- add constraints, indexes
+- maybe add data type for each attrib
+- maybe make currency short name the key, or at least make unique
 
 Communication view:
 - it should have title "Tai-Pan: ????"
@@ -223,10 +229,13 @@ mention wcf in doc
 
 ////
 
-Would be nice to get done:
-
-* Read database management systems chapters 19, 20, 21
-* do some database normalisation and tuning, and security management
+Would be particularly nice to get done (see ideas removed file):
+- ideas about database normalisation and tuning
+- ideas about more efficient network code
+- ideas about freighter routing optimisation (and possibly commodity trading optimisation too)
+- ideas about more complex financial stuff - derivatives etc
+- store some of state in a custom database server
+- monte carlo stats analysis stuff
 
 ////
 
@@ -235,8 +244,10 @@ Keeping track of time:
 up to 28 feb: 66
 mar 1: 5
 apr 1: 2
-2: 8
-4: 2
-5: before 17:30: 2
+2 - 5: 12
+6: 0.5
+7: 3.75
+8: before 11:30: 7
+
 
 
