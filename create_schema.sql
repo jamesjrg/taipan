@@ -116,7 +116,7 @@ CREATE TABLE dbo.Country
 	)  ON [PRIMARY]
 GO
 
--- financial objects
+-- financial objects inserted with initial data
 
 CREATE TABLE dbo.Commodity
 	(
@@ -129,9 +129,28 @@ CREATE TABLE dbo.Currency
 	(
 	ID int NOT NULL IDENTITY (1, 1) PRIMARY KEY CLUSTERED,
     Name nvarchar(50) NOT NULL,
+    ShortName nchar(3) NOT NULL,
     USDValue int NOT NULL,
 	)  ON [PRIMARY]
 GO
+
+CREATE TABLE dbo.PortCommodityPrice
+	(
+	PortID int NOT NULL,
+    CommodityID int NOT NULL,
+    Price int NOT NULL,
+    CONSTRAINT PK_PCP PRIMARY KEY (PortID, CommodityID)
+	)  ON [PRIMARY]
+GO
+
+CREATE NONCLUSTERED INDEX IX_PCP ON dbo.[PortCommodityPrice] 
+(
+	CommodityID,
+	PortID
+) ON [PRIMARY]
+GO
+
+-- financial objects inserted during runtime
 
 CREATE TABLE dbo.FuturesContract
 	(
@@ -184,22 +203,6 @@ CREATE TABLE dbo.CommodityTransport
     Quantity int NOT NULL,
     FreighterID int NOT NULL,
 	)  ON [PRIMARY]
-GO
-
-CREATE TABLE dbo.PortCommodityPrice
-	(
-	PortID int NOT NULL,
-    CommodityID int NOT NULL,
-    Price int NOT NULL,
-    CONSTRAINT PK_DCC PRIMARY KEY (CompanyID, CommodityID)
-	)  ON [PRIMARY]
-GO
-
-CREATE NONCLUSTERED INDEX IX_PCP ON dbo.[PortCommodityPrice] 
-(
-	CommodityID,
-	PortID
-) ON [PRIMARY]
 GO
 
 -- historical data

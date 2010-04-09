@@ -1,11 +1,10 @@
-* Read Professional C# 2008 chapters 1/2 26 (ADO), 42 (WCF)
-Starts at pdf page 64
-- currently at pdf page 916
+* Read Professional C# 2008 chapter 42 (WCF)
+- currently at pdf page 1516
 * write sql for foreign keys and triggers
 * write SQL to create starting data
 * write basic interface between C# processes and the database (once the absolute basics are working, create unit tests before creating functions)
 * write first attempt at networked and threaded parts of taipan (once the absolute basic are working, create unit tests before creating functions)
-- est 3 weeks full time
+- est 2.5 weeks full time
 
 * Read a bit more of learning UML
 * do some more UML diagramming
@@ -28,10 +27,8 @@ fairly immediate stuff:
 
 concurrency:
 - service which continuously broadcasts contents of a queue of simple structs
-- each console program takes an integer argument, this argument is appended to windows title bar so you can keep track of various programs
 
 sql:
-- correct syntax for many to many primary keys - e.g. DomesticCompanyCommodity
 - add more to SQL script which dumps and then recreates database schema
 - add more SQL script which creates all the initial data
 - add triggers (see uml)
@@ -39,15 +36,6 @@ sql:
 - add companytypecheck for freighter (see uml)
 - add checks on interface between base + derived tables (see web page bookmark)
 - add constraint on currency to have short name 3 upper case chars (UML and sql)
-
-C# to sql interface:
-- util methods to connect to, disconnect from, and possibly query and/or update db
-- add database connection strings to some sort of config file
-
-batch scripting:
-- why does batch script only work if copy and pasted, not if run directly?
-- a batch script that a) runs sql schema script b) runs sql data creation script b) starts all the processes
-- rename project file to use correct case in git repository
 
 resolver:
 
@@ -62,27 +50,6 @@ Overall plan: lots of C# processes representing entities in a trading economy co
 One day the description here, description in index.htm, description on CV, and description in Wolfie will all need to be synced...
 
 Though some of this should be configurable, a reasonable ball park figure might be that we want to have running 10 Domestic Companies, 5 Shipping Companies, 5 Traders, 1 FateAndGuesswork, 1 FXService, 1 Bank, 1 Resolver One spreadsheet, 1 SQL Server instance.
-
-GenericServer
-Class that acts as generic server, any project which acts as a server has an instance of this class, which it can configure as to what information to broadcast and when
-Logs messages to console and optionally to file
-
-GenericClient
-Class that acts as generic client that polls servers, any project which acts as a client has an instance of this class, which it can configure as to what information to broadcast and when
-Logs messages to console and optionally to file
-
-GenericSQLReader
-Class that acts as a generic read-only interface to the database, any project which reads from db has an instance of this class, which it can configure as to what information to read
-
-GenericSQLReadWriter
-Derived from: GenericSQLReader
-Class that acts as a generic read/write interface to the database, any project which reads and writes to db has an instance of this class, which it can configure as to what information to read
-
-EconomicPlayer:
-Maybe a base class for most of the projects? But maybe not needed. Could have e.g. shared ability to start up from command line and enter a main loop that exits on control-c. Might have a bunch of utility methods.
-
-LibUtil:
-Library of utility methods?
 
 DomesticCompany
 Servers it polls for input as client:
@@ -117,7 +84,7 @@ Information it broadcasts as server:
 Things it calculates:
 Things it reads from database: 
 
-FXService
+FXServer
 Information it broadcasts as server:
 1. fluctuating currency prices
 Things it calculates: fluctuating currency prices via GBM
@@ -155,14 +122,16 @@ Semi-randomly calculates which PublicCompanies will in future have a) have surpl
 Things it reads from database: info on commodities (at startup only?).
 Things it writes to database: none
 
-ResolverView
-- able to view constantly updated real time data from the database
-
-- able to view some statistics and charts built using more complex SQL queries - maybe based on complex sql queries/views which summarize data in various ways
+Resolver spreadsheet/Python code:
+- able to view constantly updated real time data from the database - this will be on a single tab for data overview, rather than in depth data analysis. have a button to turn it off.
+- have other tabs for analysing certain aspects of the data, these may or may not have option of constant update
+- have buttons for drawing graphs
+- able to view some statistics and charts - maybe based on complex sql queries/views which summarize data in various ways
 For instance:
 i) both turnover and profit over any given time period for any given economic actor
-ii) charts of time vs price for commodoties and stocks
+ii) charts of time vs price for commodoties and stocks and currencies
 Use WPF Resolver One example as a basis for some pretty graphs
+should be able to have multiple graphs at once
 
 ////
 
@@ -178,6 +147,8 @@ Database stuff (needs adding to both a) UML diagram and b) actual SQL scripts):
 - note that publiccompany includes countryid and then this info repeated as portid in derived domesticcompany. however, countryid needed to know what currency stock pirce is in. i think maybe this lack of normalisation needs to be noted and accepted. or otherwise, could make seperate shippingcompany table with countryid, and then remove countryid from publiccompany.
 - make sure indexes, triggers, fks and pks, and constraints match up UML <-> sql and vice versa
 - maybe make constraint that ensures PortCommodityPrice includes each commodity and port combination exactly once?
+- make selects + updates to db use stored procedures for efficiency? if so, doc (and also, in brief buzz word doc, "x stored procedures")
+- error handling on error being returned on database query
 
 ////
 
@@ -206,6 +177,7 @@ Communication view:
 Deployment view:
 - add the correct protocol labels
 - maybe there need to be more communication links?
+- add wpf graphs (same node as spreadsheet)
 
 Also:
 a UML diagram for internal working of FateAndGuesswork - showing threads and data created and served by them
@@ -244,10 +216,7 @@ Keeping track of time:
 up to 28 feb: 66
 mar 1: 5
 apr 1: 2
-2 - 5: 12
-6: 0.5
-7: 3.75
-8: before 11:30: 7
-
+2 - 8: 23.25
+9: before 18:00: 3
 
 

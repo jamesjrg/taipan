@@ -1,5 +1,16 @@
+*.csproj.user
 TaiPan.suo
 Bank/bin/
 Bank/obj/
+DomesticCompany/bin/
+DomesticCompany/obj/
+FateAndGuesswork/bin/
+FateAndGuesswork/obj/
+FXServer/bin/
+FXServer/obj/
+ShippingCompany/bin/
+ShippingCompany/obj/
+Trader/bin/
+Trader/obj/
 SharedLib/bin/
 SharedLib/obj/

@@ -73,25 +73,25 @@ GO
 INSERT INTO dbo.Port
            (Name, CountryID)
      VALUES
-           ("Hong Kong", 1)
+           ('Hong Kong', 1)
 GO
 
 INSERT INTO dbo.Country
            (Name, CurrencyID)
      VALUES
-           ("Hong Kong SAR", 1)
+           ('Hong Kong SAR', 1)
 GO
 
 INSERT INTO dbo.Commodity
            (Name)
      VALUES
-           ("Gold")
+           ('Gold')
 GO
 
 INSERT INTO dbo.Currency
            (Name, ShortName, USDValue)
      VALUES
-           ("Hong Kong Dollar", 100)
+           ('Hong Kong Dollar', 'HKD', 100)
 GO
 
 INSERT INTO dbo.PortCommodityPrice

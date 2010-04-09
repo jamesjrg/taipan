@@ -59,7 +59,8 @@ other ideas:
 ////
 
 hardcore comp sci custom db idea:
-
+- study algorithms book
+- study more advanced sections of databases book
 - Write a small custom database system in to replace SQL Server, either in C# or C++. Would probably just have it manage a small part of the state data, and leave most to SQL server. Would have to implement threaded network connections/cursors complete with locking during file system access, transactions, query parsing and execution, permissions, indexing
 - would use UDP or TCP for connections, would ideally be very fast and scalable, either in C# or C++
 
