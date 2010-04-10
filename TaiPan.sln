@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bank", "Bank\Bank.csproj", "{0805EE52-A229-4287-96F3-B01004AE8BBD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedLib", "SharedLib\SharedLib.csproj", "{0B2A1CDE-4E0E-4EDB-BF48-D17BE26697E8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csproj", "{0B2A1CDE-4E0E-4EDB-BF48-D17BE26697E8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FXServer", "FXServer\FXServer.csproj", "{4CCFECBC-9200-4A4A-A68E-F3563CF32709}"
 EndProject

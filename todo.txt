@@ -1,9 +1,10 @@
-* Read Professional C# 2008 chapter 42 (WCF)
-- currently at pdf page 1516
+* Read Professional C# 2008 chapter 1/2 41 (tcp sockets)
+- currently at pdf page 1508
 * write sql for foreign keys and triggers
 * write SQL to create starting data
-* write basic interface between C# processes and the database (once the absolute basics are working, create unit tests before creating functions)
-* write first attempt at networked and threaded parts of taipan (once the absolute basic are working, create unit tests before creating functions)
+* write basic logic of system using test driven development
+* get basic tcp server/client thing working
+* add all server+client addresses+ports to config files
 - est 2.5 weeks full time
 
 * Read a bit more of learning UML
@@ -26,7 +27,7 @@
 fairly immediate stuff:
 
 concurrency:
-- service which continuously broadcasts contents of a queue of simple structs
+- ensure tcp listener closes when program closes - remember it is in its own thread
 
 sql:
 - add more to SQL script which dumps and then recreates database schema
@@ -43,6 +44,9 @@ doc:
 - describe use of bank as mediator to db as design pattern (mayvbe mediator?), mention any other patterns used
 - one possible way to summarize project would be "pointlessly complicated, buzzword-based design", and list all the design strategies and buzzwords I have munged together into a single system - something like:
 "x interacting processes (x heterogenous), x threads (x heterogenous), x UML diagrams, mediator design pattern, list names of design patterns used, test-driven design, markov chain monte carlo methods, list stats methods used, list mathematical optimization methods used, 2 database servers (one custom), x database tables, x database queries, list some more database schema, query, normalization, tuning stuff, list financial instruments included, something on inter process locking, something on the vectors of shipping routes, something on semaphores, something on network code and protocols"
+
+other:
+- make sure everything is shut down correctly, including if fail in init
 
 ///
 
@@ -217,6 +221,6 @@ up to 28 feb: 66
 mar 1: 5
 apr 1: 2
 2 - 8: 23.25
-9: before 18:00: 3
+9: 10
 
 

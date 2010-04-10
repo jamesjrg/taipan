@@ -6,34 +6,10 @@ using System.Text;
 using System.Data.SqlClient;
 using System.Configuration;
 
-namespace TaiPan.SharedLib
+namespace TaiPan.Common
 {
-    public class SharedLib
+    public class Db
     {
-        public static int SetID(string title, string[] args)
-        {
-            int myID;
-
-            try
-            {
-                myID = Int32.Parse(args[0]);
-            }
-            catch (Exception e)
-            {
-                throw new ApplicationException("ID must be given as command line argument");
-            }
-
-            Console.Title = title + " " + myID;
-
-            return myID;
-        }
-
-        public static void ConsolePause()
-        {
-            Console.WriteLine("Press enter to continue...");
-            Console.ReadLine();
-        }
-
         public static SqlConnection GetDbConnection()
         {
             return GetDbConnection(true);
@@ -49,7 +25,7 @@ namespace TaiPan.SharedLib
             string connName = "taipan-rw";
             if (readOnly)
                 connName = "taipan-r";
-            string configFile = "SharedLib.config";
+            string configFile = "Common.config";
 
             Console.WriteLine("Reading config file");
             ExeConfigurationFileMap fileMap = new ExeConfigurationFileMap();
@@ -61,8 +37,9 @@ namespace TaiPan.SharedLib
 
             Console.WriteLine("Connecting to database with " + connName);
             SqlConnection conn = new SqlConnection(settings.ConnectionString);
+            Console.WriteLine("Connected to database");
 
-            return conn;            
+            return conn;
         }
     }
 }

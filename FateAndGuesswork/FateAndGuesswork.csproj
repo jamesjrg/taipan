@@ -45,13 +45,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FateAndGuesswork.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SharedLib\SharedLib.csproj">
+    <ProjectReference Include="..\Common\Common.csproj">
       <Project>{0B2A1CDE-4E0E-4EDB-BF48-D17BE26697E8}</Project>
-      <Name>SharedLib</Name>
+      <Name>Common</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
