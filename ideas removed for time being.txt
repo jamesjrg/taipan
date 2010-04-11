@@ -2,48 +2,14 @@
 Section 1: vaguely reasonable ideas:
 ++++
 
-complex finance stuff removed for time being:
-
-- have stock prices affected by recent profit/loss and bank balance of each company
-- add more complex ideas of debt and interest payments - e.g. dividends on shares, or interest payments on loans to buy goods to warehouse
-- add trading in more complex derivatives
-- make sure my GBM calculations for stock/commodity price variation are are exactly as they should be
-- investigate R1 docs/example sheets for more complex finance ideas
-- along with all this, maybe add some complex sql queries/views which summarize data in various ways
-
-Wikipedia on complex financial stuff:
-
-If I wanted to add in some financial complexity:
-http://en.wikipedia.org/wiki/Derivative_(finance)
-	http://en.wikipedia.org/wiki/Futures_contract
-	http://en.wikipedia.org/wiki/Option_(finance)
-    http://en.wikipedia.org/wiki/Black%E2%80%93Scholes
-    http://en.wikipedia.org/wiki/Geometric_Brownian_motion
-    http://en.wikipedia.org/wiki/Wiener_process
-	http://en.wikipedia.org/wiki/Swap_%28finance%29
-		http://en.wikipedia.org/wiki/Interest_rate_swap
-        
-/////
-
 shipping route optimization stuff removed for time being:
-- represent all shipping lanes between ports as a network of vectors (also do a UML diagram for this), or even have a system of shipping routes with multiple ways between two points, and represent it as a network of matrices
-- keep track of positions of freighters
-- use Resolver One and MS Solver Foundation/scipy to find optimal routing strategy for freighters
-- could make the idea more complicated, by making prices of commodities different at all ports, plus fluctuating, then would have very difficult and non-deterministic optimization problem of getting traders to choose the most efficient trades, taking into account the fuel costs involved in transporting over various distances, and the expected change in prices during that time
-- add mathematical modelling to wolfie (for set analyser, too, and that old GCSE program)
-- have a web app with MS maps or Google maps integration, with pins on the ports and also maybe on the freighters, and perhaps info boxes/some other visualisation of what is going on
+- represent all shipping lanes between ports as a network of vectors (also do a UML diagram for this), or even have a system of shipping routes with multiple ways between two points, and represent it as a network of matrices.
+- use Resolver One and MS Solver Foundation/scipy to find optimal routing strategy for freighters.
+- get Resolver One to solve optimization problem of most most efficient trades given differing comodity price at each port, taking into account a specified fuel cost involved in transporting over various distances, and the expected change in prices during that time
+- don't bother linking this up with the real time part of the system, at least for now
+- add "mathematical modelling" to wolfie (for set analyser, too, and maybe Carmen, and that old GCSE program)
 
 /////
-
-stats analysis stuff:
-- make graphs which provide various possible future outcomes of GBM (i.e. after present data as a solid line, add a bunch of dashed lines for various possibilities) with Markov Chain monte carlo methods
-- Ideally I would use scipy, but if it doesn't work properly in R1, or if the functionality isn't advanced enough, then maybe could use MS Solver Foundation Express instead. either way, add to doc+wolfie
-http://www.scipy.org/Cookbook/FittingData
-http://code.msdn.microsoft.com/solverfoundation
-
-http://en.wikipedia.org/wiki/Markov_chain_Monte_Carlo
-
-///
 
 SQL stuff:
 * Read database management systems chapters 19, 20, 21
@@ -57,14 +23,6 @@ other ideas:
 - faff with permissions and security and security schemas
 
 ////
-
-hardcore comp sci custom db idea:
-- study algorithms book
-- study more advanced sections of databases book
-- Write a small custom database system in to replace SQL Server, either in C# or C++. Would probably just have it manage a small part of the state data, and leave most to SQL server. Would have to implement threaded network connections/cursors complete with locking during file system access, transactions, query parsing and execution, permissions, indexing
-- would use UDP or TCP for connections, would ideally be very fast and scalable, either in C# or C++
-
-//
 
 UML
 
@@ -81,6 +39,38 @@ Concurrency:
 ++++
 Section 2: not especially reasonable ideas:
 ++++
+
+complex finance stuff removed for time being:
+
+- have stock prices affected by recent profit/loss and bank balance of each company
+- add more complex ideas of debt and interest payments - e.g. dividends on shares, or interest payments on loans to buy goods to warehouse
+- add trading in more complex derivatives
+- make sure my GBM calculations for stock/commodity price variation are are exactly as they should be
+- investigate R1 docs/example sheets for more complex finance ideas
+- along with all this, maybe add some complex sql queries/views which summarize data in various ways
+- and maybe try to do some proper stats analysis
+
+Wikipedia on complex financial stuff:
+
+If I wanted to add in some financial complexity:
+http://en.wikipedia.org/wiki/Derivative_(finance)
+	http://en.wikipedia.org/wiki/Futures_contract
+	http://en.wikipedia.org/wiki/Option_(finance)
+    http://en.wikipedia.org/wiki/Black%E2%80%93Scholes
+    http://en.wikipedia.org/wiki/Geometric_Brownian_motion
+    http://en.wikipedia.org/wiki/Wiener_process
+	http://en.wikipedia.org/wiki/Swap_%28finance%29
+		http://en.wikipedia.org/wiki/Interest_rate_swap
+        
+////
+
+hardcore comp sci custom db idea:
+- study more of algorithms book
+- study more advanced sections of databases book
+- Write a small custom database system in to replace SQL Server, either in C# or C++. If C++ would ideally find the Minibase source code and replace sections of that as needed. Would probably just have it manage a small part of the state data, and leave most to SQL server. Would have to implement threaded network connections/cursors complete with locking during file system access, transactions, query parsing and execution, permissions, indexing
+- would use UDP or TCP for connections, would ideally be very fast and scalable, either in C# or C++
+
+//
 
 mini project:
 
@@ -139,6 +129,7 @@ things that could be done to make it more complicated for the sake of it removed
 - make it possible for companies and trading houses to go into debt, at which point they have to pay interest charges. if they ever get to a certain point of debt, they are bailed out by the government and their debt is reset to zero
 - make it such that ships must sometimes go in for maintenance, which temporarily reduces trading house's number of freighters, and also costs money
 - have processes broadcast i'm-alive pings, and then on basis of these pings have bank create or delete database entries for the various economic players on the fly
+- keep track of positions of freighters, and have a web app with MS maps or Google maps integration, with pins on the ports and also maybe on the freighters, and perhaps info boxes/some other visualisation of what is going on
 
 ++++
 Section 3: silly ideas:

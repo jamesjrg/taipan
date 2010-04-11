@@ -1,49 +1,42 @@
 * Read Professional C# 2008 chapter 1/2 41 (tcp sockets)
 - currently at pdf page 1508
-* write sql for foreign keys and triggers
-* write SQL to create starting data
-* write basic logic of system using test driven development
-* get basic tcp server/client thing working
-* add all server+client addresses+ports to config files
-- est 2.5 weeks full time
+- add back silly proejcts to wolfie, inc phrase "mathematically prove blah blah with a 2D animation of..." for no fly
+* get basics of database schema all working
+* get basics of interacting processes and logic of their interactions working, using test driven development
+- est 3 weeks full time
 
 * Read a bit more of learning UML
 * do some more UML diagramming
 - est 2 days full time
 
-* write first attempt at Resolver One view
-- est 5 days full time
-
-* Get all basic functionality of TaiPan working
+* Read database management systems chapters 3 (almost read already), 4, 5
+* write first attempt at Resolver One view + WPF graphing, including monte carlo GBM walking
 - est 3 weeks full time
 
-* Read database management systems chapters 3 (almost read already), 4, 5
-* read about finance stuff and maths stuff
-* make data analysis part considerably more advanced
-- est 2 weeks full time
+* read parts of algorithms book
+* do algorithms bit
+- est 3 weeks full time
+
+- ideas about database normalisation and tuning - est 4 days FT
+- ideas about more efficient network code - est 1.5 weeks FT
+- ideas about trade optimisation problem - est 3.5 weeks FT
 
 ////
 
 fairly immediate stuff:
 
 concurrency:
+- add all server+client addresses+ports to config files
 - ensure tcp listener closes when program closes - remember it is in its own thread
 
 sql:
-- add more to SQL script which dumps and then recreates database schema
+- write sql for foreign keys and triggers
 - add more SQL script which creates all the initial data
-- add triggers (see uml)
-- add all foreign keys
 - add companytypecheck for freighter (see uml)
 - add checks on interface between base + derived tables (see web page bookmark)
 - add constraint on currency to have short name 3 upper case chars (UML and sql)
 
 resolver:
-
-doc:
-- describe use of bank as mediator to db as design pattern (mayvbe mediator?), mention any other patterns used
-- one possible way to summarize project would be "pointlessly complicated, buzzword-based design", and list all the design strategies and buzzwords I have munged together into a single system - something like:
-"x interacting processes (x heterogenous), x threads (x heterogenous), x UML diagrams, mediator design pattern, list names of design patterns used, test-driven design, markov chain monte carlo methods, list stats methods used, list mathematical optimization methods used, 2 database servers (one custom), x database tables, x database queries, list some more database schema, query, normalization, tuning stuff, list financial instruments included, something on inter process locking, something on the vectors of shipping routes, something on semaphores, something on network code and protocols"
 
 other:
 - make sure everything is shut down correctly, including if fail in init
@@ -126,16 +119,37 @@ Semi-randomly calculates which PublicCompanies will in future have a) have surpl
 Things it reads from database: info on commodities (at startup only?).
 Things it writes to database: none
 
+////
+
 Resolver spreadsheet/Python code:
-- able to view constantly updated real time data from the database - this will be on a single tab for data overview, rather than in depth data analysis. have a button to turn it off.
-- have other tabs for analysing certain aspects of the data, these may or may not have option of constant update
-- have buttons for drawing graphs
-- able to view some statistics and charts - maybe based on complex sql queries/views which summarize data in various ways
-For instance:
-i) both turnover and profit over any given time period for any given economic actor
-ii) charts of time vs price for commodoties and stocks and currencies
-Use WPF Resolver One example as a basis for some pretty graphs
-should be able to have multiple graphs at once
+
+(CU) = optional constant update
+
+List of diff tab displays required:
+1. Given a commodity name, display historical prices of that commodity at each port (CU)
+2. Display historical prices of all public companies (CU)
+3. Display historical market cap of all public companies (CU)
+4. Display historical price of all currencies (CU)
+5. Historical futures contracts, including details of how relevant prices of all involved values changed between start and end of contract, and profit made (CU)
+6. Historical warehousing of commodities, including details of how relevant prices of all involved values changed between start and end of contract, and profit made (CU)
+7. Summary data on comparative historical record of countries, split into time periods - in each time period have the number of each type of transaction carried out, total value of transactions, and the number + value of transactions in each economic sector
+7. As above, but with ports
+8. Historical commodity transports
+9. Summary data for each shipping company, split into time periods - number of transactions, number of different ports served, average quantity per load, min quantity in a single load, max quantity in a single load
+
+Where relevant, tabs should have:
+1. Button to switch on constant update
+2. Button to draw line graph - should be able to have multiple graphs at once, should be able to alter number of lines included on graph
+3. Button to draw random walk predicted future graph - present data as a solid line, then a bunch of dashed lines for various possibilities
+
+random walking to use Markov Chain monte carlo methods
+- Ideally I would use Solver Foundation, though could also try scipy
+http://www.scipy.org/Cookbook/FittingData
+http://code.msdn.microsoft.com/solverfoundation
+http://en.wikipedia.org/wiki/Markov_chain_Monte_Carlo
+
+- WPF graph program - just local, follow Resolver Exchange example. Can tell the server to create new windows, or you can add new data points to old windows, or close windows
+- graph windows to include help instructions
 
 ////
 
@@ -156,11 +170,14 @@ Database stuff (needs adding to both a) UML diagram and b) actual SQL scripts):
 
 ////
 
-Unit Testing/concurrency testing:
-- Database interaction and calculations on that data based on database data well suited to unit testing, do these parts via TDD (and doc this fact). However multi-process concurrent aspects of program are not naturally suited to standard unit testing frameworks. There surely are recognised ways for automated testing of multi-process concurrent programs, and I may add such a system in future, but there are only so many things you can do at once.
+testing:
 - test taipan-r cannot write to db
+- Database interaction and calculations on that data based on database data well suited to unit testing, do these parts via TDD (and doc this fact).
+- However multi-thread and multi-process concurrent aspects of program are not suited to normal unit testing frameworks, due to non-deterministic nature in which multiple threads and processes can interact. Explore CHESS, ideally use, doc, and add to wolfie:
+http://blog.decarufel.net/2009/05/how-to-test-your-multi-threaded-code.html
+http://research.microsoft.com/en-us/projects/chess/download.aspx
 
-for testing concurrent aspects between different processes, should have a text file of manual checks, possibly supported by some batch file automation. Like, as a start:
+at very least, test basic interactions of individual processes going down with either some batch automation tests or just a text file with a list of things to manually test. Like, as a start:
 - if any one server goes down, can other servers cope as well as can possibly be expected?
 - can different servers get out of sync?
 - if one server goes down and then comes back up again, can information accidentally be lost in the crash?
@@ -199,19 +216,33 @@ b) make Wt a random variable chosen from a normal distribution with mean 0 and s
 
 //////
 
-Concurrency:
+algorithms bit:
 
-mention wcf in doc
+- using info both in algos book and database book, have an entirely pointless "Pointless sorting server" (including on UML diagram, with a note of explanation) that takes a list of strings as input, and then sorts the list a method of the callers choice:
+- merge sort
+- quick sort
+- heap sort
+- hash table
+- b tree
 
-////
+- uses WCF to provide RPC-style network service
 
-Would be particularly nice to get done (see ideas removed file):
-- ideas about database normalisation and tuning
-- ideas about more efficient network code
-- ideas about freighter routing optimisation (and possibly commodity trading optimisation too)
-- ideas about more complex financial stuff - derivatives etc
-- store some of state in a custom database server
-- monte carlo stats analysis stuff
+///
+
+doc:
+
+- describe use of bank as mediator to db as design pattern (mayvbe mediator?), mention any other patterns used
+
+- see CV for project summary, this is an old version:
+•	A C# .NET, SQL Server and Python project written to improve my knowledge of various aspects of software development and computer science. A large number of heterogeneous C# processes interact by sending each other messages via TCP network connections. These processes are themselves multi-threaded to various levels of complexity. These processes also interact with an MS SQL Server instance which stores the underlying state of the system.
+•	The front end utilises the spreadsheet/Python "mash up" “Resolver One” to provide analysis of the real time data from the database. The spreadsheet’s Python code is linked to a copy of Microsoft's Solver mathematical modelling library. Solver is used both to solve an optimization problem posited by the system, and also to provide Monte Carlo random walk data on how the stochastic processes within the system may behave. A local C# service is called by the spreadsheet script to create WPF graphs of summary data on request.
+•	One final, especially contrived C# service provides an RPC-style interface whereby it takes a list of unsorted strings and returns the list in alphabetical order. Arguments provided by the caller specify which of a variety of differing algorithms or data structures should be used to perform the sorting.
+•	I created a series of UML diagrams to describe various aspects of the system. The non-concurrent parts of the system were written using Test Driven Development, the multi-threaded parts of the system were tested using Microsoft's CHESS (a model checker for concurrent systems). The multi-process aspects of the system unfortunately do not have an automated testing strategy in place. As with all my projects since around 2004, the source is under version control (in this case git).
+
+
+- add Solver Foundation+OML to doc+wolfie
+- add xml + stuff on wpf graph server to uml+doc+wolfie
+- add web services to wolfie
 
 ////
 
@@ -222,5 +253,5 @@ mar 1: 5
 apr 1: 2
 2 - 8: 23.25
 9: 10
-
-
+10: 0.5
+11: 3.5
