@@ -9,18 +9,24 @@ namespace TaiPan.FateAndGuesswork
 {
     class FateAndGuesswork : TaiPan.Common.EconomicPlayer
     {
+        private TaiPan.Common.Server server;
+
         protected override void Init(string[] args)
         {
             Console.Title = "FateAndGuesswork";
+
+            server = new TaiPan.Common.Server(serverConfigs["FateAndGuessWork-DCBroadcast"]);
         }
 
         protected override bool Run()
         {
+            server.Send("Blah");
             return true;
         }
 
-        protected override void Shutdown()
+        protected override void Dispose(bool disposing)
         {
+            server.Dispose();
         }
     }
 }

@@ -3,10 +3,14 @@ Section 1: vaguely reasonable ideas:
 ++++
 
 shipping route optimization stuff removed for time being:
-- represent all shipping lanes between ports as a network of vectors (also do a UML diagram for this), or even have a system of shipping routes with multiple ways between two points, and represent it as a network of matrices.
-- use Resolver One and MS Solver Foundation/scipy to find optimal routing strategy for freighters.
-- get Resolver One to solve optimization problem of most most efficient trades given differing comodity price at each port, taking into account a specified fuel cost involved in transporting over various distances, and the expected change in prices during that time
-- don't bother linking this up with the real time part of the system, at least for now
+- represent all shipping lanes between ports as a graph of interconnected nodes, and do a "travelling freighter problem" solution of shortest route for a freighter to visit each port exactly once
+- provide diagram of graph in doc
+
+- use Resolver One and MS Solver Foundation
+http://en.wikipedia.org/wiki/Priority_queue
+http://www.amsterdamoptimization.com/msf.html
+http://en.wikipedia.org/wiki/Travelling_salesman_problem
+
 - add "mathematical modelling" to wolfie (for set analyser, too, and maybe Carmen, and that old GCSE program)
 
 /////

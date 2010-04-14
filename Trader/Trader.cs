@@ -21,7 +21,7 @@ namespace TaiPan.Trader
             return true;
         }
 
-        protected override void Shutdown()
+        protected override void Dispose(bool disposing)
         {
         }
     }

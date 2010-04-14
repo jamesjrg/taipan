@@ -48,8 +48,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Client.cs" />
+    <Compile Include="ServersSection.cs" />
     <Compile Include="Db.cs" />
     <Compile Include="EconomicPlayer.cs" />
+    <Compile Include="Server.cs" />
     <Compile Include="Util.cs">
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />

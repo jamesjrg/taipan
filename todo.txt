@@ -1,33 +1,47 @@
 * Read Professional C# 2008 chapter 1/2 41 (tcp sockets)
 - currently at pdf page 1508
-- add back silly proejcts to wolfie, inc phrase "mathematically prove blah blah with a 2D animation of..." for no fly
 * get basics of database schema all working
-* get basics of interacting processes and logic of their interactions working, using test driven development
-- est 3 weeks full time
+* get basics of interacting processes and logic of their interactions working, using test driven development where possible
+- est 4 weeks full time
 
 * Read a bit more of learning UML
 * do some more UML diagramming
 - est 2 days full time
 
 * Read database management systems chapters 3 (almost read already), 4, 5
-* write first attempt at Resolver One view + WPF graphing, including monte carlo GBM walking
-- est 3 weeks full time
+* write first attempt at Resolver One view + WPF graphing, including monte carlo GBM predicting
+- est 4 weeks full time
 
 * read parts of algorithms book
 * do algorithms bit
-- est 3 weeks full time
+- est 3.5 weeks full time
 
 - ideas about database normalisation and tuning - est 4 days FT
-- ideas about more efficient network code - est 1.5 weeks FT
-- ideas about trade optimisation problem - est 3.5 weeks FT
+- ideas about optimisation problem - est 2.5 weeks FT
+- write script to stress test concurrent aspects - est 1 week FT
+- ideas about toggable udp networking - est 1 week FT (and doc)
 
 ////
 
+right now:
+- write some test code to see quite how syncing list enumeration across threads can be achieved
+- write some sql triggers and foreign keys
+
+
+
 fairly immediate stuff:
 
-concurrency:
-- add all server+client addresses+ports to config files
+general logic and network code:
+- "Collection was modified; enumeration operation may not execute." server broadcast (run bank and fx, close bank)
+- when a client connects to a server, server has to create a unique id for it and store this for syncing purposes. maybe this id should be same as that used for a) database and b) stored for each class? in which case clients provide their own id on connect, server cannot make it up.
 - ensure tcp listener closes when program closes - remember it is in its own thread
+- check servers can deal with client closing (this needs to be an automated test)
+- check clients can deal with server closing (this needs to be an automated test)
+- the list pointers should be maintained by the server class, not the users of these classes, and pointers (i.e. indexes) need to be updated when list front is trimmed. Then server "send" method will in fact just add data to list of strings (one list maintained for each type of server thread). At point when every connected client has passed a point in queue, data can be removed from front. Will need a limit on how much old data can be kept around in event of lost network connections etc, and some sort of error handling mechanism when this happens. Maybe need two pointers for each thread - one for how much data has been sent, one for how much has been received.
+- the server "send" method should perform GC-style management of the list maybe once every 5 times (or whatever) it is called
+- replace all the sleeping everywhere with more intelligent use of CPU
+- if I do decide to have highly fault-tolerant code, it is going to have to be very complicated - e.g. what if fateandguesswork tells both a trader and company of a future event, but then the network connection to the company is lost until after the event? There are major sync issues to deal with here. I think the best thing to do would be to require client processes to send responses that acknowledge the response of a message. send messages to relevant clients in an order such that if early, key message receivers never acknowledge, then it never gets sent to later receivers - e.g if domesticompany fails to get message about what it will do in future, then never said the prediction to a trader. if a network connection to a client is lost for a long period of time, then ideally system will adapt, but in the short term I need it to just throw some sort of catastrophic error that makes it clear something has gone flagrantly wrong.
+- doc communication with acks in UML
 
 sql:
 - write sql for foreign keys and triggers
@@ -39,6 +53,7 @@ sql:
 resolver:
 
 other:
+- improve start/testing batch scripts so can specify on command line how many of each process to start (then won't need separate test batch script, at least for now. quite possibly use Python.
 - make sure everything is shut down correctly, including if fail in init
 
 ///
@@ -173,9 +188,9 @@ Database stuff (needs adding to both a) UML diagram and b) actual SQL scripts):
 testing:
 - test taipan-r cannot write to db
 - Database interaction and calculations on that data based on database data well suited to unit testing, do these parts via TDD (and doc this fact).
-- However multi-thread and multi-process concurrent aspects of program are not suited to normal unit testing frameworks, due to non-deterministic nature in which multiple threads and processes can interact. Explore CHESS, ideally use, doc, and add to wolfie:
-http://blog.decarufel.net/2009/05/how-to-test-your-multi-threaded-code.html
-http://research.microsoft.com/en-us/projects/chess/download.aspx
+- However multi-thread and multi-process concurrent aspects of program are not suited to normal unit testing frameworks. just write some sort of stress test script - i.e. start loads and loads of processes and look for obvious problems - including crashing and incorrect answers in data. Doc this (inc CV desc)
+
+Also, use stress test to try to find any bottlenecks that can be optimised away, and if I find any doc this (maybe inc CV desc).
 
 at very least, test basic interactions of individual processes going down with either some batch automation tests or just a text file with a list of things to manually test. Like, as a start:
 - if any one server goes down, can other servers cope as well as can possibly be expected?
@@ -233,25 +248,15 @@ doc:
 
 - describe use of bank as mediator to db as design pattern (mayvbe mediator?), mention any other patterns used
 
-- see CV for project summary, this is an old version:
-•	A C# .NET, SQL Server and Python project written to improve my knowledge of various aspects of software development and computer science. A large number of heterogeneous C# processes interact by sending each other messages via TCP network connections. These processes are themselves multi-threaded to various levels of complexity. These processes also interact with an MS SQL Server instance which stores the underlying state of the system.
-•	The front end utilises the spreadsheet/Python "mash up" “Resolver One” to provide analysis of the real time data from the database. The spreadsheet’s Python code is linked to a copy of Microsoft's Solver mathematical modelling library. Solver is used both to solve an optimization problem posited by the system, and also to provide Monte Carlo random walk data on how the stochastic processes within the system may behave. A local C# service is called by the spreadsheet script to create WPF graphs of summary data on request.
-•	One final, especially contrived C# service provides an RPC-style interface whereby it takes a list of unsorted strings and returns the list in alphabetical order. Arguments provided by the caller specify which of a variety of differing algorithms or data structures should be used to perform the sorting.
-•	I created a series of UML diagrams to describe various aspects of the system. The non-concurrent parts of the system were written using Test Driven Development, the multi-threaded parts of the system were tested using Microsoft's CHESS (a model checker for concurrent systems). The multi-process aspects of the system unfortunately do not have an automated testing strategy in place. As with all my projects since around 2004, the source is under version control (in this case git).
+version for CV etc:
+•	A C# .NET, SQL Server and Python project written to improve my knowledge of various aspects of software development and computer science. A large number of heterogeneous C# processes interact with each other by running a number of threads which send and receive messages via TCP sockets. Most of the underlying state of the system is stored in a MS SQL Server instance, though only one C# process has write access, and hence acts as a mediator.
+•	The front end utilises the spreadsheet/Python "mash up" “Resolver One” to provide analysis of the real time data from the database. The spreadsheet’s Python code is linked to a copy of Microsoft's Solver mathematical modelling library. Solver is used both to provide Monte Carlo predictions for some of the stochastic outputs of the system, and also to solve a version of the Travelling Salesman Problem. A local C# program is called by the spreadsheet script to produce WPF graphs on same aspects of this analysis.
+•	One final, especially contrived C# service provides an RPC-style interface that takes a list of unsorted strings and returns the list in alphabetical order. Arguments provided by the caller specify which of a wide variety of differing algorithms or data structures should be used to perform the sorting.
+•	I created a series of UML diagrams to describe various aspects of the system. The non-concurrent aspects of the system were written using Test Driven Development, whilst the concurrent aspects of the system are tested via less stringent stress-testing. As with all projects I have worked on since around 2004 (commercial and non-commercial), the source is under version control (in this case git).
 
 
 - add Solver Foundation+OML to doc+wolfie
 - add xml + stuff on wpf graph server to uml+doc+wolfie
 - add web services to wolfie
+- add back silly proejcts to wolfie, inc phrase "mathematically prove blah blah with a 2D animation of..." for no fly
 
-////
-
-Keeping track of time:
-
-up to 28 feb: 66
-mar 1: 5
-apr 1: 2
-2 - 8: 23.25
-9: 10
-10: 0.5
-11: 3.5

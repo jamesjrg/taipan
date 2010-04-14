@@ -7,8 +7,28 @@ using System.Net.Sockets;
 
 namespace TaiPan.Common
 {
+    public class DisconnectedException : ApplicationException
+    {
+    }
+
+    public struct ServerConfig
+    {
+        public ServerConfig(string name, string address, int port)
+        {
+            this.name = name;
+            this.address = address;
+            this.port = port;
+        }
+
+        public string name;
+        public string address;
+        public int port;
+    }
+
     public class Util
     {
+        public const string configFile = "Common.config";
+
         public static void ConsolePause()
         {
             Console.WriteLine("Press enter to continue...");

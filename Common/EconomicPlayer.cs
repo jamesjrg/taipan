@@ -3,14 +3,40 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-using System.Net.Sockets;
-using System.Threading;
+using System.Configuration;
 
 namespace TaiPan.Common
 {
-    public abstract class EconomicPlayer
+    public abstract class EconomicPlayer : IDisposable
     {
-        protected const int SLEEPTIME = 500;
+        protected const int SLEEP_TIME = 10;
+        protected Dictionary<string, ServerConfig> serverConfigs = new Dictionary<string, ServerConfig>();
+
+        public EconomicPlayer()
+        {
+            ReadConfig();
+        }
+
+        ~EconomicPlayer()
+        {
+            Dispose(false);
+        }
+
+        private void ReadConfig()
+        {
+            Console.WriteLine("Reading server connection settings from config file");
+            ExeConfigurationFileMap fileMap = new ExeConfigurationFileMap();
+            fileMap.ExeConfigFilename = Util.configFile;
+            System.Configuration.Configuration config = ConfigurationManager.OpenMappedExeConfiguration(fileMap, ConfigurationUserLevel.None);
+            ServersSection serversSection = config.GetSection("servers") as ServersSection;
+            if (serversSection == null)
+                throw new ApplicationException("Couldn't find server connection settings in config file " + Util.configFile);
+
+            ServersCollection servers = serversSection.Servers;
+
+            foreach (ServerElement server in servers)
+                serverConfigs.Add(server.Name, new ServerConfig(server.Name, server.Address, server.Port));
+        }
 
         public void Go(string[] args)
         {
@@ -24,7 +50,7 @@ namespace TaiPan.Common
                     Console.WriteLine("Running");
                     while (Run() == true)
                     {
-                        System.Threading.Thread.Sleep(SLEEPTIME);
+                        System.Threading.Thread.Sleep(SLEEP_TIME);
                     }
                 }
                 catch (Exception e)
@@ -34,7 +60,7 @@ namespace TaiPan.Common
                 }
 
                 Console.WriteLine("Shutdown");
-                Shutdown();
+                Dispose();
             }
             catch (Exception e)
             {
@@ -49,7 +75,9 @@ namespace TaiPan.Common
 
         protected abstract void Init(string[] args);
         protected abstract bool Run();
-        protected abstract void Shutdown();
+
+        public void Dispose() { Dispose(true); GC.SuppressFinalize(this); }
+        protected virtual void Dispose(bool disposing) {}
 
         protected int SetID(string title, string[] args)
         {
@@ -67,33 +95,6 @@ namespace TaiPan.Common
             Console.Title = title + " " + myID;
 
             return myID;
-        }
-
-        public static TcpClient AttemptTCPConnect(string host, int port, string desc)
-        {
-            int attempts = 5;
-            for (int i = 0; i != attempts; ++i)
-            {
-                if (i == 0)
-                    Console.WriteLine("Attempting to connect to " + desc);
-                else
-                    Console.WriteLine("Connection attempt " + (i + 1) + " of " + attempts);
-                try
-                {
-                    TcpClient client = new TcpClient(host, port);
-                    Console.WriteLine("Client connected");
-                    return client;
-                }
-                catch (Exception e)
-                {
-                    if (i == attempts - 1)
-                        throw e;
-                    else
-                        Thread.Sleep(SLEEPTIME);
-                }
-            }
-
-            throw new ApplicationException("What the hell?");
-        }
+        }        
     }    
 }

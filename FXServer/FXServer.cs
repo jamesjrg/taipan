@@ -3,83 +3,75 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-using System.Threading;
+using System.Data.SqlClient;
 
-using CommonLib = TaiPan.Common.Util;
-using System.Net;
-using System.Net.Sockets;
-using System.IO;
+using TaiPan.Common;
 
 namespace TaiPan.FXServer
 {
+    internal class Currency
+    {
+        public Currency(string shortName, decimal USDValue)
+        {
+            this.shortName = shortName;
+            this.USDValue = USDValue;
+        }
+
+        public string shortName;
+        public decimal USDValue;
+    }
+
     class FXServer : TaiPan.Common.EconomicPlayer
     {
-        private TcpListener tcpListener;
-        List<TcpClient> tcpClients = new List<TcpClient>();
-        
+        private TaiPan.Common.Server server;
+        private SqlConnection dbConn;
+        private List<Currency> currencies = new List<Currency>();
+        private Random random = new Random();
+
         protected override void Init(string[] args)
         {
             Console.Title = "FXServer";
 
-            Thread thread = new Thread(Listen);
-            thread.Start();
+            dbConn = Db.GetDbConnectionRW();
+            dbConn.Open();
+
+            Console.WriteLine("Reading currencies from db");
+            string select = "SELECT ShortName, USDValue FROM Currency";
+            SqlCommand cmd = new SqlCommand(select, dbConn);
+            SqlDataReader reader = cmd.ExecuteReader();
+            while (reader.Read()) {
+                string shortName = reader.GetString(0);
+                decimal USDValue = reader.GetDecimal(1);
+                Console.WriteLine("{0}: {1}", shortName, USDValue);
+                currencies.Add(new Currency(shortName, USDValue));
+            }
+            reader.Close();
+
+            server = new TaiPan.Common.Server(serverConfigs["FXServer-BankBroadcast"]);
         }
 
         protected override bool Run()
         {
+            DecidePrices();
+
+            foreach (Currency currency in currencies)
+                server.Send(currency.shortName + currency.USDValue);
             return true;
         }
 
-        protected override void Shutdown()
+        private void DecidePrices()
         {
-            foreach (TcpClient client in tcpClients)
+            for (int i = 0; i != currencies.Count; ++i)
             {
-                CommonLib.CloseTcpClient(client);
-            }
-            tcpListener.Stop();
-        }
-
-        public void Listen()
-        {
-            IPAddress localAddr = IPAddress.Parse("127.0.0.1");
-            Int32 port = 6100;
-            tcpListener = new TcpListener(localAddr, port);
-            tcpListener.Start();
-            while (true)
-            {
-                TcpClient tcpClient = tcpListener.AcceptTcpClient();
-                Console.WriteLine("Server accepted new connection");
-                tcpClients.Add(tcpClient);
-                ThreadPool.QueueUserWorkItem(Broadcast, tcpClient);
+                //nextdouble between 0 and 1.0
+                currencies[i].USDValue += (decimal)random.NextDouble() - 0.5m;
             }
         }
 
-        public void Broadcast(object state)
-        {   
-            TcpClient tcpClient = (TcpClient)state;
-            NetworkStream ns = tcpClient.GetStream();
-            StreamWriter sw = new StreamWriter(ns);
-
-            while (true)
-            {
-                try
-                {
-                    sw.WriteLine("Important info");
-                    sw.Flush();
-                    Console.WriteLine("Important info");
-                    Thread.Sleep(SLEEPTIME);
-                }
-                catch (Exception e)
-                {
-                    if (!(e is IOException || e is ObjectDisposedException))
-                        throw;
-
-                    Console.WriteLine("Client connection lost, still waiting for new connections");
-                    sw.Close();
-                    ns.Close();
-                    break;
-                }
-            }
+        protected override void Dispose(bool disposing)
+        {
+            Db.CloseConn(dbConn);
+            server.Dispose();            
         }
     }
 }

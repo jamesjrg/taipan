@@ -63,15 +63,15 @@ CREATE TABLE dbo.Company
 	ID int IDENTITY (1, 1) PRIMARY KEY,
 	Name nvarchar(50) NOT NULL,
 	CompanyTypeID int NOT NULL,
-	Balance int NOT NULL DEFAULT 0
+	Balance Money NOT NULL DEFAULT 0
 	)  ON [PRIMARY]
 GO
 
 CREATE TABLE dbo.PublicCompany
 	(
 	CompanyID int PRIMARY KEY REFERENCES Company(ID),
-    NStocks int NOT NULL,
-    StockPrice int NOT NULL,
+    NStocks int NOT NULL DEFAULT 1000000,
+    StockPrice Money NOT NULL DEFAULT 100,
     CountryID int NOT NULL,
 	)  ON [PRIMARY]
 GO
@@ -130,7 +130,7 @@ CREATE TABLE dbo.Currency
 	ID int NOT NULL IDENTITY (1, 1) PRIMARY KEY CLUSTERED,
     Name nvarchar(50) NOT NULL,
     ShortName nchar(3) NOT NULL,
-    USDValue int NOT NULL,
+    USDValue Money NOT NULL DEFAULT 100,
 	)  ON [PRIMARY]
 GO
 
@@ -138,7 +138,7 @@ CREATE TABLE dbo.PortCommodityPrice
 	(
 	PortID int NOT NULL,
     CommodityID int NOT NULL,
-    Price int NOT NULL,
+    Price Money NOT NULL DEFAULT 100,
     CONSTRAINT PK_PCP PRIMARY KEY (PortID, CommodityID)
 	)  ON [PRIMARY]
 GO
@@ -158,7 +158,7 @@ CREATE TABLE dbo.FuturesContract
     TraderID int NOT NULL,
     CommodityID int NOT NULL,
     DomesticCompanyID int NOT NULL,
-    Price int NOT NULL,
+    Price Money  NOT NULL,
     Quantity int NOT NULL,
 	)  ON [PRIMARY]
 GO
@@ -212,7 +212,7 @@ CREATE TABLE dbo.HistoricalStockPrice
 	ID int NOT NULL IDENTITY (1, 1) PRIMARY KEY CLUSTERED,
     CompanyID int NOT NULL,
     PriceDate datetime NOT NULL,
-    Price int NOT NULL,
+    Price Money NOT NULL,
 	)  ON [PRIMARY]
 GO
 
@@ -221,7 +221,7 @@ CREATE TABLE dbo.HistoricalBalance
 	ID int NOT NULL IDENTITY (1, 1) PRIMARY KEY CLUSTERED,
     CompanyID int NOT NULL,
     BalanceDate datetime NOT NULL,
-    Balance int NOT NULL,
+    Balance Money NOT NULL,
     )  ON [PRIMARY]
 GO
 
@@ -230,7 +230,7 @@ CREATE TABLE dbo.HistoricalCurrencyPrice
 	ID int NOT NULL IDENTITY (1, 1) PRIMARY KEY CLUSTERED,
     CurrencyID int NOT NULL,
     ValueDate datetime NOT NULL,
-    USDValue int NOT NULL,    
+    USDValue Money NOT NULL,    
     )  ON [PRIMARY]
 GO
 
@@ -240,7 +240,7 @@ CREATE TABLE dbo.HistoricalPortCommodityPrice
     PortID int NOT NULL,
     CommodityID int NOT NULL,
     ValueDate datetime NOT NULL,
-    Price int NOT NULL,    
+    Price Money NOT NULL,    
     )  ON [PRIMARY]
 GO
 
