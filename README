@@ -1,3 +1,6 @@
 Tai-Pan
 
-This project is public domain. The project is being written chiefly as a personal learning exercise, and though I very much doubt it has any relevance to anyone else, people are free to make use of the code in their own projects should the desire take them.
+The vast majority of this project is public domain. The project is being written chiefly as a personal learning exercise, and though I very much doubt it has any relevance to anyone else, people are free to make use of the code in their own projects should the desire take them.
+
+The WpfChart program is based on code by Li Ghao, also public domain.
+The glue code between WpfChart and Resolver One is based on code by Greg Bray, and is GPL v2.

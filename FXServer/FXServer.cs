@@ -24,7 +24,6 @@ namespace TaiPan.FXServer
     class FXServer : TaiPan.Common.EconomicPlayer
     {
         private TaiPan.Common.Server server;
-        private DbConn dbConn;
         private List<Currency> currencies = new List<Currency>();
         private Random random = new Random();
 
@@ -32,10 +31,9 @@ namespace TaiPan.FXServer
         {
             Console.Title = "FXServer";
 
-            dbConn = new DbConn();
-
+            DbConn dbConn = new DbConn();
             Console.WriteLine("Reading currencies from db");
-            SqlDataReader reader = dbConn.ExecuteQuery("SELECT ShortName, USDValue FROM Currency");
+            SqlDataReader reader = dbConn.ExecuteQuery("SELECT ShortName, USDValue FROM Currency ORDER BY ID DESC");
             while (reader.Read()) {
                 string shortName = reader.GetString(0);
                 decimal USDValue = reader.GetDecimal(1);
@@ -43,6 +41,7 @@ namespace TaiPan.FXServer
                 currencies.Add(new Currency(shortName, USDValue));
             }
             reader.Close();
+            dbConn.Dispose();
 
             server = new TaiPan.Common.Server(serverConfigs["FXServer-BankBroadcast"]);
         }

@@ -1,6 +1,3 @@
-* Read Professional C# 2008 chapter 1/2 41 (tcp sockets)
-- currently at pdf page 1508
-* read and learn more about threading
 * get basics of database schema all working
 * get basics of interacting processes and logic of their interactions working
 - est 3 weeks full time
@@ -20,12 +17,15 @@
 - ideas about database normalisation and tuning - est 4 days FT
 - ideas about optimisation problem - est 2.5 weeks FT
 - write script to stress test concurrent aspects - est 1 week FT
-- ideas about toggable udp networking - est 1 week FT (and doc)
 
 ////
 
 right now:
-- clearly locking messages during network sending is bad, need to have a good think about how to deal with cross thread sync of messages for server. i think maybe have a new data structure, MultithreadQueue. This contains a fixed size array of strings, which loops round nibbles fashion, with fully dequed values becoming null. it also has a list of ints of subscribing threads. when a thread first subscribes it adds itself to this list. the current head position for each thread is maintained seperately. finally, keep track of time that each thread accesses queue, and if someone hasn't been seen for some time, remove them fromt list of subscribers. when dequeing threads must provide their id, if id not found then error is thrown.
+- clearly locking messages during network sending is bad, need to have a good think about how to deal with cross thread sync of messages for server. i think maybe have a new data structure, MultithreadQueue. This contains a fixed size array of strings, which loops round nibbles fashion, with fully dequed values becoming null. it also has a list of ints of subscribing threads. when a thread first subscribes it adds itself to this list. the current head position for each thread is maintained seperately. finally, keep track of time that each thread accesses queue, and if someone hasn't been seen for some time, remove them fromt list of subscribers. when dequeing threads must provide their id, if id not found then error is thrown. If it is enqued when beyond max size, then old data is overwritten, and a note is made of any clients who now have invalid head pointers. Next time these clients try to dequeue, an error is thrown. Also has a MyDequeue method to return cloned array of strings that are still relevant to a given thread, and then increase that thread's head pointer.
+- unit test MultithreadQueue
+- xmlcomment singleton for singleton classes
+- xmlcomment mediator for bank
+
 
 - write some sql triggers and foreign keys
 
@@ -34,8 +34,6 @@ fairly immediate stuff:
 
 general logic and network code:
 - when a client connects to a server, server has to create a unique id for it and store this for syncing purposes. maybe this id should be same as that used for a) database and b) stored for each class? in which case clients provide their own id on connect, server cannot make it up.
-- the list pointers should be maintained by the server class, not the users of these classes, and pointers (i.e. indexes) need to be updated when list front is trimmed. Then server "send" method will in fact just add data to list of strings (one list maintained for each type of server thread). At point when every connected client has passed a point in queue, data can be removed from front. Will need a limit on how much old data can be kept around in event of lost network connections etc, and some sort of error handling mechanism when this happens. Maybe need two pointers for each thread - one for how much data has been sent, one for how much has been received.
-- the server "send" method should perform GC-style management of the list maybe once every 5 times (or whatever) it is called
 - replace all the sleeping everywhere with more intelligent use of CPU
 - make network code fault tolerant by building in system of acknowledgement messages. E.g. what if fateandguesswork tells both a trader and company of a future event, but then the network connection to the company is lost until after the event? There are major sync issues to deal with here. Require client processes to send responses that acknowledge the response of a message. send messages to relevant clients in an order such that if early, key message receivers never acknowledge, then it never gets sent to later receivers - e.g if domesticompany fails to get message about what it will do in future, then never said the prediction to a trader. if a network connection to a client is lost for a long period of time, then ideally system will adapt, but in the short term I need it to just throw some sort of catastrophic error that makes it clear something has gone flagrantly wrong.
 - doc communication with acks in UML with sequence diagram (overwrite current seq diagram)
@@ -48,10 +46,11 @@ sql:
 - add constraint on currency to have short name 3 upper case chars (UML and sql)
 
 resolver:
+- top of most worksheets will probably be buttons "Fetch most recent data", "Fetch all data", "Toggle constant update", display "Constant update: [on/off"], "graph selected", "graph selected with Monte Carlo forecast"
+Below this will be settings "Number of records for most recent update", "[editable setting]", "Constant update interval", "[editable setting]", "Monte Carlo period length (in ticks)", "[editable setting]"
 
 other:
 - improve start/testing batch scripts so can specify on command line how many of each process to start (then won't need separate test batch script, at least for now. quite possibly use Python.
-- make sure everything is shut down correctly, including if fail in init
 
 ///
 
@@ -134,21 +133,31 @@ Resolver spreadsheet/Python code:
 (CU) = optional constant update
 
 List of diff tab displays required:
+Firstly, GBM data streams:
 1. Given a commodity name, display historical prices of that commodity at each port (CU)
-2. Display historical prices of all public companies (CU)
-3. Display historical market cap of all public companies (CU)
-4. Display historical price of all currencies (CU)
-5. Historical futures contracts, including details of how relevant prices of all involved values changed between start and end of contract, and profit made (CU)
-6. Historical warehousing of commodities, including details of how relevant prices of all involved values changed between start and end of contract, and profit made (CU)
-7. Summary data on comparative historical record of countries, split into time periods - in each time period have the number of each type of transaction carried out, total value of transactions, and the number + value of transactions in each economic sector
+2. Display historical prices and market cap of all public companies (CU)
+3. Display historical price of all currencies (CU)
+
+Secondly, just some general historical data:
+4. Historical futures contracts, including details of how relevant prices of all involved values changed between start and end of contract, and profit made (CU)
+5. Historical warehousing of commodities, including details of how relevant prices of all involved values changed between start and end of contract, and profit made (CU)
+6. Historical commodity transports
+
+Thirdly, summary data sets:
+6. Summary data on comparative historical record of countries, split into time periods - in each time period have the number of each type of transaction carried out, total value of transactions, and the number + value of transactions in each economic sector
 7. As above, but with ports
-8. Historical commodity transports
 9. Summary data for each shipping company, split into time periods - number of transactions, number of different ports served, average quantity per load, min quantity in a single load, max quantity in a single load
 
+Fourthly, extreme contrivedness:
+10. Travelling freighter problem
+
+
 Where relevant, tabs should have:
-1. Button to switch on constant update
+1. Button to switch on constant update (inc graph)
 2. Button to draw line graph - should be able to have multiple graphs at once, should be able to alter number of lines included on graph
-3. Button to draw random walk predicted future graph - present data as a solid line, then a bunch of dashed lines for various possibilities
+3. Button to draw random walk predicted future graph - present data as a solid line, then a bunch of dashed lines for various possibilities. This is mutually exclusive with constant update.
+
+Possibly some vaguely sensible management (decisions on when to reuse + close) of the db connection?
 
 random walking to use Markov Chain monte carlo methods
 - Ideally I would use Solver Foundation, though could also try scipy
@@ -156,8 +165,17 @@ http://www.scipy.org/Cookbook/FittingData
 http://code.msdn.microsoft.com/solverfoundation
 http://en.wikipedia.org/wiki/Markov_chain_Monte_Carlo
 
-- WPF graph program - just local, follow Resolver Exchange example. Can create new windows, or add new data to current windows (this functionality already in exchange example). add credit to ppl involved in making that sheet + wpf app.
+- WPF graph program - just local, follow Resolver Exchange example (and contrast with latest version from li ghao, too). Can create new windows, or add new data to current windows (this functionality already in exchange example). add credit to ppl involved in making that sheet + wpf app. But also has option for real time update.
 - graph windows to include help instructions
+
+travelling freighter problem:
+- represent all shipping lanes between ports as a graph of interconnected nodes, and do a "travelling freighter problem" solution of shortest route for a freighter to visit each port exactly once
+- provide diagram of graph in doc
+
+- use Resolver One and MS Solver Foundation
+http://en.wikipedia.org/wiki/Priority_queue
+http://www.amsterdamoptimization.com/msf.html
+http://en.wikipedia.org/wiki/Travelling_salesman_problem
 
 ////
 
@@ -176,6 +194,15 @@ Database stuff (needs adding to both a) UML diagram and b) actual SQL scripts):
 - make selects + updates to db use stored procedures for efficiency? if so, doc (and also, in brief buzz word doc, "x stored procedures")
 - error handling on error being returned on database query
 
+later SQL stuff:
+- Read database management systems chapters 19, 20, 21
+- do some database normalisation and tuning, and security management
+- faff about with different sorts of indexes etc, maybe also so totally pointless striping, clustering, etc
+other ideas:
+- views
+- stored procedures
+- faff with permissions and security and security schemas
+
 ////
 
 testing:
@@ -185,6 +212,7 @@ testing:
 - unittest the algoriths and data structures service
 - However multi-thread and multi-process concurrent aspects of program are not suited to normal unit testing frameworks. just write some sort of stress test script - i.e. start loads and loads of processes and look for obvious problems - including crashing and incorrect answers in data. Doc this (inc CV desc)
 - test ack system works for lost network connections not breaking sync
+- database connections should be closed when no longer needed
 
 - use stress test to try to find any bottlenecks that can be optimised away, and if I find any doc this (maybe inc CV desc).
 - need to think of some way of checking that servers have not gone out of sync
@@ -249,13 +277,19 @@ Mention how threads generally a bad idea, used as an exercise here, but in most 
 
 version for CV etc:
 •	A C# .NET, SQL Server and Python project written to improve my knowledge of various aspects of software development and computer science. A large number of heterogeneous multithreaded C# processes interact with each other by sending and receiving messages via TCP sockets. Much of the underlying state of the system is stored in a MS SQL Server instance. Only one of the process has database write access, and hence acts as a mediator for many interactions.
-•	The front end utilises the spreadsheet/Python "mash up" “Resolver One” to provide analysis of the real time data from the database. The spreadsheet’s Python code is linked to a copy of Microsoft's Solver mathematical modelling library. Solver is used both to provide Monte Carlo predictions for some of the stochastic outputs of the system, and also to solve a version of the Travelling Salesman Problem. A local C# program is called by the spreadsheet script to produce WPF graphs on same aspects of this analysis.
+•	The front end utilises the spreadsheet/Python "mash up" “Resolver One” to provide analysis of the real time data from the database. The spreadsheet’s Python code is linked to a copy of Microsoft's Solver mathematical modelling library. Solver is used both to provide Monte Carlo predictions for some of the stochastic outputs of the system, and also to solve a version of the Travelling Salesman Problem. A local C# program is called by the spreadsheet script to produce realtime WPF graphs on same aspects of this analysis.
 •	One final, especially contrived C# service provides an RPC-style interface that takes a list of unsorted strings and returns the list in alphabetical order. Arguments provided by the caller specify which of a wide variety of differing algorithms or data structures should be used to perform the sorting.
-•	I created a number of UML diagrams to describe various aspects of the system. Small sections of the system are covered by unit tests, but the multithreaded and multiprocess nature of much of the code means coverage is severely limited. As with all projects I have worked on since around 2004 (commercial and non-commercial), the source is under version control (in this case git).
+•	I created a number of UML diagrams to describe various aspects of the system. Some sections of the system are covered by unit tests, but much of the multithreaded and multiprocess code is not suited to this and is merely stress-tested. As with all projects I have worked on since around 2004 (commercial and non-commercial), the source is under version control (in this case git).
 
-
+- talk about real time graphs
 - add Solver Foundation+OML to doc+wolfie
 - add xml + stuff on wpf graph server to uml+doc+wolfie
 - add web services to wolfie
 - add back silly proejcts to wolfie, inc phrase "mathematically prove blah blah with a 2D animation of..." for no fly
+- maybe add "mathematical modelling" to wolfie (for set analyser, too, and maybe Carmen, and that old GCSE program)
+- lots of xmlcomments for classes and methods
+- triggers, constraints, (views?), etc
+
+
+
 

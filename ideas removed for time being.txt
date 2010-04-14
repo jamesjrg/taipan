@@ -2,31 +2,7 @@
 Section 1: vaguely reasonable ideas:
 ++++
 
-shipping route optimization stuff removed for time being:
-- represent all shipping lanes between ports as a graph of interconnected nodes, and do a "travelling freighter problem" solution of shortest route for a freighter to visit each port exactly once
-- provide diagram of graph in doc
-
-- use Resolver One and MS Solver Foundation
-http://en.wikipedia.org/wiki/Priority_queue
-http://www.amsterdamoptimization.com/msf.html
-http://en.wikipedia.org/wiki/Travelling_salesman_problem
-
-- add "mathematical modelling" to wolfie (for set analyser, too, and maybe Carmen, and that old GCSE program)
-
 /////
-
-SQL stuff:
-* Read database management systems chapters 19, 20, 21
-* do some database normalisation and tuning, and security management
-* faff about with different sorts of indexes etc, maybe also so totally pointless striping, clustering, etc
-- est 1.5 weeks full time
-
-other ideas:
-- views
-- stored procedures
-- faff with permissions and security and security schemas
-
-////
 
 UML
 
@@ -37,7 +13,12 @@ UML
 
 Concurrency:
 - read a bit of abstract concurrency theory, and then put this into practice with regard to having it vey clear how concurrency features of my system are well designed and error-resistant, and then add this to doc
-- formal testing system
+- formal testing system (e.g. something like CHESS, though probably not directly suitable)
+
+///
+
+Resolver:
+- Python script that simulates database reads by just returning incremental data from a mass of stored historical data - this will allow me to redistribute sheet without requiring dependency on rest of system. also doc this on web.
 
 ++++
 Section 2: not especially reasonable ideas:
