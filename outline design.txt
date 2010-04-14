@@ -1,0 +1,83 @@
+Though some of this should be configurable, a reasonable ball park figure might be that we want to have running 10 Domestic Companies, 5 Shipping Companies, 5 Traders, 1 FateAndGuesswork, 1 FXService, 1 Bank, 1 Resolver One spreadsheet, 0+ WpfGraphs,1 SQL Server instance, optionally 1 SortingServer + 1 SortingClient.
+
+DomesticCompany
+Servers it polls for input as client:
+1. FateAndGuesswork: it discovers when it will have a shortage or surplus of a given commodity, and at what price it will wish to buy/sell to make up for this
+Information it broadcasts as server:
+1. that is has a shortage/surplus of a given commodity, and the price at wish it wishes to buy/sell to make up for this
+Things it calculates:
+Things it reads from database: doesn't require db access?
+If process ends, what do clients do:
+1. Traders will have dud info on possible future event, and will falsely organise futures contract or warehousing. But this shouldn't matter at all, as this doesn't prevent them from continuing as normal.
+
+Trader
+Servers it polls for input as client:
+1. FateAndGuesswork for predicted future prices
+2. DomesticCompany declarations of shortage
+Information it broadcasts as server:
+1. decisions to buy goods at a given port, and decisions to organise a futures contract
+2. Contracts for movement of goods (from, to, expires)
+3. Acceptances of contracts for movement of goods (to shipping companies)
+4. Decision to sell warehoused goods
+Things it calculates:
+1. On basis of distance between ports and also predicted information on future shortage or surplus of a given commodity for a given company, they calculate the most profitable places to buy goods to warehouse in readiness to sell (i.e. somewhere nearby to and cheap for predicted future shortage, possibly the same port), or to organise a futures contract to buy goods in future in readiness to buy (i.e. at the actual port of the predicted future surplus). Then when price fluctuation actually happens, warehoused goods are sold to nearest place that has a demand for those goods, or otherwise futures contract is fufilled and goods are again sold in most profitable way possible. Though unforseen variation and/or the error in the prediction by fate and guesswork could still lead to them losing money.
+Things it reads from database: distance between ports, which ports import/export a given commodity
+If process ends, what do clients do:
+1. End of decisions to warehouse/futures contract/sell goods/move goods does not bother others. acceptances of movement contracts don't matter because shipping companies assume refused if not acked, and once accepted they can be actioned with no further input from trader.
+
+ShippingCompany
+Servers it polls for input as client:
+1. Available contracts for movement of goods from traders
+2. Whether acceptance of movement of goods has been confirmed
+Information it broadcasts as server:
+1. Acceptance of contract to move goods
+2. when it has collected goods, when it has delivered goods. See "Trade" database entity for attributes to broadcast.
+Things it calculates: which contracts for movement of goods to accept
+Things it reads from database: 
+If process ends, what do clients do:
+End of acceptances of contracts doesn't matter at all. End of messages about shipping departure and arrival will means some will end up losing out on money, but this shouldn't matter too much.
+
+FXServer
+Information it broadcasts as server:
+1. fluctuating currency prices
+Things it calculates: fluctuating currency prices via GBM
+Things it reads from db: info on currencies (at startup only?)
+If process ends, what do clients do:
+Bank should throw error and halt, system should just end gracefully.
+
+Bank:
+Servers it polls for input as client:
+1. FX Server for FX prices. Updated currency value then written to database.
+2. Shipping company departures and arrivals. On departure money is debited from trader and credited to both shipping company and seller, on basis of distance of journey. On arrival money is debited from buying company and credited to trader.
+3. FateAndGuesswork market prices. Commodity prices in database are updated accordingly.
+4. FateAndGuesswork stock prices. Database updated accordingly
+5. trader decisions to buy goods to warehouse or to organise a futures contract. db updated accordingly.
+6. domestic company declarations of shortage/surplus
+7. trader decisions to sell warehoused goods
+Information it broadcasts as server: none
+Things it calculates:
+1. whenever updating bank balances after an economic transaction, if movement it applies modifier from distance (= greater profit to freighter company, greater expense to trader), if trade in goods on open market takes into account current commodity price, if different currencies applies current FX multiplier
+2. carries out futures contracts at point in time specified
+3. sells warehoused goods at point traders decide to do so
+
+Things it reads from database: nothing
+Things it writes to database: see above
+If process ends, what do other processes do:
+All processes sending data to bank should throw exception and end gracefully.
+
+FateAndGuesswork
+Servers it polls for input as client: none
+Information it broadcasts as server:
+Calculated future shortages or surpluses of a given commodity for a given company are broadcast (note only companies_with_location which actually import/export a given commodity will ever produce a surplus/suffer shortage). These are broadcast on two channels: 
+1. Guesswork, with an added degree of error, is for Traders to pick up. The next Trader to poll FateAndGuesswork is given the information, and this information is then removed from the queue. two, without any error
+2. Fate, it will also broadcast this same information, but without any error, to be picked up by the PublicCompanies. Once received this too is removed from the queue.
+Furthermore, there is:
+3. Current market price of all commodities. Goes up and down via GBM. Make sure places which neither import nor export a commodity do not have a price created (unit test this, also take account of this in GUI)
+4. Stock prices of each company. Goes up and down via GBM.
+Things it calculates:
+Semi-randomly calculates which PublicCompanies will in future have a) have surplus of a commodity or b) have shortage of a commodity, of how much quantity (though never more than can fit in one freighter), and at what price they will wish to buy/sell above/below market to make up for this. Primary sector companies more usually have goods available for sale, service sector usually have requests for goods to buy, manufacturing sector more a mixture of the two
+Things it reads from database: info on commodities (at startup only?).
+Things it writes to database: none
+If process ends, what do other processes do:
+All client processes should throw exception and end gracefully.
+

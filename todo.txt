@@ -2,10 +2,6 @@
 * get basics of interacting processes and logic of their interactions working
 - est 3 weeks full time
 
-* Read a bit more of learning UML
-* do some more UML diagramming
-- est 2 days full time
-
 * Read database management systems chapters 3 (almost read already), 4, 5
 * write first attempt at Resolver One view + WPF graphing, including monte carlo GBM predicting
 - est 3 weeks full time
@@ -14,8 +10,8 @@
 * do algorithms bit
 - est 3.5 weeks full time
 
-- ideas about database normalisation and tuning - est 4 days FT
-- ideas about optimisation problem - est 2.5 weeks FT
+- ideas about database normalisation and tuning - est 1 week FT
+- ideas about optimisation problem - est 1.5 weeks FT
 - write script to stress test concurrent aspects - est 1 week FT
 
 ////
@@ -25,8 +21,6 @@ right now:
 - unit test MultithreadQueue
 - xmlcomment singleton for singleton classes
 - xmlcomment mediator for bank
-
-
 - write some sql triggers and foreign keys
 
 
@@ -35,8 +29,7 @@ fairly immediate stuff:
 general logic and network code:
 - when a client connects to a server, server has to create a unique id for it and store this for syncing purposes. maybe this id should be same as that used for a) database and b) stored for each class? in which case clients provide their own id on connect, server cannot make it up.
 - replace all the sleeping everywhere with more intelligent use of CPU
-- make network code fault tolerant by building in system of acknowledgement messages. E.g. what if fateandguesswork tells both a trader and company of a future event, but then the network connection to the company is lost until after the event? There are major sync issues to deal with here. Require client processes to send responses that acknowledge the response of a message. send messages to relevant clients in an order such that if early, key message receivers never acknowledge, then it never gets sent to later receivers - e.g if domesticompany fails to get message about what it will do in future, then never said the prediction to a trader. if a network connection to a client is lost for a long period of time, then ideally system will adapt, but in the short term I need it to just throw some sort of catastrophic error that makes it clear something has gone flagrantly wrong.
-- doc communication with acks in UML with sequence diagram (overwrite current seq diagram)
+- Trader/ShippingCompany interaction: delay of 5 secs between receiving acceptance of contract for movement of goods and taking contract off broadcast, requiring system of acks and locks, as in UML. But change design and UML a bit - rather than sending refusals, just make shipping companies have to assume they have been refused if they get no ack
 
 sql:
 - write sql for foreign keys and triggers
@@ -51,80 +44,7 @@ Below this will be settings "Number of records for most recent update", "[editab
 
 other:
 - improve start/testing batch scripts so can specify on command line how many of each process to start (then won't need separate test batch script, at least for now. quite possibly use Python.
-
-///
-
-Though some of this should be configurable, a reasonable ball park figure might be that we want to have running 10 Domestic Companies, 5 Shipping Companies, 5 Traders, 1 FateAndGuesswork, 1 FXService, 1 Bank, 1 Resolver One spreadsheet, 1 SQL Server instance.
-
-DomesticCompany
-Servers it polls for input as client:
-1. FateAndGuesswork: it discovers when it will have a shortage or surplus of a given commodity, and at what price it will be wish to buy/sell to make up for this
-Information it broadcasts as server:
-1. that is has a shortage/surplus of a given commodity, and the price at wish it wishes to buy/sell to make up for this
-Things it calculates:
-Things it reads from database: nothing?
-
-Trader
-Servers it polls for input as client:
-1. FateAndGuesswork for predicted future prices
-2. DomesticCompany declarations of shortage
-Information it broadcasts as server:
-1. decisions to buy goods at a given port, and decisions to organise a futures contract
-2. Contracts for movement of goods (from, to, expires)
-3. Acceptances and denials of contracts for movement of goods (to shipping companies)
-4. Decision to sell warehoused goods
-Things it calculates:
-1. On basis of distance between ports and also predicted information on future shortage or surplus of a given commodity for a given company, they calculate the most profitable places to buy goods to warehouse in readiness to sell (i.e. somewhere nearby to and cheap for predicted future shortage, possibly the same port), or to organise a futures contract to buy goods in future in readiness to buy (i.e. at the actual port of the predicted future surplus). Then when price fluctuation actually happens, warehoused goods are sold to nearest place that has a demand for those goods, or otherwise futures contract is fufilled and goods are again sold in most profitable way possible. Though unforseen variation and/or the error in the prediction by fate and guesswork could still lead to them losing money.
-Things it reads from database: distance between ports, which ports import/export a given commodity
-Things it writes to database: none
-
-ShippingCompany
-Servers it polls for input as client:
-1. Available contracts for movement of goods from traders
-2. Whether acceptance of movement of goods has been confirmed
-Information it broadcasts as server:
-1. Acceptance of contract to move goods
-2. when it has collected goods, when it has delivered goods. Once bank confirms receipt of message, sent info can be removed from broadcast. See "Trade" database entity for attributes to broadcast.
-Things it calculates:
-Things it reads from database: 
-
-FXServer
-Information it broadcasts as server:
-1. fluctuating currency prices
-Things it calculates: fluctuating currency prices via GBM
-Things it reads from db: info on currencies (at startup only?)
-
-Bank:
-Servers it polls for input as client:
-1. FX Server for FX prices. Updated currency value then written to database.
-2. Shipping company departures and arrivals. On departure money is debited from trader and credited to both shipping company and seller, on basis of distance of journey. On arrival money is debited from buying company and credited to trader.
-3. FateAndGuesswork market prices. Commodity prices in database are updated accordingly.
-4. FateAndGuesswork stock prices. Database updated accordingly
-5. trader decisions to buy goods to warehouse or to organise a futures contract. db updated accordingly.
-6. domestic company declarations of shortage/surplus
-7. trader decisions to sell warehoused goods
-Information it broadcasts as server: none
-Things it calculates:
-1. whenever updating bank balances after an economic transaction, if movement it applies modifier from distance (= greater profit to freighter company, greater expense to trader), if trade in goods on open market takes into account current commodity price, if different currencies applies current FX multiplier
-2. carries out futures contracts at point in time specified
-3. sells warehoused goods at point traders decide to do so
-
-Things it reads from database: nothing
-Things it writes to database: see above
-
-FateAndGuesswork
-Servers it polls for input as client: none
-Information it broadcasts as server:
-Calculated future shortages or surpluses of a given commodity for a given company are broadcast (note only companies_with_location which actually import/export a given commodity will ever produce a surplus/suffer shortage). These are broadcast on two channels: 
-1. Guesswork, with an added degree of error, is for Traders to pick up. The next Trader to poll FateAndGuesswork is given the information, and this information is then removed from the queue. two, without any error
-2. Fate, it will also broadcast this same information, but without any error, to be picked up by the PublicCompanies. Once received this too is removed from the queue.
-Furthermore, there is:
-3. Current market price of all commodities. Goes up and down via GBM. Make sure places which neither import nor export a commodity do not have a price created (unit test this, also take account of this in GUI)
-4. Stock prices of each company. Goes up and down via GBM.
-Things it calculates:
-Semi-randomly calculates which PublicCompanies will in future have a) have surplus of a commodity or b) have shortage of a commodity, of how much quantity (though never more than can fit in one freighter), and at what price they will wish to buy/sell above/below market to make up for this. Primary sector companies more usually have goods available for sale, service sector usually have requests for goods to buy, manufacturing sector more a mixture of the two
-Things it reads from database: info on commodities (at startup only?).
-Things it writes to database: none
+- separate start script for sortingserver + sortingclient
 
 ////
 
@@ -165,7 +85,7 @@ http://www.scipy.org/Cookbook/FittingData
 http://code.msdn.microsoft.com/solverfoundation
 http://en.wikipedia.org/wiki/Markov_chain_Monte_Carlo
 
-- WPF graph program - just local, follow Resolver Exchange example (and contrast with latest version from li ghao, too). Can create new windows, or add new data to current windows (this functionality already in exchange example). add credit to ppl involved in making that sheet + wpf app. But also has option for real time update.
+- WPF graph program - just local, follow Resolver Exchange example. How does li ghaos orig code differ from altered version on resolver exchange? diff and investigate. Then use one or the other as a base - just copy and paste to start with. Should have ability to create new windows, or add new data to current windows (this functionality already in exchange example). add credit to ppl involved in making that sheet + wpf app. But also has option for real time update.
 - graph windows to include help instructions
 
 travelling freighter problem:
@@ -207,18 +127,13 @@ other ideas:
 
 testing:
 - unittest only bank can write to db
-- check all servers can deal with one or all clients closing (this needs to be an automated test)
-- check all clients can deal with server closing (this needs to be an automated test)
+- make processes do right thing when other processes go down, and have automated tests for all possibilities if differing orders of collapse.
 - unittest the algoriths and data structures service
 - However multi-thread and multi-process concurrent aspects of program are not suited to normal unit testing frameworks. just write some sort of stress test script - i.e. start loads and loads of processes and look for obvious problems - including crashing and incorrect answers in data. Doc this (inc CV desc)
-- test ack system works for lost network connections not breaking sync
 - database connections should be closed when no longer needed
 
 - use stress test to try to find any bottlenecks that can be optimised away, and if I find any doc this (maybe inc CV desc).
 - need to think of some way of checking that servers have not gone out of sync
-- if one server goes down and then comes back up again, can information accidentally be lost in the crash?
-
-at very least, test basic interactions of individual processes going down with either some batch automation tests or just a text file with a list of things to manually test.
 
 ////
 
@@ -234,9 +149,13 @@ Communication view:
 - should be much the same as the deployment view, except without repeating the things there can be multiple of, and it should show which directions each communication can go in, and briefly describe the data transferred by each link
 
 Deployment view:
+- add sortingserver + sortingclient
 - add the correct protocol labels
 - maybe there need to be more communication links?
 - add wpf graphs (same node as spreadsheet)
+
+Seq view:
+- do as orig planned after all
 
 ////
 
@@ -260,6 +179,7 @@ algorithms bit:
 - hash table
 - b tree
 
+- unit test
 - uses WCF to provide RPC-style network service
 
 ///
@@ -270,23 +190,18 @@ One day the description here, description in index.htm, description on CV, and d
 
 The name is a nod to book Tai Pan, that is the general point is that there are several large trading houses which ferry various goods very long distances, though actually here the trading houses have been split into two distinct entities, the "Shipping companies" who do the actual transporting of goods, and the "traders" who predict surpluses and shortages in the market and buy and sell goods accordingly.
 
-Mention how threads generally a bad idea, used as an exercise here, but in most real projects there are simpler, more reliable alternatives.
-
+Mention how threads generally a bad idea, used as an exercise here, but in most real projects there are simpler, more reliable alternatives (i.e. asynchronous network read/writes, likely combined with callbacks for when data has finished sending or receiving, or otherwise combined with manual system of asynchronous acknowledgement messages between clients).
 
 - describe use of bank and db as mediator of many interactions in system, mention any other patterns used
 
 version for CV etc:
-•	A C# .NET, SQL Server and Python project written to improve my knowledge of various aspects of software development and computer science. A large number of heterogeneous multithreaded C# processes interact with each other by sending and receiving messages via TCP sockets. Much of the underlying state of the system is stored in a MS SQL Server instance. Only one of the process has database write access, and hence acts as a mediator for many interactions.
+•	A C# .NET, SQL Server and Python project written to improve my knowledge of various aspects of software development and computer science. A large number of heterogeneous multithreaded C# processes interact with each other by sending and receiving messages via TCP sockets. Much of the underlying state of the system is stored in a MS SQL Server instance. Only one of the processes has database write access, and hence acts as a mediator for many of the interactions.
 •	The front end utilises the spreadsheet/Python "mash up" “Resolver One” to provide analysis of the real time data from the database. The spreadsheet’s Python code is linked to a copy of Microsoft's Solver mathematical modelling library. Solver is used both to provide Monte Carlo predictions for some of the stochastic outputs of the system, and also to solve a version of the Travelling Salesman Problem. A local C# program is called by the spreadsheet script to produce realtime WPF graphs on same aspects of this analysis.
 •	One final, especially contrived C# service provides an RPC-style interface that takes a list of unsorted strings and returns the list in alphabetical order. Arguments provided by the caller specify which of a wide variety of differing algorithms or data structures should be used to perform the sorting.
 •	I created a number of UML diagrams to describe various aspects of the system. Some sections of the system are covered by unit tests, but much of the multithreaded and multiprocess code is not suited to this and is merely stress-tested. As with all projects I have worked on since around 2004 (commercial and non-commercial), the source is under version control (in this case git).
 
-- talk about real time graphs
-- add Solver Foundation+OML to doc+wolfie
-- add xml + stuff on wpf graph server to uml+doc+wolfie
-- add web services to wolfie
-- add back silly proejcts to wolfie, inc phrase "mathematically prove blah blah with a 2D animation of..." for no fly
-- maybe add "mathematical modelling" to wolfie (for set analyser, too, and maybe Carmen, and that old GCSE program)
+- talk about real time graphs on web
+- add Solver Foundation+OML to web doc
 - lots of xmlcomments for classes and methods
 - triggers, constraints, (views?), etc
 

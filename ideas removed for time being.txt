@@ -4,16 +4,17 @@ Section 1: vaguely reasonable ideas:
 
 /////
 
-UML
+Documentation and UML
 
 - UML class diagram (hopefully this can just be exported from Visual Studio? Or otherwise imported from C# code to MagicDraw)
-- do yet more diagrams
+- export class documentation from XML doc strings
 
 ///
 
-Concurrency:
+Concurrency and networking:
 - read a bit of abstract concurrency theory, and then put this into practice with regard to having it vey clear how concurrency features of my system are well designed and error-resistant, and then add this to doc
 - formal testing system (e.g. something like CHESS, though probably not directly suitable)
+- make processes be able to cope if other processes fall off network then reappear again (this would be a major undertaking)
 
 ///
 
@@ -53,6 +54,7 @@ hardcore comp sci custom db idea:
 - study more advanced sections of databases book
 - Write a small custom database system in to replace SQL Server, either in C# or C++. If C++ would ideally find the Minibase source code and replace sections of that as needed. Would probably just have it manage a small part of the state data, and leave most to SQL server. Would have to implement threaded network connections/cursors complete with locking during file system access, transactions, query parsing and execution, permissions, indexing
 - would use UDP or TCP for connections, would ideally be very fast and scalable, either in C# or C++
+- switch to async network connections - though wouldn't have much benefit given that system makes extensive use of threads (could allow creation of a single threaded version of system, but that wasn't really the design goal)
 
 //
 
