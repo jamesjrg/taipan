@@ -18,6 +18,10 @@ namespace TaiPan.Common
         private List<TcpClient> tcpClients = new List<TcpClient>();
         private List<int> clientIds;
 
+        /*
+         * WARNING WARNING WARNING shared between threads
+         * 
+        */
         public List<string> messages = new List<string>();
 
         private const int SLEEP_TIME = 500;
@@ -73,14 +77,17 @@ namespace TaiPan.Common
             {
                 try
                 {
-                    if (messages.Count != 0)
+                    lock (messages)
                     {
-                        foreach (string msg in messages)
+                        if (messages.Count != 0)
                         {
-                            Console.WriteLine("Sending: " + msg);
-                            sw.WriteLine(msg);
+                            foreach (string msg in messages)
+                            {
+                                Console.WriteLine("Sending: " + msg);
+                                sw.WriteLine(msg);
+                            }
+                            sw.Flush();
                         }
-                        sw.Flush();                        
                     }
                     Thread.Sleep(SLEEP_TIME);
                 }

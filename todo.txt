@@ -1,8 +1,9 @@
 * Read Professional C# 2008 chapter 1/2 41 (tcp sockets)
 - currently at pdf page 1508
+* read and learn more about threading
 * get basics of database schema all working
-* get basics of interacting processes and logic of their interactions working, using test driven development where possible
-- est 4 weeks full time
+* get basics of interacting processes and logic of their interactions working
+- est 3 weeks full time
 
 * Read a bit more of learning UML
 * do some more UML diagramming
@@ -10,7 +11,7 @@
 
 * Read database management systems chapters 3 (almost read already), 4, 5
 * write first attempt at Resolver One view + WPF graphing, including monte carlo GBM predicting
-- est 4 weeks full time
+- est 3 weeks full time
 
 * read parts of algorithms book
 * do algorithms bit
@@ -24,24 +25,20 @@
 ////
 
 right now:
-- write some test code to see quite how syncing list enumeration across threads can be achieved
-- write some sql triggers and foreign keys
+- clearly locking messages during network sending is bad, need to have a good think about how to deal with cross thread sync of messages for server. i think maybe have a new data structure, MultithreadQueue. This contains a fixed size array of strings, which loops round nibbles fashion, with fully dequed values becoming null. it also has a list of ints of subscribing threads. when a thread first subscribes it adds itself to this list. the current head position for each thread is maintained seperately. finally, keep track of time that each thread accesses queue, and if someone hasn't been seen for some time, remove them fromt list of subscribers. when dequeing threads must provide their id, if id not found then error is thrown.
 
+- write some sql triggers and foreign keys
 
 
 fairly immediate stuff:
 
 general logic and network code:
-- "Collection was modified; enumeration operation may not execute." server broadcast (run bank and fx, close bank)
 - when a client connects to a server, server has to create a unique id for it and store this for syncing purposes. maybe this id should be same as that used for a) database and b) stored for each class? in which case clients provide their own id on connect, server cannot make it up.
-- ensure tcp listener closes when program closes - remember it is in its own thread
-- check servers can deal with client closing (this needs to be an automated test)
-- check clients can deal with server closing (this needs to be an automated test)
 - the list pointers should be maintained by the server class, not the users of these classes, and pointers (i.e. indexes) need to be updated when list front is trimmed. Then server "send" method will in fact just add data to list of strings (one list maintained for each type of server thread). At point when every connected client has passed a point in queue, data can be removed from front. Will need a limit on how much old data can be kept around in event of lost network connections etc, and some sort of error handling mechanism when this happens. Maybe need two pointers for each thread - one for how much data has been sent, one for how much has been received.
 - the server "send" method should perform GC-style management of the list maybe once every 5 times (or whatever) it is called
 - replace all the sleeping everywhere with more intelligent use of CPU
-- if I do decide to have highly fault-tolerant code, it is going to have to be very complicated - e.g. what if fateandguesswork tells both a trader and company of a future event, but then the network connection to the company is lost until after the event? There are major sync issues to deal with here. I think the best thing to do would be to require client processes to send responses that acknowledge the response of a message. send messages to relevant clients in an order such that if early, key message receivers never acknowledge, then it never gets sent to later receivers - e.g if domesticompany fails to get message about what it will do in future, then never said the prediction to a trader. if a network connection to a client is lost for a long period of time, then ideally system will adapt, but in the short term I need it to just throw some sort of catastrophic error that makes it clear something has gone flagrantly wrong.
-- doc communication with acks in UML
+- make network code fault tolerant by building in system of acknowledgement messages. E.g. what if fateandguesswork tells both a trader and company of a future event, but then the network connection to the company is lost until after the event? There are major sync issues to deal with here. Require client processes to send responses that acknowledge the response of a message. send messages to relevant clients in an order such that if early, key message receivers never acknowledge, then it never gets sent to later receivers - e.g if domesticompany fails to get message about what it will do in future, then never said the prediction to a trader. if a network connection to a client is lost for a long period of time, then ideally system will adapt, but in the short term I need it to just throw some sort of catastrophic error that makes it clear something has gone flagrantly wrong.
+- doc communication with acks in UML with sequence diagram (overwrite current seq diagram)
 
 sql:
 - write sql for foreign keys and triggers
@@ -57,9 +54,6 @@ other:
 - make sure everything is shut down correctly, including if fail in init
 
 ///
-
-Overall plan: lots of C# processes representing entities in a trading economy communicate with each other via XML, some as servers, some as clients, some as both. Most state is contained within a SQL server database, and only one of the processes (the "Bank", the name being a nod to Monopoly). The name is a nod to book Tai Pan, that is the general point is that there are several large trading houses which ferry various goods very long distances, though actually here the trading houses have been split into two distinct entities, the "Shipping companies" who do the actual transporting of goods, and the "traders" who predict surpluses and shortages in the market and buy and sell goods accordingly.
-One day the description here, description in index.htm, description on CV, and description in Wolfie will all need to be synced...
 
 Though some of this should be configurable, a reasonable ball park figure might be that we want to have running 10 Domestic Companies, 5 Shipping Companies, 5 Traders, 1 FateAndGuesswork, 1 FXService, 1 Bank, 1 Resolver One spreadsheet, 1 SQL Server instance.
 
@@ -82,7 +76,6 @@ Information it broadcasts as server:
 4. Decision to sell warehoused goods
 Things it calculates:
 1. On basis of distance between ports and also predicted information on future shortage or surplus of a given commodity for a given company, they calculate the most profitable places to buy goods to warehouse in readiness to sell (i.e. somewhere nearby to and cheap for predicted future shortage, possibly the same port), or to organise a futures contract to buy goods in future in readiness to buy (i.e. at the actual port of the predicted future surplus). Then when price fluctuation actually happens, warehoused goods are sold to nearest place that has a demand for those goods, or otherwise futures contract is fufilled and goods are again sold in most profitable way possible. Though unforseen variation and/or the error in the prediction by fate and guesswork could still lead to them losing money.
-2. Between contract for movement of goods being accepted and the contract being removed from broadcast, there is a 10 second delay (represents e.g. finalizing negociations). Therefore has to maintain locks on open contracts for movement of goods.
 Things it reads from database: distance between ports, which ports import/export a given commodity
 Things it writes to database: none
 
@@ -163,7 +156,7 @@ http://www.scipy.org/Cookbook/FittingData
 http://code.msdn.microsoft.com/solverfoundation
 http://en.wikipedia.org/wiki/Markov_chain_Monte_Carlo
 
-- WPF graph program - just local, follow Resolver Exchange example. Can tell the server to create new windows, or you can add new data points to old windows, or close windows
+- WPF graph program - just local, follow Resolver Exchange example. Can create new windows, or add new data to current windows (this functionality already in exchange example). add credit to ppl involved in making that sheet + wpf app.
 - graph windows to include help instructions
 
 ////
@@ -186,16 +179,18 @@ Database stuff (needs adding to both a) UML diagram and b) actual SQL scripts):
 ////
 
 testing:
-- test taipan-r cannot write to db
-- Database interaction and calculations on that data based on database data well suited to unit testing, do these parts via TDD (and doc this fact).
+- unittest only bank can write to db
+- check all servers can deal with one or all clients closing (this needs to be an automated test)
+- check all clients can deal with server closing (this needs to be an automated test)
+- unittest the algoriths and data structures service
 - However multi-thread and multi-process concurrent aspects of program are not suited to normal unit testing frameworks. just write some sort of stress test script - i.e. start loads and loads of processes and look for obvious problems - including crashing and incorrect answers in data. Doc this (inc CV desc)
+- test ack system works for lost network connections not breaking sync
 
-Also, use stress test to try to find any bottlenecks that can be optimised away, and if I find any doc this (maybe inc CV desc).
-
-at very least, test basic interactions of individual processes going down with either some batch automation tests or just a text file with a list of things to manually test. Like, as a start:
-- if any one server goes down, can other servers cope as well as can possibly be expected?
-- can different servers get out of sync?
+- use stress test to try to find any bottlenecks that can be optimised away, and if I find any doc this (maybe inc CV desc).
+- need to think of some way of checking that servers have not gone out of sync
 - if one server goes down and then comes back up again, can information accidentally be lost in the crash?
+
+at very least, test basic interactions of individual processes going down with either some batch automation tests or just a text file with a list of things to manually test.
 
 ////
 
@@ -214,9 +209,6 @@ Deployment view:
 - add the correct protocol labels
 - maybe there need to be more communication links?
 - add wpf graphs (same node as spreadsheet)
-
-Also:
-a UML diagram for internal working of FateAndGuesswork - showing threads and data created and served by them
 
 ////
 
@@ -246,13 +238,20 @@ algorithms bit:
 
 doc:
 
-- describe use of bank as mediator to db as design pattern (mayvbe mediator?), mention any other patterns used
+One day the description here, description in index.htm, description on CV, and description in Wolfie will all need to be synced...
+
+The name is a nod to book Tai Pan, that is the general point is that there are several large trading houses which ferry various goods very long distances, though actually here the trading houses have been split into two distinct entities, the "Shipping companies" who do the actual transporting of goods, and the "traders" who predict surpluses and shortages in the market and buy and sell goods accordingly.
+
+Mention how threads generally a bad idea, used as an exercise here, but in most real projects there are simpler, more reliable alternatives.
+
+
+- describe use of bank and db as mediator of many interactions in system, mention any other patterns used
 
 version for CV etc:
-•	A C# .NET, SQL Server and Python project written to improve my knowledge of various aspects of software development and computer science. A large number of heterogeneous C# processes interact with each other by running a number of threads which send and receive messages via TCP sockets. Most of the underlying state of the system is stored in a MS SQL Server instance, though only one C# process has write access, and hence acts as a mediator.
+•	A C# .NET, SQL Server and Python project written to improve my knowledge of various aspects of software development and computer science. A large number of heterogeneous multithreaded C# processes interact with each other by sending and receiving messages via TCP sockets. Much of the underlying state of the system is stored in a MS SQL Server instance. Only one of the process has database write access, and hence acts as a mediator for many interactions.
 •	The front end utilises the spreadsheet/Python "mash up" “Resolver One” to provide analysis of the real time data from the database. The spreadsheet’s Python code is linked to a copy of Microsoft's Solver mathematical modelling library. Solver is used both to provide Monte Carlo predictions for some of the stochastic outputs of the system, and also to solve a version of the Travelling Salesman Problem. A local C# program is called by the spreadsheet script to produce WPF graphs on same aspects of this analysis.
 •	One final, especially contrived C# service provides an RPC-style interface that takes a list of unsorted strings and returns the list in alphabetical order. Arguments provided by the caller specify which of a wide variety of differing algorithms or data structures should be used to perform the sorting.
-•	I created a series of UML diagrams to describe various aspects of the system. The non-concurrent aspects of the system were written using Test Driven Development, whilst the concurrent aspects of the system are tested via less stringent stress-testing. As with all projects I have worked on since around 2004 (commercial and non-commercial), the source is under version control (in this case git).
+•	I created a number of UML diagrams to describe various aspects of the system. Small sections of the system are covered by unit tests, but the multithreaded and multiprocess nature of much of the code means coverage is severely limited. As with all projects I have worked on since around 2004 (commercial and non-commercial), the source is under version control (in this case git).
 
 
 - add Solver Foundation+OML to doc+wolfie

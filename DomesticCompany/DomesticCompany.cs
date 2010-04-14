@@ -14,7 +14,7 @@ namespace TaiPan.DomesticCompany
         private int myID;
         private Client fatePoller;
 
-        protected override void Init(string[] args)
+        public DomesticCompany(string[] args)
         {
             myID = SetID("DomesticCompany", args);
 
@@ -28,10 +28,6 @@ namespace TaiPan.DomesticCompany
             if (fatePoller.messages.Count != 0)
                 Console.WriteLine(fatePoller.messages.Dequeue());
             return true;
-        }
-
-        protected override void Dispose(bool disposing)
-        {
         }
     }
 }

@@ -7,7 +7,7 @@ using System.Configuration;
 
 namespace TaiPan.Common
 {
-    public abstract class EconomicPlayer : IDisposable
+    public abstract class EconomicPlayer
     {
         protected const int SLEEP_TIME = 10;
         protected Dictionary<string, ServerConfig> serverConfigs = new Dictionary<string, ServerConfig>();
@@ -17,10 +17,7 @@ namespace TaiPan.Common
             ReadConfig();
         }
 
-        ~EconomicPlayer()
-        {
-            Dispose(false);
-        }
+        //no dispose here or in derived classes because when this class is no longer needed, the whole program is ending
 
         private void ReadConfig()
         {
@@ -38,15 +35,12 @@ namespace TaiPan.Common
                 serverConfigs.Add(server.Name, new ServerConfig(server.Name, server.Address, server.Port));
         }
 
-        public void Go(string[] args)
+        public void Go()
         {
             try
             {
                 try
                 {
-                    Console.WriteLine("Initialising");
-                    Init(args);
-
                     Console.WriteLine("Running");
                     while (Run() == true)
                     {
@@ -60,7 +54,6 @@ namespace TaiPan.Common
                 }
 
                 Console.WriteLine("Shutdown");
-                Dispose();
             }
             catch (Exception e)
             {
@@ -73,11 +66,7 @@ namespace TaiPan.Common
             }
         }
 
-        protected abstract void Init(string[] args);
         protected abstract bool Run();
-
-        public void Dispose() { Dispose(true); GC.SuppressFinalize(this); }
-        protected virtual void Dispose(bool disposing) {}
 
         protected int SetID(string title, string[] args)
         {

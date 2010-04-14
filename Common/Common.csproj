@@ -50,7 +50,7 @@
   <ItemGroup>
     <Compile Include="Client.cs" />
     <Compile Include="ServersSection.cs" />
-    <Compile Include="Db.cs" />
+    <Compile Include="DbConn.cs" />
     <Compile Include="EconomicPlayer.cs" />
     <Compile Include="Server.cs" />
     <Compile Include="Util.cs">

@@ -9,8 +9,8 @@ namespace TaiPan.FXServer
     {
         static void Main(string[] args)
         {
-            FXServer fx = new FXServer();
-            fx.Go(args);
+            FXServer fx = new FXServer(args);
+            fx.Go();
         }
     }
 }

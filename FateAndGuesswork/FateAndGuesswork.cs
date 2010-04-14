@@ -11,7 +11,7 @@ namespace TaiPan.FateAndGuesswork
     {
         private TaiPan.Common.Server server;
 
-        protected override void Init(string[] args)
+        public FateAndGuesswork(string[] args)
         {
             Console.Title = "FateAndGuesswork";
 
@@ -22,11 +22,6 @@ namespace TaiPan.FateAndGuesswork
         {
             server.Send("Blah");
             return true;
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            server.Dispose();
         }
     }
 }

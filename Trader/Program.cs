@@ -9,8 +9,8 @@ namespace TaiPan.Trader
     {
         static void Main(string[] args)
         {
-            Trader trader = new Trader();
-            trader.Go(args);
+            Trader trader = new Trader(args);
+            trader.Go();
         }
     }
 }

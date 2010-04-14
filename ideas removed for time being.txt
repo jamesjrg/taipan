@@ -36,7 +36,6 @@ UML
 ///
 
 Concurrency:
-- add some more complicated threading stuff - mutexes, semaphores, system events, etc
 - read a bit of abstract concurrency theory, and then put this into practice with regard to having it vey clear how concurrency features of my system are well designed and error-resistant, and then add this to doc
 - formal testing system
 

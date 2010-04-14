@@ -9,8 +9,8 @@ namespace TaiPan.FateAndGuesswork
     {
         static void Main(string[] args)
         {
-            FateAndGuesswork fate = new FateAndGuesswork();
-            fate.Go(args);
+            FateAndGuesswork fate = new FateAndGuesswork(args);
+            fate.Go();
         }
     }
 }

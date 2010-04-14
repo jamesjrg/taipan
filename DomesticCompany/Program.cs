@@ -9,8 +9,8 @@ namespace TaiPan.DomesticCompany
     {
         static void Main(string[] args)
         {
-            DomesticCompany company = new DomesticCompany();
-            company.Go(args);
+            DomesticCompany company = new DomesticCompany(args);
+            company.Go();
         }
     }
 }

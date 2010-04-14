@@ -9,8 +9,8 @@ namespace TaiPan.Bank
     {   
         static void Main(string[] args)
         {
-            Bank bank = new Bank();
-            bank.Go(args);
+            Bank bank = new Bank(args);
+            bank.Go();
         }       
     }
 }

@@ -9,8 +9,8 @@ namespace TaiPan.ShippingCompany
     {
         static void Main(string[] args)
         {
-            ShippingCompany company = new ShippingCompany();
-            company.Go(args);
+            ShippingCompany company = new ShippingCompany(args);
+            company.Go();
         }
     }
 }

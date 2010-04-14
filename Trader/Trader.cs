@@ -11,7 +11,7 @@ namespace TaiPan.Trader
     {
         private int myID;
 
-        protected override void Init(string[] args)
+        public Trader(string[] args)
         {
             myID = SetID("Trader", args);
         }
@@ -19,10 +19,6 @@ namespace TaiPan.Trader
         protected override bool Run()
         {
             return true;
-        }
-
-        protected override void Dispose(bool disposing)
-        {
         }
     }
 }

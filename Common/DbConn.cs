@@ -8,19 +8,38 @@ using System.Configuration;
 
 namespace TaiPan.Common
 {
-    public class Db
+    public class DbConn
     {
-        public static SqlConnection GetDbConnection()
+        private SqlConnection conn;
+
+        public DbConn()
         {
-            return GetDbConnection(true);
+            Init(true);
         }
 
-        public static SqlConnection GetDbConnectionRW()
+        public DbConn(bool readOnly)
         {
-            return GetDbConnection(false);
+            Init(readOnly);
         }
 
-        private static SqlConnection GetDbConnection(bool readOnly)
+        public void Dispose()
+        {
+            Close();
+        }
+
+        public SqlDataReader ExecuteQuery(string query)
+        {
+            SqlCommand cmd = new SqlCommand(query, conn);
+            return cmd.ExecuteReader();
+        }
+
+        public SqlDataReader ExecuteNonQuery(string stmt)
+        {
+            SqlCommand cmd = new SqlCommand(stmt, conn);
+            return cmd.ExecuteReader();
+        }
+
+        private void Init(bool readOnly)
         {
             string connName = "taipan-rw";
             if (readOnly)
@@ -35,16 +54,15 @@ namespace TaiPan.Common
                 throw new ApplicationException("Couldn't find connection string \"" + connName + "\" in config file " + Util.configFile);
 
             Console.WriteLine("Connecting to database with " + connName);
-            SqlConnection conn = new SqlConnection(settings.ConnectionString);
+            conn = new SqlConnection(settings.ConnectionString);
+            conn.Open();
             Console.WriteLine("Connected to database");
-
-            return conn;
         }
 
-        public static void CloseConn(SqlConnection dbConn)
+        public void Close()
         {
-            if (dbConn.State != System.Data.ConnectionState.Closed)
-                dbConn.Close();
-        }
+            if (conn.State != System.Data.ConnectionState.Closed)
+                conn.Close();
+        }        
     }
 }

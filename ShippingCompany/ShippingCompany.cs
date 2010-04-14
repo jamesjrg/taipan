@@ -11,18 +11,14 @@ namespace TaiPan.ShippingCompany
     {
         private int myID;
 
-        protected override void Init(string[] args)
+        public ShippingCompany(string[] args)
         {
             myID = SetID("ShippingCompany", args);
-        }
+        }        
 
         protected override bool Run()
         {
             return true;
-        }
-
-        protected override void Dispose(bool disposing)
-        {
         }
     }
 }
