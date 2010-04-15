@@ -17,10 +17,7 @@
 ////
 
 right now:
-- clearly locking messages during network sending is bad, need to have a good think about how to deal with cross thread sync of messages for server. i think maybe have a new data structure, MultithreadQueue. This contains a fixed size array of strings, which loops round nibbles fashion, with fully dequed values becoming null. it also has a list of ints of subscribing threads. when a thread first subscribes it adds itself to this list. the current head position for each thread is maintained seperately. finally, keep track of time that each thread accesses queue, and if someone hasn't been seen for some time, remove them fromt list of subscribers. when dequeing threads must provide their id, if id not found then error is thrown. If it is enqued when beyond max size, then old data is overwritten, and a note is made of any clients who now have invalid head pointers. Next time these clients try to dequeue, an error is thrown. Also has a MyDequeue method to return cloned array of strings that are still relevant to a given thread, and then increase that thread's head pointer.
-- unit test MultithreadQueue
-- xmlcomment singleton for singleton classes
-- xmlcomment mediator for bank
+- Finish multihead queue, and make server use it. when a thread first subscribes it adds itself to this list. the current head position for each thread is maintained seperately. also has an unsubscribe function. when dequeing threads must provide their id, if id not found then error is thrown. If it is enqued when beyond max size, then old data is overwritten, and a note is made of any clients who now have invalid head pointers. Next time these clients try to dequeue, an error is thrown. DequeueAll needs to advance head.
 - write some sql triggers and foreign keys
 
 
@@ -28,7 +25,6 @@ fairly immediate stuff:
 
 general logic and network code:
 - when a client connects to a server, server has to create a unique id for it and store this for syncing purposes. maybe this id should be same as that used for a) database and b) stored for each class? in which case clients provide their own id on connect, server cannot make it up.
-- replace all the sleeping everywhere with more intelligent use of CPU
 - Trader/ShippingCompany interaction: delay of 5 secs between receiving acceptance of contract for movement of goods and taking contract off broadcast, requiring system of acks and locks, as in UML. But change design and UML a bit - rather than sending refusals, just make shipping companies have to assume they have been refused if they get no ack
 
 sql:
@@ -37,6 +33,7 @@ sql:
 - add companytypecheck for freighter (see uml)
 - add checks on interface between base + derived tables (see web page bookmark)
 - add constraint on currency to have short name 3 upper case chars (UML and sql)
+- add spatial data things to uml
 
 resolver:
 - top of most worksheets will probably be buttons "Fetch most recent data", "Fetch all data", "Toggle constant update", display "Constant update: [on/off"], "graph selected", "graph selected with Monte Carlo forecast"
@@ -57,20 +54,34 @@ Firstly, GBM data streams:
 1. Given a commodity name, display historical prices of that commodity at each port (CU)
 2. Display historical prices and market cap of all public companies (CU)
 3. Display historical price of all currencies (CU)
+All have possible monte carlo predictions and graphs.
 
 Secondly, just some general historical data:
 4. Historical futures contracts, including details of how relevant prices of all involved values changed between start and end of contract, and profit made (CU)
 5. Historical warehousing of commodities, including details of how relevant prices of all involved values changed between start and end of contract, and profit made (CU)
 6. Historical commodity transports
+No graphs or other fanciness.
 
 Thirdly, summary data sets:
-6. Summary data on comparative historical record of countries, split into time periods - in each time period have the number of each type of transaction carried out, total value of transactions, and the number + value of transactions in each economic sector
-7. As above, but with ports
-9. Summary data for each shipping company, split into time periods - number of transactions, number of different ports served, average quantity per load, min quantity in a single load, max quantity in a single load
+6. Summary data on comparative historical record of countries, split into time periods - in each time period have the number of each type of transaction carried out, total value of transactions, and the number + value of transactions in each economic sector. also country name, currency name.
+7. As above, but with ports. port name, country name, currency name.
+9. Summary data for each shipping company, split into time periods - number of transactions, number of different ports served, average quantity per load, min quantity in a single load, max quantity in a single load. company name, number of freighters.
 
 Fourthly, extreme contrivedness:
 10. Travelling freighter problem
+Read about spatial data in sql - need to use "geography" data type
+a quick example:
+CREATE TABLE SpatialTable 
+    ( id int IDENTITY (1,1),
+    GeogCol1 geography, 
+    GeogCol2 AS GeogCol1.STAsText() );
+GO
+INSERT INTO SpatialTable (GeogCol1)
+VALUES (geography::STPointFromText('POINT(-122.360 47.656)', 4326));
+longitude is specified first before the latitude
 
+
+Find the coordinates for just 10 of the ports for insertion, leave others null.
 
 Where relevant, tabs should have:
 1. Button to switch on constant update (inc graph)
@@ -103,7 +114,6 @@ Database stuff (needs adding to both a) UML diagram and b) actual SQL scripts):
 
 - For all tables with historical values, have the current value updated via a trigger linked to a new record being inserted into the main table
 - maybe constraint on linking ports + commodities + prices: every commodity for every port must appear in link table, no null values allowed for either FK
-- some commodities: steel, paper, electronics, cereal, textiles, oil, opium, precious gems, look on wikipedia for main exports of various countries
 - constraints to ensure CompanyType is correctly enforced and instances can be neither multiple base classes nor multiple sub classes
 - same with PublicCompanyType
 - maybe add some views for use by the various processes that need info from database?
@@ -118,6 +128,7 @@ later SQL stuff:
 - Read database management systems chapters 19, 20, 21
 - do some database normalisation and tuning, and security management
 - faff about with different sorts of indexes etc, maybe also so totally pointless striping, clustering, etc
+- doc optimization/tuning
 other ideas:
 - views
 - stored procedures
@@ -129,6 +140,7 @@ testing:
 - unittest only bank can write to db
 - make processes do right thing when other processes go down, and have automated tests for all possibilities if differing orders of collapse.
 - unittest the algoriths and data structures service
+- unittest multiheadqueue
 - However multi-thread and multi-process concurrent aspects of program are not suited to normal unit testing frameworks. just write some sort of stress test script - i.e. start loads and loads of processes and look for obvious problems - including crashing and incorrect answers in data. Doc this (inc CV desc)
 - database connections should be closed when no longer needed
 
@@ -192,11 +204,13 @@ The name is a nod to book Tai Pan, that is the general point is that there are s
 
 Mention how threads generally a bad idea, used as an exercise here, but in most real projects there are simpler, more reliable alternatives (i.e. asynchronous network read/writes, likely combined with callbacks for when data has finished sending or receiving, or otherwise combined with manual system of asynchronous acknowledgement messages between clients).
 
+doc how even without 5 second delay in taking contracts for movements off broadcast, the multithreaded nature of system would mean it would be possible for two threads to simultaneously accept the same request anyway
+
 - describe use of bank and db as mediator of many interactions in system, mention any other patterns used
 
 version for CV etc:
 •	A C# .NET, SQL Server and Python project written to improve my knowledge of various aspects of software development and computer science. A large number of heterogeneous multithreaded C# processes interact with each other by sending and receiving messages via TCP sockets. Much of the underlying state of the system is stored in a MS SQL Server instance. Only one of the processes has database write access, and hence acts as a mediator for many of the interactions.
-•	The front end utilises the spreadsheet/Python "mash up" “Resolver One” to provide analysis of the real time data from the database. The spreadsheet’s Python code is linked to a copy of Microsoft's Solver mathematical modelling library. Solver is used both to provide Monte Carlo predictions for some of the stochastic outputs of the system, and also to solve a version of the Travelling Salesman Problem. A local C# program is called by the spreadsheet script to produce realtime WPF graphs on same aspects of this analysis.
+•	The front end utilises the spreadsheet/Python "mash up" “Resolver One” to provide analysis of the real time data from the database. The spreadsheet’s Python code is linked to a copy of Microsoft's Solver mathematical modelling library. Solver is used both to provide Monte Carlo predictions for some of the stochastic outputs of the system, and also to solve a version of the Travelling Salesman Problem using a very small amount of spatial data from the system. A local C# program is called by the spreadsheet script to produce realtime WPF graphs on same aspects of this analysis.
 •	One final, especially contrived C# service provides an RPC-style interface that takes a list of unsorted strings and returns the list in alphabetical order. Arguments provided by the caller specify which of a wide variety of differing algorithms or data structures should be used to perform the sorting.
 •	I created a number of UML diagrams to describe various aspects of the system. Some sections of the system are covered by unit tests, but much of the multithreaded and multiprocess code is not suited to this and is merely stress-tested. As with all projects I have worked on since around 2004 (commercial and non-commercial), the source is under version control (in this case git).
 
@@ -204,7 +218,7 @@ version for CV etc:
 - add Solver Foundation+OML to web doc
 - lots of xmlcomments for classes and methods
 - triggers, constraints, (views?), etc
-
+- web doc spatial database data
 
 
 

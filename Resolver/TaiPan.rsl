@@ -1,15 +1,14 @@
 <!--
 This spreadsheet is in the Public Domain.
 -->
-<document currentResultWorksheet="Stock Prices" verticalSplitterRatio="0.75" horizontalSplitterRatio="0.386281588448" splitterOrientation="Horizontal" suspendRecalculations="False" license="Public Domain" copyrightOwner="James Gregory" resolverVersion="1.8.1" resolverBuild="5061" documentVersion="12">
+<document currentResultWorksheet="FX Rates" verticalSplitterRatio="0.75" horizontalSplitterRatio="0.386281588448" splitterOrientation="Horizontal" suspendRecalculations="False" license="Public Domain" copyrightOwner="James Gregory" resolverVersion="1.8.1" resolverBuild="5061" documentVersion="12">
     <foldState license="True" imports="True" worksheetCreation="True" preConstantsUserCode="False" constants="True" preFormulaeUserCode="False" generated="False" postFormulaeUserCode="False"/>
     <traitDefaults>
 
     </traitDefaults>
     <preConstantsUserCode><![CDATA[import os.path
-myDirname  = os.path.dirname(__file__) + '/'
-execfile(myDirname + 'preConstantsUserCode.py')
 
+execfile('preConstantsUserCode.py')
 
 ]]></preConstantsUserCode>
     <preFormulaeUserCode><![CDATA[
@@ -52,9 +51,9 @@ execfile(myDirname + 'preConstantsUserCode.py')
             <virtualGridSize width="51" height="29" />
         </viewState>
         <viewState worksheet="FX Rates">
-            <currentCell col="1" row="1" />
+            <currentCell col="4" row="3" />
             <scrollPos col="1" row="1" />
-            <virtualGridSize width="51" height="65" />
+            <virtualGridSize width="51" height="29" />
         </viewState>
         <viewState worksheet="Shipping">
             <currentCell col="1" row="1" />
@@ -62,9 +61,10 @@ execfile(myDirname + 'preConstantsUserCode.py')
             <virtualGridSize width="51" height="29" />
         </viewState>
         <viewState worksheet="Stock Prices">
-            <currentCell col="2" row="1" />
+            <currentCell col="1" row="1" />
+            <selection left="1" top="1" right="9" bottom="13" />
             <scrollPos col="1" row="1" />
-            <virtualGridSize width="51" height="29" />
+            <virtualGridSize width="49" height="29" />
         </viewState>
     </viewStates>
     <worksheetOrder>
@@ -147,6 +147,7 @@ execfile(myDirname + 'preConstantsUserCode.py')
         <trait name="Unit">
         </trait>
         <trait name="ColWidth">
+            <traitentry col="1" row="0" value="226" />
         </trait>
         <trait name="Alignment">
         </trait>
@@ -205,6 +206,7 @@ execfile(myDirname + 'preConstantsUserCode.py')
         <trait name="Unit">
         </trait>
         <trait name="ColWidth">
+            <traitentry col="1" row="0" value="119" />
         </trait>
         <trait name="Alignment">
         </trait>
@@ -252,6 +254,7 @@ execfile(myDirname + 'preConstantsUserCode.py')
         </trait>
         <trait name="DecimalPlaces">
         </trait>
+        <array expression="=queryFXRates()" left="1" top="1" right="3" bottom="7" />
     </worksheet>
     <worksheet name="Shipping" value="" showGrid="True" showBounds="False" headerWidth="-1" headerHeight="-1">
         <trait name="FontSize">

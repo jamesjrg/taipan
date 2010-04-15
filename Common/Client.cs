@@ -6,22 +6,26 @@ using System.Text;
 using System.Net.Sockets;
 using System.Threading;
 using System.IO;
+using System.Collections.Specialized;
 
 namespace TaiPan.Common
 {
     public class Client: IDisposable
     {
         public Queue<string> messages = new Queue<string>();
-        
-        private const int RETRY_TIME = 500;
-        private const int SLEEP_TIME = 500;
+
+        private readonly int ClientLoopTick;
+        private readonly int ClientRetryTime;
 
         private TcpClient tcpClient;
         private NetworkStream ns;
         private StreamReader sr;
 
-        public Client(Common.ServerConfig config)
+        public Client(Common.ServerConfig config, NameValueCollection appSettings)
         {
+            ClientLoopTick = Convert.ToInt32(appSettings["ClientLoopTick"]);
+            ClientRetryTime = Convert.ToInt32(appSettings["ClientRetryTime"]);
+
             tcpClient = AttemptTCPConnect(config);
             ns = tcpClient.GetStream();
             sr = new StreamReader(ns);
@@ -40,7 +44,7 @@ namespace TaiPan.Common
                 {
                     while (ns.DataAvailable)
                         messages.Enqueue(sr.ReadLine());
-                    Thread.Sleep(SLEEP_TIME);
+                    Thread.Sleep(ClientLoopTick);
                 }
                 catch (Exception e)
                 {
@@ -72,7 +76,7 @@ namespace TaiPan.Common
                     if (i == attempts - 1)
                         throw e;
                     else
-                        Thread.Sleep(RETRY_TIME);
+                        Thread.Sleep(ClientRetryTime);
                 }
             }
 

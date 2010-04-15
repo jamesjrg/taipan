@@ -7,6 +7,9 @@ using CommonLib = TaiPan.Common.Util;
 
 namespace TaiPan.FateAndGuesswork
 {
+    /// <summary>
+    /// Singleton class for FateAndGuesswork process
+    /// </summary>
     class FateAndGuesswork : TaiPan.Common.EconomicPlayer
     {
         private TaiPan.Common.Server server;
@@ -15,7 +18,7 @@ namespace TaiPan.FateAndGuesswork
         {
             Console.Title = "FateAndGuesswork";
 
-            server = new TaiPan.Common.Server(serverConfigs["FateAndGuessWork-DCBroadcast"]);
+            server = new TaiPan.Common.Server(ServerConfigs["FateAndGuessWork-DCBroadcast"], AppSettings);
         }
 
         protected override bool Run()

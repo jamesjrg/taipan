@@ -4,36 +4,41 @@ using System.Linq;
 using System.Text;
 
 using System.Configuration;
+using System.Collections.Specialized;
 
 namespace TaiPan.Common
 {
+    /// <summary>
+    /// Singleton base class for all of the interacting C# processes
+    /// </summary>
     public abstract class EconomicPlayer
     {
-        protected const int SLEEP_TIME = 10;
-        protected Dictionary<string, ServerConfig> serverConfigs = new Dictionary<string, ServerConfig>();
+        protected NameValueCollection AppSettings = new NameValueCollection();
+        protected Dictionary<string, ServerConfig> ServerConfigs = new Dictionary<string, ServerConfig>();
+
+        private readonly int MainLoopTick;
 
         public EconomicPlayer()
-        {
-            ReadConfig();
-        }
-
-        //no dispose here or in derived classes because when this class is no longer needed, the whole program is ending
-
-        private void ReadConfig()
         {
             Console.WriteLine("Reading server connection settings from config file");
             ExeConfigurationFileMap fileMap = new ExeConfigurationFileMap();
             fileMap.ExeConfigFilename = Util.configFile;
             System.Configuration.Configuration config = ConfigurationManager.OpenMappedExeConfiguration(fileMap, ConfigurationUserLevel.None);
+
+            AppSettings = ConfigurationManager.AppSettings;
+            if (AppSettings.Count == 0)
+                throw new ApplicationException("Flagrant error attempting to read appSettings from config file");
+            MainLoopTick = Convert.ToInt32(AppSettings["MainLoopTick"]);
+
             ServersSection serversSection = config.GetSection("servers") as ServersSection;
             if (serversSection == null)
                 throw new ApplicationException("Couldn't find server connection settings in config file " + Util.configFile);
-
             ServersCollection servers = serversSection.Servers;
-
             foreach (ServerElement server in servers)
-                serverConfigs.Add(server.Name, new ServerConfig(server.Name, server.Address, server.Port));
+                ServerConfigs.Add(server.Name, new ServerConfig(server.Name, server.Address, server.Port));
         }
+
+        //no dispose here or in derived classes because when this class is no longer needed, the whole program is ending
 
         public void Go()
         {
@@ -44,7 +49,7 @@ namespace TaiPan.Common
                     Console.WriteLine("Running");
                     while (Run() == true)
                     {
-                        System.Threading.Thread.Sleep(SLEEP_TIME);
+                        System.Threading.Thread.Sleep(MainLoopTick);
                     }
                 }
                 catch (Exception e)

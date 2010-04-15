@@ -7,6 +7,9 @@ using CommonLib = TaiPan.Common.Util;
 
 namespace TaiPan.ShippingCompany
 {
+    /// <summary>
+    /// Singleton class for ShippingCompany process
+    /// </summary>
     class ShippingCompany : TaiPan.Common.EconomicPlayer
     {
         private int myID;

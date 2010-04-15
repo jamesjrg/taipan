@@ -9,23 +9,26 @@ using TaiPan.Common;
 
 namespace TaiPan.FXServer
 {
-    internal class Currency
-    {
-        public Currency(string shortName, decimal USDValue)
-        {
-            this.shortName = shortName;
-            this.USDValue = USDValue;
-        }
-
-        public string shortName;
-        public decimal USDValue;
-    }
-
+    /// <summary>
+    /// Singleton class for FXServer process
+    /// </summary>
     class FXServer : TaiPan.Common.EconomicPlayer
     {
         private TaiPan.Common.Server server;
         private List<Currency> currencies = new List<Currency>();
         private Random random = new Random();
+
+        private class Currency
+        {
+            public Currency(string shortName, decimal USDValue)
+            {
+                this.shortName = shortName;
+                this.USDValue = USDValue;
+            }
+
+            public string shortName;
+            public decimal USDValue;
+        }
 
         public FXServer(string[] args)
         {
@@ -43,7 +46,7 @@ namespace TaiPan.FXServer
             reader.Close();
             dbConn.Dispose();
 
-            server = new TaiPan.Common.Server(serverConfigs["FXServer-BankBroadcast"]);
+            server = new TaiPan.Common.Server(ServerConfigs["FXServer-BankBroadcast"], AppSettings);
         }
 
         protected override bool Run()

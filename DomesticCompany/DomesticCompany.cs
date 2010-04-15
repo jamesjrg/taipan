@@ -9,6 +9,9 @@ using TaiPan.Common;
 
 namespace TaiPan.DomesticCompany
 {
+    /// <summary>
+    /// Singleton class for DomesticCompany process
+    /// </summary>
     class DomesticCompany : TaiPan.Common.EconomicPlayer
     {
         private int myID;
@@ -18,7 +21,7 @@ namespace TaiPan.DomesticCompany
         {
             myID = SetID("DomesticCompany", args);
 
-            fatePoller = new Client(serverConfigs["FateAndGuessWork-DCBroadcast"]);
+            fatePoller = new Client(ServerConfigs["FateAndGuessWork-DCBroadcast"], AppSettings);
             Thread thread = new Thread(fatePoller.MainLoop);
             thread.Start();
         }

@@ -7,6 +7,9 @@ using CommonLib = TaiPan.Common.Util;
 
 namespace TaiPan.Trader
 {
+    /// <summary>
+    /// Singleton class for Trader process
+    /// </summary>
     class Trader : TaiPan.Common.EconomicPlayer
     {
         private int myID;

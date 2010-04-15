@@ -105,6 +105,8 @@ CREATE TABLE dbo.Port
 	ID int NOT NULL IDENTITY (1, 1) PRIMARY KEY CLUSTERED,
     Name nvarchar(50) NOT NULL,
     CountryID int NOT NULL,
+    Location geography DEFAULT NULL,
+    LocationString AS Location.STAsText()
 	)  ON [PRIMARY]
 GO
 

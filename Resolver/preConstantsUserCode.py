@@ -2,7 +2,7 @@ from System import Array
 from System.Data import DataSet
 from System.Data.Odbc import OdbcConnection, OdbcDataAdapter
 
-connectString = "Driver={SQL Server};DAPHNE-DURON\\SQLEXPRESS;Database=TaiPan;UID=taipan-r;PWD=fakepass;"
+connectString = "Driver={SQL Server};Server=DAPHNE-DURON\\SQLEXPRESS;Database=TaiPan;UID=taipan-r;PWD=fakepass;"
 
 def queryDb(query):
     connection = OdbcConnection(connectString)
@@ -19,5 +19,10 @@ def queryDb(query):
         return ret
         
 def queryFXRates():
-    return queryDb("SELECT ShortName, USDValue FROM Currency ORDER BY ID DESC")
+    return queryDb("SELECT TOP 10 Name, ShortName, USDValue FROM Currency ORDER BY Name DESC")
+
+def queryCountrySummary():
+    return queryDb("SELECT TOP 10 Name FROM Country ORDER BY Name DESC")
+    
+    
     

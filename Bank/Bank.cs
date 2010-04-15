@@ -10,6 +10,9 @@ using TaiPan.Common;
 
 namespace TaiPan.Bank
 {
+    /// <summary>
+    /// Singleton class for Bank process
+    /// </summary>
     class Bank : TaiPan.Common.EconomicPlayer
     {
         private DbConn dbConn;
@@ -21,7 +24,7 @@ namespace TaiPan.Bank
 
             dbConn = new DbConn(false);
 
-            fxPoller = new Client(serverConfigs["FXServer-BankBroadcast"]);
+            fxPoller = new Client(ServerConfigs["FXServer-BankBroadcast"], AppSettings);
             Thread thread = new Thread(fxPoller.MainLoop);
             thread.Start();
         }

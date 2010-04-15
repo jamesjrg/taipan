@@ -9,25 +9,28 @@ using System.IO;
 using System.Threading;
 
 using CommonLib = TaiPan.Common.Util;
+using System.Collections.Specialized;
 
 namespace TaiPan.Common
 {
     public class Server
     {
-        private TcpListener tcpListener;
-        private List<TcpClient> tcpClients = new List<TcpClient>();
-        private List<int> clientIds;
-
         /*
          * WARNING WARNING WARNING shared between threads
          * 
         */
         public List<string> messages = new List<string>();
 
-        private const int SLEEP_TIME = 500;
+        private TcpListener tcpListener;
+        private List<TcpClient> tcpClients = new List<TcpClient>();
+        private List<int> clientIds;
+        
+        private readonly int ServerLoopTick;
 
-        public Server(Common.ServerConfig config)
+        public Server(Common.ServerConfig config, NameValueCollection appSettings)
         {
+            ServerLoopTick = Convert.ToInt32(appSettings["ServerLoopTick"]);
+
             Thread thread = new Thread(Listen);
             thread.Start(config);
         }
@@ -89,7 +92,7 @@ namespace TaiPan.Common
                             sw.Flush();
                         }
                     }
-                    Thread.Sleep(SLEEP_TIME);
+                    Thread.Sleep(ServerLoopTick);
                 }
                 catch (Exception e)
                 {

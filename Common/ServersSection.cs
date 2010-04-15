@@ -7,6 +7,9 @@ using System.Configuration;
 
 namespace TaiPan.Common
 {
+    /// <summary>
+    /// Class to parse custom config file section that lists server host/port information
+    /// </summary>
     public class ServersSection : ConfigurationSection
     {
         public ServersSection()
