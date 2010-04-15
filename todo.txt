@@ -1,14 +1,16 @@
-* get basics of database schema all working
-* get basics of interacting processes and logic of their interactions working
-- est 3 weeks full time
+* database schema
+- est 1 week FT
+
+* network code and process logic
+- est 2.5 weeks FT
 
 * Read database management systems chapters 3 (almost read already), 4, 5
-* write first attempt at Resolver One view + WPF graphing, including monte carlo GBM predicting
+* write Resolver One view + WPF graphing, including monte carlo GBM predicting
 - est 3 weeks full time
 
 * read parts of algorithms book
 * do algorithms bit
-- est 3.5 weeks full time
+- est 3 weeks full time
 
 - ideas about database normalisation and tuning - est 1 week FT
 - ideas about optimisation problem - est 1.5 weeks FT
@@ -17,6 +19,7 @@
 ////
 
 right now:
+- update main loop tick to 1 second
 - Finish multihead queue, and make server use it. when a thread first subscribes it adds itself to this list. the current head position for each thread is maintained seperately. also has an unsubscribe function. when dequeing threads must provide their id, if id not found then error is thrown. If it is enqued when beyond max size, then old data is overwritten, and a note is made of any clients who now have invalid head pointers. Next time these clients try to dequeue, an error is thrown. DequeueAll needs to advance head.
 - write some sql triggers and foreign keys
 
@@ -35,10 +38,6 @@ sql:
 - add constraint on currency to have short name 3 upper case chars (UML and sql)
 - add spatial data things to uml
 
-resolver:
-- top of most worksheets will probably be buttons "Fetch most recent data", "Fetch all data", "Toggle constant update", display "Constant update: [on/off"], "graph selected", "graph selected with Monte Carlo forecast"
-Below this will be settings "Number of records for most recent update", "[editable setting]", "Constant update interval", "[editable setting]", "Monte Carlo period length (in ticks)", "[editable setting]"
-
 other:
 - improve start/testing batch scripts so can specify on command line how many of each process to start (then won't need separate test batch script, at least for now. quite possibly use Python.
 - separate start script for sortingserver + sortingclient
@@ -54,6 +53,10 @@ Firstly, GBM data streams:
 1. Given a commodity name, display historical prices of that commodity at each port (CU)
 2. Display historical prices and market cap of all public companies (CU)
 3. Display historical price of all currencies (CU)
+
+for FXupdate:
+
+
 All have possible monte carlo predictions and graphs.
 
 Secondly, just some general historical data:
@@ -76,10 +79,7 @@ longitude is specified first before the latitude
 
 Find the coordinates for perhaps just 10 of the ports for insertion, leave others null.
 
-Where relevant, tabs should have:
-1. Button to switch on constant update (inc graph)
-2. Button to draw line graph - should be able to have multiple graphs at once, should be able to alter number of lines included on graph
-3. Button to draw random walk predicted future graph - present data as a solid line, then a bunch of dashed lines for various possibilities. This is mutually exclusive with constant update.
+Monte Carlo random walk predicted future graph - present data as a solid line, then a bunch of dashed lines for various possibilities. This is mutually exclusive with constant update.
 
 Possibly some vaguely sensible management (decisions on when to reuse + close) of the db connection?
 
@@ -90,6 +90,7 @@ http://code.msdn.microsoft.com/solverfoundation
 http://en.wikipedia.org/wiki/Markov_chain_Monte_Carlo
 
 - WPF graph program - just local, follow Resolver Exchange example. How does li ghaos orig code differ from altered version on resolver exchange? diff and investigate. Then use one or the other as a base - just copy and paste to start with. Should have ability to create new windows, or add new data to current windows (this functionality already in exchange example). add credit to ppl involved in making that sheet + wpf app. But also has option for real time update.
+- real time update doesn't affect monte carlo graph
 - graph windows to include help instructions
 
 travelling freighter problem:

@@ -1,13 +1,13 @@
 <!--
 This spreadsheet is in the Public Domain.
 -->
-<document currentResultWorksheet="FX Rates" verticalSplitterRatio="0.75" horizontalSplitterRatio="0.386281588448" splitterOrientation="Horizontal" suspendRecalculations="False" license="Public Domain" copyrightOwner="James Gregory" resolverVersion="1.8.1" resolverBuild="5061" documentVersion="12">
+<document currentResultWorksheet="FX Rates" verticalSplitterRatio="0.75" horizontalSplitterRatio="0.791599353796" splitterOrientation="Horizontal" suspendRecalculations="False" license="Public Domain" copyrightOwner="James Gregory" resolverVersion="1.8.1" resolverBuild="5061" documentVersion="12">
     <foldState license="True" imports="True" worksheetCreation="True" preConstantsUserCode="False" constants="True" preFormulaeUserCode="False" generated="False" postFormulaeUserCode="False"/>
     <traitDefaults>
 
     </traitDefaults>
     <preConstantsUserCode><![CDATA[import os.path
-
+execfile('settings.py')
 execfile('preConstantsUserCode.py')
 
 ]]></preConstantsUserCode>
@@ -51,9 +51,9 @@ execfile('preConstantsUserCode.py')
             <virtualGridSize width="51" height="29" />
         </viewState>
         <viewState worksheet="FX Rates">
-            <currentCell col="4" row="3" />
+            <currentCell col="8" row="13" />
             <scrollPos col="1" row="1" />
-            <virtualGridSize width="51" height="29" />
+            <virtualGridSize width="48" height="56" />
         </viewState>
         <viewState worksheet="Shipping">
             <currentCell col="1" row="1" />
@@ -207,6 +207,22 @@ execfile('preConstantsUserCode.py')
         </trait>
         <trait name="ColWidth">
             <traitentry col="1" row="0" value="119" />
+            <traitentry col="3" row="1" value="119" />
+            <traitentry col="3" row="2" value="119" />
+            <traitentry col="5" row="1" value="119" />
+            <traitentry col="5" row="2" value="119" />
+            <traitentry col="8" row="0" value="151" />
+            <traitentry col="9" row="0" value="150" />
+            <traitentry col="9" row="1" value="65" />
+            <traitentry col="9" row="2" value="65" />
+            <traitentry col="9" row="3" value="65" />
+            <traitentry col="9" row="4" value="65" />
+            <traitentry col="9" row="5" value="65" />
+            <traitentry col="9" row="6" value="65" />
+            <traitentry col="9" row="7" value="65" />
+            <traitentry col="9" row="8" value="65" />
+            <traitentry col="9" row="9" value="65" />
+            <traitentry col="10" row="4" value="150" />
         </trait>
         <trait name="Alignment">
         </trait>
@@ -254,7 +270,47 @@ execfile('preConstantsUserCode.py')
         </trait>
         <trait name="DecimalPlaces">
         </trait>
-        <array expression="=queryFXRates()" left="1" top="1" right="3" bottom="7" />
+        <array expression="" left="1" top="5" right="1" bottom="10" />
+        <cell name="I1" value="dropdown" type="general">
+        </cell>
+        <cell name="A1" value="Code:" type="general">
+        </cell>
+        <cell name="H5" value="Toggle constant update" type="general">
+        </cell>
+        <cell name="H1" value="Currency 1" type="general">
+        </cell>
+        <cell name="I2" value="dropdown" type="general">
+        </cell>
+        <cell name="A2" value="Date" type="general">
+        </cell>
+        <cell name="B2" value="Price" type="general">
+        </cell>
+        <cell name="H9" value="Draw graph with forecast" type="general">
+        </cell>
+        <cell name="E1" value="Code:" type="general">
+        </cell>
+        <cell name="I3" value="dropdown" type="general">
+        </cell>
+        <cell name="D2" value="Price" type="general">
+        </cell>
+        <cell name="C2" value="Date" type="general">
+        </cell>
+        <cell name="H8" value="Draw graph" type="general">
+        </cell>
+        <cell name="E2" value="Date" type="general">
+        </cell>
+        <cell name="H3" value="Currency 3" type="general">
+        </cell>
+        <cell name="F2" value="Price" type="general">
+        </cell>
+        <cell name="C1" value="Code:" type="general">
+        </cell>
+        <cell name="H6" value="Update Monte Carlo Forecast" type="general">
+        </cell>
+        <cell name="I5" value="currently [Off]" type="general">
+        </cell>
+        <cell name="H2" value="Currency 2" type="general">
+        </cell>
     </worksheet>
     <worksheet name="Shipping" value="" showGrid="True" showBounds="False" headerWidth="-1" headerHeight="-1">
         <trait name="FontSize">
@@ -662,6 +718,6 @@ execfile('preConstantsUserCode.py')
         <trait name="DecimalPlaces">
         </trait>
     </worksheet>
-    <postFormulaeUserCode><![CDATA[
+    <postFormulaeUserCode><![CDATA[execfile('postFormulaeUserCode.py')
 ]]></postFormulaeUserCode>
 </document>
