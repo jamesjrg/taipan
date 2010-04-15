@@ -69,19 +69,12 @@ Thirdly, summary data sets:
 
 Fourthly, extreme contrivedness:
 10. Travelling freighter problem
-Read about spatial data in sql - need to use "geography" data type
-a quick example:
-CREATE TABLE SpatialTable 
-    ( id int IDENTITY (1,1),
-    GeogCol1 geography, 
-    GeogCol2 AS GeogCol1.STAsText() );
-GO
+Maybe need to read about spatial data in sql - need to use "geography" data type
 INSERT INTO SpatialTable (GeogCol1)
 VALUES (geography::STPointFromText('POINT(-122.360 47.656)', 4326));
 longitude is specified first before the latitude
 
-
-Find the coordinates for just 10 of the ports for insertion, leave others null.
+Find the coordinates for perhaps just 10 of the ports for insertion, leave others null.
 
 Where relevant, tabs should have:
 1. Button to switch on constant update (inc graph)
@@ -218,7 +211,7 @@ version for CV etc:
 - add Solver Foundation+OML to web doc
 - lots of xmlcomments for classes and methods
 - triggers, constraints, (views?), etc
-- web doc spatial database data
+- web doc spatial database data - though utterly trivial use of spatial data because the database is not used to perform any operations on that data
 
 
 
