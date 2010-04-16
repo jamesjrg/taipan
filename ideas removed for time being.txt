@@ -8,7 +8,6 @@ Documentation and UML
 
 - UML class diagram (hopefully this can just be exported from Visual Studio? Or otherwise imported from C# code to MagicDraw)
 - export class documentation from XML doc strings
-- add data type for each attrib on SQL diagram
 
 ///
 
@@ -19,9 +18,6 @@ Concurrency and networking:
 - make processes be able to cope if other processes fall off network then reappear again (this would be a major undertaking)
 
 ///
-
-Resolver:
-- Python script that simulates database reads by just returning incremental data from a mass of stored historical data - this will allow me to redistribute sheet without requiring dependency on rest of system. also doc this on web.
 
 ++++
 Section 2: not especially reasonable ideas:
@@ -119,6 +115,24 @@ things that could be done to make it more complicated for the sake of it removed
 - have processes broadcast i'm-alive pings, and then on basis of these pings have bank create or delete database entries for the various economic players on the fly
 - keep track of positions of freighters, and have a web app with MS maps or Google maps integration, with pins on the ports and also maybe on the freighters, and perhaps info boxes/some other visualisation of what is going on
 
+Resolver:
+- Python script that simulates database reads by just returning incremental data from a mass of stored historical data - this will allow me to redistribute sheet without requiring dependency on rest of system. also doc this on web.
+
+- GalaxyHack-ify it - allow people to take control of trading houses with custom logic code. I imagine this would work thusly:
+1. Make trader logic optionally take decisions on the basis of instructions via UDP or TCP messages rather than guesswork messages from fateandguesswork
+2. This would technically allow control in any language or program, but I would take advantage of already having worked with Resolver One to make a template ResolverOne spreadsheet for controlling trader logic
+3. For this to make any sense as a game, algorithms that control prices at different ports + changing exchange rates would have to conform to certain definite guidelines, and the objective of people's logic code would be to predict results on the basis of these algorithms to make the best trades. This would clearly involve a massive amount of research into financial mathematics.
+5. If it were to be truly competitive game as opposed to just single player, the rules would have to be set such that there is no ultimately "correct" answer. Also, there would either a) need to be a central server running the game to which players connect or b) if it is done corewars/galaxyhack style and the game is not continuous, there would need to be strict limits on how much processor time each process got.
+6. Could keep certain price change and behaviour algorithms for certain actors closed source and ony allow people to access their results via a web server. This would stop cheating by looking at the source code.
+7. Or alternatively could make it single player, in which case if people cheat then that is up to them.
+8. Could have a continuous multiplayer game where the idea is to make the maximum amount of money possible each day with a given amount to invest, or could instead make it a single player game of with "levels", whereby with each level you have to work out a particular algorithm plus its parameters.
+9. Possibly ideas for challenges include: 1. work out the parameters of GBM 2. parameters of GBM are constantly changing, and see who has the best algorithm for quickly working out these changes 3. have a variety of different factors affecting profit/loss (e.g. fluctuations in currency, shares, commodities, various things you can do like futures contracts and warehousing), and then the challenge is to come up with the best "AI" which takes all these things into account to make the most money
+
+REALLY doubt there'd be much interest, though. Even if I managed to implement this (which would be no small task), the target niche of possible players would be so small it would never get enough players to make it work. But could be interesting to try to implement?
+
+UML:
+- add data type for each attrib on SQL diagram
+
 ++++
 Section 3: silly ideas:
 ++++
@@ -165,20 +179,6 @@ Factor in marketing and advertising increasing demand, increasing salaries leadi
 
 ///
 
-make it a game idea:
-
-- GalaxyHack-ify it - allow people to take control of trading houses with custom logic code. I imagine this would work thusly:
-1. Make trader logic optionally take decisions on the basis of instructions via UDP or TCP messages
-2. Make trader's output all the data they receive via UDP or TCP messages
-3. This would technically allow control in any language or program, but I would take advantage of already having worked with Resolver One to make a template ResolverOne spreadsheet for controlling trader logic
-4. For this to make any sense as a game, I would have to make the algorithms for the prices at different places + changing exchange rates conform to certain definite guidelines, and the objective of people's logic code would be to predict results on the basis of these algorithms to make the best trades. This would clearly involve a massive amount of research into financial mathematics.
-5. If it were to be truly competitive game as opposed to just single player, the rules would have to be set such that there is no ultimately "correct" answer. Also, there would either a) need to be a central server running the game to which players connect or b) if it is done corewars/galaxyhack style and the game is not continuous, there would need to be strict limits on how much processor time each process got.
-6. Could keep certain price change and behaviour algorithms for certain actors closed source and ony allow people to access their results via a web server. This would stop cheating by looking at the source code.
-7. Or alternatively could make it single player, in which case if people cheat then that is up to them.
-8. Could have a continuous multiplayer game where the idea is to make the maximum amount of money possible each day with a given amount to invest, or could instead make it a single player game of with "levels", whereby with each level you have to work out a particular algorithm plus its parameters.
-9. Possibly ideas for challenges include: 1. work out the parameters of GBM 2. parameters of GBM are constantly changing, and see who has the best algorithm for quickly working out these changes 3. have a variety of different factors affecting profit/loss (e.g. fluctuations in currency, shares, commodities, various things you can do like futures contracts and warehousing), and then the challenge is to come up with the best "AI" which takes all these things into account to make the most money
-
-REALLY doubt there'd be much interest, though. Even if I managed to implement this (which would be no small task), the target niche of possible players would be so small it would never get enough players to make it work. But could be interesting to try to implement?
 
 
 

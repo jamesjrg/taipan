@@ -1,50 +1,97 @@
 ﻿BEGIN TRANSACTION
 GO
 
--- categories
-
-INSERT INTO dbo.CompanyType
-           (Name)
+INSERT INTO dbo.Currency
+           (Name, ShortName)
      VALUES
-           ('Trader'), ('ShippingCompany')
+           ('Algerian Dinar', 'DZD'),
+           ('Argentine peso', 'ARS'),
+           ('Australian dollar', 'AUD'),
+           ('British pound', 'GBP'),
+           ('Euro', 'EUR'),
+           ('Bangladeshi taka', 'BDT'),
+           ('Brazilian real', 'BRL'),
+           ('United States dollar', 'USD'),
+           ('Canadian dollar', 'CAD'),
+           ('Chilean peso', 'CLP'),
+           ('Chinese yuan', 'CNY'),
+           ('Colombian peso', 'COP'),
+           ('Danish krone', 'DKK'),
+           ('Egyptian pound', 'EGP'),
+           ('Hong Kong Dollar', 'HKD'),
+           ('Icelandic króna', 'ISK'),   
+           ('Indian rupee', 'INR'),
+           ('Iranian rial', 'IRR'),
+           ('Israeli new sheqel', 'ILS'),
+           ('Japanese yen', 'JPY'),
+           ('Malagasy ariary', 'MGA'),
+           ('Mexican peso', 'MXN'),
+           ('Namibian dollar', 'NAD'),
+           ('New Zealand dollar', 'NZD'),
+           ('Norwegian krone', 'NOK'),
+           ('Pakistani rupee', 'PKR'),
+           ('Peruvian nuevo sol', 'PEN'),
+           ('Ruble', 'RUB'),
+           ('Saudi riyal', 'SAR'),
+           ('Singapore dollar', 'SGD'),
+           ('South African rand', 'ZAR'),
+           ('South Korean won', 'KRW'),
+           ('Swedish krona', 'SEK'),
+           ('New Taiwan dollar', 'TWD'),
+           ('Thai baht', 'THB'),
+           ('Turkish lira', 'TRY'),
+           ('United Arab Emirates dirham', 'AED'),
+           ('Venezuelan bolívar', 'VEF')
 GO
 
--- economic players
-
-INSERT INTO dbo.Company
-           (Name, CompanyTypeID)
+INSERT INTO dbo.Country
+           (Name, CurrencyID)
      VALUES
-           ('Devlin MacGregor', 1),
-           ('Jackson Steinem', 1),
-           ('Ecumena', 1),
-           ('Pierce & Pierce', 1),
-           ('Khumalo', 1),
-                     
-           ('CHOAM', 2),
-           ('M & M Enterprises', 2),
-           ('Delos', 2),
-           ('Bluecorp', 2),
-           ('Planet Express', 2)
-GO
-
-INSERT INTO dbo.ShippingCompany
-           (CompanyID, NStocks, StockPrice, CountryID)
-     VALUES
-           (6, 1000, 100, 1),
-           (7, 1000, 100, 1),
-           (8, 1000, 100, 1),
-           (9, 1000, 100, 1),
-           (10, 1000, 100, 1)
-GO
-
-INSERT INTO dbo.Trader
-           (CompanyID, CountryID)
-     VALUES
-           (1, 1),
-           (2, 1),
-           (3, 1),
-           (4, 1),
-           (5, 1)
+           ('Algeria', 1),
+           ('Argentina', 1),
+           ('Australia', 1),
+           
+           ('Belgium', 1),
+           ('Netherlands', 1),
+           ('United Kingdom', 1),
+           ('France', 1),
+           ('Germany', 1),
+           ('Italy', 1),
+           ('Spain', 1),
+           
+           ('Bangladesh', 1),
+           ('Brazil', 1),
+           ('United States', 1),
+           ('Canada', 1),
+           ('Chile', 1),
+           ('China', 1),
+           ('Colombia', 1),
+           ('Denmark', 1),
+           ('Egypt', 1),
+           ('Hong Kong SAR', 1),
+           ('Iceland', 1),
+           ('India', 1),
+           ('Iran', 1),
+           ('Israel', 1),
+           ('Japan', 1),
+           ('Madagascar', 1),
+           ('Mexico', 1),
+           ('Namibia', 1),
+           ('New Zealand', 1),
+           ('Norway', 1),
+           ('Pakistan', 1),
+           ('Peru', 1),
+           ('Russia', 1),
+           ('Saudi Arabia', 1),
+           ('Singapore', 1),
+           ('South Africa', 1),
+           ('South Korea', 1),
+           ('Sweden', 1),
+           ('Taiwan', 1),
+           ('Thailand', 1),
+           ('Turkey', 1),
+           ('United Arab Emirates', 1),
+           ('Venezuela', 1)
 GO
 
 INSERT INTO dbo.Port
@@ -157,56 +204,6 @@ INSERT INTO dbo.Port
        ('Maracaibo', 1)
 GO
 
-INSERT INTO dbo.Country
-           (Name, CurrencyID)
-     VALUES
-           ('Algeria', 1),
-           ('Argentina', 1),
-           ('Australia', 1),
-           
-           ('Belgium', 1),
-           ('Netherlands', 1),
-           ('United Kingdom', 1),
-           ('France', 1),
-           ('Germany', 1),
-           ('Italy', 1),
-           ('Spain', 1),
-           
-           ('Bangladesh', 1),
-           ('Brazil', 1),
-           ('United States', 1),
-           ('Canada', 1),
-           ('Chile', 1),
-           ('China', 1),
-           ('Colombia', 1),
-           ('Denmark', 1),
-           ('Egypt', 1),
-           ('Hong Kong SAR', 1),
-           ('Iceland', 1),
-           ('India', 1),
-           ('Iran', 1),
-           ('Israel', 1),
-           ('Japan', 1),
-           ('Madagascar', 1),
-           ('Mexico', 1),
-           ('Namibia', 1),
-           ('New Zealand', 1),
-           ('Norway', 1),
-           ('Pakistan', 1),
-           ('Peru', 1),
-           ('Russia', 1),
-           ('Saudi Arabia', 1),
-           ('Singapore', 1),
-           ('South Africa', 1),
-           ('South Korea', 1),
-           ('Sweden', 1),
-           ('Taiwan', 1),
-           ('Thailand', 1),
-           ('Turkey', 1),
-           ('United Arab Emirates', 1),
-           ('Venezuela', 1)
-GO
-
 INSERT INTO dbo.Commodity
            (Name)
      VALUES
@@ -238,47 +235,50 @@ INSERT INTO dbo.Commodity
            ('Oil')
 GO
 
-INSERT INTO dbo.Currency
-           (Name, ShortName)
+-- categories
+
+INSERT INTO dbo.CompanyType
+           (Name)
      VALUES
-           ('Algerian Dinar', 'DZD'),
-           ('Argentine peso', 'ARS'),
-           ('Australian dollar', 'AUD'),
-           ('British pound', 'GBP'),
-           ('Euro', 'EUR'),
-           ('Bangladeshi taka', 'BDT'),
-           ('Brazilian real', 'BRL'),
-           ('United States dollar', 'USD'),
-           ('Canadian dollar', 'CAD'),
-           ('Chilean peso', 'CLP'),
-           ('Chinese yuan', 'CNY'),
-           ('Colombian peso', 'COP'),
-           ('Danish krone', 'DKK'),
-           ('Egyptian pound', 'EGP'),
-           ('Hong Kong Dollar', 'HKD'),
-           ('Icelandic króna', 'ISK'),   
-           ('Indian rupee', 'INR'),
-           ('Iranian rial', 'IRR'),
-           ('Israeli new sheqel', 'ILS'),
-           ('Japanese yen', 'JPY'),
-           ('Malagasy ariary', 'MGA'),
-           ('Mexican peso', 'MXN'),
-           ('Namibian dollar', 'NAD'),
-           ('New Zealand dollar', 'NZD'),
-           ('Norwegian krone', 'NOK'),
-           ('Pakistani rupee', 'PKR'),
-           ('Peruvian nuevo sol', 'PEN'),
-           ('Ruble', 'RUB'),
-           ('Saudi riyal', 'SAR'),
-           ('Singapore dollar', 'SGD'),
-           ('South African rand', 'ZAR'),
-           ('South Korean won', 'KRW'),
-           ('Swedish krona', 'SEK'),
-           ('New Taiwan dollar', 'TWD'),
-           ('Thai baht', 'THB'),
-           ('Turkish lira', 'TRY'),
-           ('United Arab Emirates dirham', 'AED'),
-           ('Venezuelan bolívar', 'VEF')
+           ('Trader'), ('ShippingCompany')
+GO
+
+-- economic players
+
+INSERT INTO dbo.Company
+           (Name, CompanyTypeID, CountryID)
+     VALUES
+           ('Devlin MacGregor', 1, 1),
+           ('Jackson Steinem', 1, 1),
+           ('Ecumena', 1, 1),
+           ('Pierce & Pierce', 1, 1),
+           ('Khumalo', 1, 1),
+                     
+           ('CHOAM', 2, 1),
+           ('M & M Enterprises', 2, 1),
+           ('Delos', 2, 1),
+           ('Bluecorp', 2, 1),
+           ('Planet Express', 2, 1)
+GO
+
+INSERT INTO dbo.ShippingCompany
+           (CompanyID, NStocks, USDStockPrice)
+     VALUES
+           (6, 1000, 100),
+           (7, 1000, 100),
+           (8, 1000, 100),
+           (9, 1000, 100),
+           (10, 1000, 100)
+GO
+
+INSERT INTO dbo.Trader
+           (CompanyID)
+     VALUES
+           (1),
+           (2),
+           (3),
+           (4),
+           (5)
 GO
 
 INSERT INTO dbo.PortCommodityPrice

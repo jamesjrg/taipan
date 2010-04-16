@@ -2,11 +2,17 @@ from System import Array
 from System.Data import DataSet
 from System.Data.Odbc import OdbcConnection, OdbcDataAdapter
 
+commoditySheet = workbook['Commodity Prices']
 fxSheet = workbook['FX Rates']
 
-currency1 = 1
-currency2 = 0
-currency3 = 0
+commodityId = 1
+commodityPortId1 = 1
+commodityPortId2 = 2
+commodityPortId3 = 3
+
+currencyId1 = 1
+currencyId2 = 2
+currencyId3 = 3
 
 def queryDb(query):
     print 'DB query: %s' % query
@@ -29,8 +35,12 @@ def queryCurrencies():
 def setCurrency(which, id):
     data = queryDb("select ShortName from Currency where ID = %d" % id)
 
+def updateCommodityPrices():
+    data = queryDb("select top %d ValueDate, Price from HistoricalPortCommodityPrice where PortID = %d and CommodityID = %d order by ValueDate ASC" % (Settings.nTopUpdate, commodityPortId1, commodityId))
+    commoditySheet.FillRange(data, 1, 3, 2, Settings.nTopUpdate + 1)
+   
 def updateFXRates():
-    data = queryDb("select top %d ValueDate, USDValue from HistoricalCurrencyPrice where CurrencyID = %d order by ValueDate ASC" % (Settings.nTopUpdate, currency1))
+    data = queryDb("select top %d ValueDate, USDValue from HistoricalCurrencyPrice where CurrencyID = %d order by ValueDate ASC" % (Settings.nTopUpdate, currencyId1))
     fxSheet.FillRange(data, 1, 3, 2, Settings.nTopUpdate + 1)
 
 def queryCountrySummary():

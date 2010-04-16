@@ -1,7 +1,7 @@
 <!--
 This spreadsheet is in the Public Domain.
 -->
-<document currentResultWorksheet="FX Rates" verticalSplitterRatio="0.75" horizontalSplitterRatio="0.994100294985" splitterOrientation="Horizontal" suspendRecalculations="False" license="Public Domain" copyrightOwner="James Gregory" resolverVersion="1.8.1" resolverBuild="5061" documentVersion="12">
+<document currentResultWorksheet="Commodity Prices" verticalSplitterRatio="0.75" horizontalSplitterRatio="0.543160690571" splitterOrientation="Horizontal" suspendRecalculations="False" license="Public Domain" copyrightOwner="James Gregory" resolverVersion="1.8.1" resolverBuild="5061" documentVersion="12">
     <foldState license="True" imports="True" worksheetCreation="True" preConstantsUserCode="False" constants="True" preFormulaeUserCode="False" generated="False" postFormulaeUserCode="False"/>
     <traitDefaults>
 
@@ -18,47 +18,41 @@ execfile('preConstantsUserCode.py')
         <viewState worksheet="Travelling Freighter Problem">
             <currentCell col="1" row="1" />
             <scrollPos col="1" row="1" />
-            <virtualGridSize width="51" height="57" />
+            <virtualGridSize width="51" height="39" />
         </viewState>
         <viewState worksheet="Country summary">
             <currentCell col="1" row="2" />
             <scrollPos col="1" row="1" />
-            <virtualGridSize width="51" height="57" />
+            <virtualGridSize width="51" height="39" />
         </viewState>
         <viewState worksheet="Shipping summary">
             <currentCell col="1" row="1" />
             <scrollPos col="1" row="1" />
-            <virtualGridSize width="51" height="57" />
+            <virtualGridSize width="51" height="39" />
         </viewState>
         <viewState worksheet="Commodity Prices">
-            <currentCell col="7" row="18" />
+            <currentCell col="8" row="5" />
             <scrollPos col="1" row="1" />
-            <virtualGridSize width="51" height="71" />
+            <virtualGridSize width="50" height="39" />
         </viewState>
         <viewState worksheet="Futures">
             <currentCell col="6" row="8" />
             <scrollPos col="1" row="1" />
-            <virtualGridSize width="50" height="57" />
+            <virtualGridSize width="50" height="39" />
         </viewState>
         <viewState worksheet="FX Rates">
-            <currentCell col="8" row="14" />
+            <currentCell col="5" row="9" />
             <scrollPos col="1" row="1" />
-            <virtualGridSize width="48" height="71" />
+            <virtualGridSize width="48" height="39" />
         </viewState>
         <viewState worksheet="Shipping">
             <currentCell col="1" row="1" />
             <scrollPos col="1" row="1" />
-            <virtualGridSize width="51" height="29" />
-        </viewState>
-        <viewState worksheet="Stock Prices">
-            <currentCell col="5" row="9" />
-            <scrollPos col="1" row="1" />
-            <virtualGridSize width="51" height="57" />
+            <virtualGridSize width="51" height="39" />
         </viewState>
     </viewStates>
     <worksheetOrder>
         <orderentry name="Commodity Prices" />
-        <orderentry name="Stock Prices" />
         <orderentry name="FX Rates" />
         <orderentry name="Futures" />
         <orderentry name="Shipping" />
@@ -85,15 +79,7 @@ execfile('preConstantsUserCode.py')
             <traitentry col="1" row="7" value="119" />
             <traitentry col="1" row="8" value="119" />
             <traitentry col="1" row="9" value="119" />
-            <traitentry col="8" row="2" value="151" />
-            <traitentry col="8" row="3" value="151" />
-            <traitentry col="8" row="4" value="151" />
-            <traitentry col="8" row="5" value="151" />
-            <traitentry col="8" row="6" value="151" />
-            <traitentry col="8" row="7" value="151" />
-            <traitentry col="8" row="8" value="151" />
-            <traitentry col="8" row="9" value="151" />
-            <traitentry col="8" row="10" value="151" />
+            <traitentry col="8" row="0" value="139" />
             <traitentry col="3" row="1" value="119" />
             <traitentry col="3" row="2" value="119" />
             <traitentry col="5" row="1" value="119" />
@@ -149,9 +135,7 @@ execfile('preConstantsUserCode.py')
         </cell>
         <cell name="A1" value="nameofport" type="general">
         </cell>
-        <cell name="H10" value="Draw graph with forecast" type="general">
-        </cell>
-        <cell name="H5" value="[Update]" type="general">
+        <cell name="H10" value="Draw graph" type="general">
         </cell>
         <cell name="I6" value="currently [Off]" type="general">
         </cell>
@@ -165,8 +149,6 @@ execfile('preConstantsUserCode.py')
         </cell>
         <cell name="H4" value="Port 3" type="general">
         </cell>
-        <cell name="H9" value="Draw graph" type="general">
-        </cell>
         <cell name="E1" value="nameofport" type="general">
         </cell>
         <cell name="I3" value="dropdown" type="general">
@@ -174,6 +156,8 @@ execfile('preConstantsUserCode.py')
         <cell name="D2" value="Price" type="general">
         </cell>
         <cell name="C2" value="Date" type="general">
+        </cell>
+        <cell name="H8" value="Clear Monte Carlo Forecast" type="general">
         </cell>
         <cell name="H7" value="Update Monte Carlo Forecast" type="general">
         </cell>
@@ -190,112 +174,6 @@ execfile('preConstantsUserCode.py')
         <cell name="H6" value="Toggle constant update" type="general">
         </cell>
         <cell name="H2" value="Port 1" type="general">
-        </cell>
-    </worksheet>
-    <worksheet name="Stock Prices" value="" showGrid="True" showBounds="False" headerWidth="-1" headerHeight="-1">
-        <trait name="FontSize">
-        </trait>
-        <trait name="BorderBottom">
-        </trait>
-        <trait name="ShowNegativeSymbol">
-        </trait>
-        <trait name="Unit">
-        </trait>
-        <trait name="ColWidth">
-            <traitentry col="1" row="0" value="72" />
-            <traitentry col="8" row="0" value="109" />
-            <traitentry col="3" row="1" value="119" />
-            <traitentry col="3" row="2" value="119" />
-            <traitentry col="5" row="1" value="119" />
-            <traitentry col="5" row="2" value="119" />
-        </trait>
-        <trait name="Alignment">
-        </trait>
-        <trait name="BorderTop">
-        </trait>
-        <trait name="WebEditable">
-        </trait>
-        <trait name="Italic">
-        </trait>
-        <trait name="FontFamily">
-        </trait>
-        <trait name="ShowSeparators">
-        </trait>
-        <trait name="VerticalAlignment">
-        </trait>
-        <trait name="Formatter">
-        </trait>
-        <trait name="Underline">
-        </trait>
-        <trait name="Color">
-        </trait>
-        <trait name="RowHidden">
-        </trait>
-        <trait name="BorderLeft">
-        </trait>
-        <trait name="StripZeros">
-        </trait>
-        <trait name="ColHidden">
-        </trait>
-        <trait name="Wrap">
-        </trait>
-        <trait name="NegativeTextColor">
-        </trait>
-        <trait name="BorderRight">
-        </trait>
-        <trait name="RowHeight">
-        </trait>
-        <trait name="BackColor">
-        </trait>
-        <trait name="Bold">
-        </trait>
-        <trait name="Strikethrough">
-        </trait>
-        <trait name="ImagePlacement">
-        </trait>
-        <trait name="DecimalPlaces">
-        </trait>
-        <cell name="I1" value="dropdown" type="general">
-        </cell>
-        <cell name="A1" value="nameofcompany" type="general">
-        </cell>
-        <cell name="H5" value="Toggle constant update" type="general">
-        </cell>
-        <cell name="H1" value="Company 1" type="general">
-        </cell>
-        <cell name="I2" value="dropdown" type="general">
-        </cell>
-        <cell name="A2" value="Date" type="general">
-        </cell>
-        <cell name="B2" value="Price" type="general">
-        </cell>
-        <cell name="H4" value="[Update]" type="general">
-        </cell>
-        <cell name="H9" value="Draw graph with forecast" type="general">
-        </cell>
-        <cell name="E1" value="nameofcompany" type="general">
-        </cell>
-        <cell name="I3" value="dropdown" type="general">
-        </cell>
-        <cell name="D2" value="Price" type="general">
-        </cell>
-        <cell name="C2" value="Date" type="general">
-        </cell>
-        <cell name="H8" value="Draw graph" type="general">
-        </cell>
-        <cell name="E2" value="Date" type="general">
-        </cell>
-        <cell name="H3" value="Company 3" type="general">
-        </cell>
-        <cell name="F2" value="Price" type="general">
-        </cell>
-        <cell name="C1" value="nameofcompany" type="general">
-        </cell>
-        <cell name="H6" value="Update Monte Carlo Forecast" type="general">
-        </cell>
-        <cell name="I5" value="currently [Off]" type="general">
-        </cell>
-        <cell name="H2" value="Company 2" type="general">
         </cell>
     </worksheet>
     <worksheet name="FX Rates" value="" showGrid="True" showBounds="False" headerWidth="-1" headerHeight="-1">
@@ -375,9 +253,9 @@ execfile('preConstantsUserCode.py')
         <array expression="" left="1" top="5" right="1" bottom="10" />
         <cell name="I1" value="dropdown" type="general">
         </cell>
-        <cell name="H8" value="Draw graph" type="general">
-        </cell>
         <cell name="A2" value="Date" type="general">
+        </cell>
+        <cell name="H7" value="Clear Monte Carlo Forecast" type="general">
         </cell>
         <cell name="B2" value="Price" type="general">
         </cell>
@@ -387,7 +265,7 @@ execfile('preConstantsUserCode.py')
         </cell>
         <cell name="H3" value="Currency 3" type="general">
         </cell>
-        <cell name="H9" value="Draw graph with forecast" type="general">
+        <cell name="H9" value="Draw graph" type="general">
         </cell>
         <cell name="F2" value="Price" type="general">
         </cell>

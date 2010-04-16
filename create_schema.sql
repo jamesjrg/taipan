@@ -55,7 +55,8 @@ CREATE TABLE dbo.Company
 	ID int IDENTITY (1, 1) PRIMARY KEY,
 	Name nvarchar(50) NOT NULL,
 	CompanyTypeID int references CompanyType(ID) not null,
-	Balance Money NOT NULL DEFAULT 0
+	Balance Money NOT NULL DEFAULT 0,
+    CountryID int NOT NULL
     constraint alternate_pk unique (ID,CompanyTypeID)
 	)  ON [PRIMARY]
 GO
@@ -63,8 +64,7 @@ GO
 CREATE TABLE dbo.Trader
 	(
 	CompanyID int PRIMARY KEY REFERENCES Company(ID),
-    CompanyTypeID as 1 persisted,
-    CountryID int NOT NULL,
+    CompanyTypeID as 1 persisted,    
     foreign key (CompanyID, CompanyTypeID) references Company(ID, CompanyTypeID)
 	)  ON [PRIMARY]
 GO
@@ -74,8 +74,7 @@ CREATE TABLE dbo.ShippingCompany
 	CompanyID int PRIMARY KEY REFERENCES Company(ID),
     CompanyTypeID as 2 persisted,
     NStocks int NOT NULL DEFAULT 1000000,
-    StockPrice Money NOT NULL DEFAULT 100,
-    CountryID int NOT NULL,
+    USDStockPrice Money NOT NULL DEFAULT 100,
     foreign key (CompanyID, CompanyTypeID) references Company(ID, CompanyTypeID)
 	)  ON [PRIMARY]
 GO
@@ -185,7 +184,7 @@ CREATE TABLE dbo.HistoricalStockPrice
 	ID int NOT NULL IDENTITY (1, 1) PRIMARY KEY CLUSTERED,
     ShippingCompanyID int NOT NULL,
     PriceDate datetime NOT NULL,
-    Price Money NOT NULL,
+    USDStockPrice Money NOT NULL,
 	)  ON [PRIMARY]
 GO
 
@@ -219,26 +218,50 @@ GO
 
 -- foreign keys (except those used for table inheritance concept, already declared)
 ALTER TABLE dbo.HistoricalStockPrice ADD
-	CONSTRAINT fkHistoricalStockPrice FOREIGN KEY
+	CONSTRAINT fkHistStockPrice FOREIGN KEY
 	(ShippingCompanyID) REFERENCES dbo.ShippingCompany (CompanyID)
 GO
 
 ALTER TABLE dbo.HistoricalBalance ADD
-	CONSTRAINT fkHistoricalBalance FOREIGN KEY
+	CONSTRAINT fkHistBalance FOREIGN KEY
 	(CompanyID) REFERENCES dbo.Company (ID)
 GO
 
 ALTER TABLE dbo.HistoricalCurrencyPrice ADD
-	CONSTRAINT fkHistoricalCurrencyPrice FOREIGN KEY
+	CONSTRAINT fkHistCurrencyPrice FOREIGN KEY
 	(CurrencyID) REFERENCES dbo.Currency (ID)
 GO
 
 ALTER TABLE dbo.HistoricalPortCommodityPrice ADD
-	CONSTRAINT fkHistoricalPortCommodityPort FOREIGN KEY
+	CONSTRAINT fkHistPortCommodityPort FOREIGN KEY
 	(PortID) REFERENCES dbo.Port (ID),
-    CONSTRAINT fkHistoricalPortCommodityCommod FOREIGN KEY
+    CONSTRAINT fkHistPortCommodityCommod FOREIGN KEY
 	(CommodityID) REFERENCES dbo.Commodity (ID);
 GO
+
+ALTER TABLE dbo.Company ADD
+	CONSTRAINT fkCompanyCountry FOREIGN KEY
+	(CountryID) REFERENCES dbo.Country (ID)
+GO
+
+ALTER TABLE dbo.Country ADD
+	CONSTRAINT fkCountryCurr FOREIGN KEY
+	(CurrencyID) REFERENCES dbo.Currency (ID)
+GO
+
+ALTER TABLE dbo.Port ADD
+	CONSTRAINT fkPortCountry FOREIGN KEY
+	(CountryID) REFERENCES dbo.Country (ID)
+GO
+
+ALTER TABLE dbo.FuturesContract ADD
+	CONSTRAINT fkFuturesTrader FOREIGN KEY
+	(TraderID) REFERENCES dbo.Trader (CompanyID),
+    CONSTRAINT fkFuturesCommod FOREIGN KEY
+	(CommodityID) REFERENCES dbo.Commodity (ID);
+GO
+
+-- TODO: warehousedcommod, commodtrans, portcommodprice
     
 -- triggers
 CREATE TRIGGER dbo.trgStockUpdate
@@ -246,8 +269,8 @@ ON dbo.ShippingCompany
 AFTER update
 AS
 INSERT INTO dbo.HistoricalStockPrice
-    (ShippingCompanyID, PriceDate, Price)
-SELECT updated.ID, GETDATE(), updated.StockPrice FROM updated
+    (ShippingCompanyID, PriceDate, USDStockPrice)
+SELECT updated.ID, GETDATE(), updated.USDStockPrice FROM updated
 GO
 
 CREATE TRIGGER dbo.trgBalanceUpdate
