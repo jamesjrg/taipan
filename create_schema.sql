@@ -34,7 +34,7 @@ GO
 
 COMMIT
 
--- create tables + constraints
+-- create everything
 BEGIN TRANSACTION
 GO
 
@@ -49,28 +49,34 @@ GO
 
 -- economic players
 
+-- foreign keys for inheritance concept are added on table creation
 CREATE TABLE dbo.Company
 	(
 	ID int IDENTITY (1, 1) PRIMARY KEY,
 	Name nvarchar(50) NOT NULL,
-	CompanyTypeID int NOT NULL,
+	CompanyTypeID int references CompanyType(ID) not null,
 	Balance Money NOT NULL DEFAULT 0
-	)  ON [PRIMARY]
-GO
-
-CREATE TABLE dbo.PublicCompany
-	(
-	CompanyID int PRIMARY KEY REFERENCES Company(ID),
-    NStocks int NOT NULL DEFAULT 1000000,
-    StockPrice Money NOT NULL DEFAULT 100,
-    CountryID int NOT NULL,
+    constraint alternate_pk unique (ID,CompanyTypeID)
 	)  ON [PRIMARY]
 GO
 
 CREATE TABLE dbo.Trader
 	(
 	CompanyID int PRIMARY KEY REFERENCES Company(ID),
+    CompanyTypeID as 1 persisted,
     CountryID int NOT NULL,
+    foreign key (CompanyID, CompanyTypeID) references Company(ID, CompanyTypeID)
+	)  ON [PRIMARY]
+GO
+
+CREATE TABLE dbo.ShippingCompany
+	(
+	CompanyID int PRIMARY KEY REFERENCES Company(ID),
+    CompanyTypeID as 2 persisted,
+    NStocks int NOT NULL DEFAULT 1000000,
+    StockPrice Money NOT NULL DEFAULT 100,
+    CountryID int NOT NULL,
+    foreign key (CompanyID, CompanyTypeID) references Company(ID, CompanyTypeID)
 	)  ON [PRIMARY]
 GO
 
@@ -177,7 +183,7 @@ GO
 CREATE TABLE dbo.HistoricalStockPrice
 	(
 	ID int NOT NULL IDENTITY (1, 1) PRIMARY KEY CLUSTERED,
-    CompanyID int NOT NULL,
+    ShippingCompanyID int NOT NULL,
     PriceDate datetime NOT NULL,
     Price Money NOT NULL,
 	)  ON [PRIMARY]
@@ -211,27 +217,64 @@ CREATE TABLE dbo.HistoricalPortCommodityPrice
     )  ON [PRIMARY]
 GO
 
--- foreign keys (except those used for base table/inheritance concept, already declared)
-ALTER TABLE dbo.Company ADD CONSTRAINT
-	FK_Company_CompanyType FOREIGN KEY
-	(
-	CompanyTypeID
-	) REFERENCES dbo.CompanyType
-	(
-	ID
-	)
+-- foreign keys (except those used for table inheritance concept, already declared)
+ALTER TABLE dbo.HistoricalStockPrice ADD
+	CONSTRAINT fkHistoricalStockPrice FOREIGN KEY
+	(ShippingCompanyID) REFERENCES dbo.ShippingCompany (CompanyID)
 GO
 
+ALTER TABLE dbo.HistoricalBalance ADD
+	CONSTRAINT fkHistoricalBalance FOREIGN KEY
+	(CompanyID) REFERENCES dbo.Company (ID)
+GO
+
+ALTER TABLE dbo.HistoricalCurrencyPrice ADD
+	CONSTRAINT fkHistoricalCurrencyPrice FOREIGN KEY
+	(CurrencyID) REFERENCES dbo.Currency (ID)
+GO
+
+ALTER TABLE dbo.HistoricalPortCommodityPrice ADD
+	CONSTRAINT fkHistoricalPortCommodityPort FOREIGN KEY
+	(PortID) REFERENCES dbo.Port (ID),
+    CONSTRAINT fkHistoricalPortCommodityCommod FOREIGN KEY
+	(CommodityID) REFERENCES dbo.Commodity (ID);
+GO
+    
 -- triggers
+CREATE TRIGGER dbo.trgStockUpdate
+ON dbo.ShippingCompany
+AFTER update
+AS
+INSERT INTO dbo.HistoricalStockPrice
+    (ShippingCompanyID, PriceDate, Price)
+SELECT updated.ID, GETDATE(), updated.StockPrice FROM updated
+GO
+
+CREATE TRIGGER dbo.trgBalanceUpdate
+ON dbo.Company
+AFTER update
+AS
+INSERT INTO dbo.HistoricalBalance
+    (CompanyID, BalanceDate, Balance)
+SELECT updated.ID, GETDATE(), updated.Balance FROM updated
+GO
+
 CREATE TRIGGER dbo.trgCurrencyUpdate
 ON dbo.Currency
 AFTER update
 AS
 INSERT INTO dbo.HistoricalCurrencyPrice
     (CurrencyID, ValueDate, USDValue)
-SELECT inserted.ID, GETDATE(), inserted.USDValue FROM inserted
+SELECT updated.ID, GETDATE(), updated.USDValue FROM updated
+GO
+
+CREATE TRIGGER dbo.trgPortComodUpdate
+ON dbo.PortCommodityPrice
+AFTER update
+AS
+INSERT INTO dbo.HistoricalPortCommodityPrice
+    (PortID, CommodityID, ValueDate, Price)
+SELECT updated.PortID, updated.CommodityID, GETDATE(), updated.Price FROM updated
 GO
     
 COMMIT
-
-

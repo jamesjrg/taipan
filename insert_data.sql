@@ -27,10 +27,14 @@ INSERT INTO dbo.Company
            ('Planet Express', 2)
 GO
 
-INSERT INTO dbo.PublicCompany
+INSERT INTO dbo.ShippingCompany
            (CompanyID, NStocks, StockPrice, CountryID)
      VALUES
-           (6, 1000, 100, 1)
+           (6, 1000, 100, 1),
+           (7, 1000, 100, 1),
+           (8, 1000, 100, 1),
+           (9, 1000, 100, 1),
+           (10, 1000, 100, 1)
 GO
 
 INSERT INTO dbo.Trader

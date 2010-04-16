@@ -8,6 +8,7 @@ Documentation and UML
 
 - UML class diagram (hopefully this can just be exported from Visual Studio? Or otherwise imported from C# code to MagicDraw)
 - export class documentation from XML doc strings
+- add data type for each attrib on SQL diagram
 
 ///
 
