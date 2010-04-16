@@ -7,8 +7,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FXServer", "FXServer\FXServer.csproj", "{4CCFECBC-9200-4A4A-A68E-F3563CF32709}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DomesticCompany", "DomesticCompany\DomesticCompany.csproj", "{8282CF92-A934-4C73-9A9A-A07CEBA88809}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trader", "Trader\Trader.csproj", "{37BDAC3A-5910-4A0F-9734-BC60742E4351}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShippingCompany", "ShippingCompany\ShippingCompany.csproj", "{EC773A5A-5911-4B9C-A20C-2DB11204F748}"
@@ -44,10 +42,6 @@ Global
 		{4CCFECBC-9200-4A4A-A68E-F3563CF32709}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4CCFECBC-9200-4A4A-A68E-F3563CF32709}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4CCFECBC-9200-4A4A-A68E-F3563CF32709}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8282CF92-A934-4C73-9A9A-A07CEBA88809}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8282CF92-A934-4C73-9A9A-A07CEBA88809}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8282CF92-A934-4C73-9A9A-A07CEBA88809}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8282CF92-A934-4C73-9A9A-A07CEBA88809}.Release|Any CPU.Build.0 = Release|Any CPU
 		{37BDAC3A-5910-4A0F-9734-BC60742E4351}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{37BDAC3A-5910-4A0F-9734-BC60742E4351}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{37BDAC3A-5910-4A0F-9734-BC60742E4351}.Release|Any CPU.ActiveCfg = Release|Any CPU

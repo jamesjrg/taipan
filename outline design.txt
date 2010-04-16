@@ -1,26 +1,15 @@
-Though some of this should be configurable, a reasonable ball park figure might be that we want to have running 10 Domestic Companies, 5 Shipping Companies, 5 Traders, 1 FateAndGuesswork, 1 FXService, 1 Bank, 1 Resolver One spreadsheet, 0+ WpfGraphs,1 SQL Server instance, optionally 1 SortingServer + 1 SortingClient.
-
-DomesticCompany
-Servers it polls for input as client:
-1. FateAndGuesswork: it discovers when it will have a shortage or surplus of a given commodity, and at what price it will wish to buy/sell to make up for this
-Information it broadcasts as server:
-1. that is has a shortage/surplus of a given commodity, and the price at wish it wishes to buy/sell to make up for this
-Things it calculates:
-Things it reads from database: doesn't require db access?
-If process ends, what do clients do:
-1. Traders will have dud info on possible future event, and will falsely organise futures contract or warehousing. But this shouldn't matter at all, as this doesn't prevent them from continuing as normal.
+Though some of this should be configurable, a reasonable ball park figure might be that we want to have running 5 Shipping Companies, 5 Traders, 1 FateAndGuesswork, 1 FXService, 1 Bank, 1 Resolver One spreadsheet, 0+ WpfGraphs,1 SQL Server instance, optionally 1 SortingServer + 1 SortingClient.
 
 Trader
 Servers it polls for input as client:
-1. FateAndGuesswork for predicted future prices
-2. DomesticCompany declarations of shortage
+1. FateAndGuesswork for predicted future times/places for futures contracts and warehouse goods buying
 Information it broadcasts as server:
 1. decisions to buy goods at a given port, and decisions to organise a futures contract
 2. Contracts for movement of goods (from, to, expires)
 3. Acceptances of contracts for movement of goods (to shipping companies)
 4. Decision to sell warehoused goods
 Things it calculates:
-1. On basis of distance between ports and also predicted information on future shortage or surplus of a given commodity for a given company, they calculate the most profitable places to buy goods to warehouse in readiness to sell (i.e. somewhere nearby to and cheap for predicted future shortage, possibly the same port), or to organise a futures contract to buy goods in future in readiness to buy (i.e. at the actual port of the predicted future surplus). Then when price fluctuation actually happens, warehoused goods are sold to nearest place that has a demand for those goods, or otherwise futures contract is fufilled and goods are again sold in most profitable way possible. Though unforseen variation and/or the error in the prediction by fate and guesswork could still lead to them losing money.
+1. On basis of distance between ports and also predicted information on future shortage or surplus of a given commodity for a given company, they calculate the most profitable places to buy goods to warehouse in readiness to sell (i.e. somewhere nearby to and cheap for predicted future shortage, possibly the same port), or to organise a futures contract to buy goods in future in readiness to sell (i.e. at the actual port of the predicted future surplus). Then when price fluctuation actually happens, warehoused goods are sold to nearest place that has a demand for those goods, or otherwise futures contract is fufilled and goods are again sold in most profitable way possible. Though unforseen variation and/or the error in the prediction by fate and guesswork could still lead to them losing money.
 Things it reads from database: distance between ports, which ports import/export a given commodity
 If process ends, what do clients do:
 1. End of decisions to warehouse/futures contract/sell goods/move goods does not bother others. acceptances of movement contracts don't matter because shipping companies assume refused if not acked, and once accepted they can be actioned with no further input from trader.
@@ -52,8 +41,7 @@ Servers it polls for input as client:
 3. FateAndGuesswork market prices. Commodity prices in database are updated accordingly.
 4. FateAndGuesswork stock prices. Database updated accordingly
 5. trader decisions to buy goods to warehouse or to organise a futures contract. db updated accordingly.
-6. domestic company declarations of shortage/surplus
-7. trader decisions to sell warehoused goods
+6. trader decisions to sell warehoused goods
 Information it broadcasts as server: none
 Things it calculates:
 1. whenever updating bank balances after an economic transaction, if movement it applies modifier from distance (= greater profit to freighter company, greater expense to trader), if trade in goods on open market takes into account current commodity price, if different currencies applies current FX multiplier

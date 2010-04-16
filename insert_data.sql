@@ -6,13 +6,7 @@ GO
 INSERT INTO dbo.CompanyType
            (Name)
      VALUES
-           ('Trader'), ('DomesticCompany'), ('ShippingCompany')
-GO
-
-INSERT INTO dbo.DomesticCompanyType
-           (Name, ShortageProb, SurplusProb)
-     VALUES
-           ('Primary Sector', 20, 80), ('Manufacturing', 50, 50), ('Service Sector', 80, 20)
+           ('Trader'), ('ShippingCompany')
 GO
 
 -- economic players
@@ -25,20 +19,7 @@ INSERT INTO dbo.Company
            ('Ecumena', 1),
            ('Pierce & Pierce', 1),
            ('Khumalo', 1),
-           
-           ('Slate Rock and Gravel Company', 2),
-           ('Arctic & European Fish Oil Company', 2),
-           
-           ('Dunder Mifflin', 2),
-           ('Cyberdyne Systems', 2),
-           ('Tamaribuchi Heavy Manufacturing Concern', 2),
-           ('Medical Mechanica', 2),
-           ('Prescott Pharmaceuticals', 2),
-           
-           ('Goatberger Publishers', 2),
-           ('Garak''s', 2),
-           ('Omni Consumer Products', 2),           
-           
+                     
            ('CHOAM', 3),
            ('M & M Enterprises', 3),
            ('Delos', 3),
@@ -55,13 +36,11 @@ GO
 INSERT INTO dbo.Trader
            (CompanyID, CountryID)
      VALUES
-           (1, 1)
-GO
-
-INSERT INTO dbo.DomesticCompany
-           (PublicCompanyID, PortID, DomesticCompanyTypeID)
-     VALUES
-           (6, 1, 1)
+           (1, 1),
+           (2, 1),
+           (3, 1),
+           (4, 1),
+           (5, 1)
 GO
 
 INSERT INTO dbo.Freighter

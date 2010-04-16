@@ -12,6 +12,7 @@ Documentation and UML
 ///
 
 Concurrency and networking:
+- traders don't need to poll all companies, only those they are currently waiting on for predicted surplus or shortage
 - read a bit of abstract concurrency theory, and then put this into practice with regard to having it vey clear how concurrency features of my system are well designed and error-resistant, and then add this to doc
 - formal testing system (e.g. something like CHESS, though probably not directly suitable)
 - make processes be able to cope if other processes fall off network then reappear again (this would be a major undertaking)

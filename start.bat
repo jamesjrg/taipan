@@ -2,7 +2,6 @@ echo starting all processes
 
 SET EXEDIR=\bin\Debug
 SET BANK=Bank%EXEDIR%
-SET DOMESTIC=DomesticCompany%EXEDIR%
 SET FATE=FateAndGuesswork%EXEDIR%
 SET FX=FXServer%EXEDIR%
 SET SHIPPING=ShippingCompany%EXEDIR%
@@ -12,15 +11,10 @@ start /D %BANK% %BANK%\Bank.exe
 start /D %FATE% %FATE%\FateAndGuesswork.exe
 start /D %FX% %FX%\FXServer.exe
 
-for %%A in (1 2) do call :StartDomesticCompany %%A
 for %%A in (1 2) do call :StartShippingCompany %%A
 for %%A in (1 2) do call :StartTrader %%A
 
 GOTO End
-
-:StartDomesticCompany
-start /D %DOMESTIC% %DOMESTIC%\DomesticCompany.exe %1
-goto:eof
 
 :StartShippingCompany
 start /D %SHIPPING% %SHIPPING%\ShippingCompany.exe %1

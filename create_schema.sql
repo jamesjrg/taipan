@@ -47,15 +47,6 @@ CREATE TABLE dbo.CompanyType
 	)  ON [PRIMARY]
 GO
 
-CREATE TABLE dbo.DomesticCompanyType
-	(
-	ID int IDENTITY (1, 1) PRIMARY KEY,
-    Name nvarchar(50) NOT NULL,
-    ShortageProb int NOT NULL CHECK (ShortageProb > 0 AND ShortageProb <= 100) DEFAULT 0,
-    SurplusProb int NOT NULL CHECK (SurplusProb > 0 AND SurplusProb <= 100) DEFAULT 0
-	)  ON [PRIMARY]
-GO
-
 -- economic players
 
 CREATE TABLE dbo.Company
@@ -80,14 +71,6 @@ CREATE TABLE dbo.Trader
 	(
 	CompanyID int PRIMARY KEY REFERENCES Company(ID),
     CountryID int NOT NULL,
-	)  ON [PRIMARY]
-GO
-
-CREATE TABLE dbo.DomesticCompany
-	(
-	PublicCompanyID int PRIMARY KEY REFERENCES PublicCompany(CompanyID),
-    PortID int NOT NULL,
-    DomesticCompanyTypeID int NOT NULL,
 	)  ON [PRIMARY]
 GO
 
@@ -159,9 +142,11 @@ CREATE TABLE dbo.FuturesContract
 	ID int NOT NULL IDENTITY (1, 1) PRIMARY KEY CLUSTERED,
     TraderID int NOT NULL,
     CommodityID int NOT NULL,
-    DomesticCompanyID int NOT NULL,
+    PortID int NOT NULL,
     Price Money  NOT NULL,
     Quantity int NOT NULL,
+    PurchaseTime datetime NOT NULL,
+    SettlementTime datetime NOT NULL,
 	)  ON [PRIMARY]
 GO
 
@@ -170,26 +155,12 @@ CREATE TABLE dbo.WarehousedCommodity
 	ID int NOT NULL IDENTITY (1, 1) PRIMARY KEY CLUSTERED,
     TraderID int NOT NULL,
     CommodityID int NOT NULL,
-    DomesticCompanyID int NOT NULL,
+    PortID int NOT NULL,
+    Price Money  NOT NULL,
     Quantity int NOT NULL,
     PurchaseTime datetime NOT NULL,
-    SaleTime datetime NOT NULL,
+    PlannedSaleTime datetime NOT NULL,
 	)  ON [PRIMARY]
-GO
-
-CREATE TABLE dbo.DomesticCompanyCommodity
-	(
-	CompanyID int NOT NULL,
-    CommodityID int NOT NULL,
-    CONSTRAINT PK_DCC PRIMARY KEY (CompanyID, CommodityID)
-	)  ON [PRIMARY]
-GO
-
-CREATE NONCLUSTERED INDEX IX_DCC ON dbo.[DomesticCompanyCommodity] 
-(
-	CommodityID,
-	CompanyID
-) ON [PRIMARY]
 GO
 
 CREATE TABLE dbo.CommodityTransport

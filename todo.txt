@@ -4,7 +4,7 @@
 * network code and process logic
 - est 2.5 weeks FT
 
-* Read database management systems chapters 3 (almost read already), 4, 5
+* Read database management systems chapters 4, 5
 * write Resolver One view + WPF graphing, including monte carlo GBM predicting
 - est 3 weeks full time
 
@@ -22,13 +22,17 @@ right now:
 - update main loop tick to 1 second
 - Finish multihead queue, and make server use it. when a thread first subscribes it adds itself to this list. the current head position for each thread is maintained seperately. also has an unsubscribe function. when dequeing threads must provide their id, if id not found then error is thrown. If it is enqued when beyond max size, then old data is overwritten, and a note is made of any clients who now have invalid head pointers. Next time these clients try to dequeue, an error is thrown. DequeueAll needs to advance head.
 - write some sql triggers and foreign keys
-
+- UML diagram for db now fairly accurate, update schema to match
 
 fairly immediate stuff:
 
 general logic and network code:
 - when a client connects to a server, server has to create a unique id for it and store this for syncing purposes. maybe this id should be same as that used for a) database and b) stored for each class? in which case clients provide their own id on connect, server cannot make it up.
 - Trader/ShippingCompany interaction: delay of 5 secs between receiving acceptance of contract for movement of goods and taking contract off broadcast, requiring system of acks and locks, as in UML. But change design and UML a bit - rather than sending refusals, just make shipping companies have to assume they have been refused if they get no ack
+- change outline plan.txt: fateandguesswork price fluctuatioins of commodities are linked up with predictions given to traders. totally remove domesticcompanies broadcasting surplus/shortage and traders communicating with them to do transactions
+- when futures contract is fufilled, goods end up warehoused until sold. "warehousing" should be renamed "Buying".
+- for trader/domesticcomany interaction: at settlement time, traders do what they had decided to do, and organise selling goods as planned, whatever the actual price.
+- remove a whole bunch of fields from CommodityTransport, should instead refer to warehousedcommodity. make sure futures/warehousing/commodtreansport matches up uml <->schema
 
 sql:
 - write sql for foreign keys and triggers
@@ -40,7 +44,7 @@ sql:
 
 other:
 - improve start/testing batch scripts so can specify on command line how many of each process to start (then won't need separate test batch script, at least for now. quite possibly use Python.
-- separate start script for sortingserver + sortingclient
+- separate start script for starting up sortingserver + sortingclient together
 
 ////
 
@@ -54,24 +58,17 @@ Firstly, GBM data streams:
 2. Display historical prices and market cap of all public companies (CU)
 3. Display historical price of all currencies (CU)
 
-for FXupdate:
-
-
-All have possible monte carlo predictions and graphs.
-
 Secondly, just some general historical data:
 4. Historical futures contracts, including details of how relevant prices of all involved values changed between start and end of contract, and profit made (CU)
-5. Historical warehousing of commodities, including details of how relevant prices of all involved values changed between start and end of contract, and profit made (CU)
-6. Historical commodity transports
+5. Historical commdity transports, including details of how relevant prices of all involved values changed between start and end of contract, and profit made (CU)
 No graphs or other fanciness.
 
 Thirdly, summary data sets:
 6. Summary data on comparative historical record of countries, split into time periods - in each time period have the number of each type of transaction carried out, total value of transactions, and the number + value of transactions in each economic sector. also country name, currency name.
-7. As above, but with ports. port name, country name, currency name.
-9. Summary data for each shipping company, split into time periods - number of transactions, number of different ports served, average quantity per load, min quantity in a single load, max quantity in a single load. company name, number of freighters.
+7. Summary data for each shipping company, split into time periods - number of transactions, number of different ports served, average quantity per load, min quantity in a single load, max quantity in a single load. company name, number of freighters.
 
 Fourthly, extreme contrivedness:
-10. Travelling freighter problem
+8. Travelling freighter problem
 Maybe need to read about spatial data in sql - need to use "geography" data type
 INSERT INTO SpatialTable (GeogCol1)
 VALUES (geography::STPointFromText('POINT(-122.360 47.656)', 4326));
@@ -98,23 +95,21 @@ travelling freighter problem:
 - provide diagram of graph in doc
 
 - use Resolver One and MS Solver Foundation
-http://en.wikipedia.org/wiki/Priority_queue
 http://www.amsterdamoptimization.com/msf.html
 http://en.wikipedia.org/wiki/Travelling_salesman_problem
+http://en.wikipedia.org/wiki/Priority_queue
 
 ////
 
 Database stuff (needs adding to both a) UML diagram and b) actual SQL scripts):
 
 - For all tables with historical values, have the current value updated via a trigger linked to a new record being inserted into the main table
-- maybe constraint on linking ports + commodities + prices: every commodity for every port must appear in link table, no null values allowed for either FK
+- maybe constraint on PortCommodityPrice: every commodity for every port must appear in link table once and exactly once, no null values allowed for either FK
 - constraints to ensure CompanyType is correctly enforced and instances can be neither multiple base classes nor multiple sub classes
 - same with PublicCompanyType
 - maybe add some views for use by the various processes that need info from database?
 - do some normalisation some time after the design has changed a bit, and doc how I carried this out, and doc what normal form the db is in
-- note that publiccompany includes countryid and then this info repeated as portid in derived domesticcompany. however, countryid needed to know what currency stock pirce is in. i think maybe this lack of normalisation needs to be noted and accepted. or otherwise, could make seperate shippingcompany table with countryid, and then remove countryid from publiccompany.
 - make sure indexes, triggers, fks and pks, and constraints match up UML <-> sql and vice versa
-- maybe make constraint that ensures PortCommodityPrice includes each commodity and port combination exactly once?
 - make selects + updates to db use stored procedures for efficiency? if so, doc (and also, in brief buzz word doc, "x stored procedures")
 - error handling on error being returned on database query
 
@@ -155,10 +150,8 @@ Communication view:
 - should be much the same as the deployment view, except without repeating the things there can be multiple of, and it should show which directions each communication can go in, and briefly describe the data transferred by each link
 
 Deployment view:
-- add sortingserver + sortingclient
 - add the correct protocol labels
 - maybe there need to be more communication links?
-- add wpf graphs (same node as spreadsheet)
 
 Seq view:
 - do as orig planned after all
