@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Threading;
 
-using CommonLib = TaiPan.Common.Util;
+using TaiPan.Common;
 
 namespace TaiPan.Trader
 {
@@ -13,15 +12,22 @@ namespace TaiPan.Trader
     class Trader : TaiPan.Common.EconomicPlayer
     {
         private int myID;
+        private Client fatePoller;
 
         public Trader(string[] args)
         {
             myID = SetID("Trader", args);
+
+            fatePoller = new Client(ServerConfigs["FateAndGuessWork-TraderBroadcast"], AppSettings);
+            Thread thread = new Thread(fatePoller.MainLoop);
+            thread.Start();
         }
 
         protected override bool Run()
         {
-            return true;
+            if (fatePoller.messages.Count != 0)
+                Console.WriteLine(fatePoller.messages.Dequeue());
+            return true; 
         }
     }
 }

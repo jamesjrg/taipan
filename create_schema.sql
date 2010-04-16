@@ -76,13 +76,6 @@ GO
 
 -- physical objects
 
-CREATE TABLE dbo.Freighter
-	(
-	ID int NOT NULL IDENTITY (1, 1) PRIMARY KEY CLUSTERED,
-	CompanyID int NOT NULL
-	)  ON [PRIMARY]
-GO
-
 CREATE TABLE dbo.Port
 	(
 	ID int NOT NULL IDENTITY (1, 1) PRIMARY KEY CLUSTERED,
@@ -123,7 +116,9 @@ CREATE TABLE dbo.PortCommodityPrice
 	(
 	PortID int NOT NULL,
     CommodityID int NOT NULL,
-    Price Money NOT NULL DEFAULT 100,
+    Price Money NOT NULL DEFAULT 0,
+    ShortageProb int NOT NULL CHECK (ShortageProb >= 0 AND ShortageProb <= 100) DEFAULT 0,
+    SurplusProb int NOT NULL CHECK (SurplusProb >= 0 AND SurplusProb <= 100) DEFAULT 0,
     CONSTRAINT PK_PCP PRIMARY KEY (PortID, CommodityID)
 	)  ON [PRIMARY]
 GO
@@ -147,6 +142,7 @@ CREATE TABLE dbo.FuturesContract
     Quantity int NOT NULL,
     PurchaseTime datetime NOT NULL,
     SettlementTime datetime NOT NULL,
+    ActualSetTime datetime default null,
 	)  ON [PRIMARY]
 GO
 
@@ -156,10 +152,13 @@ CREATE TABLE dbo.WarehousedCommodity
     TraderID int NOT NULL,
     CommodityID int NOT NULL,
     PortID int NOT NULL,
-    Price Money  NOT NULL,
+    FuturesContractID int default null,
     Quantity int NOT NULL,
+    PurchasePrice Money NOT NULL,    
     PurchaseTime datetime NOT NULL,
-    PlannedSaleTime datetime NOT NULL,
+    SaleTime datetime default null,
+    SalePrice datetime default null,
+    SalePortID int default null,
 	)  ON [PRIMARY]
 GO
 
@@ -167,15 +166,10 @@ CREATE TABLE dbo.CommodityTransport
 	(
 	ID int NOT NULL IDENTITY (1, 1) PRIMARY KEY CLUSTERED,
     ShippingCompanyID int NOT NULL,
-    TraderID int NOT NULL,
-    CommodityID int NOT NULL,
+    WarehousedCommodityID int NOT NULL,
     DepartureTime datetime NOT NULL,
-    ArrivalTime datetime NOT NULL,
-    DeparturePort int NOT NULL,
-    ArrivalPort int NOT NULL,
-    Quantity int NOT NULL,
-    FreighterID int NOT NULL,
-	)  ON [PRIMARY]
+    ArrivalTime datetime default null,
+    )  ON [PRIMARY]
 GO
 
 -- historical data
@@ -228,6 +222,15 @@ ALTER TABLE dbo.Company ADD CONSTRAINT
 	)
 GO
 
+-- triggers
+CREATE TRIGGER dbo.trgCurrencyUpdate
+ON dbo.Currency
+AFTER update
+AS
+INSERT INTO dbo.HistoricalCurrencyPrice
+    (CurrencyID, ValueDate, USDValue)
+SELECT inserted.ID, GETDATE(), inserted.USDValue FROM inserted
+GO
     
 COMMIT
 

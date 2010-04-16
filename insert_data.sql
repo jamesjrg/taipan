@@ -20,11 +20,11 @@ INSERT INTO dbo.Company
            ('Pierce & Pierce', 1),
            ('Khumalo', 1),
                      
-           ('CHOAM', 3),
-           ('M & M Enterprises', 3),
-           ('Delos', 3),
-           ('Bluecorp', 3),
-           ('Planet Express', 3)
+           ('CHOAM', 2),
+           ('M & M Enterprises', 2),
+           ('Delos', 2),
+           ('Bluecorp', 2),
+           ('Planet Express', 2)
 GO
 
 INSERT INTO dbo.PublicCompany
@@ -41,12 +41,6 @@ INSERT INTO dbo.Trader
            (3, 1),
            (4, 1),
            (5, 1)
-GO
-
-INSERT INTO dbo.Freighter
-           (CompanyID)
-     VALUES
-           (1)
 GO
 
 INSERT INTO dbo.Port
