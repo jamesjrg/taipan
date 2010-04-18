@@ -24,8 +24,14 @@ namespace TaiPan.Common
             ExeConfigurationFileMap fileMap = new ExeConfigurationFileMap();
             fileMap.ExeConfigFilename = Util.configFile;
             System.Configuration.Configuration config = ConfigurationManager.OpenMappedExeConfiguration(fileMap, ConfigurationUserLevel.None);
+            
+            //this line worked for a while, and then stopped working? This config API totally sucks, I've wasted ludicrous amounts of time fighting it
+            //AppSettings = ConfigurationManager.AppSettings;
 
-            AppSettings = ConfigurationManager.AppSettings;
+            /* alternative approach: could instead use KeyValueConfigurationCollection everywhere, but it doesn't support hash lookups and also requires adding assembly references everywhere, lets just copy to a nice easy NameValueCollection */
+            foreach (KeyValueConfigurationElement keyValueElement in config.AppSettings.Settings)
+                AppSettings.Add(keyValueElement.Key, keyValueElement.Value);
+            
             if (AppSettings.Count == 0)
                 throw new ApplicationException("Flagrant error attempting to read appSettings from config file");
             MainLoopTick = Convert.ToInt32(AppSettings["MainLoopTick"]);

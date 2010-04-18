@@ -49,7 +49,11 @@ div.wrapper {font: 100% Sans-serif; background-color: #D2DEFF; width: 94%; paddi
 
 <p>xxx blah blah test driven development (proper test-first strategy on most sections of the program, but not on concurrent/networked aspects, could be asomething I look at another time. semi-followed before at Isotoma</p>
 
+<p>blah blah stress testing</p>
+
 <p>As with all projects I have worked on since around 2004 (commercial and non-commercial), the source is under version control (in this case git). The repository for the project is at <a href="http://github.com/jamesjrg/taipan">http://github.com/jamesjrg/taipan</a></p>
+
+<p>time spent graph</p>
 
 <h3 id="hsql">Relational databases</h3>
 
@@ -61,7 +65,7 @@ div.wrapper {font: 100% Sans-serif; background-color: #D2DEFF; width: 94%; paddi
 
 <p>There are four tables containing historical data on monetary balances and values, each of which uses a trigger to update the current price attribute in the table for which they are recording historical data. xxx therefore there are four redunadntly stored values, as a search of the historical data tables whenever a value or balance was required would be very inefficient. Within individual tables there are no repeating groups, no non-prime attributes that are functionally determined by only part of a candidate key, no non-prime attributes transitively dependent on a candidate key, and no prime attributes functionally determined by a proper subset of a candidate key. As such the schema is in Boyce-Codd normal form.</p>
 
-<p>blah blah stored procedures (briefly toyed with some util sps but found not needed), talk about where I've used before (sde, setanalyser, forkd). blah blah some basic security and permissions - seperate r and rw logins to db, only bank and sql creation scripts use rw. but given there is in reality only one user, myself, complex security permissions schemes applying to different tables, sql views and such like would be complexity even more contrived than the rest of the project.</p>
+<p>blah blah stored procedures (briefly toyed with some util sps but found not needed), talk about where I've used before (sde, setanalyser, forkd). blah blah some basic security and permissions - seperate r and rw logins to db, only bank and sql creation scripts use rw. but given there is in reality only one user, myself, complex security permissions schemes applying to different tables, sql views and such like would be complexity even more contrived than the rest of the project. blah blah various queries carried out by spreadsheet</p>
 
 <p>blah blah blah tuning and efficiency and indexes very large tables</p>
 
@@ -72,7 +76,7 @@ div.wrapper {font: 100% Sans-serif; background-color: #D2DEFF; width: 94%; paddi
 
 <p>[UML communication diagram - several processes, SQL, database]</p>
 
-<p>xxx brief explanation of diagram. xxx explain messaging protocol - relatively low level tcp sockets, tried wpf but not really suited.</p>
+<p>xxx brief explanation of diagram. xxx explain messaging protocol - relatively low level tcp sockets. wcf just for sorting server, rest tcp sockets</p>
 
 <p>blah blah concurrency with processes and within processes with threading, blah blah contract for movements of goods and locking process</p>
 
@@ -86,9 +90,11 @@ div.wrapper {font: 100% Sans-serif; background-color: #D2DEFF; width: 94%; paddi
 
 <h3 id="#hmath">Mathematical modelling</h3>
 
-<p>[screenshot of spreadsheet maths stuff]</p>
+<p>[couple of screenshots of spreadsheet maths stuff]</p>
 
 <p>[screenshot of graph]</p>
+
+<p>[screenshot of TFP nodes]</p>
 
 <p>I considered various options for a user front end that analysed the data. It needed to display large amounts of real time data, to carry out some mathematical analysis on that data, and also to display graphs and charts. There would be some user interaction with regard to selecting the current view of the data or variables used in its analysis, but a complex GUI was not required. The most instantly accessible yet also most difficult option would have been to use some sort of web front end using AJAX. It is possible to display, analyse and visualise large amounts of real time data using Javascript, but it's extremely time consuming and difficult. A more reasonable option would be C# combined with either Windows Forms and WPF (including Silverlight). However, WPF and WinForms are large, complex GUI frameworks, and would be overkill for the simplistic user interaction the program required, whilst complex data analysis code written in C# would require spending lots of time in a code-compile-test cycle.<p>
 

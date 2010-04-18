@@ -12,3 +12,7 @@ solveTFPButton = Button("Solve")
 solveTFPButton.Click += solveTFP
 TFPSheet.H4 = solveTFPButton
 
+runSortButton = Button("Run iterations")
+runSortButton.Click += runSort
+sortingSheet.H4 = runSortButton
+

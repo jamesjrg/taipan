@@ -6,6 +6,15 @@ using Microsoft.SolverFoundation.Services;
 
 namespace Microsoft.SolverFoundation.Samples.TravelingSalesman
 {
+    public static class ModelingExtensions
+    {
+        public static void AssignmentConstraintsNoDiag(this Model model, Set s, Decision assign)
+        {
+            model.AddConstraint("A1", Model.ForEach(s, i => Model.Sum(Model.ForEachWhere(s, j => assign[i, j], j => i != j)) == 1));
+            model.AddConstraint("A2", Model.ForEach(s, j => Model.Sum(Model.ForEachWhere(s, i => assign[i, j], i => i != j)) == 1));
+        }
+    }
+
     class Program
     {
         // TSP coordinate.
@@ -60,21 +69,21 @@ namespace Microsoft.SolverFoundation.Samples.TravelingSalesman
 
         // Burma14 from TSPLIB. Optimal tour = 3323.
         private static Coordinate[] data = new Coordinate[] {
-      new Coordinate(0, 16.47, 96.10),
-      new Coordinate(1, 16.47, 94.44),
-      new Coordinate(2, 20.09, 92.54),
-      new Coordinate(3, 22.39, 93.37),
-      new Coordinate(4, 25.23, 97.24),
-      new Coordinate(5, 22.00, 96.05),
-      new Coordinate(6, 20.47, 97.02),
-      new Coordinate(7, 17.20, 96.29),
-      new Coordinate(8, 16.30, 97.38),
-      new Coordinate(9, 14.05, 98.12),
-      new Coordinate(10, 16.53, 97.38),
-      new Coordinate(11, 21.52, 95.59),
-      new Coordinate(12, 19.41, 97.13),
-      new Coordinate(13, 20.09, 94.55)
-    };
+          new Coordinate(0, 16.47, 96.10),
+          new Coordinate(1, 16.47, 94.44),
+          new Coordinate(2, 20.09, 92.54),
+          new Coordinate(3, 22.39, 93.37),
+          new Coordinate(4, 25.23, 97.24),
+          new Coordinate(5, 22.00, 96.05),
+          new Coordinate(6, 20.47, 97.02),
+          new Coordinate(7, 17.20, 96.29),
+          new Coordinate(8, 16.30, 97.38),
+          new Coordinate(9, 14.05, 98.12),
+          new Coordinate(10, 16.53, 97.38),
+          new Coordinate(11, 21.52, 95.59),
+          new Coordinate(12, 19.41, 97.13),
+          new Coordinate(13, 20.09, 94.55)
+        };
 
         static void Main(string[] args)
         {
@@ -110,7 +119,7 @@ namespace Microsoft.SolverFoundation.Samples.TravelingSalesman
                 j => i != j)) == 1));
             model.AddConstraint("assign2",
               Model.ForEach(city, j => Model.Sum(Model.ForEachWhere(city, i => assign[i, j], i => i != j)) == 1));
-            model.AssignmentNoDiag(city, assign);
+            model.AssignmentConstraintsNoDiag(city, assign);
 
             // Forbid subtours (Miller, Tucker, Zemlin - 1960...)
             model.AddConstraint("no_subtours",

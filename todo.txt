@@ -1,11 +1,11 @@
 * finish all main points of database schema
-- est 4 days FT
+- est 3 days FT
 
 * finish all main points of network code and process logic
 - est 2.5 weeks FT
 
 * Read database management systems chapters 4, 5
-* finish all main points of Resolver One view + WPF graphing, including brownian GBM predicting
+* finish all main points of Resolver One view + WPF graphing, including GBM forecasting
 - est 2.5 weeks full time
 
 * read parts of algorithms book
@@ -22,44 +22,43 @@
 git changelog:
 
 right now:
-- do subscribe/unsub methods for multihead queue
 - write tests for multihead queue
-- make server use multihead queue
+- make the server/client stuff work again
+- the id a) used in db and b) stored by class instances should be the same
 - add remaining sql foreign keys
 - maybe constraint on PortCommodityPrice: every commodity for every port must appear in link table once and exactly once, no null values allowed for either FK
 - add constraint shortage prob + import prob <=100
-- check for comments on R1 and Solver
+- check for comments on R1
 
 fairly immediate stuff:
 general logic and network code:
-- when a client connects to a server, server has to create a unique id for it and store this for syncing purposes. maybe this id should be same as that used for a) database and b) stored for each class? in which case clients provide their own id on connect, server cannot make it up.
 - Trader/ShippingCompany interaction: delay of 5 secs between receiving acceptance of contract for movement of goods and taking contract off broadcast, requiring system of acks and locks, as in UML. But change design and UML a bit - rather than sending refusals, just make shipping companies have to assume they have been refused if they get no ack
 
 other:
 - improve start/testing batch scripts so can specify on command line how many of each process to start (then won't need separate test batch script, at least for now. quite possibly use Python.
 - separate start script for starting up sortingserver + sortingclient together
+- mega_start.bat script to start all C# processes at once (not Resolver though)
 
 ////
 
 First two tabs of Resolver sheet (GBM data streams):
-1. Given a commodity name, display historical prices of that commodity at selected ports (CU)
-2. Display historical price of selected currencies (CU)
-
-Brownian random walk predicted future graph - present data as a solid line, then a bunch of dashed lines for various possibilities. This is mutually exclusive with constant update - pressing one deletes data from the other, perhaps, or maybe disable button.
+- make the basic update button work correctly
+- Brownian random walk predicted future graph - present data as a solid line, then a bunch of dashed lines for various possibilities. This is mutually exclusive with constant update - pressing one deletes data from the other, perhaps, or maybe disable button.
 Need to save a variable which says how many of the rows are real data, then this row is sent to brownian graph so it knows from where to draw dashed line.
 
 brownian motion random walking:
 use scipy
 best link:
 http://www.scipy.org/Cookbook/BrownianMotion
+http://en.wikipedia.org/wiki/Geometric_Brownian_motion
+http://en.wikipedia.org/wiki/Wiener_process	
 also:
 http://www.scipy.org/Cookbook/FittingData
 c = scipy.random.standard_normal((5,5,5) ?
 
-- WPF graph program - just local, follow Resolver Exchange example. How does li ghaos orig code differ from altered version on resolver exchange? diff and investigate. Then use one or the other as a base - just copy and paste to start with. Should have ability to create new windows, or add new data to current windows (this functionality already in exchange example). add credit to ppl involved in making that sheet + wpf app. But also has option for real time update.
-- real time update doesn't affect brownian graph
+- WPF graph program - just local, follow Resolver Exchange example. How does li ghaos orig code differ from altered version on resolver exchange? diff and investigate. Then use one or the other as a base - just copy and paste to start with. Should have ability to create new windows, or add new data to current windows (this functionality already in exchange example). But also has option for real time update.
+- real time update button should auto clear brownian forecast
 - graph windows to include help instructions
-
 - maybe mention my thoughts on benefits of selective timed functions vs recalcualting whole workbook with RecalculateAfter
 
 /////
@@ -69,24 +68,35 @@ Next two sheets:
 5. Historical commdity transports, including details of how relevant prices of all involved values changed between start and end of contract, and profit made (CU)
 
 Thirdly, summary data sets:
-6. Summary data on comparative historical record of countries, split into time periods - in each time period have the number of each type of transaction carried out, total value of transactions, and the number + value of transactions in each economic sector. also country name, currency name.
-7. Summary data for each shipping company, split into time periods - number of transactions, number of different ports served, average quantity per load, min quantity in a single load, max quantity in a single load. company name, number of freighters.
+6. Summary data on comparative historical record of countries, split into time periods
+Drop down to select country
+- name of country's currency
+in each time period have
+- number of and total value of buys
+- number and total value of settled futures
+- overall outgoings, overall income, overall profit/loss
+- number of futures agreed in period
+- average diff between futures settled price in period and price they were agreed at
+- average value of currency vs USD
+
+7. Summary data for each shipping company, split into time periods
+Drop down to select company
+- name of company's country, and its currency
+For each time period, have:
+- number of different ports served
+- average quantity per load
+- min quantity in a single load
+- max quantity in a single load
+- av share price (own currency)
+- av share price (USD)
+- balance at end of period
+
+////
 
 Fourthly, extreme contrivedness:
 8. Travelling freighter problem
 
-- //model.AssignmentNoDiag(city, assign);?
-
-Maybe need to read about spatial data in sql - need to use "geography" data type
-INSERT INTO SpatialTable (GeogCol1)
-VALUES (geography::STPointFromText('POINT(-122.360 47.656)', 4326));
-longitude is specified first before the latitude
-
-Find the coordinates for perhaps just 10 of the ports for insertion, leave others null.
-
-- represent all shipping lanes between ports as a graph of interconnected nodes, and do a "travelling freighter problem" solution of shortest route for a freighter to visit each port exactly once
-- provide diagram of graph in doc
-
+- read about 
 - use Resolver One and MS Solver Foundation
 particularly relevant:
 http://code.msdn.microsoft.com/solverfoundation
@@ -102,7 +112,22 @@ http://en.wikipedia.org/wiki/Priority_queue
 also:
 http://www.amsterdamoptimization.com/msf.html
 
+- doc: represent all shipping lanes between ports as a graph of interconnected nodes, and do a "travelling freighter problem" solution of shortest route for a freighter to visit each port exactly once. provide a diagram on web.
+
+Find the coordinates for perhaps just 10 of the ports for insertion, and add to db
+
+Maybe need to read about spatial data in sql - need to use "geography" data type
+INSERT INTO SpatialTable (GeogCol1)
+VALUES (geography::STPointFromText('POINT(-122.360 47.656)', 4326));
+longitude is specified first before the latitude
+
 ///
+
+9. sheet that calls sorting server with various combinations of parameters (diff lists, diff algorithms), doing each one for a large number of iterations, and gets returned data on time taken. for each alg includes avg/min/max creation time and avg/min/max sort time (creation time not always relevant, otherwise 'N/A). Mark winner for each category with red X.
+add to uml deployment. 
+
+///
+
 
 General Resolver things to do:
 Possibly some vaguely sensible management (decisions on when to reuse + close) of the db connection?
@@ -175,13 +200,15 @@ b) make Wt a random variable chosen from a normal distribution with mean 0 and s
 
 algorithms bit:
 
-- using info both in algos book and database book, have an entirely pointless "Pointless sorting server" (including on UML diagram, with a note of explanation) that takes a list of numbers as input, and then sorts the list a method of the callers choice:
+- using info both in algos book and database book, have an entirely pointless "sorting server" (including on UML diagram, with a note of explanation) that takes a list of numbers as input, and then sorts the list a method of the callers choice:
 - merge sort
 - quick sort
 - heap sort
 - hash table
 - red black tree
 - b tree
+
+It has two types of call, one returns the sorted list, the other just returns how long the sort took.
 
 - unit test
 - uses WCF to provide RPC-style network service. perhaps the argument given for sorting method is an enum? or maybe a string attribute with options taken from a certain schema? look into how this is normally done.
@@ -204,7 +231,7 @@ doc how even without 5 second delay in taking contracts for movements off broadc
 
 shorter version for CV etc:
 
-A C# .NET, SQL Server and Python project written to improve my knowledge of various aspects of software development and computer science. A large number of heterogeneous multithreaded C# processes interact with each other by sending and receiving messages via TCP sockets. These processes manipulate data using various algorithms and data structures for producing, sorting and manipulating sequences of numbers. Much of the underlying state of the system is stored in a MS SQL Server instance. A user interface is provided in the form of a Python-based spreadsheet. This is linked to a C# program for producing WPF graphs, and to Microsoft’s Solver Foundation and SciPy for simplistic mathematical modelling. The project also uses UML, unit testing, source control, etc. Around 160 hours work so far.
+A C# .NET, SQL Server and Python project written to improve my knowledge of various aspects of software development and computer science. A large number of heterogeneous multithreaded C# processes interact with each other by sending and receiving messages via TCP sockets. These processes manipulate data using various algorithms and data structures for producing, sorting and manipulating sequences of numbers. Much of the underlying state of the system is stored in a MS SQL Server instance. A user interface to the system is provided in the form of a Python-based spreadsheet. This is also linked to a C# program for producing WPF graphs, and to Microsoft’s Solver Foundation and SciPy for simplistic mathematical modelling. The project also uses UML, unit testing, source control, etc. Around 160 hours work so far.
 
 some phrases that could go in web doc:
 
@@ -212,16 +239,17 @@ A C# .NET, SQL Server and Python project written to improve my knowledge of vari
 
 The front end utilises the spreadsheet/Python "mash up" “Resolver One” to provide analysis of the real time data from the database. The Python spreadsheet uses Microsoft's Solver Foundation to solve a version of the Travelling Salesman Problem, and scipy to provide xxx fixme for some of the stochastic outputs of the system. A local C# program is called by the spreadsheet script to produce realtime WPF graphs on same aspects of this analysis.
 
-One final, especially contrived C# service provides an RPC-style interface that takes a list of unsorted numbers and returns the list in alphabetical order. Arguments provided by the caller specify which of a wide variety of differing algorithms or data structures should be used to perform the sorting.
+One final, especially contrived C# service provides an RPC-style interface that takes a list of unsorted numbers and returns the list in alphabetical order. Arguments provided by the caller specify which of a wide variety of differing algorithms or data structures should be used to perform the sorting. blah blah spreadsheet integ
 
 I created a number of UML diagrams to describe various aspects of the system. Some sections of the system are covered by unit tests, but much of the multithreaded and multiprocess code is not suited to this and is merely stress-tested. As with all projects I have worked on since around 2004 (commercial and non-commercial), the source is under version control (in this case git).
 
 - talk about real time graphs on web
-- add Solver Foundation+OML to web doc
+- add Solver Foundation to web doc
 - lots of xmlcomments for classes and methods (methods only necessary for public classes)
 - triggers, constraints, (views?), etc
 - web doc spatial database data - though utterly trivial use of spatial data because the database is not used to perform any operations on that data
 - scipy
 - solver foundation, travelling salesman
-
+- relational algebra/calculus
+- time spent graph (note on first point saying includes several weeks in one point)
 

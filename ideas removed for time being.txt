@@ -48,12 +48,29 @@ http://en.wikipedia.org/wiki/Derivative_(finance)
 	http://en.wikipedia.org/wiki/Futures_contract
 	http://en.wikipedia.org/wiki/Option_(finance)
     http://en.wikipedia.org/wiki/Black%E2%80%93Scholes
-    http://en.wikipedia.org/wiki/Geometric_Brownian_motion
-    http://en.wikipedia.org/wiki/Wiener_process
-	http://en.wikipedia.org/wiki/Swap_%28finance%29
+    http://en.wikipedia.org/wiki/Swap_%28finance%29
 		http://en.wikipedia.org/wiki/Interest_rate_swap
-http://en.wikipedia.org/wiki/Markov_chain_Monte_Carlo
-        
+
+///
+
+Complex Maths and data analysis stuff removed - could be combined with finance stuff, or with data mining, or with mip optimization:
+
+monte carlo:
+    http://en.wikipedia.org/wiki/Monte_Carlo_method
+    http://en.wikipedia.org/wiki/Markov_chain_Monte_Carlo
+    monte carlo integration
+    pymc
+bayesian:
+    - read a bit of AI book
+    - also http://en.wikipedia.org/wiki/Bayesian_inference
+    - also http://webuser.bus.umich.edu/plenk/downloads.htm
+    - do something with analysing data using Bayesian inference
+data mining:
+    - set up some sort of OLAP functionality for large scale data analysis of historical data in database - i.e. denormalization, useful indexes, etc
+mip optimization:
+    - read more of intro to theory of comp sci
+    - more reading and playing with MS Solver
+      
 ////
 
 hardcore comp sci custom db idea:
@@ -85,18 +102,8 @@ web services:
 
 /////
 
-machine learning stuff:
-
-- read a bit of AI book
-- also http://en.wikipedia.org/wiki/Bayesian_inference
-- also http://webuser.bus.umich.edu/plenk/downloads.htm
-- do something with analysing data using Bayesian inference
-- set up some sort of OLAP functionality for large scale data analysis of historical data in database - i.e. denormalization, useful indexes, etc
-
-////
-
 front end stuff removed for the time being:
-- have a WPF view with pretty real-time charts and graphs and such like
+- have a WPF view with pretty interactive real-time charts and graphs and such like that doesn't require Resolver
 - have an ASP web interface (WebView), add to wolfie + doc
 - GUI displays diagnostic system information on the current status of all the processes and their interactions. Maybe also a green or red light next to each one to show all are responding? This would require processes to keep records in the database of when they last communicated with each other.
 
@@ -108,7 +115,8 @@ front end stuff removed for the time being:
 ///
 
 things that could be done to make it more complicated for the sake of it removed for time being:
-
+- keep track of which transactions are to do with primary, secondary or tertiary sector, then include this data on summary sheets
+- different companies have differing number of freighters
 - make it so freighters have different capacities, and make the bidding for contracts to move goods take account of this
 - make it so sometimes quanity transported won't fit in a single freigher, so multiple freighters are involved in a single transport (perhaps from two seperate companies)
 - add bumpf to database - company director names, commodity descriptions, country populations, etc
@@ -127,7 +135,9 @@ things that could be done to make it more complicated for the sake of it removed
 Resolver:
 - Python script that simulates database reads by just returning incremental data from a mass of stored historical data - this will allow me to redistribute sheet without requiring dependency on rest of system. also doc this on web.
 
-- GalaxyHack-ify it - allow people to take control of trading houses with custom logic code. I imagine this would work thusly:
+////
+
+Make it a game - allow people to take control of trading houses with custom logic code. I imagine this would work thusly:
 1. Make trader logic optionally take decisions on the basis of instructions via UDP or TCP messages rather than guesswork messages from fateandguesswork
 2. This would technically allow control in any language or program, but I would take advantage of already having worked with Resolver One to make a template ResolverOne spreadsheet for controlling trader logic
 3. For this to make any sense as a game, algorithms that control prices at different ports + changing exchange rates would have to conform to certain definite guidelines, and the objective of people's logic code would be to predict results on the basis of these algorithms to make the best trades. This would clearly involve a massive amount of research into financial mathematics.
@@ -135,7 +145,7 @@ Resolver:
 6. Could keep certain price change and behaviour algorithms for certain actors closed source and ony allow people to access their results via a web server. This would stop cheating by looking at the source code.
 7. Or alternatively could make it single player, in which case if people cheat then that is up to them.
 8. Could have a continuous multiplayer game where the idea is to make the maximum amount of money possible each day with a given amount to invest, or could instead make it a single player game of with "levels", whereby with each level you have to work out a particular algorithm plus its parameters.
-9. Possibly ideas for challenges include: 1. work out the parameters of GBM 2. parameters of GBM are constantly changing, and see who has the best algorithm for quickly working out these changes 3. have a variety of different factors affecting profit/loss (e.g. fluctuations in currency, shares, commodities, various things you can do like futures contracts and warehousing), and then the challenge is to come up with the best "AI" which takes all these things into account to make the most money
+9. Possibly ideas for challenges include: 1. notice when GBM has been interuptted by a sudden price drop/increase 2. work out the parameters of GBM 3. parameters of GBM are constantly changing, and see who has the best algorithm for quickly working out these changes 4. have a variety of different factors affecting profit/loss (e.g. fluctuations in currency, shares, commodities, various things you can do like futures contracts and warehousing), and then the challenge is to come up with the best "AI" which takes all these things into account to make the most money
 
 REALLY doubt there'd be much interest, though. Even if I managed to implement this (which would be no small task), the target niche of possible players would be so small it would never get enough players to make it work. But could be interesting to try to implement?
 
@@ -143,7 +153,7 @@ UML:
 - add data type for each attrib on SQL diagram
 
 ++++
-Section 3: silly ideas:
+Section 3: truly silly ideas:
 ++++
 
 international politics idea:
@@ -188,7 +198,9 @@ Factor in marketing and advertising increasing demand, increasing salaries leadi
 
 ///
 
+Translate web doc into Chinese, Japanese, and French
 
+///
 
 
 

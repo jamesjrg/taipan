@@ -18,7 +18,7 @@ namespace TaiPan.FateAndGuesswork
         {
             Console.Title = "FateAndGuesswork";
 
-            server = new TaiPan.Common.Server(ServerConfigs["FateAndGuessWork-DCBroadcast"], AppSettings);
+            server = new TaiPan.Common.Server(ServerConfigs["FateAndGuessWork-TraderBroadcast"], AppSettings);
         }
 
         protected override bool Run()

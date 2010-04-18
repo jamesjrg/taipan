@@ -1,7 +1,7 @@
 <!--
 This spreadsheet is in the Public Domain.
 -->
-<document currentResultWorksheet="Travelling Freighter Problem" verticalSplitterRatio="0.75" horizontalSplitterRatio="0.543160690571" splitterOrientation="Horizontal" suspendRecalculations="False" license="Public Domain" copyrightOwner="James Gregory" resolverVersion="1.8.1" resolverBuild="5061" documentVersion="12">
+<document currentResultWorksheet="Commodity Prices" verticalSplitterRatio="0.75" horizontalSplitterRatio="0.543160690571" splitterOrientation="Horizontal" suspendRecalculations="False" license="Public Domain" copyrightOwner="James Gregory" resolverVersion="1.8.1" resolverBuild="5061" documentVersion="12">
     <foldState license="True" imports="True" worksheetCreation="True" preConstantsUserCode="False" constants="True" preFormulaeUserCode="False" generated="False" postFormulaeUserCode="False"/>
     <traitDefaults>
 
@@ -42,9 +42,14 @@ execfile('TFPPreConstants.py')
             <scrollPos col="1" row="1" />
             <virtualGridSize width="50" height="44" />
         </viewState>
+        <viewState worksheet="Sorting Algorithms">
+            <currentCell col="6" row="10" />
+            <scrollPos col="1" row="1" />
+            <virtualGridSize width="49" height="44" />
+        </viewState>
         <viewState worksheet="FX Rates">
-            <currentCell col="8" row="7" />
-            <selection left="8" top="6" right="8" bottom="7" />
+            <currentCell col="9" row="1" />
+            <selection left="9" top="1" right="9" bottom="3" />
             <scrollPos col="1" row="1" />
             <virtualGridSize width="48" height="44" />
         </viewState>
@@ -62,6 +67,7 @@ execfile('TFPPreConstants.py')
         <orderentry name="Country summary" />
         <orderentry name="Shipping summary" />
         <orderentry name="Travelling Freighter Problem" />
+        <orderentry name="Sorting Algorithms" />
     </worksheetOrder>
     <worksheet name="Commodity Prices" value="" showGrid="True" showBounds="False" headerWidth="-1" headerHeight="-1">
         <trait name="FontSize">
@@ -603,6 +609,122 @@ execfile('TFPPreConstants.py')
         </trait>
         <trait name="DecimalPlaces">
         </trait>
+    </worksheet>
+    <worksheet name="Sorting Algorithms" value="" showGrid="True" showBounds="False" headerWidth="-1" headerHeight="-1">
+        <trait name="FontSize">
+        </trait>
+        <trait name="BorderBottom">
+        </trait>
+        <trait name="ShowNegativeSymbol">
+        </trait>
+        <trait name="Unit">
+        </trait>
+        <trait name="ColWidth">
+            <traitentry col="1" row="0" value="146" />
+            <traitentry col="6" row="0" value="158" />
+        </trait>
+        <trait name="Alignment">
+        </trait>
+        <trait name="BorderTop">
+        </trait>
+        <trait name="WebEditable">
+        </trait>
+        <trait name="Italic">
+        </trait>
+        <trait name="FontFamily">
+        </trait>
+        <trait name="ShowSeparators">
+        </trait>
+        <trait name="VerticalAlignment">
+        </trait>
+        <trait name="Formatter">
+        </trait>
+        <trait name="Underline">
+        </trait>
+        <trait name="Color">
+        </trait>
+        <trait name="RowHidden">
+        </trait>
+        <trait name="BorderLeft">
+        </trait>
+        <trait name="StripZeros">
+        </trait>
+        <trait name="ColHidden">
+        </trait>
+        <trait name="Wrap">
+        </trait>
+        <trait name="NegativeTextColor">
+        </trait>
+        <trait name="BorderRight">
+        </trait>
+        <trait name="RowHeight">
+        </trait>
+        <trait name="BackColor">
+        </trait>
+        <trait name="Bold">
+        </trait>
+        <trait name="Strikethrough">
+        </trait>
+        <trait name="ImagePlacement">
+        </trait>
+        <trait name="DecimalPlaces">
+        </trait>
+        <cell name="F3" value="Method 3" type="general">
+        </cell>
+        <cell name="G2" value="dropdown" type="general">
+        </cell>
+        <cell name="A1" value="Alg name" type="general">
+        </cell>
+        <cell name="B1" value="alg 1" type="general">
+        </cell>
+        <cell name="F7" value="Number of creation iterations:" type="general">
+        </cell>
+        <cell name="A5" value="Winner" type="general">
+        </cell>
+        <cell name="C4" value="x" type="general">
+        </cell>
+        <cell name="A9" value="Max sort time" type="general">
+        </cell>
+        <cell name="G1" value="dropdown" type="general">
+        </cell>
+        <cell name="A2" value="Avg creation time" type="general">
+        </cell>
+        <cell name="B2" value="xx" type="general">
+        </cell>
+        <cell name="C3" value="x" type="general">
+        </cell>
+        <cell name="F8" value="Number of sort iterations:" type="general">
+        </cell>
+        <cell name="A10" value="Winner" type="general">
+        </cell>
+        <cell name="F1" value="Method 1" type="general">
+        </cell>
+        <cell name="A3" value="Min creation time" type="general">
+        </cell>
+        <cell name="B3" value="x" type="general">
+        </cell>
+        <cell name="C2" value="x" type="general">
+        </cell>
+        <cell name="F5" value="List to use:" type="general">
+        </cell>
+        <cell name="A7" value="Avg sort time" type="general">
+        </cell>
+        <cell name="F2" value="Method 2" type="general">
+        </cell>
+        <cell name="G3" value="dropdown" type="general">
+        </cell>
+        <cell name="D1" value="alg 3" type="general">
+        </cell>
+        <cell name="C1" value="alg 2" type="general">
+        </cell>
+        <cell name="F6" value="Custom list:" type="general">
+        </cell>
+        <cell name="A4" value="Max creation time" type="general">
+        </cell>
+        <cell name="B4" value="x" type="general">
+        </cell>
+        <cell name="A8" value="Min sort time" type="general">
+        </cell>
     </worksheet>
     <postFormulaeUserCode><![CDATA[execfile('postFormulaeUserCode.py')
 ]]></postFormulaeUserCode>

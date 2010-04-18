@@ -5,44 +5,68 @@ using System.Text;
 
 namespace TaiPan.Common
 {
+    /// <summary>
+    /// A data structure a bit like a normal thread safe queue, except it manages a list of "subscribers", each of whom maintain a seperate head index into the queue - dequeueing only advances the callers head, not everyone else's. Also, rather than dequeueing a single item at a time, the DequeueAll method dequeues all remaining values (for the calling subscriber).
+    /// </summary>
     class MultiHeadQueue
     {
         private readonly int size;
         private readonly object syncRoot;
 
         private string[] buffer;
-
-        //position for next dequeue for each subscriber. -1 means out of sync.
-        private Dictionary<int, int> heads;
+        private Dictionary<int, Subscriber> subscribers;
 
         //position for next enqueue
         private int tail;
 
-        //number of elements yet to be dequeued for each subscriber
-        private Dictionary<int, int> counts;
+        //values for new subscribers
+        private int newHead;
+        private int newCount;
+
+        private class Subscriber
+        {
+            //position for next dequeue for each subscriber. -1 means out of sync.
+            public int head;
+            //number of elements yet to be dequeued for each subscriber
+            public int count;
+
+            public Subscriber(int head, int count)
+            {
+                this.head = head;
+                this.count = count;
+            }
+        }
 
         public MultiHeadQueue(int size)
         {
             this.size = size;
             syncRoot = new object();
             buffer = new string[size];
-            heads = new Dictionary<int, int>();
+            subscribers = new Dictionary<int, Subscriber>();
+            newHead = 0;
+            newCount = 0;
             tail = 0;
-            counts = new Dictionary<int, int>();            
         }
 
-        public int Subscribe()
+        public int Subscribe(int myId)
         {
             lock (syncRoot)
             {
+                if (subscribers.ContainsKey(myId))
+                    throw new ApplicationException("FLAGRANT ERROR: Subscribe request for id already subscribed");
+
+                subscribers.Add(myId, new Subscriber(newHead, newCount));
             }
             return 0;
         }
 
-        public void Unsubscribe()
+        public void Unsubscribe(int myId)
         {
             lock (syncRoot)
             {
+                if (!subscribers.ContainsKey(myId))
+                    throw new ApplicationException("FLAGRANT ERROR: Unsubscribe request for id not subscribed");
+                subscribers.Remove(myId);
             }
         }
 
@@ -52,32 +76,40 @@ namespace TaiPan.Common
             {
                 buffer[tail] = value;
                 tail = (tail + 1) % size;
-                foreach (var entry in counts.Values)
+                foreach (var key in subscribers.Keys)
                 {
-                    counts[entry]++;
-                    if (counts[entry] == size)
-                        counts[entry] = -1;
+                    subscribers[key].count++;
+                    if (subscribers[key].count == size)
+                        subscribers[key].count = -1;
                 }
+
+                if (newCount < size)
+                {
+                    newCount++;
+                }
+                else
+                    newHead = tail;
             }
         }
 
         public string[] DequeueAll(int myId)
         {
-            if (counts[myId] == -1)
+            if (subscribers[myId].count == -1)
                 throw new ApplicationException("FLAGRANT ERROR: Worker thread with id " + myId + " has become to out of sync with data queue");
  
             string[] values;
 
             lock (syncRoot)
             {
-                values = new string[counts[myId]];
-                int pos = heads[myId];
-                for (int i = 0; i < size; i++)
+                values = new string[subscribers[myId].count];
+
+                int pos = subscribers[myId].head;
+                for (int i = 0; i < subscribers[myId].count; i++)
                 {
                     values[i] = buffer[pos];
                     pos = (pos + 1) % size;                    
                 }
-                heads[myId] = pos;
+                subscribers[myId].head = pos;
             }
             return values;
         }

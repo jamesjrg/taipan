@@ -95,7 +95,7 @@ namespace TestTaiPan
         {
             int size = 0; // TODO: Initialize to an appropriate value
             MultiHeadQueue target = new MultiHeadQueue(size); // TODO: Initialize to an appropriate value
-            target.Enqueue();
+            target.Enqueue("test");
             Assert.Inconclusive("A method that does not return a value cannot be verified.");
         }
     }

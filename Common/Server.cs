@@ -19,13 +19,26 @@ namespace TaiPan.Common
          * WARNING WARNING WARNING shared between threads
          * 
         */
-        public List<string> messages = new List<string>();
+        private const int MESSAGE_QUEUE_SIZE = 10;
+
+        private MultiHeadQueue messages = new MultiHeadQueue(MESSAGE_QUEUE_SIZE);
 
         private TcpListener tcpListener;
-        private List<TcpClient> tcpClients = new List<TcpClient>();
-        private List<int> clientIds;
+        private List<ClientSubscriber> subscribers = new List<ClientSubscriber>();
         
         private readonly int ServerLoopTick;
+
+        private class ClientSubscriber
+        {
+            public int myId;
+            public TcpClient client;
+
+            public ClientSubscriber(int myId, TcpClient client)
+            {
+                this.myId = myId;
+                this.client = client;
+            }
+        }
 
         public Server(Common.ServerConfig config, NameValueCollection appSettings)
         {
@@ -37,9 +50,9 @@ namespace TaiPan.Common
 
         public void Dispose()
         {
-            foreach (TcpClient client in tcpClients)
+            foreach (ClientSubscriber subscriber in subscribers)
             {
-                CommonLib.CloseTcpClient(client);
+                CommonLib.CloseTcpClient(subscriber.client);
             }
             tcpListener.Stop();
         }
@@ -50,47 +63,46 @@ namespace TaiPan.Common
             IPAddress localAddr = IPAddress.Parse(config.address);
             tcpListener = new TcpListener(localAddr, config.port);
             tcpListener.Start();
+            int newSubscriberId = 1;
             while (true)
             {
                 TcpClient tcpClient = tcpListener.AcceptTcpClient();
                 Console.WriteLine("Server accepted new connection");
-                tcpClients.Add(tcpClient);
-                ThreadPool.QueueUserWorkItem(Broadcast, tcpClient);
+                ClientSubscriber subscriber = new ClientSubscriber(newSubscriberId, tcpClient);
+                subscribers.Add(subscriber);
+                ThreadPool.QueueUserWorkItem(Broadcast, subscriber);
+                newSubscriberId++;
             }
         }
 
         public void Send(string message)
         {
-            lock (messages)
-            {
-                messages.Add(message);
-
-                if (messages.Count > 10)
-                    messages.RemoveRange(0, 5);
-            }            
+            messages.Enqueue(message);
         }
 
         public void Broadcast(object state)
-        {   
-            TcpClient tcpClient = (TcpClient)state;
+        {
+            ClientSubscriber subscriber = (ClientSubscriber)state;
+            TcpClient tcpClient = subscriber.client;
+            int myId = subscriber.myId;
             NetworkStream ns = tcpClient.GetStream();
             StreamWriter sw = new StreamWriter(ns);
+
+            messages.Subscribe(myId);
 
             while (true)
             {
                 try
                 {
-                    lock (messages)
+                    string[] messagesCopy = messages.DequeueAll(myId);
+                    if (messagesCopy.Length != 0)
                     {
-                        if (messages.Count != 0)
+                        foreach (string msg in messagesCopy)
                         {
-                            foreach (string msg in messages)
-                            {
-                                Console.WriteLine("Sending: " + msg);
-                                sw.WriteLine(msg);
-                            }
-                            sw.Flush();
+                            Console.WriteLine("Sending: " + msg);
+                            sw.WriteLine(msg);
                         }
+                        sw.Flush();
                     }
                     Thread.Sleep(ServerLoopTick);
                 }
