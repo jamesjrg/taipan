@@ -22,7 +22,9 @@
 git changelog:
 
 right now:
-- Finish multihead queue, and make server use it. when a thread first subscribes it adds itself to this list. the current head position for each thread is maintained seperately. also has an unsubscribe function. when dequeing threads must provide their id, if id not found then error is thrown. If it is enqued when beyond max size, then old data is overwritten, and a note is made of any clients who now have invalid head pointers. Next time these clients try to dequeue, an error is thrown. DequeueAll needs to advance head.
+- do subscribe/unsub methods for multihead queue
+- write tests for multihead queue
+- make server use multihead queue
 - add remaining sql foreign keys
 - maybe constraint on PortCommodityPrice: every commodity for every port must appear in link table once and exactly once, no null values allowed for either FK
 - add constraint shortage prob + import prob <=100
@@ -111,7 +113,6 @@ Database stuff (needs adding to both a) UML diagram and b) actual SQL scripts):
 - maybe add some views for use by the various processes that need info from database?
 - do some normalisation some time after the design has changed a bit, and doc how I carried this out, and doc what normal form the db is in
 - make sure indexes, triggers, fks and pks (and their names), and constraints (and their names) match up UML <-> sql and vice versa
-- make selects + updates to db use stored procedures for efficiency? if so, doc (and also, in brief buzz word doc, "x stored procedures")
 - error handling on error being returned on database query
 
 later SQL stuff:
@@ -191,8 +192,7 @@ doc:
 
 One day the description here, description in index.htm, description on CV, and description in Wolfie will all need to be synced...
 
-credit ppl whose tsp code I read in readme + web
-credit wpf graph ppl on web
+credit ppl from readme on web
 
 The name is a nod to book Tai Pan, that is the general point is that there are several large trading houses which ferry various goods very long distances, though actually here the trading houses have been split into two distinct entities, the "Shipping companies" who do the actual transporting of goods, and the "traders" who predict surpluses and shortages in the market and buy and sell goods accordingly.
 
@@ -218,7 +218,7 @@ I created a number of UML diagrams to describe various aspects of the system. So
 
 - talk about real time graphs on web
 - add Solver Foundation+OML to web doc
-- lots of xmlcomments for classes and methods
+- lots of xmlcomments for classes and methods (methods only necessary for public classes)
 - triggers, constraints, (views?), etc
 - web doc spatial database data - though utterly trivial use of spatial data because the database is not used to perform any operations on that data
 - scipy

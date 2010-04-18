@@ -23,6 +23,10 @@ Concurrency and networking:
 
 ///
 
+sql:
+
+on one of the resolver sheets have some distance between points/distance travelled by freighters info, and maybe make it use sql spatial data functions to do calculation
+
 ++++
 Section 2: not especially reasonable ideas:
 ++++

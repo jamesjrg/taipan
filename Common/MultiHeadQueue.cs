@@ -11,18 +11,24 @@ namespace TaiPan.Common
         private readonly object syncRoot;
 
         private string[] buffer;
+
+        //position for next dequeue for each subscriber. -1 means out of sync.
         private Dictionary<int, int> heads;
+
+        //position for next enqueue
         private int tail;
-        private int count;
+
+        //number of elements yet to be dequeued for each subscriber
+        private Dictionary<int, int> counts;
 
         public MultiHeadQueue(int size)
         {
             this.size = size;
             syncRoot = new object();
             buffer = new string[size];
-            count = 0;
             heads = new Dictionary<int, int>();
             tail = 0;
+            counts = new Dictionary<int, int>();            
         }
 
         public int Subscribe()
@@ -46,25 +52,35 @@ namespace TaiPan.Common
             {
                 buffer[tail] = value;
                 tail = (tail + 1) % size;
-                count++;
+                foreach (var entry in counts.Values)
+                {
+                    counts[entry]++;
+                    if (counts[entry] == size)
+                        counts[entry] = -1;
+                }
             }
         }
 
         public string[] DequeueAll(int myId)
         {
+            if (counts[myId] == -1)
+                throw new ApplicationException("FLAGRANT ERROR: Worker thread with id " + myId + " has become to out of sync with data queue");
+ 
             string[] values;
 
             lock (syncRoot)
             {
-                values = new string[10];
+                values = new string[counts[myId]];
                 int pos = heads[myId];
                 for (int i = 0; i < size; i++)
                 {
                     values[i] = buffer[pos];
-                    pos = (pos + 1) % size;
+                    pos = (pos + 1) % size;                    
                 }
+                heads[myId] = pos;
             }
             return values;
         }
     }
 }
+    
