@@ -1,7 +1,7 @@
 <!--
 This spreadsheet is in the Public Domain.
 -->
-<document currentResultWorksheet="Commodity Prices" verticalSplitterRatio="0.75" horizontalSplitterRatio="0.543160690571" splitterOrientation="Horizontal" suspendRecalculations="False" license="Public Domain" copyrightOwner="James Gregory" resolverVersion="1.8.1" resolverBuild="5061" documentVersion="12">
+<document currentResultWorksheet="Travelling Freighter Problem" verticalSplitterRatio="0.75" horizontalSplitterRatio="0.543160690571" splitterOrientation="Horizontal" suspendRecalculations="False" license="Public Domain" copyrightOwner="James Gregory" resolverVersion="1.8.1" resolverBuild="5061" documentVersion="12">
     <foldState license="True" imports="True" worksheetCreation="True" preConstantsUserCode="False" constants="True" preFormulaeUserCode="False" generated="False" postFormulaeUserCode="False"/>
     <traitDefaults>
 
@@ -9,6 +9,7 @@ This spreadsheet is in the Public Domain.
     <preConstantsUserCode><![CDATA[import os.path
 execfile('settings.py')
 execfile('preConstantsUserCode.py')
+execfile('TFPPreConstants.py')
 
 ]]></preConstantsUserCode>
     <preFormulaeUserCode><![CDATA[
@@ -18,37 +19,39 @@ execfile('preConstantsUserCode.py')
         <viewState worksheet="Travelling Freighter Problem">
             <currentCell col="1" row="1" />
             <scrollPos col="1" row="1" />
-            <virtualGridSize width="51" height="39" />
+            <virtualGridSize width="51" height="44" />
         </viewState>
         <viewState worksheet="Country summary">
             <currentCell col="1" row="2" />
             <scrollPos col="1" row="1" />
-            <virtualGridSize width="51" height="39" />
+            <virtualGridSize width="51" height="44" />
         </viewState>
         <viewState worksheet="Shipping summary">
             <currentCell col="1" row="1" />
             <scrollPos col="1" row="1" />
-            <virtualGridSize width="51" height="39" />
+            <virtualGridSize width="51" height="44" />
         </viewState>
         <viewState worksheet="Commodity Prices">
-            <currentCell col="8" row="5" />
+            <currentCell col="8" row="7" />
+            <selection left="8" top="7" right="8" bottom="8" />
             <scrollPos col="1" row="1" />
-            <virtualGridSize width="50" height="39" />
+            <virtualGridSize width="50" height="44" />
         </viewState>
         <viewState worksheet="Futures">
             <currentCell col="6" row="8" />
             <scrollPos col="1" row="1" />
-            <virtualGridSize width="50" height="39" />
+            <virtualGridSize width="50" height="44" />
         </viewState>
         <viewState worksheet="FX Rates">
-            <currentCell col="5" row="9" />
+            <currentCell col="8" row="7" />
+            <selection left="8" top="6" right="8" bottom="7" />
             <scrollPos col="1" row="1" />
-            <virtualGridSize width="48" height="39" />
+            <virtualGridSize width="48" height="44" />
         </viewState>
         <viewState worksheet="Shipping">
             <currentCell col="1" row="1" />
             <scrollPos col="1" row="1" />
-            <virtualGridSize width="51" height="39" />
+            <virtualGridSize width="51" height="44" />
         </viewState>
     </viewStates>
     <worksheetOrder>
@@ -80,6 +83,8 @@ execfile('preConstantsUserCode.py')
             <traitentry col="1" row="8" value="119" />
             <traitentry col="1" row="9" value="119" />
             <traitentry col="8" row="0" value="139" />
+            <traitentry col="8" row="7" value="151" />
+            <traitentry col="8" row="8" value="151" />
             <traitentry col="3" row="1" value="119" />
             <traitentry col="3" row="2" value="119" />
             <traitentry col="5" row="1" value="119" />
@@ -157,9 +162,9 @@ execfile('preConstantsUserCode.py')
         </cell>
         <cell name="C2" value="Date" type="general">
         </cell>
-        <cell name="H8" value="Clear Monte Carlo Forecast" type="general">
+        <cell name="H8" value="Clear Forecast" type="general">
         </cell>
-        <cell name="H7" value="Update Monte Carlo Forecast" type="general">
+        <cell name="H7" value="Random Walk Forecast" type="general">
         </cell>
         <cell name="I4" value="dropdown" type="general">
         </cell>
@@ -255,7 +260,7 @@ execfile('preConstantsUserCode.py')
         </cell>
         <cell name="A2" value="Date" type="general">
         </cell>
-        <cell name="H7" value="Clear Monte Carlo Forecast" type="general">
+        <cell name="H7" value="Clear Forecast" type="general">
         </cell>
         <cell name="B2" value="Price" type="general">
         </cell>
@@ -279,7 +284,7 @@ execfile('preConstantsUserCode.py')
         </cell>
         <cell name="D2" value="Price" type="general">
         </cell>
-        <cell name="H6" value="Update Monte Carlo Forecast" type="general">
+        <cell name="H6" value="Random Walk Forecast" type="general">
         </cell>
         <cell name="I5" value="currently [Off]" type="general">
         </cell>

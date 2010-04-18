@@ -5,6 +5,13 @@ from System.Data.Odbc import OdbcConnection, OdbcDataAdapter
 commoditySheet = workbook['Commodity Prices']
 fxSheet = workbook['FX Rates']
 
+futuresSheet = workbook['Futures']
+shippingSheet = workbook['Shipping']
+countrySheet = workbook['Country summary']
+shippingSumSheet = workbook['Shipping summary']
+
+TFPSheet = workbook['Travelling Freighter Problem']
+
 commodityId = 1
 commodityPortId1 = 1
 commodityPortId2 = 2

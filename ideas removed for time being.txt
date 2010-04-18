@@ -4,6 +4,10 @@ Section 1: vaguely reasonable ideas:
 
 /////
 
+Contribute a bit to an OS project?
+
+////
+
 Documentation and UML
 
 - UML class diagram (hopefully this can just be exported from Visual Studio? Or otherwise imported from C# code to MagicDraw)
@@ -44,6 +48,7 @@ http://en.wikipedia.org/wiki/Derivative_(finance)
     http://en.wikipedia.org/wiki/Wiener_process
 	http://en.wikipedia.org/wiki/Swap_%28finance%29
 		http://en.wikipedia.org/wiki/Interest_rate_swap
+http://en.wikipedia.org/wiki/Markov_chain_Monte_Carlo
         
 ////
 

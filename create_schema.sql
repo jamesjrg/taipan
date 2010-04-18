@@ -112,7 +112,7 @@ CREATE TABLE dbo.Currency
 	(
 	ID int NOT NULL IDENTITY (1, 1) PRIMARY KEY CLUSTERED,
     Name nvarchar(50) NOT NULL,
-    ShortName nchar(3) NOT NULL,
+    ShortName nchar(3) NOT NULL CHECK (ShortName LIKE '[A-Z][A-Z][A-Z]'),
     USDValue Money NOT NULL DEFAULT 100,
 	)  ON [PRIMARY]
 GO

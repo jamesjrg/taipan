@@ -1,5 +1,5 @@
 Tai-Pan
 
-The vast majority of this project is public domain. The project is being written chiefly as a personal learning exercise, and though I very much doubt it has any relevance to anyone else, people are free to make use of the code in their own projects should the desire take them.
+Everything in this project that is not in the "Resolver" subdirectory is public domain. The project is being written chiefly as a personal learning exercise, and though I very much doubt it has any relevance to anyone else, people are free to make use of the code in their own projects should the desire take them.
 
-The WpfChart program is based on GPL v2 code by Greg Bray (which is in turn based on code by Li Ghao and others).
+The code in the Resolver directory was originally based on various bits of sample code found both in the Resolver One online spreadsheet exchange, and in various places on the internet. It is therefore covered by various (possibly conflicting) licenses. The WpfChart program is based on work by Greg Bray, which is in turn based on code by Li Ghao and others. The database access functions are based on code by Michael Foord. The code that interfaces Resolver to Microsoft Solver Foundation is based on an example by Suresh Shanmugam, and the Solver model used to solve the Travelling Salesman problem is taken from a blog post by Nathan Brixius.
