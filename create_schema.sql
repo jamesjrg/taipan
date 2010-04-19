@@ -113,7 +113,7 @@ CREATE TABLE dbo.Currency
 	ID int NOT NULL IDENTITY (1, 1) PRIMARY KEY CLUSTERED,
     Name nvarchar(50) NOT NULL,
     ShortName nchar(3) NOT NULL CHECK (ShortName LIKE '[A-Z][A-Z][A-Z]'),
-    USDValue Money NOT NULL DEFAULT 100,
+    USDValue Money NOT NULL DEFAULT 1,
 	)  ON [PRIMARY]
 GO
 
@@ -121,9 +121,9 @@ CREATE TABLE dbo.PortCommodityPrice
 	(
 	PortID int NOT NULL,
     CommodityID int NOT NULL,
-    Price Money NOT NULL DEFAULT 0,
-    ShortageProb int NOT NULL CHECK (ShortageProb >= 0 AND ShortageProb <= 100) DEFAULT 0,
-    SurplusProb int NOT NULL CHECK (SurplusProb >= 0 AND SurplusProb <= 100) DEFAULT 0,
+    LocalPrice Money NOT NULL DEFAULT 100,
+    ShortageProb int NOT NULL CHECK (ShortageProb >= 0 AND ShortageProb <= 100) DEFAULT 50,
+    SurplusProb int NOT NULL CHECK (SurplusProb >= 0 AND SurplusProb <= 100) DEFAULT 50,
     CONSTRAINT PK_PCP PRIMARY KEY (PortID, CommodityID)
 	)  ON [PRIMARY]
 GO
@@ -212,7 +212,7 @@ CREATE TABLE dbo.HistoricalPortCommodityPrice
     PortID int NOT NULL,
     CommodityID int NOT NULL,
     ValueDate datetime NOT NULL,
-    Price Money NOT NULL,    
+    LocalPrice Money NOT NULL,    
     )  ON [PRIMARY]
 GO
 
@@ -261,7 +261,30 @@ ALTER TABLE dbo.FuturesContract ADD
 	(CommodityID) REFERENCES dbo.Commodity (ID);
 GO
 
--- TODO: warehousedcommod, commodtrans, portcommodprice
+ALTER TABLE dbo.WarehousedCommodity ADD
+	CONSTRAINT fkWareCommodTrader FOREIGN KEY
+	(TraderID) REFERENCES dbo.Trader (CompanyID),
+    CONSTRAINT fkWareCommodCommod FOREIGN KEY
+	(CommodityID) REFERENCES dbo.Commodity (ID),
+    CONSTRAINT fkWareCommodPort FOREIGN KEY
+	(PortID) REFERENCES dbo.Port (ID),
+    CONSTRAINT fkWareCommodFutures FOREIGN KEY
+	(FuturesContractID) REFERENCES dbo.FuturesContract (ID);
+GO
+
+ALTER TABLE dbo.PortCommodityPrice ADD
+	CONSTRAINT fkPortCommodityPort FOREIGN KEY
+	(PortID) REFERENCES dbo.Port (ID),
+    CONSTRAINT fkPortCommodityCommod FOREIGN KEY
+	(CommodityID) REFERENCES dbo.Commodity (ID);
+GO
+
+ALTER TABLE dbo.CommodityTransport ADD
+	CONSTRAINT fkCommTransportShippingComp FOREIGN KEY
+	(ShippingCompanyID) REFERENCES dbo.ShippingCompany (CompanyID),
+    CONSTRAINT fkCommTransportWarehouse FOREIGN KEY
+	(WarehousedCommodityID) REFERENCES dbo.WarehousedCommodity (ID);
+GO
     
 -- triggers
 CREATE TRIGGER dbo.trgStockUpdate

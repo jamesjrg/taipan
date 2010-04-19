@@ -61,7 +61,7 @@ Servers it polls for input as client: none
 Information it broadcasts as server:
 1. To Trader, sends "guesswork" calculated future price jumps of a given commodity for a given port and with given time (note only ports which actually import/export a given commodity will ever produce a surplus/suffer shortage). The next Trader to poll FateAndGuesswork is given the information, and this information is then removed from the queue.
 2. Current market price of all commodities. Goes up and down via GBM, except for planned jumps due to predictions for traders. Make sure places which neither import nor export a commodity do not have a price created (unit test this, also take account of this in GUI).
-4. Stock prices of each company. Goes up and down via GBM.
+3. Stock prices of each company. Goes up and down via GBM.
 Things it calculates:
 Semi-randomly calculates which ports will in future have a) have surplus of a commodity or b) have shortage of a commodity, i.e. how big the price will jump and at what date
 Things it reads from database: info on commodities (at startup only?).

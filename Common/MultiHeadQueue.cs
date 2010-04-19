@@ -110,6 +110,7 @@ namespace TaiPan.Common
                     pos = (pos + 1) % size;                    
                 }
                 subscribers[myId].head = pos;
+                subscribers[myId].count = 0;
             }
             return values;
         }

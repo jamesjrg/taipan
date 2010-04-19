@@ -16,7 +16,10 @@ namespace TaiPan.Bank
     class Bank : TaiPan.Common.EconomicPlayer
     {
         private DbConn dbConn;
+
         private Client fxPoller;
+        private Client commodPoller;
+        private Client stockPoller;
 
         public Bank(string[] args)
         {
@@ -25,8 +28,16 @@ namespace TaiPan.Bank
             dbConn = new DbConn(false);
 
             fxPoller = new Client(ServerConfigs["FXServer-BankBroadcast"], AppSettings);
-            Thread thread = new Thread(fxPoller.MainLoop);
-            thread.Start();
+            Thread thread1 = new Thread(fxPoller.MainLoop);
+            thread1.Start();
+
+            commodPoller = new Client(ServerConfigs["FateAndGuessWork-BankCommodBroadcast"], AppSettings);
+            Thread thread2 = new Thread(commodPoller.MainLoop);
+            thread2.Start();
+
+            stockPoller = new Client(ServerConfigs["FateAndGuessWork-BankStockBroadcast"], AppSettings);
+            Thread thread3 = new Thread(stockPoller.MainLoop);
+            thread3.Start();
         }
 
         protected override bool Run()

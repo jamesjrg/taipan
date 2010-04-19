@@ -8,7 +8,6 @@ using System.Net.Sockets;
 using System.IO;
 using System.Threading;
 
-using CommonLib = TaiPan.Common.Util;
 using System.Collections.Specialized;
 
 namespace TaiPan.Common
@@ -19,7 +18,7 @@ namespace TaiPan.Common
          * WARNING WARNING WARNING shared between threads
          * 
         */
-        private const int MESSAGE_QUEUE_SIZE = 10;
+        private const int MESSAGE_QUEUE_SIZE = 1000;
 
         private MultiHeadQueue messages = new MultiHeadQueue(MESSAGE_QUEUE_SIZE);
 
@@ -52,7 +51,7 @@ namespace TaiPan.Common
         {
             foreach (ClientSubscriber subscriber in subscribers)
             {
-                CommonLib.CloseTcpClient(subscriber.client);
+                Util.CloseTcpClient(subscriber.client);
             }
             tcpListener.Stop();
         }

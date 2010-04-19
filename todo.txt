@@ -4,7 +4,7 @@
 * finish all main points of network code and process logic
 - est 2.5 weeks FT
 
-* Read database management systems chapters 4, 5
+* Read database management systems chapter 5
 * finish all main points of Resolver One view + WPF graphing, including GBM forecasting
 - est 2.5 weeks full time
 
@@ -23,19 +23,20 @@ git changelog:
 
 right now:
 - write tests for multihead queue
-- make the server/client stuff work again
-- the id a) used in db and b) stored by class instances should be the same
-- add remaining sql foreign keys
-- maybe constraint on PortCommodityPrice: every commodity for every port must appear in link table once and exactly once, no null values allowed for either FK
 - add constraint shortage prob + import prob <=100
 - check for comments on R1
+- format for FateAndGuesswork broadcast to Trader, something like:
+"Portname,CommodName,2010-04-15T20:10:00"
+- format for FateAndGuesswork stockprice broadcast:
+"StockName,Price"
 
 fairly immediate stuff:
 general logic and network code:
 - Trader/ShippingCompany interaction: delay of 5 secs between receiving acceptance of contract for movement of goods and taking contract off broadcast, requiring system of acks and locks, as in UML. But change design and UML a bit - rather than sending refusals, just make shipping companies have to assume they have been refused if they get no ack
+- Client messages needs thread control
 
 other:
-- improve start/testing batch scripts so can specify on command line how many of each process to start (then won't need separate test batch script, at least for now. quite possibly use Python.
+- improve start py script so you can specify on command line how many of each process to start
 - separate start script for starting up sortingserver + sortingclient together
 - mega_start.bat script to start all C# processes at once (not Resolver though)
 
@@ -139,6 +140,25 @@ Database stuff (needs adding to both a) UML diagram and b) actual SQL scripts):
 - do some normalisation some time after the design has changed a bit, and doc how I carried this out, and doc what normal form the db is in
 - make sure indexes, triggers, fks and pks (and their names), and constraints (and their names) match up UML <-> sql and vice versa
 - error handling on error being returned on database query
+
+- test data (or maybe just store some real data from system?):
+INSERT INTO dbo.FuturesContract
+           (TraderID, CommodityID, PortID, Price , Quantity, PurchaseTime, SettlementTime, ActualSetTime)
+     VALUES
+     ()
+GO
+
+INSERT INTO dbo.WarehousedCommodity
+           (TraderID, CommodityID, PortID, FuturesContractID, Quantity, PurchasePrice, PurchaseTime, SaleTime, SalePrice, SalePortID)
+     VALUES
+     ()
+GO
+
+INSERT INTO dbo.CommodityTransport
+           (ShippingCompanyID, WarehousedCommodityID, DepartureTime, ArrivalTime)
+     VALUES
+     ()
+GO
 
 later SQL stuff:
 - Read database management systems chapters 19, 20, 21
@@ -252,4 +272,4 @@ I created a number of UML diagrams to describe various aspects of the system. So
 - solver foundation, travelling salesman
 - relational algebra/calculus
 - time spent graph (note on first point saying includes several weeks in one point)
-
+- cursors within sql

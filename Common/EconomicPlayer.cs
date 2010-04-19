@@ -92,7 +92,7 @@ namespace TaiPan.Common
                 throw new ApplicationException("ID must be given as command line argument");
             }
 
-            Console.Title = title + " " + myID;
+            Console.Title = title + " (ID: " + myID + ")";
 
             return myID;
         }        
