@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using TaiPan.Common;
+
 namespace TaiPan.FateAndGuesswork
 {
     /// <summary>
@@ -14,6 +16,7 @@ namespace TaiPan.FateAndGuesswork
         private TaiPan.Common.Server traderBroadcast;
 
         private List<Port> ports = new List<Port>();
+        private List<Stock> stocks = new List<Stock>();
         private Random random = new Random();
 
         private class Commodity
@@ -44,6 +47,38 @@ namespace TaiPan.FateAndGuesswork
             public List<Commodity> commodityPrices;
         }
 
+        private class Stock
+        {
+            public Stock(string name, decimal price)
+            {
+                this.name = name;
+                this.price = price;
+            }
+
+            public string name;
+            public decimal price;
+        }
+
+        private class PriceJump
+        {
+            public PriceJump(string traderId, PriceJumpType type, string port, string commod, int quantity, DateTime when)
+            {
+                this.traderId = traderId;
+                this.type = type;
+                this.port = port;
+                this.commod = commod;
+                this.when = when;
+                this.quantity = quantity;
+            }
+
+            public string traderId;
+            public PriceJumpType type;
+            string port;
+            string commod;
+            int quantity;
+            DateTime when;
+        }
+
         public FateAndGuesswork(string[] args)
         {
             Console.Title = "FateAndGuesswork";
@@ -61,9 +96,9 @@ namespace TaiPan.FateAndGuesswork
             foreach (Port port in ports)
             {
                 foreach (Commodity commod in port.commodityPrices)
-                {
                     bankBroadcast.Send("commodity," + port.name + ',' + commod.name + ',' + commod.localPrice);
-                }                
+                foreach (Stock stock in stocks)
+                    bankBroadcast.Send("stock," + stock.name + ',' + stock.price);
             }
             return true;
         }

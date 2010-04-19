@@ -7,6 +7,12 @@ using System.Net.Sockets;
 
 namespace TaiPan.Common
 {
+    public enum PriceJumpType
+    {
+        Surplus = 0,
+        Shortage = 1
+    }
+
     public class DisconnectedException : ApplicationException
     {
     }

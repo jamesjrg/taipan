@@ -6,7 +6,7 @@ Servers it polls for input as client:
 2. Shipping Companies for acceptances of contracts to move goods
 Information it broadcasts as server:
 1. To Bank
-a) decisions to buy goods at a given port b) to organise futures contracts, and c) to sell warehoused goods
+a) decisions to buy goods at a given port b) to organise futures contracts.
 2. To Shipping Companies
 a) Contracts for movement of goods (from, to, expires) b) Acceptances of contracts for movement of goods
 Things it calculates:
@@ -41,14 +41,13 @@ Bank should throw error and halt, system should just end gracefully.
 Bank:
 Servers it polls for input as client:
 1. FX Server for FX prices. Updated currency value then written to database.
-2. Shipping company departures and arrivals. On departure money is debited from trader and credited to shipping company, on basis of distance of journey. On arrival money is credited to trader.
+2. Shipping company departures and arrivals. On departure money is debited from trader and credited to shipping company, on basis of distance of journey. On arrival money is credited to trader on basis of price at port.
 3. FateAndGuesswork:
 a) market prices. Commodity prices in database are updated accordingly.
 b) stock prices. Database updated accordingly
 5. Traders:
 a) decisions to buy goods to warehouse. db updated accordingly.
 b) decisions to organise a futures contract. db updated accordingly.
-c) decisions to sell warehoused goods
 Information it broadcasts as server: none
 Things it calculates:
 1. whenever updating bank balances after an economic transaction, if movement it applies modifier from distance (= greater profit to freighter company, greater expense to trader), if trade in goods on open market takes into account current commodity price, if different currencies applies current FX multiplier
@@ -62,7 +61,7 @@ All processes sending data to bank should throw exception and end gracefully.
 FateAndGuesswork
 Servers it polls for input as client: none
 Information it broadcasts as server:
-1. To Trader, sends "guesswork" calculated future price jumps of a given commodity for a given port and with given time (note only ports which actually import/export a given commodity will ever produce a surplus/suffer shortage). The next Trader to poll FateAndGuesswork is given the information, and this information is then removed from the queue.
+1. To Trader, sends "guesswork" calculated future price jumps of a given commodity for a given port and with given time (note only ports which actually import/export a given commodity will ever produce a surplus/suffer shortage). Only sent to a single trader.
 2. To Bank:
 a) Current market price of all commodities. Goes up and down via GBM, except for planned jumps due to predictions for traders. Make sure places which neither import nor export a commodity do not have a price created (unit test this, also take account of this in GUI).
 b) Stock prices of each company. Goes up and down via GBM.

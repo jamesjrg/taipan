@@ -41,14 +41,41 @@ namespace TaiPan.Bank
 
             fxPoller = new Client(ServerConfigs["FXServer-BankBroadcast"], AppSettings);
             fatePoller = new Client(ServerConfigs["FateAndGuessWork-BankBroadcast"], AppSettings);
-            traderPollers.Add(new Client(ServerConfigs["Trader-BankBroadcast"], AppSettings));
-            shippingPollers.Add(new Client(ServerConfigs["Shipping-BankBroadcast"], AppSettings));
+
+            var conf = ServerConfigs["Trader-BankBroadcast"];
+            for (int i = 0; i != nTraders; ++i)
+            {
+                traderPollers.Add(new Client(conf, AppSettings));
+                conf.port += 1;
+            }
+
+            conf = ServerConfigs["Shipping-BankBroadcast"];
+            for (int i = 0; i != nShipping; ++i)
+            {
+                traderPollers.Add(new Client(conf, AppSettings));
+                conf.port += 1;
+            }
         }
 
         protected override bool Run()
         {
             while (fxPoller.messages.Count != 0)
                 Console.WriteLine(fxPoller.messages.Dequeue());
+            while (fatePoller.messages.Count != 0)
+                Console.WriteLine(fxPoller.messages.Dequeue());
+
+            foreach (var traderPoller in traderPollers)
+            {
+                while (traderPoller.messages.Count != 0)
+                    Console.WriteLine(traderPoller.messages.Dequeue());
+            }
+
+            foreach (var shippingPoller in shippingPollers)
+            {
+                while (shippingPoller.messages.Count != 0)
+                    Console.WriteLine(shippingPoller.messages.Dequeue());
+            }
+
             return true;
         }
 

@@ -122,9 +122,10 @@ CREATE TABLE dbo.PortCommodityPrice
 	PortID int NOT NULL,
     CommodityID int NOT NULL,
     LocalPrice Money NOT NULL DEFAULT 100,
-    ShortageProb int NOT NULL CHECK (ShortageProb >= 0 AND ShortageProb <= 100) DEFAULT 50,
-    SurplusProb int NOT NULL CHECK (SurplusProb >= 0 AND SurplusProb <= 100) DEFAULT 50,
-    CONSTRAINT PK_PCP PRIMARY KEY (PortID, CommodityID)
+    ShortageProb int NOT NULL CHECK (ShortageProb >= 0) DEFAULT 50,
+    SurplusProb int NOT NULL CHECK (SurplusProb >= 0) DEFAULT 50,
+    CONSTRAINT PK_PCP PRIMARY KEY (PortID, CommodityID),
+    CONSTRAINT Prob_Total CHECK (ShortageProb + SurplusProb <= 100)
 	)  ON [PRIMARY]
 GO
 
@@ -293,7 +294,7 @@ AFTER update
 AS
 INSERT INTO dbo.HistoricalStockPrice
     (ShippingCompanyID, PriceDate, USDStockPrice)
-SELECT updated.ID, GETDATE(), updated.USDStockPrice FROM updated
+SELECT i.CompanyID, GETDATE(), i.USDStockPrice FROM inserted as i
 GO
 
 CREATE TRIGGER dbo.trgBalanceUpdate
@@ -302,7 +303,7 @@ AFTER update
 AS
 INSERT INTO dbo.HistoricalBalance
     (CompanyID, BalanceDate, Balance)
-SELECT updated.ID, GETDATE(), updated.Balance FROM updated
+SELECT i.ID, GETDATE(), i.Balance FROM inserted as i
 GO
 
 CREATE TRIGGER dbo.trgCurrencyUpdate
@@ -311,7 +312,7 @@ AFTER update
 AS
 INSERT INTO dbo.HistoricalCurrencyPrice
     (CurrencyID, ValueDate, USDValue)
-SELECT updated.ID, GETDATE(), updated.USDValue FROM updated
+SELECT i.ID, GETDATE(), i.USDValue FROM inserted as i
 GO
 
 CREATE TRIGGER dbo.trgPortComodUpdate
@@ -319,8 +320,8 @@ ON dbo.PortCommodityPrice
 AFTER update
 AS
 INSERT INTO dbo.HistoricalPortCommodityPrice
-    (PortID, CommodityID, ValueDate, Price)
-SELECT updated.PortID, updated.CommodityID, GETDATE(), updated.Price FROM updated
+    (PortID, CommodityID, ValueDate, LocalPrice)
+SELECT i.PortID, i.CommodityID, GETDATE(), i.LocalPrice FROM inserted as i
 GO
     
 COMMIT

@@ -8,17 +8,24 @@ Contribute a bit to an OS project?
 
 ////
 
-Documentation and UML
+Logic:
+**this one would really make for a better system**
+- when traders sell warehoused goods to make profit on fateandguesswork prediction, prices should rebound back towards where they were before. this would require bank doing some sort of calculation on basis of past prices and current price, etc.
 
+- balance should actually be taken into account both for what transactions are allowed and what transactions actors take - currently it is totally ignored, and people are totally unaffected if they go into debt
+- shipping companies should have a limited number of freighters, which restricts which shipping contracts they can accept. even more complex, the location of their freighters is tracked, and they have to work out if they have any freighters nearby to the required goods departure point
+
+Documentation and UML
 - UML class diagram (hopefully this can just be exported from Visual Studio? Or otherwise imported from C# code to MagicDraw)
 - export class documentation from XML doc strings
 
 ///
 
 Concurrency and networking:
-- traders don't need to poll all companies, only those they are currently waiting on for predicted surplus or shortage
+- traders don't need to poll all companies, only those they are currently waiting on for predicted surplus or shortage. in fact, whole network thing is silly at the moment as much of the communication should be peer-to-peer, not broadcast openly and then left for clients to check whether target id says message is for them
 - read a bit of abstract concurrency theory, and then put this into practice with regard to having it vey clear how concurrency features of my system are well designed and error-resistant, and then add this to doc
-- formal testing system (e.g. something like CHESS, though probably not directly suitable)
+- script to stress test concurrent aspects
+- do research on ways to improve stress testing
 - make processes be able to cope if other processes fall off network then reappear again (this would be a major undertaking)
 
 ///
@@ -116,7 +123,6 @@ front end stuff removed for the time being:
 
 things that could be done to make it more complicated for the sake of it removed for time being:
 - keep track of which transactions are to do with primary, secondary or tertiary sector, then include this data on summary sheets
-- different companies have differing number of freighters
 - make it so freighters have different capacities, and make the bidding for contracts to move goods take account of this
 - make it so sometimes quanity transported won't fit in a single freigher, so multiple freighters are involved in a single transport (perhaps from two seperate companies)
 - add bumpf to database - company director names, commodity descriptions, country populations, etc

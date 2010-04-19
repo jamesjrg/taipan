@@ -40,7 +40,12 @@ namespace TaiPan.ShippingCompany
             conf.port = conf.port + (myID - 1);
             traderBroadcast = new Server(conf, AppSettings);
 
-            traderPollers.Add(new Client(ServerConfigs["Trader-ShippingBroadcast"], AppSettings));
+            conf = ServerConfigs["Trader-ShippingBroadcast"];
+            for (int i = 0; i != nTraders; ++i)
+            {
+                traderPollers.Add(new Client(conf, AppSettings));
+                conf.port += 1;
+            }
         }        
 
         protected override bool Run()

@@ -36,17 +36,24 @@ namespace TaiPan.Trader
             var conf = ServerConfigs["Trader-BankBroadcast"];
             conf.port = conf.port + (myID - 1);
             bankBroadcast = new Server(conf, AppSettings);
+
             conf = ServerConfigs["Trader-ShippingBroadcast"];
             conf.port = conf.port + (myID - 1);
             shippingBroadcast = new Server(conf, AppSettings);
 
             fatePoller = new Client(ServerConfigs["FateAndGuessWork-TraderBroadcast"], AppSettings);
-            shippingPollers.Add(new Client(ServerConfigs["Shipping-TraderBroadcast"], AppSettings));
+            
+            conf = ServerConfigs["Shipping-TraderBroadcast"];
+            for (int i = 0; i != nShipping; ++i)
+            {
+                shippingPollers.Add(new Client(conf, AppSettings));
+                conf.port += 1;
+            }
         }
 
         protected override bool Run()
         {
-            if (fatePoller.messages.Count != 0)
+            while (fatePoller.messages.Count != 0)
                 Console.WriteLine(fatePoller.messages.Dequeue());
             return true; 
         }
