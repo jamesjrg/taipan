@@ -25,10 +25,13 @@ namespace TaiPan.Common
         {
             ClientLoopTick = Convert.ToInt32(appSettings["ClientLoopTick"]);
             ClientRetryTime = Convert.ToInt32(appSettings["ClientRetryTime"]);
-
+            
             tcpClient = AttemptTCPConnect(config);
             ns = tcpClient.GetStream();
             sr = new StreamReader(ns);
+
+            Thread thread = new Thread(MainLoop);
+            thread.Start();
         }
 
         public void Dispose()
@@ -36,7 +39,7 @@ namespace TaiPan.Common
             Util.CloseTcpClient(tcpClient);
         }
 
-        public void MainLoop()
+        private void MainLoop()
         {
             while (true)
             {
@@ -62,7 +65,7 @@ namespace TaiPan.Common
             for (int i = 0; i != attempts; ++i)
             {
                 if (i == 0)
-                    Console.WriteLine("Attempting to connect to " + config.name);
+                    Console.WriteLine("Attempting to connect to " + config.name + " at " + config.address + ":" + config.port);
                 else
                     Console.WriteLine("Connection attempt " + (i + 1) + " of " + attempts);
                 try

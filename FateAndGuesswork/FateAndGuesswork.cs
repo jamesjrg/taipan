@@ -10,8 +10,7 @@ namespace TaiPan.FateAndGuesswork
     /// </summary>
     class FateAndGuesswork : TaiPan.Common.EconomicPlayer
     {
-        private TaiPan.Common.Server commodBroadcast;
-        private TaiPan.Common.Server stockPriceBroadcast;
+        private TaiPan.Common.Server bankBroadcast;
         private TaiPan.Common.Server traderBroadcast;
 
         private List<Port> ports = new List<Port>();
@@ -49,8 +48,7 @@ namespace TaiPan.FateAndGuesswork
         {
             Console.Title = "FateAndGuesswork";
 
-            commodBroadcast = new TaiPan.Common.Server(ServerConfigs["FateAndGuessWork-BankCommodBroadcast"], AppSettings);
-            stockPriceBroadcast = new TaiPan.Common.Server(ServerConfigs["FateAndGuessWork-BankStockBroadcast"], AppSettings);
+            bankBroadcast = new TaiPan.Common.Server(ServerConfigs["FateAndGuessWork-BankBroadcast"], AppSettings);
             traderBroadcast = new TaiPan.Common.Server(ServerConfigs["FateAndGuessWork-TraderBroadcast"], AppSettings);
         }
 
@@ -64,7 +62,7 @@ namespace TaiPan.FateAndGuesswork
             {
                 foreach (Commodity commod in port.commodityPrices)
                 {
-                    commodBroadcast.Send(port.name + ',' + commod.name + ',' + commod.localPrice);
+                    bankBroadcast.Send("commodity," + port.name + ',' + commod.name + ',' + commod.localPrice);
                 }                
             }
             return true;

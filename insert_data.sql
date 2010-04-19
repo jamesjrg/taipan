@@ -94,113 +94,114 @@ INSERT INTO dbo.Country
            --('Venezuela', 1)
 GO
 
+-- coordinates are in form longitude, latitude (i.e. x, y)
 INSERT INTO dbo.Port
-           (Name, CountryID)
+           (Name, CountryID, Location)
      VALUES
         --Algeria
-        --('Algiers', 1),        
+        --('Algiers', 1, geography::STPointFromText('POINT(3.05 36.7833)', 4326)),
         --Argentina
-        ('Bahía Blanca', 2),
+        ('Bahía Blanca', 2, geography::STPointFromText('POINT(0 0)', 4326)),
         --('Buenos Aires', 2),        
         --Australia
-        ('Sydney', 3),
-        ('Port Hedland', 3),        
-        --('Melbourne', 3),        
+        ('Sydney', 3, geography::STPointFromText('POINT(0 0)', 4326)),
+        ('Port Hedland', 3, geography::STPointFromText('POINT(0 0)', 4326)),        
+        --('Melbourne', 3, geography::STPointFromText('POINT(0 0)', 4326)),        
         --Belgium
-        ('Antwerp', 4),
+        ('Antwerp', 4, geography::STPointFromText('POINT(0 0)', 4326)),
         --Netherlands
-        ('Rotterdam', 5),        
+        ('Rotterdam', 5, geography::STPointFromText('POINT(0 0)', 4326)),        
         --UK
-        ('Felixstowe', 6),
-        --('Grimsby and Immingham', 6),        
+        ('Felixstowe', 6, geography::STPointFromText('POINT(0 0)', 4326)),
+        --('Grimsby and Immingham', 6, geography::STPointFromText('POINT(0 0)', 4326)),        
         --France
-        ('Le Havre', 7),
-        --('Marseille', 7),        
+        ('Le Havre', 7, geography::STPointFromText('POINT(0 0)', 4326)),
+        --('Marseille', 7, geography::STPointFromText('POINT(0 0)', 4326)),        
         --Germany
-        ('Bremen', 8),
-        --('Hamburg', 8),        
+        ('Bremen', 8, geography::STPointFromText('POINT(0 0)', 4326)),
+        --('Hamburg', 8, geography::STPointFromText('POINT(0 0)', 4326)),        
        --Italy
-       --('Gioia Tauro', 9),
+       --('Gioia Tauro', 9, geography::STPointFromText('POINT(0 0)', 4326)),
        --Spain
-       ('Valencia', 1),
-       --('Algeciras', 1),    
+       ('Valencia', 1, geography::STPointFromText('POINT(0 0)', 4326)),
+       --('Algeciras', 1, geography::STPointFromText('POINT(0 0)', 4326)),    
        --Bangladesh
-       --('Chittagong', 1),       
+       --('Chittagong', 1, geography::STPointFromText('POINT(0 0)', 4326)),       
        --Brazil
-       ('Santos', 1),       
+       ('Santos', 1, geography::STPointFromText('POINT(0 0)', 4326)),       
        --United States
-       --('Los Angeles', 1),
-       ('Long Beach', 1),
-       --('New York', 1),
-       ('Savannah', 1),
+       --('Los Angeles', 1, geography::STPointFromText('POINT(0 0)', 4326)),
+       ('Long Beach', 1, geography::STPointFromText('POINT(0 0)', 4326)),
+       --('New York', 1, geography::STPointFromText('POINT(0 0)', 4326)),
+       ('Savannah', 1, geography::STPointFromText('POINT(0 0)', 4326)),
        --Canada
-       ('Vancouver', 1),       
+       ('Vancouver', 1, geography::STPointFromText('POINT(0 0)', 4326)),       
        --Chile
-       ('San Antonio', 1),       
+       ('San Antonio', 1, geography::STPointFromText('POINT(0 0)', 4326)),       
        --China
-       ('Shanghai', 1),
-       ('Shenzhen', 1),
-       --('Ningbo', 1),
-       --('Guangzhou', 1),
-       --('Qingdao', 1),
-       --('Tianjin', 1),       
+       ('Shanghai', 1, geography::STPointFromText('POINT(0 0)', 4326)),
+       ('Shenzhen', 1, geography::STPointFromText('POINT(0 0)', 4326)),
+       --('Ningbo', 1, geography::STPointFromText('POINT(0 0)', 4326)),
+       --('Guangzhou', 1, geography::STPointFromText('POINT(0 0)', 4326)),
+       --('Qingdao', 1, geography::STPointFromText('POINT(0 0)', 4326)),
+       --('Tianjin', 1, geography::STPointFromText('POINT(0 0)', 4326)),       
        --Colombia
-       --('Buenaventura', 1),       
+       --('Buenaventura', 1, geography::STPointFromText('POINT(0 0)', 4326)),       
        --Denmark
-       --('Fredericia', 1),       
+       --('Fredericia', 1, geography::STPointFromText('POINT(0 0)', 4326)),       
        --Egypt
-       ('Port Said', 1),
+       ('Port Said', 1, geography::STPointFromText('POINT(0 0)', 4326)),
        --Hong Kong SAR
-       ('Hong Kong', 1),
+       ('Hong Kong', 1, geography::STPointFromText('POINT(0 0)', 4326)),
        --Iceland
-       --('Reykjavík', 1),       
+       --('Reykjavík', 1, geography::STPointFromText('POINT(0 0)', 4326)),       
        --India
-       ('Jawaharlal Nehru', 1),
+       ('Jawaharlal Nehru', 1, geography::STPointFromText('POINT(0 0)', 4326)),
        --Iran
-       ('Bandar Abbas', 1),
+       ('Bandar Abbas', 1, geography::STPointFromText('POINT(0 0)', 4326)),
        --Israel
-       --('Ashdod', 1),
+       --('Ashdod', 1, geography::STPointFromText('POINT(0 0)', 4326)),
        --Japan
-       --('Nagoya', 1),
-       ('Tokyo', 1),
-       ('Yokohama', 1),       
+       --('Nagoya', 1, geography::STPointFromText('POINT(0 0)', 4326)),
+       ('Tokyo', 1, geography::STPointFromText('POINT(0 0)', 4326)),
+       ('Yokohama', 1, geography::STPointFromText('POINT(0 0)', 4326)),       
        --Madagascar
-       --('Tamatave', 1),
+       --('Tamatave', 1, geography::STPointFromText('POINT(0 0)', 4326)),
        --Mexico
-       --('Manzanillo', 1),
-       --('Veracruz', 1),
+       --('Manzanillo', 1, geography::STPointFromText('POINT(0 0)', 4326)),
+       --('Veracruz', 1, geography::STPointFromText('POINT(0 0)', 4326)),
        --Namibia
-       --('Walvis Bay', 1),
+       --('Walvis Bay', 1, geography::STPointFromText('POINT(0 0)', 4326)),
        --New Zealand
-       --('Auckland', 1),
+       --('Auckland', 1, geography::STPointFromText('POINT(0 0)', 4326)),
        --Norway
-       --('Bergen', 1),
+       --('Bergen', 1, geography::STPointFromText('POINT(0 0)', 4326)),
        --Pakistan
-       ('Karachi', 1),
+       ('Karachi', 1, geography::STPointFromText('POINT(0 0)', 4326)),
        --Peru
-       --('Callao', 1),
+       --('Callao', 1, geography::STPointFromText('POINT(0 0)', 4326)),
        --Russia
-       ('Saint Petersburg', 1),
+       ('Saint Petersburg', 1, geography::STPointFromText('POINT(0 0)', 4326)),
        --Saudi Arabia
-       ('Jeddah', 1),
+       ('Jeddah', 1, geography::STPointFromText('POINT(0 0)', 4326)),
        --Singapore
-       ('Singapore', 1),
+       ('Singapore', 1, geography::STPointFromText('POINT(0 0)', 4326)),
        --South Africa
-       --('Durban', 1),
+       --('Durban', 1, geography::STPointFromText('POINT(0 0)', 4326)),
        --South Korea
-        ('Busan', 1),       
+        ('Busan', 1, geography::STPointFromText('POINT(0 0)', 4326)),       
        --Sweden
-       --('Gothenburg', 1),
+       --('Gothenburg', 1, geography::STPointFromText('POINT(0 0)', 4326)),
        --Taiwan
-       ('Kaohsiung', 1),
+       ('Kaohsiung', 1, geography::STPointFromText('POINT(0 0)', 4326)),
        --Thailand
-       ('Laem Chabang', 1),
+       ('Laem Chabang', 1, geography::STPointFromText('POINT(0 0)', 4326)),
        --Turkey
-       --('Istanbul', 1),
+       --('Istanbul', 1, geography::STPointFromText('POINT(0 0)', 4326)),
        --United Arab Emirates
-       ('Dubai', 1)
+       ('Dubai', 1, geography::STPointFromText('POINT(0 0)', 4326))
        --Venezuela
-       --('Caracas', 1),
+       --('Caracas', 1, geography::STPointFromText('POINT(0 0)', 4326)),
        --('Maracaibo', 1)
 GO
 

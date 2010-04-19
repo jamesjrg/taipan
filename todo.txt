@@ -26,14 +26,16 @@ right now:
 - add constraint shortage prob + import prob <=100
 - check for comments on R1
 - format for FateAndGuesswork broadcast to Trader, something like:
-"Portname,CommodName,2010-04-15T20:10:00"
+"surplus,Portname,CommodName,2010-04-15T20:10:00"
 - format for FateAndGuesswork stockprice broadcast:
 "StockName,Price"
+- Client messages needs thread control - i.e. make it private and add a "Dequeue" method to Client
+- make client lists poll all available relevant servers, with each server+client of same time taking different port numbers - search for List<Client>
 
 fairly immediate stuff:
 general logic and network code:
 - Trader/ShippingCompany interaction: delay of 5 secs between receiving acceptance of contract for movement of goods and taking contract off broadcast, requiring system of acks and locks, as in UML. But change design and UML a bit - rather than sending refusals, just make shipping companies have to assume they have been refused if they get no ack
-- Client messages needs thread control
+
 
 other:
 - improve start py script so you can specify on command line how many of each process to start
@@ -41,6 +43,11 @@ other:
 - mega_start.bat script to start all C# processes at once (not Resolver though)
 
 ////
+
+Process logic - make sure everything from overall plan.txt is working.
+Unit test individual functions
+
+///
 
 First two tabs of Resolver sheet (GBM data streams):
 - make the basic update button work correctly
@@ -115,12 +122,7 @@ http://www.amsterdamoptimization.com/msf.html
 
 - doc: represent all shipping lanes between ports as a graph of interconnected nodes, and do a "travelling freighter problem" solution of shortest route for a freighter to visit each port exactly once. provide a diagram on web.
 
-Find the coordinates for perhaps just 10 of the ports for insertion, and add to db
-
-Maybe need to read about spatial data in sql - need to use "geography" data type
-INSERT INTO SpatialTable (GeogCol1)
-VALUES (geography::STPointFromText('POINT(-122.360 47.656)', 4326));
-longitude is specified first before the latitude
+Find the coordinates for all the ports not commented out in sql insert script
 
 ///
 
@@ -128,7 +130,6 @@ longitude is specified first before the latitude
 add to uml deployment. 
 
 ///
-
 
 General Resolver things to do:
 Possibly some vaguely sensible management (decisions on when to reuse + close) of the db connection?
@@ -261,7 +262,7 @@ The front end utilises the spreadsheet/Python "mash up" “Resolver One” to provid
 
 One final, especially contrived C# service provides an RPC-style interface that takes a list of unsorted numbers and returns the list in alphabetical order. Arguments provided by the caller specify which of a wide variety of differing algorithms or data structures should be used to perform the sorting. blah blah spreadsheet integ
 
-I created a number of UML diagrams to describe various aspects of the system. Some sections of the system are covered by unit tests, but much of the multithreaded and multiprocess code is not suited to this and is merely stress-tested. As with all projects I have worked on since around 2004 (commercial and non-commercial), the source is under version control (in this case git).
+I created a number of UML diagrams to describe various aspects of the system. Some sections of the system are covered by unit tests, but much of the interaction between multiple threads and processes is not suited to this and is merely stress-tested. As with all projects I have worked on since around 2004 (commercial and non-commercial), the source is under version control (in this case git).
 
 - talk about real time graphs on web
 - add Solver Foundation to web doc

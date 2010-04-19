@@ -11,19 +11,25 @@ fxDir = 'FXServer' + exeDir
 traderDir = 'Trader' + exeDir
 shippingDir = 'ShippingCompany' + exeDir
 
+nTraders = 2
+nShipping = 2
+
+startTraderId = 1
+startShippingId = 5
+
 def startInNewConsole(process, dir):
     print 'start ' + dir+process
     os.system('start /D ' + dir + " " + dir+process)
 
-startInNewConsole('Bank.exe', bankDir)
+startInNewConsole('Bank.exe %d %d' % (nTraders, nShipping), bankDir)
 startInNewConsole('FateAndGuesswork.exe', fateDir)
 startInNewConsole('FXServer.exe', fxDir)
 
-for i in range(1, 3):
-    startInNewConsole('Trader.exe %d' % i, traderDir)
+for i in range(startTraderId, startTraderId + nTraders):
+    startInNewConsole('Trader.exe %d %d' % (i, nShipping), traderDir)
     
-for i in range(5, 7):
-    startInNewConsole('ShippingCompany.exe %d' % i, shippingDir)
+for i in range(startShippingId, startShippingId + nShipping):
+    startInNewConsole('ShippingCompany.exe %d %d' % (i, nTraders), shippingDir)
 
 print 'all processes started'
 

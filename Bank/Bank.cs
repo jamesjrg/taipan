@@ -18,26 +18,31 @@ namespace TaiPan.Bank
         private DbConn dbConn;
 
         private Client fxPoller;
-        private Client commodPoller;
-        private Client stockPoller;
+        private Client fatePoller;
+        private List<Client> traderPollers = new List<Client>();
+        private List<Client> shippingPollers = new List<Client>();
 
         public Bank(string[] args)
         {
             Console.Title = "Bank";
 
+            int nTraders, nShipping;
+            try
+            {
+                nTraders = Int32.Parse(args[0]);
+                nShipping = Int32.Parse(args[1]);
+            }
+            catch (Exception)
+            {
+                throw new ApplicationException("Requires 2 command line arguments: first is number of traders, second is number of shipping companies");
+            }
+
             dbConn = new DbConn(false);
 
             fxPoller = new Client(ServerConfigs["FXServer-BankBroadcast"], AppSettings);
-            Thread thread1 = new Thread(fxPoller.MainLoop);
-            thread1.Start();
-
-            commodPoller = new Client(ServerConfigs["FateAndGuessWork-BankCommodBroadcast"], AppSettings);
-            Thread thread2 = new Thread(commodPoller.MainLoop);
-            thread2.Start();
-
-            stockPoller = new Client(ServerConfigs["FateAndGuessWork-BankStockBroadcast"], AppSettings);
-            Thread thread3 = new Thread(stockPoller.MainLoop);
-            thread3.Start();
+            fatePoller = new Client(ServerConfigs["FateAndGuessWork-BankBroadcast"], AppSettings);
+            traderPollers.Add(new Client(ServerConfigs["Trader-BankBroadcast"], AppSettings));
+            shippingPollers.Add(new Client(ServerConfigs["Shipping-BankBroadcast"], AppSettings));
         }
 
         protected override bool Run()

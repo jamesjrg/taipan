@@ -56,11 +56,12 @@ namespace TaiPan.Common
             tcpListener.Stop();
         }
 
-        public void Listen(object o)
+        private void Listen(object o)
         {
             ServerConfig config = (ServerConfig)o;
             IPAddress localAddr = IPAddress.Parse(config.address);
             tcpListener = new TcpListener(localAddr, config.port);
+            Console.WriteLine("Server starting on " + config.address + ":" + config.port);
             tcpListener.Start();
             int newSubscriberId = 1;
             while (true)
