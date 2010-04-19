@@ -12,33 +12,27 @@ namespace SortingService
     public interface ISortingService
     {
         [OperationContract]
-        string GetData(int value);
-
-        [OperationContract]
-        CompositeType GetDataUsingDataContract(CompositeType composite);
-
-        // TODO: Add your service operations here
+        StructureReturn CreateStructure(string type, List<int> data);
     }
 
-    // Use a data contract as illustrated in the sample below to add composite types to service operations
     [DataContract]
-    public class CompositeType
+    public class StructureReturn
     {
-        bool boolValue = true;
-        string stringValue = "Hello ";
+        int id = -1;
+        int time = -1;
 
         [DataMember]
-        public bool BoolValue
+        public int Id
         {
-            get { return boolValue; }
-            set { boolValue = value; }
+            get { return id; }
+            set { id = value; }
         }
 
         [DataMember]
-        public string StringValue
+        public int Time
         {
-            get { return stringValue; }
-            set { stringValue = value; }
+            get { return time; }
+            set { time = value; }
         }
     }
 }

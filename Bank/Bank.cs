@@ -17,6 +17,8 @@ namespace TaiPan.Bank
     {
         private DbConn dbConn;
 
+        private Server traderBroadcast;
+
         private Client fxPoller;
         private Client fatePoller;
         private List<Client> traderPollers = new List<Client>();
@@ -38,6 +40,8 @@ namespace TaiPan.Bank
             }
 
             dbConn = new DbConn(false);
+
+            traderBroadcast = new Server(ServerConfigs["Bank-TraderBroadcast"], AppSettings);
 
             fxPoller = new Client(ServerConfigs["FXServer-BankBroadcast"], AppSettings);
             fatePoller = new Client(ServerConfigs["FateAndGuessWork-BankBroadcast"], AppSettings);

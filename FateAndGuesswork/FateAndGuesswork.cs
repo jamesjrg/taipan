@@ -12,8 +12,8 @@ namespace TaiPan.FateAndGuesswork
     /// </summary>
     class FateAndGuesswork : TaiPan.Common.EconomicPlayer
     {
-        private TaiPan.Common.Server bankBroadcast;
-        private TaiPan.Common.Server traderBroadcast;
+        private Server bankBroadcast;
+        private Server traderBroadcast;
 
         private List<Port> ports = new List<Port>();
         private List<Stock> stocks = new List<Stock>();

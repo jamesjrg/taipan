@@ -9,12 +9,12 @@ namespace TaiPan.Trader
     /// <summary>
     /// Singleton class for Trader process
     /// </summary>
-    class Trader : TaiPan.Common.EconomicPlayer
+    class Trader : EconomicPlayer
     {
         private int myID;
 
-        private TaiPan.Common.Server bankBroadcast;
-        private TaiPan.Common.Server shippingBroadcast;
+        private Server bankBroadcast;
+        private Server shippingBroadcast;
 
         private Client fatePoller;
         private List<Client> shippingPollers = new List<Client>();

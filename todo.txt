@@ -19,9 +19,9 @@ git changelog:
 
 right now:
 - add new server broadcast bank->trader
-- when trader tells bank to organise commod buy, it includes a made up packet id, and then bank responds with broadcast that includes packetid, and also the new db warehouseid for the thing requested in the orig broadcast. bank also broadcasts to trader to tell them when a future has been settled, including new warehouseid. this way trader can keep track of its currently warehoused goods.
 - change fxserver to only use decimal correct to 5 sf
 - still need scaffolding for:
+bank traderBroadcast
 fateandguesswork traderBroadcast
 shippingcompany bankBroadcast, traderBroadcast, traderPollers
 trader bankBroadcast, shippingBroadcast, shippingPollers
@@ -30,6 +30,10 @@ trader bankBroadcast, shippingBroadcast, shippingPollers
 - Client messages needs thread control - i.e. make it private and add a "Dequeue" method to Client
 - check for comments on R1
 
+- format for Bank broadcast to trader
+a) "buyconfirm,traderid,traderpacketid,warehouseid"
+b) "futuresettle,traderid,traderpacketid,warehouseid"
+
 - format for FateAndGuesswork broadcast to Trader, something like:
 a) "traderid,surplus,Portname,CommodName,1200,2010-04-15T20:10:00"
 b) "traderid,shortage,Portname,CommodName,1200,2010-04-15T20:10:00"
@@ -37,9 +41,10 @@ b) "traderid,shortage,Portname,CommodName,1200,2010-04-15T20:10:00"
 - format for messages from traders to shipping companies something like:
 a) "advertise,myid,targetid,warehouseid"
 b) "accept,myid,targetid,warehouseid"
+
 - format for messages from trader to bank something like:
-a) "buy,myid,portname,commodname,quantity"
-b) "future,myid,portname,commodname,quantity,when"
+a) "buy,myid,madeuppacketid,portname,commodname,quantity"
+b) "future,myid,madeuppacketid,portname,commodname,quantity,when"
 
 - format for messages from shipping company to bank something like:
 a) "departure,myid,warehouseid,depaturetime"
@@ -242,10 +247,32 @@ b) make Wt a random variable chosen from a normal distribution with mean 0 and s
 //////
 
 algorithms bit:
+following remote methods
+
+CreateStructure()
+args: which structure, list
+returns: structure id, time taken
+
+Time results from structure()
+args: structureid
+returns: structure id, time taken
+
+Time results from sort alg()
+args: method, list
+returns: time taken
+
+DeleteStructure
+args: structure id
+returns: success or failure
+
+TimeMethod
+method 2: 
+1. enum of method to use 2. the list 3. whether to return
 
 - using info both in algos book and database book, have an entirely pointless "sorting server" (including on UML diagram, with a note of explanation) that takes a list of numbers as input, and then sorts the list a method of the callers choice:
 - merge sort
 - quick sort
+- quick sort in place
 - heap sort
 - hash table
 - red black tree
@@ -254,7 +281,7 @@ algorithms bit:
 It has two types of call, one returns the sorted list, the other just returns how long the sort took.
 
 - unit test
-- uses WCF to provide RPC-style network service. perhaps the argument given for sorting method is an enum? or maybe a string attribute with options taken from a certain schema? look into how this is normally done.
+- does data contract require I use get/set properties? how exactly does data contract work?
 
 ///
 

@@ -12,9 +12,9 @@ namespace TaiPan.FXServer
     /// <summary>
     /// Singleton class for FXServer process
     /// </summary>
-    class FXServer : TaiPan.Common.EconomicPlayer
+    class FXServer : EconomicPlayer
     {
-        private TaiPan.Common.Server server;
+        private Server server;
         private List<Currency> currencies = new List<Currency>();
         private Random random = new Random();
 
@@ -46,7 +46,7 @@ namespace TaiPan.FXServer
             reader.Close();
             dbConn.Dispose();
 
-            server = new TaiPan.Common.Server(ServerConfigs["FXServer-BankBroadcast"], AppSettings);
+            server = new Server(ServerConfigs["FXServer-BankBroadcast"], AppSettings);
         }
 
         protected override bool Run()

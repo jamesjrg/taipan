@@ -28,6 +28,12 @@ Concurrency and networking:
 - do research on ways to improve stress testing
 - make processes be able to cope if other processes fall off network then reappear again (this would be a major undertaking)
 
+////
+
+algs server:
+
+have option to actually return the sorted list...
+
 ///
 
 sql:

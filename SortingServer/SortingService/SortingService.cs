@@ -7,21 +7,32 @@ using System.Text;
 
 namespace SortingService
 {
-    // NOTE: If you change the class name "Service1" here, you must also update the reference to "Service1" in App.config.
     public class SortingService : ISortingService
     {
-        public string GetData(int value)
+        public StructureReturn CreateStructure(string type, List<int> data)
         {
-            return string.Format("You entered: {0}", value);
+            StructureReturn ret = new StructureReturn();
+            ret.Id = 0;
+            ret.Time = 0;
+            return ret;
         }
 
-        public CompositeType GetDataUsingDataContract(CompositeType composite)
+        public StructureReturn TimeStructureToArray(int structureId)
         {
-            if (composite.BoolValue)
-            {
-                composite.StringValue += "Suffix";
-            }
-            return composite;
+            StructureReturn ret = new StructureReturn();
+            ret.Id = 0;
+            ret.Time = 0;
+            return ret;
+        }
+
+        public bool DeleteStructure(int structureId)
+        {
+            return true;
+        }
+
+        public int TimeSort(string type, List<int> data)
+        {
+            return 0;
         }
     }
 }

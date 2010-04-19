@@ -23,6 +23,9 @@ SortingServer/SortingServer/bin/
 SortingServer/SortingServer/obj/
 SortingServer/SortingService/bin/
 SortingServer/SortingService/obj/
+SortingServer/TestSortingService/bin/
+SortingServer/TestSortingService/obj/
+SortingServer/TestResults/
 
 Resolver/WpfChart/WpfChart.suo
 Resolver/WpfChart/WpfChart/bin/
