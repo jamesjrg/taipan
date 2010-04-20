@@ -15,9 +15,10 @@ namespace TaiPan.Common
     {
         protected NameValueCollection AppSettings = new NameValueCollection();
         protected Dictionary<string, ServerConfig> ServerConfigs = new Dictionary<string, ServerConfig>();
+        protected readonly string CurrencyAccuracy;
 
         private readonly int MainLoopTick;
-
+        
         public EconomicPlayer()
         {
             Console.WriteLine("Reading server connection settings from config file");
@@ -35,6 +36,7 @@ namespace TaiPan.Common
             if (AppSettings.Count == 0)
                 throw new ApplicationException("Flagrant error attempting to read appSettings from config file");
             MainLoopTick = Convert.ToInt32(AppSettings["MainLoopTick"]);
+            CurrencyAccuracy = "F" + Convert.ToInt32(AppSettings["CurrencyAccuracy"]);
 
             ServersSection serversSection = config.GetSection("servers") as ServersSection;
             if (serversSection == null)

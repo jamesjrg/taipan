@@ -36,7 +36,7 @@ namespace TaiPan.FXServer
 
             DbConn dbConn = new DbConn();
             Console.WriteLine("Reading currencies from db");
-            SqlDataReader reader = dbConn.ExecuteQuery("SELECT ShortName, USDValue FROM Currency ORDER BY ID DESC");
+            SqlDataReader reader = dbConn.ExecuteQuery("SELECT ShortName, USDValue FROM Currency ORDER BY ID ASC");
             while (reader.Read()) {
                 string shortName = reader.GetString(0);
                 decimal USDValue = reader.GetDecimal(1);
@@ -54,7 +54,7 @@ namespace TaiPan.FXServer
             DecidePrices();
 
             foreach (Currency currency in currencies)
-                server.Send(currency.shortName + ',' + currency.USDValue);
+                server.Send(currency.shortName + ',' + currency.USDValue.ToString(CurrencyAccuracy));
             return true;
         }
 

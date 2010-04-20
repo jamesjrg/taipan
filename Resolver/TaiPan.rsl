@@ -1,7 +1,7 @@
 <!--
 This spreadsheet is in the Public Domain.
 -->
-<document currentResultWorksheet="Commodity Prices" verticalSplitterRatio="0.75" horizontalSplitterRatio="0.543160690571" splitterOrientation="Horizontal" suspendRecalculations="False" license="Public Domain" copyrightOwner="James Gregory" resolverVersion="1.8.1" resolverBuild="5061" documentVersion="12">
+<document currentResultWorksheet="FX Rates" verticalSplitterRatio="0.75" horizontalSplitterRatio="0.543160690571" splitterOrientation="Horizontal" suspendRecalculations="False" license="Public Domain" copyrightOwner="James Gregory" resolverVersion="1.8.1" resolverBuild="5061" documentVersion="12">
     <foldState license="True" imports="True" worksheetCreation="True" preConstantsUserCode="False" constants="True" preFormulaeUserCode="False" generated="False" postFormulaeUserCode="False"/>
     <traitDefaults>
 
@@ -32,8 +32,7 @@ execfile('TFPPreConstants.py')
             <virtualGridSize width="51" height="44" />
         </viewState>
         <viewState worksheet="Commodity Prices">
-            <currentCell col="8" row="7" />
-            <selection left="8" top="7" right="8" bottom="8" />
+            <currentCell col="3" row="9" />
             <scrollPos col="1" row="1" />
             <virtualGridSize width="50" height="44" />
         </viewState>
@@ -48,8 +47,7 @@ execfile('TFPPreConstants.py')
             <virtualGridSize width="49" height="44" />
         </viewState>
         <viewState worksheet="FX Rates">
-            <currentCell col="9" row="1" />
-            <selection left="9" top="1" right="9" bottom="3" />
+            <currentCell col="8" row="6" />
             <scrollPos col="1" row="1" />
             <virtualGridSize width="48" height="44" />
         </viewState>
@@ -289,8 +287,6 @@ execfile('TFPPreConstants.py')
         <cell name="H5" value="Toggle constant update" type="general">
         </cell>
         <cell name="D2" value="Price" type="general">
-        </cell>
-        <cell name="H6" value="Random Walk Forecast" type="general">
         </cell>
         <cell name="I5" value="currently [Off]" type="general">
         </cell>

@@ -1,11 +1,12 @@
 #!/usr/bin/env python
 
 import os
+import sys
+
 print 'starting all processes'
 
 exeDir = '\\bin\\Debug\\'
 bankDir = 'Bank' + exeDir
-print bankDir
 fateDir = 'FateAndGuesswork' + exeDir
 fxDir = 'FXServer' + exeDir
 traderDir = 'Trader' + exeDir
@@ -17,6 +18,10 @@ nShipping = 2
 startTraderId = 1
 startShippingId = 5
 
+if len(sys.argv) > 1:
+    nTraders = int(sys.argv[1])
+    nShipping = int(sys.argv[2])
+    
 def startInNewConsole(process, dir):
     print 'start ' + dir+process
     os.system('start /D ' + dir + " " + dir+process)

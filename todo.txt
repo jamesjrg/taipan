@@ -5,6 +5,9 @@
 * finish all main points of Resolver One view + WPF graphing, including GBM forecasting
 - est 2.5 weeks full time
 
+* finish 3 main UML diagrams
+- est 2 days FT
+
 * read parts of algorithms book
 * do algorithms bit
 - est 2.5 weeks full time
@@ -15,11 +18,11 @@
 
 ////
 
-git changelog:
-
 right now:
-- add new server broadcast bank->trader
-- change fxserver to only use decimal correct to 5 sf
+- read WCF chapter in more detail
+- add file NetworkContracts with classes that convert data included in network messages to/from string - start off with trader to bank mesgs
+- make traders send bank a bunch of test data, and make bank insert it into db
+
 - still need scaffolding for:
 bank traderBroadcast
 fateandguesswork traderBroadcast
@@ -35,18 +38,22 @@ a) "buyconfirm,traderid,traderpacketid,warehouseid"
 b) "futuresettle,traderid,traderpacketid,warehouseid"
 
 - format for FateAndGuesswork broadcast to Trader, something like:
-a) "traderid,surplus,Portname,CommodName,1200,2010-04-15T20:10:00"
-b) "traderid,shortage,Portname,CommodName,1200,2010-04-15T20:10:00"
+a) "traderid,surplus,portid,commodid,1200,2010-04-15T20:10:00"
+b) "traderid,shortage,portid,commodid,1200,2010-04-15T20:10:00"
 
-- format for messages from traders to shipping companies something like:
+-format for FateAndGuesswork broadcast to Bank, something like:
+a) stock price
+b) commod price
+
+- format traders to shipping companies something like:
 a) "advertise,myid,targetid,warehouseid"
 b) "accept,myid,targetid,warehouseid"
 
-- format for messages from trader to bank something like:
-a) "buy,myid,madeuppacketid,portname,commodname,quantity"
-b) "future,myid,madeuppacketid,portname,commodname,quantity,when"
+- format from trader to bank something like:
+a) "buy,myid,madeuppacketid,portid,commodid,quantity"
+b) "future,myid,madeuppacketid,portid,commodid,quantity,when"
 
-- format for messages from shipping company to bank something like:
+- format from shipping company to bank something like:
 a) "departure,myid,warehouseid,depaturetime"
 b) "arrival,myid,warehouseid,arrivaltime"
 - format for messages from shipping company to traders something like:
@@ -61,6 +68,7 @@ other:
 - improve start py script so you can specify on command line how many of each process to start
 - separate start script for starting up sortingserver + sortingclient together
 - mega_start.bat script to start all C# processes at once (not Resolver though)
+- probably use sql spatial functions to work out distances for freighter travel
 
 ////
 
@@ -73,16 +81,23 @@ First two tabs of Resolver sheet (GBM data streams):
 - make the basic update buttons work correctly
 - Brownian random walk predicted future graph - present data as a solid line, then a bunch of dashed lines for various possibilities. This is mutually exclusive with constant update - pressing one deletes data from the other, perhaps, or maybe disable button.
 Need to save a variable which says how many of the rows are real data, then this row is sent to brownian graph so it knows from where to draw dashed line.
+- make percentageDrift and percentageVolatility editable on spreadsheet, and different for currencies + commods
 
 brownian motion random walking:
-use scipy
-best link:
+use built in functions of resolver  - function to get normal distrib variable in partic.
+other people doing similar things:
 http://www.scipy.org/Cookbook/BrownianMotion
+the black-scholes R1 sheet
 http://en.wikipedia.org/wiki/Geometric_Brownian_motion
 http://en.wikipedia.org/wiki/Wiener_process	
 also:
 http://www.scipy.org/Cookbook/FittingData
-c = scipy.random.standard_normal((5,5,5) ?
+
+I think this is right:
+
+- change_in_price = PERCENTAGE_DRIFT * prev_price + PERCENTAGE_VOLATILITY * prev_price * change_in_wiener_process
+- make Wt a random variable chosen from a normal distribution with mean 0 and standard deviation equal to tick time
+
 
 - WPF graph program - just local, follow Resolver Exchange example. How does li ghaos orig code differ from altered version on resolver exchange? diff and investigate. Then use one or the other as a base - just copy and paste to start with. Should have ability to create new windows, or add new data to current windows (this functionality already in exchange example). But also has option for real time update.
 - real time update button should auto clear brownian forecast
@@ -235,17 +250,6 @@ Deployment view:
 
 ////
 
-Variation of price of stocks and commodities
-
-http://en.wikipedia.org/wiki/Geometric_Brownian_motion
-
-I think this is right:
-
-a) use the analytic solution of the equation for GBM, which requires an initial value, two constants, the explanatory variable (time) and Wt
-b) make Wt a random variable chosen from a normal distribution with mean 0 and standard deviation equal to the tick time
-
-//////
-
 algorithms bit:
 following remote methods
 
@@ -301,13 +305,14 @@ doc how even without 5 second delay in taking contracts for movements off broadc
 
 shorter version for CV etc:
 
-A C# .NET, SQL Server and Python project written to improve my knowledge of various aspects of computer science and software engineering. A large number of heterogeneous multithreaded C# processes interact with each other by sending and receiving messages via TCP sockets. These processes manipulate data using various algorithms and data structures for producing, sorting and manipulating sequences of numbers. Much of the underlying state of the system is stored in a MS SQL Server instance. A user interface to the system is provided in the form of a Python-based spreadsheet. This is also linked to a C# program for producing WPF graphs, and to Microsoft’s Solver Foundation and SciPy for simplistic mathematical modelling. The project also uses UML, unit testing, source control, etc. Around 160 hours work so far.
+•	A C# .NET, SQL Server and Python project written to improve my knowledge of various aspects of computer science and software engineering. A large number of heterogeneous multithreaded C# processes interact with each other by sending and receiving messages via TCP sockets. These processes manipulate data using various algorithms and data structures for producing, sorting and manipulating sequences of numbers. Much of the underlying state of the system is stored in a MS SQL Server instance. A user interface to the system is provided in the form of an IronPython-based spreadsheet that performs simplistic mathematical modelling (with help from Microsoft Solver Foundation). The spreadsheet is also linked to a C# program for producing WPF graphs. The project also uses UML, unit testing, source control, etc. Around 180 hours work so far.
+
 
 some phrases that could go in web doc:
 
 Only one of the processes has database write access, and hence acts as a mediator for many of the interactions.
 
-The front end utilises the spreadsheet/Python "mash up" “Resolver One” to provide analysis of the real time data from the database. The Python spreadsheet uses Microsoft's Solver Foundation to solve a version of the Travelling Salesman Problem, and scipy to provide xxx fixme for some of the stochastic outputs of the system. A local C# program is called by the spreadsheet script to produce realtime WPF graphs on same aspects of this analysis.
+The front end utilises the spreadsheet/Python "mash up" “Resolver One” to provide analysis of the real time data from the database. The Python spreadsheet uses Microsoft's Solver Foundation to solve a version of the Travelling Salesman Problem, and o provide xxx fixme for some of the stochastic outputs of the system. A local C# program is called by the spreadsheet script to produce realtime WPF graphs on same aspects of this analysis.
 
 One final, especially contrived C# service provides an RPC-style interface that takes a list of unsorted numbers and returns the list in alphabetical order. Arguments provided by the caller specify which of a wide variety of differing algorithms or data structures should be used to perform the sorting. blah blah spreadsheet integ
 
@@ -318,12 +323,11 @@ I created a number of UML diagrams to describe various aspects of the system. So
 - lots of xmlcomments for classes and methods (methods only necessary for public classes)
 - triggers, constraints, (views?), etc
 - web doc spatial database data - though utterly trivial use of spatial data because the database is not used to perform any operations on that data
-- scipy
 - solver foundation, travelling salesman
 - relational algebra/calculus
 - time spent graph (note on first point saying includes several weeks in one point)
 - cursors within sql
 - talk about how peer-to-peer would make far more sense for most of the communication, but I didn't want to spend all my time working soley on efficient network communication and neglect the other parts of the system
-
+- scipy - efficieny, r1 also has norm functions
 
 

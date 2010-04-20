@@ -30,6 +30,19 @@ def queryDb(query):
                 ret[colIndex, rowIndex] = val
         return ret
 
+#GBM functions        
+        
+def createBrownian(currentPrice):
+    forecasts = []
+    changeInWiener = 0
+    hmm need x to be a random point, chosen probabilistically
+    print 'normdist', NORMDIST(x, 0, Settings.gbmTickLength)
+    for i in range(Settings.gbmNTicks):
+        priceChange = Settings.percentageDrift * currentPrice + Settings.percentageVolatility * currentPrice * changeInWiener
+        currentPrice = currentPrice + priceChange
+        forecasts.append(currentPrice)
+    return forecasts
+
 # Commodity Prices
 commodityId = 1
 commodityPortId1 = 1
@@ -39,7 +52,7 @@ commodityPortId3 = 3
 def updateCommodityPrices():
     data = queryDb("select top %d ValueDate, Price from HistoricalPortCommodityPrice where PortID = %d and CommodityID = %d order by ValueDate ASC" % (Settings.nTopUpdate, commodityPortId1, commodityId))
     commoditySheet.FillRange(data, 1, 3, 2, Settings.nTopUpdate + 1)
-    
+  
 # FX rates
 currencyId1 = 1
 currencyId2 = 2
@@ -54,7 +67,11 @@ def setCurrency(which, id):
 def updateFXRates():
     data = queryDb("select top %d ValueDate, USDValue from HistoricalCurrencyPrice where CurrencyID = %d order by ValueDate ASC" % (Settings.nTopUpdate, currencyId1))
     fxSheet.FillRange(data, 1, 3, 2, Settings.nTopUpdate + 1)
-
+    
+def fxForecast():
+    currentPrice = 100
+    print createBrownian(currentPrice)
+    
 # Country summary
 def queryCountrySummary():
     data = queryDb("SELECT TOP 10 Name FROM Country ORDER BY Name DESC")

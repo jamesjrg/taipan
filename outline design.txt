@@ -24,6 +24,22 @@ All processes sending data to bank should throw exception and end gracefully.
 
 ////
 
+FateAndGuesswork
+Servers it polls for input as client: none
+Information it broadcasts as server:
+1. To Trader, sends "guesswork" calculated future price jumps of a given commodity for a given port and with given time (note only ports which actually import/export a given commodity will ever produce a surplus/suffer shortage). Only sent to a single trader.
+2. To Bank:
+a) Current market price of all commodities. Goes up and down via GBM, except for planned jumps due to predictions for traders. Make sure places which neither import nor export a commodity do not have a price created (unit test this, also take account of this in GUI).
+b) Stock prices of each company. Goes up and down via GBM.
+Things it calculates:
+Semi-randomly calculates which ports will in future have a) have surplus of a commodity or b) have shortage of a commodity, i.e. how big the price will jump and at what date
+Things it reads from database: info on commodities (at startup only?).
+Things it writes to database: none
+If process ends, what do other processes do:
+All client processes should throw exception and end gracefully.
+
+////
+
 Trader
 Servers it polls for input as client:
 1. FateAndGuesswork for predicted future times/places for futures contracts and goods buying
@@ -61,18 +77,4 @@ Things it calculates: fluctuating currency prices via GBM
 Things it reads from db: info on currencies (at startup only?)
 If process ends, what do clients do:
 Bank should throw error and halt, system should just end gracefully.
-
-FateAndGuesswork
-Servers it polls for input as client: none
-Information it broadcasts as server:
-1. To Trader, sends "guesswork" calculated future price jumps of a given commodity for a given port and with given time (note only ports which actually import/export a given commodity will ever produce a surplus/suffer shortage). Only sent to a single trader.
-2. To Bank:
-a) Current market price of all commodities. Goes up and down via GBM, except for planned jumps due to predictions for traders. Make sure places which neither import nor export a commodity do not have a price created (unit test this, also take account of this in GUI).
-b) Stock prices of each company. Goes up and down via GBM.
-Things it calculates:
-Semi-randomly calculates which ports will in future have a) have surplus of a commodity or b) have shortage of a commodity, i.e. how big the price will jump and at what date
-Things it reads from database: info on commodities (at startup only?).
-Things it writes to database: none
-If process ends, what do other processes do:
-All client processes should throw exception and end gracefully.
 

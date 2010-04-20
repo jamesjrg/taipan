@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 
 using TaiPan.Common;
+using System.Data.SqlClient;
 
 namespace TaiPan.FateAndGuesswork
 {
@@ -15,47 +16,37 @@ namespace TaiPan.FateAndGuesswork
         private Server bankBroadcast;
         private Server traderBroadcast;
 
-        private List<Port> ports = new List<Port>();
+        private List<CommodityPrice> commodityPrices = new List<CommodityPrice>();
         private List<Stock> stocks = new List<Stock>();
         private Random random = new Random();
 
-        private class Commodity
+        private class CommodityPrice
         {
-            public Commodity(string name, decimal localPrice, int importProb, int exportProb)
+            public CommodityPrice(int portId, int commodId, decimal localPrice, int surplusProb, int shortageProb)
             {
-                this.name = name;
+                this.portId = portId;
+                this.commodId = commodId;                
                 this.localPrice = localPrice;
-                this.importProb = importProb;
-                this.exportProb = exportProb;
+                this.surplusProb = surplusProb;
+                this.shortageProb = shortageProb;
             }
 
-            public string name;
+            public int portId;
+            public int commodId;
             public decimal localPrice;
-            public int importProb;
-            public int exportProb;
-        }
-
-        private class Port
-        {
-            public Port(string name)
-            {
-                this.name = name;
-                this.commodityPrices = new List<Commodity>();
-            }
-
-            public string name;
-            public List<Commodity> commodityPrices;
+            public int surplusProb;
+            public int shortageProb;
         }
 
         private class Stock
         {
-            public Stock(string name, decimal price)
+            public Stock(int companyId, decimal price)
             {
-                this.name = name;
+                this.companyId = companyId;
                 this.price = price;
             }
 
-            public string name;
+            public int companyId;
             public decimal price;
         }
 
@@ -82,6 +73,34 @@ namespace TaiPan.FateAndGuesswork
         public FateAndGuesswork(string[] args)
         {
             Console.Title = "FateAndGuesswork";
+
+            DbConn dbConn = new DbConn();
+
+            Console.WriteLine("Reading commodity prices from db");           
+            SqlDataReader reader = dbConn.ExecuteQuery("SELECT PortID, CommodityID, LocalPrice, ShortageProb, SurplusProb FROM PortCommodityPrice ORDER BY PortID ASC");
+            while (reader.Read())
+            {
+                int portId = reader.GetInt32(0);
+                int commodId = reader.GetInt32(1);
+                decimal localPrice = reader.GetDecimal(2);
+                int shortageProb = reader.GetInt32(3);
+                int surplusProb = reader.GetInt32(4);
+                commodityPrices.Add(new CommodityPrice(portId, commodId, localPrice, shortageProb, surplusProb));
+            }
+
+            Console.WriteLine("Reading stocks from db");
+            reader = dbConn.ExecuteQuery("SELECT CompanyID, USDStockPrice from ShippingCompany ORDER BY CompanyID ASC");
+            while (reader.Read())
+            {
+                int id = reader.GetInt32(0);
+                decimal price = reader.GetDecimal(1);
+                Console.WriteLine("{0}: {1}", id, price);
+                stocks.Add(new Stock(id, price));
+            }
+
+            //close db conn
+            reader.Close();
+            dbConn.Dispose();
 
             bankBroadcast = new TaiPan.Common.Server(ServerConfigs["FateAndGuessWork-BankBroadcast"], AppSettings);
             traderBroadcast = new TaiPan.Common.Server(ServerConfigs["FateAndGuessWork-TraderBroadcast"], AppSettings);

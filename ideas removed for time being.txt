@@ -10,7 +10,7 @@ Contribute a bit to an OS project?
 
 Logic:
 **this one would really make for a better system**
-- when traders sell warehoused goods to make profit on fateandguesswork prediction, prices should rebound back towards where they were before. this would require bank doing some sort of calculation on basis of past prices and current price, etc.
+- when traders sell warehoused goods to make profit on fateandguesswork prediction, prices should rebound back towards where they were before. this would require fateandgw keeping track of the price jumps that it has created, and then partially "undoing" them after sale of warehoused goods/futures settle
 
 - balance should actually be taken into account both for what transactions are allowed and what transactions actors take - currently it is totally ignored, and people are totally unaffected if they go into debt
 - shipping companies should have a limited number of freighters, which restricts which shipping contracts they can accept. even more complex, the location of their freighters is tracked, and they have to work out if they have any freighters nearby to the required goods departure point
