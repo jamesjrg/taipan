@@ -112,26 +112,20 @@ namespace TaiPan.FateAndGuesswork
             //DecideCommodPriceJumps();
             //DecideStockPrices();
 
-            foreach (Port port in ports)
-            {
-                foreach (Commodity commod in port.commodityPrices)
-                    bankBroadcast.Send("commodity," + port.name + ',' + commod.name + ',' + commod.localPrice);
-                foreach (Stock stock in stocks)
-                    bankBroadcast.Send("stock," + stock.name + ',' + stock.price);
-            }
+            foreach (CommodityPrice commod in commodityPrices)
+                bankBroadcast.Send("commodity," + commod.portId + ',' + commod.commodId + ',' + commod.localPrice);
+            foreach (Stock stock in stocks)
+                bankBroadcast.Send("stock," + stock.companyId + ',' + stock.price);
             return true;
         }
 
         private void DecideCommodPrices()
         {
-            for (int i = 0; i != ports.Count; ++i)
+            for (int i = 0; i != commodityPrices.Count; ++i)
             {
-                for (int j = 0; j != ports[i].commodityPrices.Count; ++j)
-                {
-                    decimal newPrice = ports[i].commodityPrices[j].localPrice + (decimal)random.NextDouble() - 0.5m;
-                    if (newPrice > 0)
-                        ports[i].commodityPrices[j].localPrice = newPrice;
-                }
+                decimal newPrice = commodityPrices[i].localPrice + (decimal)random.NextDouble() - 0.5m;
+                if (newPrice > 0)
+                    commodityPrices[i].localPrice = newPrice;
             }
         }
     }

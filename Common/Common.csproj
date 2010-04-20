@@ -50,6 +50,7 @@
   <ItemGroup>
     <Compile Include="Client.cs" />
     <Compile Include="MultiHeadQueue.cs" />
+    <Compile Include="NetContract.cs" />
     <Compile Include="ServersSection.cs" />
     <Compile Include="DbConn.cs" />
     <Compile Include="EconomicPlayer.cs" />

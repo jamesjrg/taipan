@@ -7,6 +7,7 @@ using System.Data.SqlClient;
 using System.Threading;
 
 using TaiPan.Common;
+using TaiPan.Common.NetContract;
 
 namespace TaiPan.Bank
 {
@@ -71,7 +72,21 @@ namespace TaiPan.Bank
             foreach (var traderPoller in traderPollers)
             {
                 while (traderPoller.messages.Count != 0)
-                    Console.WriteLine(traderPoller.messages.Dequeue());
+                {
+                    string msg = traderPoller.messages.Dequeue();
+                    switch (NetContract.GetNetMsgType(msg))
+                    {
+                        case NetMsgType.TraderToBankBuy:
+                            NetContract.DecodeBuy(msg);
+                            break;
+                        case NetMsgType.TraderToBankFuture:
+                            NetContract.DecodeFuture(msg);
+                            break;
+                        default:
+                            throw new ApplicationException("traderPoller received wrong type of net message");
+                    }
+                    Console.WriteLine(msg);
+                }                 
             }
 
             foreach (var shippingPoller in shippingPollers)

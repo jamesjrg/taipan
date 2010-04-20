@@ -20,7 +20,7 @@
 
 right now:
 - read WCF chapter in more detail
-- add file NetworkContracts with classes that convert data included in network messages to/from string - start off with trader to bank mesgs
+- work on NetContract with classes that convert data included in network messages to/from string - start off with trader to bank mesgs
 - make traders send bank a bunch of test data, and make bank insert it into db
 
 - still need scaffolding for:
@@ -84,7 +84,20 @@ Need to save a variable which says how many of the rows are real data, then this
 - make percentageDrift and percentageVolatility editable on spreadsheet, and different for currencies + commods
 
 brownian motion random walking:
-use built in functions of resolver  - function to get normal distrib variable in partic.
+I need to sample random distib. just use box muller transform. put it in a library such that both resolver and economicplayers can use it.
+http://en.wikipedia.org/wiki/Box%E2%80%93Muller_transform
+
+//Box-Muller Transform of gaussian random variable
+Random rand = new Random(123); //reuse this if you are generating many
+double u1 = rand.NextDouble(); //these are uniform(0,1) random doubles
+double u2 = rand.NextDouble();
+double randStdNormal = Math.Sqrt(-2.0 * Math.Log(u1)) *
+             Math.Sin(2.0 * Math.PI * u2); //random normal(0,1)
+double randNormal =
+             mean + stdDev * randStdNormal; //random normal(mean,stdDev^2)
+
+
+
 other people doing similar things:
 http://www.scipy.org/Cookbook/BrownianMotion
 the black-scholes R1 sheet
@@ -156,8 +169,6 @@ also:
 http://www.amsterdamoptimization.com/msf.html
 
 - doc: represent all shipping lanes between ports as a graph of interconnected nodes, and do a "travelling freighter problem" solution of shortest route for a freighter to visit each port exactly once. provide a diagram on web.
-
-Find the coordinates for all the ports not commented out in sql insert script
 
 ///
 
