@@ -31,7 +31,6 @@ trader bankBroadcast, shippingBroadcast, shippingPollers
 
 - write tests for multihead queue
 - Client messages needs thread control - i.e. make it private and add a "Dequeue" method to Client
-- check for comments on R1
 
 - format for Bank broadcast to trader
 a) "buyconfirm,traderid,traderpacketid,warehouseid"
@@ -65,14 +64,13 @@ general logic and network code:
 - Trader/ShippingCompany interaction: delay of 5 secs between receiving acceptance of contract for movement of goods and taking contract off broadcast, requiring system of acks and locks. Rather than sending refusals, just make shipping companies have to assume they have been refused if they get no ack
 
 other:
-- improve start py script so you can specify on command line how many of each process to start
 - separate start script for starting up sortingserver + sortingclient together
 - mega_start.bat script to start all C# processes at once (not Resolver though)
-- probably use sql spatial functions to work out distances for freighter travel
+- probably use sql spatial functions to work out distances for freighter travel - both for Bank and for Resolver
 
 ////
 
-Process logic - make sure everything from overall plan.txt is working.
+Process logic - make sure everything from outline_system_plan.txt is working.
 Unit test individual functions
 
 ///
@@ -96,8 +94,6 @@ double randStdNormal = Math.Sqrt(-2.0 * Math.Log(u1)) *
 double randNormal =
              mean + stdDev * randStdNormal; //random normal(mean,stdDev^2)
 
-
-
 other people doing similar things:
 http://www.scipy.org/Cookbook/BrownianMotion
 the black-scholes R1 sheet
@@ -112,8 +108,7 @@ I think this is right:
 - make Wt a random variable chosen from a normal distribution with mean 0 and standard deviation equal to tick time
 
 
-- WPF graph program - just local, follow Resolver Exchange example. How does li ghaos orig code differ from altered version on resolver exchange? diff and investigate. Then use one or the other as a base - just copy and paste to start with. Should have ability to create new windows, or add new data to current windows (this functionality already in exchange example). But also has option for real time update.
-- real time update button should auto clear brownian forecast
+- WPF graph program. Should have ability to create new windows, or add new data to current windows, also has option for real time update.
 - graph windows to include help instructions
 - maybe mention my thoughts on benefits of selective timed functions vs recalcualting whole workbook with RecalculateAfter
 
@@ -152,8 +147,10 @@ For each time period, have:
 Fourthly, extreme contrivedness:
 8. Travelling freighter problem
 
-- read about 
-- use Resolver One and MS Solver Foundation
+- do some reading
+- convert C# example code to Resolver
+- doc: represent all shipping lanes between ports as a graph of interconnected nodes, and do a "travelling freighter problem" solution of shortest route for a freighter to visit each port exactly once. provide a diagram on web.
+
 particularly relevant:
 http://code.msdn.microsoft.com/solverfoundation
 http://blogs.msdn.com/natbr/archive/2009/04/27/solving-traveling-salesman-problems-using-solver-foundation.aspx
@@ -167,8 +164,6 @@ http://en.wikipedia.org/wiki/Priority_queue
 
 also:
 http://www.amsterdamoptimization.com/msf.html
-
-- doc: represent all shipping lanes between ports as a graph of interconnected nodes, and do a "travelling freighter problem" solution of shortest route for a freighter to visit each port exactly once. provide a diagram on web.
 
 ///
 
@@ -321,24 +316,11 @@ shorter version for CV etc:
 
 some phrases that could go in web doc:
 
-Only one of the processes has database write access, and hence acts as a mediator for many of the interactions.
-
 The front end utilises the spreadsheet/Python "mash up" “Resolver One” to provide analysis of the real time data from the database. The Python spreadsheet uses Microsoft's Solver Foundation to solve a version of the Travelling Salesman Problem, and o provide xxx fixme for some of the stochastic outputs of the system. A local C# program is called by the spreadsheet script to produce realtime WPF graphs on same aspects of this analysis.
 
 One final, especially contrived C# service provides an RPC-style interface that takes a list of unsorted numbers and returns the list in alphabetical order. Arguments provided by the caller specify which of a wide variety of differing algorithms or data structures should be used to perform the sorting. blah blah spreadsheet integ
 
-I created a number of UML diagrams to describe various aspects of the system. Some sections of the system are covered by unit tests, but much of the interaction between multiple threads and processes is not suited to this and is merely stress-tested. As with all projects I have worked on since around 2004 (commercial and non-commercial), the source is under version control (in this case git).
-
-- talk about real time graphs on web
-- add Solver Foundation to web doc
 - lots of xmlcomments for classes and methods (methods only necessary for public classes)
-- triggers, constraints, (views?), etc
-- web doc spatial database data - though utterly trivial use of spatial data because the database is not used to perform any operations on that data
-- solver foundation, travelling salesman
-- relational algebra/calculus
 - time spent graph (note on first point saying includes several weeks in one point)
-- cursors within sql
-- talk about how peer-to-peer would make far more sense for most of the communication, but I didn't want to spend all my time working soley on efficient network communication and neglect the other parts of the system
-- scipy - efficieny, r1 also has norm functions
 
 
