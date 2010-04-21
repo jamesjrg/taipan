@@ -16,16 +16,14 @@ Common/obj/
 TestTaiPan/bin/
 TestTaiPan/obj/
 
-SortingServer/SortingServer.suo
-SortingServer/SortingClient/bin/
-SortingServer/SortingClient/obj/
-SortingServer/SortingServer/bin/
-SortingServer/SortingServer/obj/
-SortingServer/SortingService/bin/
-SortingServer/SortingService/obj/
-SortingServer/TestSortingService/bin/
-SortingServer/TestSortingService/obj/
-SortingServer/TestResults/
+AlgoServer/AlgoServer.suo
+AlgoServer/AlgoServer/bin/
+AlgoServer/AlgoServer/obj/
+AlgoServer/AlgoService/bin/
+AlgoServer/AlgoService/obj/
+AlgoServer/TestAlgoService/bin/
+AlgoServer/TestAlgoService/obj/
+AlgoServer/TestResults/
 
 Resolver/WpfChart/WpfChart.suo
 Resolver/WpfChart/WpfChart/bin/

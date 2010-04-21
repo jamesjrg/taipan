@@ -21,7 +21,7 @@ div.wrapper {font: 100% Sans-serif; background-color: #D2DEFF; width: 94%; paddi
 
 <h3>BOTH THE PROJECT AND THIS DOCUMENT ARE FLAGRANTLY A WORK IN PROGRESS</h3>
 
-<p>"Tai-Pan" is a C# .NET, SQL Server and Python project written to improve my knowledge of various aspects of computer science and software engineering. A large number of heterogeneous multithreaded C# processes interact with each other by sending and receiving messages via TCP sockets. These processes manipulate data using various algorithms and data structures for producing, sorting and manipulating sequences of numbers. Much of the underlying state of the system is stored in a MS SQL Server instance. A user interface to the system is provided in the form of an IronPython-based spreadsheet that performs simplistic mathematical modelling (with help from Microsoft Solver Foundation). The spreadsheet is also linked to a C# program for producing WPF graphs. The project also uses UML, unit testing, source control, etc.</p>
+<p>"Tai-Pan" is a C# .NET, SQL Server and Python project written to improve my knowledge of various aspects of computer science and software engineering. A large number of heterogeneous multithreaded C# processes interact with each other by sending and receiving messages via TCP sockets. These processes manipulate data using various algorithms and data structures for producing and manipulating sequences of numbers. Much of the underlying state of the system is stored in a MS SQL Server instance. A user interface to the system is provided in the form of an IronPython-based spreadsheet that performs simplistic mathematical modelling (with help from Microsoft Solver Foundation). The spreadsheet is also linked to a C# program for producing WPF graphs. The project also uses UML, unit testing, source control, etc.</p>
 
 <p>This web page provides an outline of the project, divided into the following sections:</p>
 <ul>
@@ -41,13 +41,13 @@ div.wrapper {font: 100% Sans-serif; background-color: #D2DEFF; width: 94%; paddi
 
 <p>The system is seperated into several different processes, and some of these processes have multiple copies running at once. Though in the above deployment diagram each process is running on a different node, in reality I test the program by having all the processes running on a single computer and communicating via localhost.</p>
 
-<p>With the exception of "SortingServer", all of the processes interact as a single system. SortingServer is an extremely contrived service which was mostly written as an exercise in learning more about various sorting algorithms and complex ordered data structures (see <a href="#hmath">math section</a>).</p>
+<p>With the exception of "AlgoServer", all of the processes interact as a single system. AlgoServer is an extremely contrived service which was mostly written as an exercise in learning more about various algorithms and complex ordered structures (see <a href="#hmath">math section</a>).</p>
 
 <p>The system makes use of various design patterns both within each process and in the system as a whole. Patterns seen in system as a whole include the n-tier division of data, logic and view (the SQL Server instance, C# processes, and IronPython spreadsheet), and the use of the Bank as a mediator to the database (no other process has write access, leaving the Bank process to manage the stored state of the system).</p>
 
 <p>I used various standard software engineering techniques in the design and construction of the system. Near the beginning of the design process I created several UML diagrams describing various aspects of the system (as can be seen in various places within this document). I have written unit tests against the code to make the system more reliable and resistant to bugs. As with all projects I have worked on since around 2004 (commercial and non-commercial), the source is under version control (in this case git). See the <a href="#hlinks">links section</a> for a link to browse the repository.</p>
 
-<p>There are some things I could have done but didn't due to lack of time. I could have put more focus on unit testing by working via test driven development, but the constantly changing nature of my plans, combined with the fact that much of the system is not well suited to unit testing at all, meant that for the most part I left writing tests until after code was written. The multi-process, concurrent aspects of the system which cannot be unit tested would ideally be stress tested with a series of automated scripts, but I have not yet got around to this. </p>
+<p>There are some things I could have done but didn't due to lack of time. I could have put more focus on unit testing by working via test driven development, but the constantly changing nature of my design, combined with the fact that much of the system is concurrent and multi-process and hence not suited to unit testing at all, meant that this didn't seem a worthwhile use of time. The multi-process, concurrent aspects of the system which cannot be unit tested would ideally instead be stress tested with a series of automated scripts, but I have not yet got around to this. </p>
 
 <h3 id="hsql">Relational databases</h3>
 
@@ -76,7 +76,7 @@ div.wrapper {font: 100% Sans-serif; background-color: #D2DEFF; width: 94%; paddi
 
 <h3 id="hconcurrency">Concurrency and distributed systems</h3>
 
-<p>xxx explain messaging protocol - relatively low level tcp sockets. wcf just for sorting server, rest tcp sockets</p>
+<p>xxx explain messaging protocol - relatively low level tcp sockets. wcf just for AlgoServer, rest tcp sockets</p>
 
 <p>blah blah talk about how peer-to-peer would make far more sense for most of the communication, but I didn't want to spend all my time working soley on efficient network communication and neglect the other parts of the system</p>
 
@@ -97,7 +97,7 @@ div.wrapper {font: 100% Sans-serif; background-color: #D2DEFF; width: 94%; paddi
 
 <p>blah blah explain Resolver One</p>
 
-<p>blah blah real time data from database, GBM, static graph or real time graph or random walk forecast with Muller Transformation lib shared with main prog</p>
+<p>blah blah real time data from database, GBM, static graph or real time graph or random walk forecast with Muller Transformation lib shared with main prog, WPF (mostly copied code though)</p>
 
 <p>[screenshot of summary sheet]</p>
 

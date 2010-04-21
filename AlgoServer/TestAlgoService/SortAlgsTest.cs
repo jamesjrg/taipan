@@ -1,6 +1,6 @@
-﻿using SortingService;
+﻿using AlgoService;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-namespace TestSortingService
+namespace TestAlgoService
 {
     
     

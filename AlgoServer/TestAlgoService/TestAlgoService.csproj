@@ -7,8 +7,8 @@
     <ProjectGuid>{DA606F23-C633-4F04-96A5-FFD7649C6570}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>TestSortingService</RootNamespace>
-    <AssemblyName>TestSortingService</AssemblyName>
+    <RootNamespace>TestAlgoService</RootNamespace>
+    <AssemblyName>TestAlgoService</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -56,9 +56,9 @@
     <Content Include="AuthoringTests.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SortingService\SortingService.csproj">
+    <ProjectReference Include="..\AlgoService\AlgoService.csproj">
       <Project>{EFCB282D-29BD-47DF-9641-0D941D8E2958}</Project>
-      <Name>SortingService</Name>
+      <Name>AlgoService</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

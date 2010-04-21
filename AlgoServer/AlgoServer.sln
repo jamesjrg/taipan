@@ -1,26 +1,21 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SortingServer", "SortingServer\SortingServer.csproj", "{5B1B94B0-BAA7-499E-8BD7-A7E9598F6DAD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AlgoServer", "AlgoServer\AlgoServer.csproj", "{5B1B94B0-BAA7-499E-8BD7-A7E9598F6DAD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SortingService", "SortingService\SortingService.csproj", "{EFCB282D-29BD-47DF-9641-0D941D8E2958}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AlgoService", "AlgoService\AlgoService.csproj", "{EFCB282D-29BD-47DF-9641-0D941D8E2958}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SortingClient", "SortingClient\SortingClient.csproj", "{93AE8B74-AD0B-41C0-9241-34BD64FACC42}"
-	ProjectSection(ProjectDependencies) = postProject
-		{EFCB282D-29BD-47DF-9641-0D941D8E2958} = {EFCB282D-29BD-47DF-9641-0D941D8E2958}
-	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestSortingService", "TestSortingService\TestSortingService.csproj", "{DA606F23-C633-4F04-96A5-FFD7649C6570}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestAlgoService", "TestAlgoService\TestAlgoService.csproj", "{DA606F23-C633-4F04-96A5-FFD7649C6570}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{94E70AB1-A75E-4BD1-9BAF-60C4183B4F2B}"
 	ProjectSection(SolutionItems) = preProject
 		LocalTestRun.testrunconfig = LocalTestRun.testrunconfig
-		SortingServer.vsmdi = SortingServer.vsmdi
+		AlgoServer.vsmdi = AlgoServer.vsmdi
 	EndProjectSection
 EndProject
 Global
 	GlobalSection(TestCaseManagementSettings) = postSolution
-		CategoryFile = SortingServer.vsmdi
+		CategoryFile = AlgoServer.vsmdi
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

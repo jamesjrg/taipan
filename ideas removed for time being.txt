@@ -32,7 +32,8 @@ Concurrency and networking:
 
 algs server:
 
-have option to actually return the sorted list...
+- mapreduce (with some sort of made up query)
+- have option to actually return the sorted list
 
 ///
 

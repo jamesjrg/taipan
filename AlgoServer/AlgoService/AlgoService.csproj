@@ -7,8 +7,8 @@
     <ProjectGuid>{EFCB282D-29BD-47DF-9641-0D941D8E2958}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SortingService</RootNamespace>
-    <AssemblyName>SortingService</AssemblyName>
+    <RootNamespace>AlgoService</RootNamespace>
+    <AssemblyName>AlgoService</AssemblyName>
     <ProjectTypeGuids>{3D9AD99F-2412-4246-B90B-4EAA41C64699};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <StartArguments>/client:"WcfTestClient.exe"</StartArguments>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
@@ -48,10 +48,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ISortingService.cs" />
+    <Compile Include="IAlgoService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SortAlgs.cs" />
-    <Compile Include="SortingService.cs" />
+    <Compile Include="AlgoService.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

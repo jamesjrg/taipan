@@ -64,7 +64,7 @@ general logic and network code:
 - Trader/ShippingCompany interaction: delay of 5 secs between receiving acceptance of contract for movement of goods and taking contract off broadcast, requiring system of acks and locks. Rather than sending refusals, just make shipping companies have to assume they have been refused if they get no ack
 
 other:
-- separate start script for starting up sortingserver + sortingclient together
+- separate start script for starting up AlgoServer + AlgoClient together
 - mega_start.bat script to start all C# processes at once (not Resolver though)
 - probably use sql spatial functions to work out distances for freighter travel - both for Bank and for Resolver
 
@@ -167,7 +167,7 @@ http://www.amsterdamoptimization.com/msf.html
 
 ///
 
-9. sheet that calls sorting server with various combinations of parameters (diff lists, diff algorithms), doing each one for a large number of iterations, and gets returned data on time taken. for each alg includes avg/min/max creation time and avg/min/max sort time (creation time not always relevant, otherwise 'N/A). Mark winner for each category with red X.
+9. sheet that calls AlgoServer with various combinations of parameters (diff lists, diff algorithms), doing each one for a large number of iterations, and gets returned data on time taken. for each alg includes avg/min/max creation time and avg/min/max sort time (creation time not always relevant, otherwise 'N/A). Mark winner for each category with red X.
 add to uml deployment. 
 
 ///
@@ -279,7 +279,9 @@ TimeMethod
 method 2: 
 1. enum of method to use 2. the list 3. whether to return
 
-- using info both in algos book and database book, have an entirely pointless "sorting server" (including on UML diagram, with a note of explanation) that takes a list of numbers as input, and then sorts the list a method of the callers choice:
+- using info both in algos book and database book, have an entirely pointless AlgoServer (including on UML diagram, with a note of explanation) that has functions to create various complex data structures and run various algorithms.
+
+some examples:
 - merge sort
 - quick sort
 - quick sort in place
@@ -288,7 +290,7 @@ method 2:
 - red black tree
 - b tree
 
-It has two types of call, one returns the sorted list, the other just returns how long the sort took.
+It has two types of call, one returns the result, the other just returns how long the procedure took.
 
 - unit test
 - does data contract require I use get/set properties? how exactly does data contract work?
@@ -311,14 +313,14 @@ doc how even without 5 second delay in taking contracts for movements off broadc
 
 shorter version for CV etc:
 
-•	A C# .NET, SQL Server and Python project written to improve my knowledge of various aspects of computer science and software engineering. A large number of heterogeneous multithreaded C# processes interact with each other by sending and receiving messages via TCP sockets. These processes manipulate data using various algorithms and data structures for producing, sorting and manipulating sequences of numbers. Much of the underlying state of the system is stored in a MS SQL Server instance. A user interface to the system is provided in the form of an IronPython-based spreadsheet that performs simplistic mathematical modelling (with help from Microsoft Solver Foundation). The spreadsheet is also linked to a C# program for producing WPF graphs. The project also uses UML, unit testing, source control, etc. Around 180 hours work so far.
+•	A C# .NET, SQL Server and Python project written to improve my knowledge of various aspects of computer science and software engineering. A large number of heterogeneous multithreaded C# processes interact with each other by sending and receiving messages via TCP sockets. These processes manipulate data using various algorithms and data structures for producing and manipulating sequences of numbers. Much of the underlying state of the system is stored in a MS SQL Server instance. A user interface to the system is provided in the form of an IronPython-based spreadsheet that performs simplistic mathematical modelling (with help from Microsoft Solver Foundation). The spreadsheet is also linked to a C# program for producing WPF graphs. The project also uses UML, unit testing, source control, etc. Around 200 hours work so far.
 
 
 some phrases that could go in web doc:
 
 The front end utilises the spreadsheet/Python "mash up" “Resolver One” to provide analysis of the real time data from the database. The Python spreadsheet uses Microsoft's Solver Foundation to solve a version of the Travelling Salesman Problem, and o provide xxx fixme for some of the stochastic outputs of the system. A local C# program is called by the spreadsheet script to produce realtime WPF graphs on same aspects of this analysis.
 
-One final, especially contrived C# service provides an RPC-style interface that takes a list of unsorted numbers and returns the list in alphabetical order. Arguments provided by the caller specify which of a wide variety of differing algorithms or data structures should be used to perform the sorting. blah blah spreadsheet integ
+One final, especially contrived C# service provides an RPC-style interface that blah blah differing algorithms or data structures  blah blah spreadsheet integ
 
 - lots of xmlcomments for classes and methods (methods only necessary for public classes)
 - time spent graph (note on first point saying includes several weeks in one point)

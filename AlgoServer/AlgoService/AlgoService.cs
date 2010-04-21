@@ -5,9 +5,9 @@ using System.Runtime.Serialization;
 using System.ServiceModel;
 using System.Text;
 
-namespace SortingService
+namespace AlgoService
 {
-    public class SortingService : ISortingService
+    public class AlgoService : IAlgoService
     {
         public StructureReturn CreateStructure(string type, List<int> data)
         {

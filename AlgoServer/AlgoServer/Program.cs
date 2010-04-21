@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ServiceModel;
-using SortingService;
+using AlgoService;
 
-namespace SortingServer
+namespace AlgoServer
 {
     class Program
     {
@@ -11,7 +11,7 @@ namespace SortingServer
         
         internal static void StartService()
         {
-            myServiceHost = new ServiceHost(typeof(SortingService.SortingService));
+            myServiceHost = new ServiceHost(typeof(AlgoService.AlgoService));
             myServiceHost.Open();
         }
         internal static void StopService()
