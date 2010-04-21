@@ -55,6 +55,8 @@
     <Compile Include="DbConn.cs" />
     <Compile Include="EconomicPlayer.cs" />
     <Compile Include="Server.cs" />
+    <Compile Include="SyncQueue.cs" />
+    <Compile Include="TCPConnection.cs" />
     <Compile Include="Util.cs">
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />

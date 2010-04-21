@@ -8,7 +8,7 @@ namespace TaiPan.Common
     /// <summary>
     /// A data structure a bit like a normal thread safe queue, except it manages a list of "subscribers", each of whom maintain a seperate head index into the queue - dequeueing only advances the callers head, not everyone else's. Also, rather than dequeueing a single item at a time, the DequeueAll method dequeues all remaining values (for the calling subscriber).
     /// </summary>
-    class MultiHeadQueue
+    public class MultiHeadQueue
     {
         private readonly int size;
         private readonly object syncRoot;

@@ -11,20 +11,10 @@ using System.Collections.Specialized;
 
 namespace TaiPan.Common
 {
-    public class Server
+    public class Server : TCPConnection, IDisposable
     {
-        /*
-         * WARNING WARNING WARNING shared between threads
-         * 
-        */
-        private const int MESSAGE_QUEUE_SIZE = 1000;
-
-        private MultiHeadQueue messages = new MultiHeadQueue(MESSAGE_QUEUE_SIZE);
-
         private TcpListener tcpListener;
         private List<ClientSubscriber> subscribers = new List<ClientSubscriber>();
-        
-        private readonly int ServerLoopTick;
 
         private class ClientSubscriber
         {
@@ -38,10 +28,9 @@ namespace TaiPan.Common
             }
         }
 
-        public Server(Common.ServerConfig config, NameValueCollection appSettings)
+        public Server(Common.ServerConfig config, NameValueCollection appSettings):
+            base(appSettings)
         {
-            ServerLoopTick = Convert.ToInt32(appSettings["ServerLoopTick"]);
-
             Thread thread = new Thread(Listen);
             thread.Start(config);
         }
@@ -76,7 +65,7 @@ namespace TaiPan.Common
 
         public void Send(string message)
         {
-            messages.Enqueue(message);
+            outgoing.Enqueue(message);
         }
 
         public void Broadcast(object state)
@@ -87,13 +76,13 @@ namespace TaiPan.Common
             NetworkStream ns = tcpClient.GetStream();
             StreamWriter sw = new StreamWriter(ns);
 
-            messages.Subscribe(myId);
+            outgoing.Subscribe(myId);
 
             while (true)
             {
                 try
                 {
-                    string[] messagesCopy = messages.DequeueAll(myId);
+                    string[] messagesCopy = outgoing.DequeueAll(myId);
                     if (messagesCopy.Length != 0)
                     {
                         foreach (string msg in messagesCopy)
@@ -103,7 +92,7 @@ namespace TaiPan.Common
                         }
                         sw.Flush();
                     }
-                    Thread.Sleep(ServerLoopTick);
+                    Thread.Sleep(TCP_THREAD_TICK);
                 }
                 catch (Exception e)
                 {

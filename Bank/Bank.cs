@@ -18,12 +18,11 @@ namespace TaiPan.Bank
     {
         private DbConn dbConn;
 
-        private Server traderBroadcast;
+        private Server traderListener;
+        private Server shippingListener;
 
         private Client fxPoller;
         private Client fatePoller;
-        private List<Client> traderPollers = new List<Client>();
-        private List<Client> shippingPollers = new List<Client>();
 
         public Bank(string[] args)
         {
@@ -42,58 +41,39 @@ namespace TaiPan.Bank
 
             dbConn = new DbConn(false);
 
-            traderBroadcast = new Server(ServerConfigs["Bank-TraderBroadcast"], AppSettings);
+            traderListener = new Server(ServerConfigs["Bank-Trader"], AppSettings);
+            shippingListener = new Server(ServerConfigs["Bank-Shipping"], AppSettings);
 
-            fxPoller = new Client(ServerConfigs["FXServer-BankBroadcast"], AppSettings);
-            fatePoller = new Client(ServerConfigs["FateAndGuessWork-BankBroadcast"], AppSettings);
-
-            var conf = ServerConfigs["Trader-BankBroadcast"];
-            for (int i = 0; i != nTraders; ++i)
-            {
-                traderPollers.Add(new Client(conf, AppSettings));
-                conf.port += 1;
-            }
-
-            conf = ServerConfigs["Shipping-BankBroadcast"];
-            for (int i = 0; i != nShipping; ++i)
-            {
-                traderPollers.Add(new Client(conf, AppSettings));
-                conf.port += 1;
-            }
+            fxPoller = new Client(ServerConfigs["FXServer-Bank"], AppSettings);
+            fatePoller = new Client(ServerConfigs["FateAndGuesswork-Bank"], AppSettings);
         }
 
         protected override bool Run()
         {
-            while (fxPoller.messages.Count != 0)
-                Console.WriteLine(fxPoller.messages.Dequeue());
-            while (fatePoller.messages.Count != 0)
-                Console.WriteLine(fxPoller.messages.Dequeue());
+            while (fxPoller.incoming.Count != 0)
+                Console.WriteLine(fxPoller.incoming.Dequeue());
+            while (fatePoller.incoming.Count != 0)
+                Console.WriteLine(fatePoller.incoming.Dequeue());
 
-            foreach (var traderPoller in traderPollers)
+            while (traderListener.incoming.Count != 0)
             {
-                while (traderPoller.messages.Count != 0)
+                string msg = traderListener.incoming.Dequeue();
+                switch (NetContract.GetNetMsgType(msg))
                 {
-                    string msg = traderPoller.messages.Dequeue();
-                    switch (NetContract.GetNetMsgType(msg))
-                    {
-                        case NetMsgType.TraderToBankBuy:
-                            NetContract.DecodeBuy(msg);
-                            break;
-                        case NetMsgType.TraderToBankFuture:
-                            NetContract.DecodeFuture(msg);
-                            break;
-                        default:
-                            throw new ApplicationException("traderPoller received wrong type of net message");
-                    }
-                    Console.WriteLine(msg);
-                }                 
+                    case NetMsgType.TraderToBankBuy:
+                        NetContract.DecodeBuy(msg);
+                        break;
+                    case NetMsgType.TraderToBankFuture:
+                        NetContract.DecodeFuture(msg);
+                        break;
+                    default:
+                        throw new ApplicationException("traderPoller received wrong type of net message");
+                }
+                Console.WriteLine(msg);
             }
 
-            foreach (var shippingPoller in shippingPollers)
-            {
-                while (shippingPoller.messages.Count != 0)
-                    Console.WriteLine(shippingPoller.messages.Dequeue());
-            }
+            while (shippingListener.incoming.Count != 0)
+                Console.WriteLine(shippingListener.incoming.Dequeue());
 
             return true;
         }

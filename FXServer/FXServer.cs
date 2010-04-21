@@ -14,7 +14,7 @@ namespace TaiPan.FXServer
     /// </summary>
     class FXServer : EconomicPlayer
     {
-        private Server server;
+        private Server bankListener;
         private List<Currency> currencies = new List<Currency>();
         private Random random = new Random();
 
@@ -46,7 +46,7 @@ namespace TaiPan.FXServer
             reader.Close();
             dbConn.Dispose();
 
-            server = new Server(ServerConfigs["FXServer-BankBroadcast"], AppSettings);
+            bankListener = new Server(ServerConfigs["FXServer-Bank"], AppSettings);
         }
 
         protected override bool Run()
@@ -54,7 +54,7 @@ namespace TaiPan.FXServer
             DecidePrices();
 
             foreach (Currency currency in currencies)
-                server.Send(currency.shortName + ',' + currency.USDValue.ToString(CurrencyAccuracy));
+                bankListener.Send(currency.shortName + ',' + currency.USDValue.ToString(CurrencyAccuracy));
             return true;
         }
 

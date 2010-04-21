@@ -13,11 +13,10 @@ namespace TaiPan.Trader
     {
         private int myID;
 
-        private Server bankBroadcast;
-        private Server shippingBroadcast;
+        private Server shippingListener;
 
+        private Client bankPoller;
         private Client fatePoller;
-        private List<Client> shippingPollers = new List<Client>();
 
         public Trader(string[] args)
         {
@@ -33,28 +32,19 @@ namespace TaiPan.Trader
                 throw new ApplicationException("Requires 2 command line arguments: first is id, second is number of shipping companies");
             }
 
-            var conf = ServerConfigs["Trader-BankBroadcast"];
+            var conf = ServerConfigs["Trader-Shipping"];
             conf.port = conf.port + (myID - 1);
-            bankBroadcast = new Server(conf, AppSettings);
+            shippingListener = new Server(conf, AppSettings);
 
-            conf = ServerConfigs["Trader-ShippingBroadcast"];
-            conf.port = conf.port + (myID - 1);
-            shippingBroadcast = new Server(conf, AppSettings);
+            bankPoller = new Client(ServerConfigs["Bank-Trader"], AppSettings);
 
-            fatePoller = new Client(ServerConfigs["FateAndGuessWork-TraderBroadcast"], AppSettings);
-            
-            conf = ServerConfigs["Shipping-TraderBroadcast"];
-            for (int i = 0; i != nShipping; ++i)
-            {
-                shippingPollers.Add(new Client(conf, AppSettings));
-                conf.port += 1;
-            }
+            fatePoller = new Client(ServerConfigs["FateAndGuesswork-Trader"], AppSettings);
         }
 
         protected override bool Run()
         {
-            while (fatePoller.messages.Count != 0)
-                Console.WriteLine(fatePoller.messages.Dequeue());
+            while (fatePoller.incoming.Count != 0)
+                Console.WriteLine(fatePoller.incoming.Dequeue());
             return true; 
         }
     }

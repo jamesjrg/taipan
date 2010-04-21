@@ -13,8 +13,8 @@ namespace TaiPan.FateAndGuesswork
     /// </summary>
     class FateAndGuesswork : TaiPan.Common.EconomicPlayer
     {
-        private Server bankBroadcast;
-        private Server traderBroadcast;
+        private Server bankListener;
+        private Server traderListener;
 
         private List<CommodityPrice> commodityPrices = new List<CommodityPrice>();
         private List<Stock> stocks = new List<Stock>();
@@ -87,6 +87,7 @@ namespace TaiPan.FateAndGuesswork
                 int surplusProb = reader.GetInt32(4);
                 commodityPrices.Add(new CommodityPrice(portId, commodId, localPrice, shortageProb, surplusProb));
             }
+            reader.Close();
 
             Console.WriteLine("Reading stocks from db");
             reader = dbConn.ExecuteQuery("SELECT CompanyID, USDStockPrice from ShippingCompany ORDER BY CompanyID ASC");
@@ -102,8 +103,8 @@ namespace TaiPan.FateAndGuesswork
             reader.Close();
             dbConn.Dispose();
 
-            bankBroadcast = new TaiPan.Common.Server(ServerConfigs["FateAndGuessWork-BankBroadcast"], AppSettings);
-            traderBroadcast = new TaiPan.Common.Server(ServerConfigs["FateAndGuessWork-TraderBroadcast"], AppSettings);
+            bankListener = new TaiPan.Common.Server(ServerConfigs["FateAndGuesswork-Bank"], AppSettings);
+            traderListener = new TaiPan.Common.Server(ServerConfigs["FateAndGuesswork-Trader"], AppSettings);
         }
 
         protected override bool Run()
@@ -113,9 +114,9 @@ namespace TaiPan.FateAndGuesswork
             //DecideStockPrices();
 
             foreach (CommodityPrice commod in commodityPrices)
-                bankBroadcast.Send("commodity," + commod.portId + ',' + commod.commodId + ',' + commod.localPrice);
+                bankListener.Send("commodity," + commod.portId + ',' + commod.commodId + ',' + commod.localPrice);
             foreach (Stock stock in stocks)
-                bankBroadcast.Send("stock," + stock.companyId + ',' + stock.price);
+                bankListener.Send("stock," + stock.companyId + ',' + stock.price);
             return true;
         }
 

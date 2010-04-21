@@ -14,9 +14,7 @@ namespace TaiPan.ShippingCompany
     {
         private int myID;
 
-        private TaiPan.Common.Server bankBroadcast;
-        private TaiPan.Common.Server traderBroadcast;
-
+        private Client bankPoller;
         private List<Client> traderPollers = new List<Client>();
 
         public ShippingCompany(string[] args)
@@ -33,14 +31,9 @@ namespace TaiPan.ShippingCompany
                 throw new ApplicationException("Requires 2 command line arguments: first is id, second is number of traders");
             }
 
-            var conf = ServerConfigs["Shipping-BankBroadcast"];
-            conf.port = conf.port + (myID - 1);
-            bankBroadcast = new Server(conf, AppSettings);
-            conf = ServerConfigs["Shipping-TraderBroadcast"];
-            conf.port = conf.port + (myID - 1);
-            traderBroadcast = new Server(conf, AppSettings);
+            bankPoller = new Client(ServerConfigs["Bank-Shipping"], AppSettings);
 
-            conf = ServerConfigs["Trader-ShippingBroadcast"];
+            var conf = ServerConfigs["Trader-Shipping"];
             for (int i = 0; i != nTraders; ++i)
             {
                 traderPollers.Add(new Client(conf, AppSettings));

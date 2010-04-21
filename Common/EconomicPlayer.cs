@@ -50,23 +50,13 @@ namespace TaiPan.Common
 
         public void Go()
         {
+#if DEBUG
+            ActualGo();
+            Util.ConsolePause();
+#else
             try
             {
-                try
-                {
-                    Console.WriteLine("Running");
-                    while (Run() == true)
-                    {
-                        System.Threading.Thread.Sleep(MainLoopTick);
-                    }
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e.Message);
-                    Console.WriteLine(e.StackTrace);
-                }
-
-                Console.WriteLine("Shutdown");
+                ActualGo();
             }
             catch (Exception e)
             {
@@ -77,6 +67,19 @@ namespace TaiPan.Common
             {
                 Util.ConsolePause();
             }
+#endif
+        }
+
+        private void ActualGo()
+        {
+            Console.WriteLine("Running");
+            while (Run() == true)
+            {
+                System.Threading.Thread.Sleep(MainLoopTick);
+            }
+
+            Console.WriteLine("Shutdown");
+            //could add shutdown code here, but as everything is managed code or resources under the control of System classes, rely on everything to clear up after itself when program ends. This isn't C++.
         }
 
         protected abstract bool Run();

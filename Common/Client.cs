@@ -10,20 +10,17 @@ using System.Collections.Specialized;
 
 namespace TaiPan.Common
 {
-    public class Client: IDisposable
+    public class Client : TCPConnection, IDisposable
     {
-        public Queue<string> messages = new Queue<string>();
-
-        private readonly int ClientLoopTick;
         private readonly int ClientRetryTime;
 
         private TcpClient tcpClient;
         private NetworkStream ns;
         private StreamReader sr;
 
-        public Client(Common.ServerConfig config, NameValueCollection appSettings)
+        public Client(Common.ServerConfig config, NameValueCollection appSettings):
+            base(appSettings)
         {
-            ClientLoopTick = Convert.ToInt32(appSettings["ClientLoopTick"]);
             ClientRetryTime = Convert.ToInt32(appSettings["ClientRetryTime"]);
             
             tcpClient = AttemptTCPConnect(config);
@@ -46,8 +43,8 @@ namespace TaiPan.Common
                 try
                 {
                     while (ns.DataAvailable)
-                        messages.Enqueue(sr.ReadLine());
-                    Thread.Sleep(ClientLoopTick);
+                        incoming.Enqueue(sr.ReadLine());
+                    Thread.Sleep(TCP_THREAD_TICK);
                 }
                 catch (Exception e)
                 {
