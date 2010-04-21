@@ -17,9 +17,11 @@
 
 right now:
 - read WCF chapter in more detail
-- if fateandguesswork goes down, bank should notice
-- client/server threads should store the id of the process they are connected to, where applicable, this info will be need with certain message types
-- work on NetContract with classes that convert data included in network messages to/from string - start off with trader to bank mesgs
+- make network serialization methods work
+- client/server threads should store the id of the process they are connected to, where applicable, this info will be need with certain message types. for this to work, first messages sent on opening of new connection should be server synchronous message "hey, this is my id" and client synchronous response "hey, this is mine". then needs to be stored in a class somewhere.
+
+
+
 - make traders send bank a bunch of test data, and make bank insert it into db
 - write tests for multihead queue
 
@@ -68,17 +70,7 @@ Need to save a variable which says how many of the rows are real data, then this
 - make percentageDrift and percentageVolatility editable on spreadsheet, and different for currencies + commods
 
 brownian motion random walking:
-I need to sample random distib. just use box muller transform. put it in a library such that both resolver and economicplayers can use it.
-http://en.wikipedia.org/wiki/Box%E2%80%93Muller_transform
-
-//Box-Muller Transform of gaussian random variable
-Random rand = new Random(123); //reuse this if you are generating many
-double u1 = rand.NextDouble(); //these are uniform(0,1) random doubles
-double u2 = rand.NextDouble();
-double randStdNormal = Math.Sqrt(-2.0 * Math.Log(u1)) *
-             Math.Sin(2.0 * Math.PI * u2); //random normal(0,1)
-double randNormal =
-             mean + stdDev * randStdNormal; //random normal(mean,stdDev^2)
+I need to sample random distib. use my tiny statslib for both resolver and economicplayer.
 
 other people doing similar things:
 http://www.scipy.org/Cookbook/BrownianMotion

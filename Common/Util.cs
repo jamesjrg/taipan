@@ -13,6 +13,12 @@ namespace TaiPan.Common
         Shortage = 1
     }
 
+    public class TaiPanException : ApplicationException
+    {
+        public TaiPanException(string msg) :
+            base("FLAGRANT ERROR: " + msg) {}
+    }
+
     public class DisconnectedException : ApplicationException
     {
     }

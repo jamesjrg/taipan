@@ -21,6 +21,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		TaiPan.vsmdi = TaiPan.vsmdi
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StatsLib", "StatsLib\StatsLib.csproj", "{433D5C3E-C961-4857-8919-F10ED51BD375}"
+EndProject
 Global
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = TaiPan.vsmdi
@@ -58,6 +60,10 @@ Global
 		{EBB493EF-5F29-4F3D-843C-2843B5D43D6A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EBB493EF-5F29-4F3D-843C-2843B5D43D6A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EBB493EF-5F29-4F3D-843C-2843B5D43D6A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{433D5C3E-C961-4857-8919-F10ED51BD375}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{433D5C3E-C961-4857-8919-F10ED51BD375}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{433D5C3E-C961-4857-8919-F10ED51BD375}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{433D5C3E-C961-4857-8919-F10ED51BD375}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

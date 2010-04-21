@@ -53,7 +53,7 @@ namespace TaiPan.Common
             lock (syncRoot)
             {
                 if (subscribers.ContainsKey(myId))
-                    throw new ApplicationException("FLAGRANT ERROR: Subscribe request for id already subscribed");
+                    throw new TaiPanException("Subscribe request for id already subscribed");
 
                 subscribers.Add(myId, new Subscriber(newHead, newCount));
             }
@@ -65,7 +65,7 @@ namespace TaiPan.Common
             lock (syncRoot)
             {
                 if (!subscribers.ContainsKey(myId))
-                    throw new ApplicationException("FLAGRANT ERROR: Unsubscribe request for id not subscribed");
+                    throw new TaiPanException("Unsubscribe request for id not subscribed");
                 subscribers.Remove(myId);
             }
         }

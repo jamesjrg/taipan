@@ -40,19 +40,9 @@ namespace TaiPan.Common
         {
             while (true)
             {
-                try
-                {
-                    while (ns.DataAvailable)
-                        incoming.Enqueue(sr.ReadLine());
-                    Thread.Sleep(TCP_THREAD_TICK);
-                }
-                catch (Exception e)
-                {
-                    if (!(e is IOException))
-                        throw;
-
-                    Console.WriteLine("Disconnected from server");
-                }
+                while (ns.DataAvailable)
+                    incoming.Enqueue(sr.ReadLine());
+                Thread.Sleep(TCP_THREAD_TICK);                
             }
         }
 

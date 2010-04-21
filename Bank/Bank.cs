@@ -60,11 +60,11 @@ namespace TaiPan.Bank
                 string msg = traderListener.incoming.Dequeue();
                 switch (NetContract.GetNetMsgType(msg))
                 {
-                    case NetMsgType.TraderToBankBuy:
-                        NetContract.DecodeBuy(msg);
+                    case NetMsgType.Buy:
+                        NetContract.DeserializeBuy(msg);
                         break;
-                    case NetMsgType.TraderToBankFuture:
-                        NetContract.DecodeFuture(msg);
+                    case NetMsgType.Future:
+                        NetContract.DeserializeFuture(msg);
                         break;
                     default:
                         throw new ApplicationException("traderPoller received wrong type of net message");
