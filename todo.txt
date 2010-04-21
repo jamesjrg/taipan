@@ -230,19 +230,7 @@ testing:
 UML diagrams:
 
 Sequence:
-- replace sequence diagram with a slightly more complex one with Fateandguess/trader/bank/shipping company, i.e. something along the lines of:
-
-fateandguess gives surplus prediction (with margin of error) to a single trader
-trader tells bank it wishes to organise future
-predicted surplus time arises, fateandguess includes price of commodity at each port in its broadcast to bank each tick as per usual (also stock prices)
-bank enacts futures settlement
-bank sends trader warehouseid
-trader works out where to sell and tells shipping companies (multiple) of contract to move goods
-stuff copied from current seq diagram about multiple acceptances with shippingcompanies
-shipping tells bank when goods leave (bank makes money change hands)
-shipping tells bank when goods arrive (bank makes money change hands)
-
-and do another very similar diagram except with shortage, not surplus - i.e. instead of futures, trader buys to warehouse
+- needs tidying up
 
 SQL:
 - add add spatial stuff, table inheritance stuff, correct trigger names
