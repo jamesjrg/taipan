@@ -2,6 +2,10 @@ from System import Array
 from System.Data import DataSet
 from System.Data.Odbc import OdbcConnection, OdbcDataAdapter
 
+import clr
+clr.AddReference("StatsLib")
+from TaiPan.StatsLib import StatsLib
+
 commoditySheet = workbook['Commodity Prices']
 fxSheet = workbook['FX Rates']
 
@@ -35,8 +39,8 @@ def queryDb(query):
 def createBrownian(currentPrice):
     forecasts = []
     changeInWiener = 0
-    hmm need x to be a random point, chosen probabilistically
-    print 'normdist', NORMDIST(x, 0, Settings.gbmTickLength)
+    #hmm need x to be a random point, chosen probabilistically
+    print 'normdist', StatsLib.NormRand(0, Settings.gbmTickLength, Settings.gbmNTicks)
     for i in range(Settings.gbmNTicks):
         priceChange = Settings.percentageDrift * currentPrice + Settings.percentageVolatility * currentPrice * changeInWiener
         currentPrice = currentPrice + priceChange

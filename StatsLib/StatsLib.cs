@@ -8,7 +8,7 @@ namespace TaiPan.StatsLib
     public class StatsLib
     {
         //Box-Muller Transform of gaussian random variable
-        public static double[] NormalRand(double mean, double stdDev, int number)
+        public static double[] NormRand(double mean, double stdDev, int number)
         {
             Random rand = new Random();
             double[] ret = new double[number];

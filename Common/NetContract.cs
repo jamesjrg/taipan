@@ -9,8 +9,23 @@ namespace TaiPan.Common.NetContract
 {
     public enum NetMsgType
     {
-        Buy = 0,
-        Future = 1,
+        Currency = 0,
+        Buy = 1,
+        Future = 2,
+    }
+
+    public class CurrencyMsg
+    {
+        public CurrencyMsg() { }
+
+        public CurrencyMsg(string shortName, decimal USDValue)
+        {
+            this.shortName = shortName;
+            this.USDValue = USDValue;
+        }
+
+        public string shortName;
+        public decimal USDValue;
     }
 
     public class BuyMsg
@@ -29,21 +44,32 @@ namespace TaiPan.Common.NetContract
 
     public class NetContract
     {
-        public static NetMsgType GetNetMsgType(string msg)
+        public static NetMsgType GetNetMsgTypeFromStr(string msg)
         {
             return (NetMsgType)(Int32.Parse(msg.Substring(0,1)));
         }
 
-        public static string Serialize(NetMsgType type, object data)
+        public static Type GetClassFromNetMsgType(NetMsgType type)
         {
-            string ret = Serialize(data);
-            return type + ret;
+            switch (type)
+            {
+                case NetMsgType.Currency:
+                    return typeof(CurrencyMsg);
+                case NetMsgType.Buy:
+                    return typeof(BuyMsg);
+                case NetMsgType.Future:
+                    return typeof(FutureMsg);
+                default:
+                    throw new TaiPanException("GetClassFromNetMsgType received unknown type");
+            }
         }
 
-        private static string Serialize(object obj)
+        public static string Serialize(NetMsgType type, object obj)
         {
+            Type classType = GetClassFromNetMsgType(type);
+
             TextWriter tw = new StringWriter();
-            XmlSerializer sr = new XmlSerializer(typeof(BuyMsg));
+            XmlSerializer sr = new XmlSerializer(classType);
             string ret = "";
 
             try 
@@ -61,24 +87,21 @@ namespace TaiPan.Common.NetContract
                 tw.Close();
             }
 
-            return "";
+            //Add message type to front of string
+            return type + ret;
         }
 
-        public static BuyMsg DeserializeBuy(string msg)
+        public static object Deserialize(NetMsgType type, string msg)
         {
             string data = msg.Substring(1);
-            // Declare the hashtable reference.
-            BuyMsg ret = null;
+            Type classType = GetClassFromNetMsgType(type);
+            object ret = System.Activator.CreateInstance(classType);
 
-            // Open the file containing the data that you want to deserialize.
             TextReader tw = new StringReader(data);
             try
             {
-                XmlSerializer sr = new XmlSerializer(typeof(BuyMsg));
-
-                // Deserialize the hashtable from the file and 
-                // assign the reference to the local variable.
-                ret = (BuyMsg)sr.Deserialize(tw);
+                XmlSerializer sr = new XmlSerializer(classType);
+                ret = sr.Deserialize(tw);
             }
             catch (SerializationException e)
             {
@@ -91,11 +114,6 @@ namespace TaiPan.Common.NetContract
             }
 
             return ret;
-        }
-
-        public static FutureMsg DeserializeFuture(string msg)
-        {
-            return new FutureMsg();
         }
     }
 }

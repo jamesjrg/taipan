@@ -6,6 +6,7 @@ using System.Text;
 using System.Data.SqlClient;
 
 using TaiPan.Common;
+using TaiPan.Common.NetContract;
 
 namespace TaiPan.FXServer
 {
@@ -15,20 +16,8 @@ namespace TaiPan.FXServer
     class FXServer : EconomicPlayer
     {
         private Server bankListener;
-        private List<Currency> currencies = new List<Currency>();
+        private List<CurrencyMsg> currencies = new List<CurrencyMsg>();
         private Random random = new Random();
-
-        private class Currency
-        {
-            public Currency(string shortName, decimal USDValue)
-            {
-                this.shortName = shortName;
-                this.USDValue = USDValue;
-            }
-
-            public string shortName;
-            public decimal USDValue;
-        }
 
         public FXServer(string[] args)
         {
@@ -41,7 +30,7 @@ namespace TaiPan.FXServer
                 string shortName = reader.GetString(0);
                 decimal USDValue = reader.GetDecimal(1);
                 Console.WriteLine("{0}: {1}", shortName, USDValue);
-                currencies.Add(new Currency(shortName, USDValue));
+                currencies.Add(new CurrencyMsg(shortName, USDValue));
             }
             reader.Close();
             dbConn.Dispose();
@@ -53,8 +42,8 @@ namespace TaiPan.FXServer
         {
             DecidePrices();
 
-            foreach (Currency currency in currencies)
-                bankListener.Send(currency.shortName + ',' + currency.USDValue.ToString(CurrencyAccuracy));
+            foreach (CurrencyMsg currency in currencies)
+                bankListener.Send(NetContract.Serialize(NetMsgType.Currency, currency));
             return true;
         }
 

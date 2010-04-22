@@ -84,7 +84,9 @@ I think this is right:
 
 - change_in_price = PERCENTAGE_DRIFT * prev_price + PERCENTAGE_VOLATILITY * prev_price * change_in_wiener_process
 - make Wt a random variable chosen from a normal distribution with mean 0 and standard deviation equal to tick time
-
+- have script to copy statslib dll to resolver:
+copy c:\mydocs\dev\TaiPan\StatsLib\bin\Debug\StatsLib.dll c:\mydocs\dev\TaiPan\Resolver
+can't do it automatically because file might well be in use
 
 - WPF graph program. Should have ability to create new windows, or add new data to current windows, also has option for real time update.
 - graph windows to include help instructions
@@ -292,5 +294,5 @@ One final, especially contrived C# service uses WCF/SOAP to provide a network se
 
 - lots of xmlcomments for classes and methods (methods only necessary for public classes)
 - time spent graph (note on first point saying includes several weeks in one point)
-
+- doc stats lib on uml explanation
 
