@@ -8,6 +8,7 @@ namespace TaiPan.StatsLib
     public class StatsLib
     {
         //Box-Muller Transform of gaussian random variable
+        //XXX - Box Muller should use sin and cos to provide two vars, not one
         public static double[] NormRand(double mean, double stdDev, int number)
         {
             Random rand = new Random();

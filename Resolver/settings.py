@@ -7,7 +7,5 @@
     nTopUpdate = 30
     
     #Geometric Brownian Motion constants
-    percentageDrift = 1
-    percentageVolatility = 10
-    gbmTickLength = 5
-    gbmNTicks = 10
+    tickVolatility = 0.005
+    gbmNTicks = 500

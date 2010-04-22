@@ -38,11 +38,16 @@ def queryDb(query):
         
 def createBrownian(currentPrice):
     forecasts = []
-    changeInWiener = 0
-    #hmm need x to be a random point, chosen probabilistically
-    print 'normdist', StatsLib.NormRand(0, Settings.gbmTickLength, Settings.gbmNTicks)
-    for i in range(Settings.gbmNTicks):
-        priceChange = Settings.percentageDrift * currentPrice + Settings.percentageVolatility * currentPrice * changeInWiener
+    sample = StatsLib.NormRand(0, 1, Settings.gbmNTicks)
+    
+    for i in range(len(sample)):
+        changeInWiener = 0
+        if (i > 0):
+            changeInWiener = sample[i] - sample[i - 1]
+        else:
+            changeInWiener = sample[i]
+        
+        priceChange = Settings.tickVolatility * currentPrice * changeInWiener
         currentPrice = currentPrice + priceChange
         forecasts.append(currentPrice)
     return forecasts

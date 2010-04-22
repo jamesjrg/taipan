@@ -17,7 +17,7 @@
 git change log:
 
 right now:
-- make traders send bank a bunch of test data, and make bank insert it into db
+- people can now send and receive messages, so make a first attempt at adding in all the logic that goes with this (though also still need to do a little more work with regard to keeping track of client/server ids)
 - write tests for multihead queue and syncqueue
 
 - format for Bank broadcast to trader
@@ -60,6 +60,8 @@ Unit test individual functions
 
 First two tabs of Resolver sheet (GBM data streams):
 - make the basic update buttons work correctly
+- Box Muller should use sin and cos to provide two vars, not one
+- is my gbm equation correct? I think maybe no, I am using S at t-1 when I should be using S at t. also, even if right, code is a bit messy
 - Brownian random walk predicted future graph - present data as a solid line, then a bunch of dashed lines for various possibilities. This is mutually exclusive with constant update - pressing one deletes data from the other, perhaps, or maybe disable button.
 Need to save a variable which says how many of the rows are real data, then this row is sent to brownian graph so it knows from where to draw dashed line.
 - make percentageDrift and percentageVolatility editable on spreadsheet, and different for currencies + commods
