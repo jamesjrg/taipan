@@ -33,10 +33,10 @@ namespace TaiPan.Common
             return cmd.ExecuteReader();
         }
 
-        public SqlDataReader ExecuteNonQuery(string stmt)
+        public void ExecuteNonQuery(string stmt)
         {
             SqlCommand cmd = new SqlCommand(stmt, conn);
-            return cmd.ExecuteReader();
+            cmd.ExecuteNonQuery();
         }
 
         private void Init(bool readOnly)

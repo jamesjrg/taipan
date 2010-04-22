@@ -5,6 +5,7 @@ using System.Collections.Specialized;
 using System.IO;
 using System.Net.Sockets;
 using System.Threading;
+using TaiPan.Common.NetContract;
 
 namespace TaiPan.Common
 {
@@ -21,6 +22,22 @@ namespace TaiPan.Common
         {
             OUTGOING_QUEUE_SIZE = Convert.ToInt32(appSettings["MultiHeadQueueSize"]);
             TCP_THREAD_TICK = Convert.ToInt32(appSettings["TCPThreadTick"]);
+        }
+
+        public List<DeserializedMsg> IncomingDeserializeAll()
+        {
+            List<String> strings = incoming.DequeueAll();
+            List<DeserializedMsg> msgs = new List<DeserializedMsg>();
+            
+            foreach (string str in strings)
+            {
+                NetMsgType type;
+                object data;
+                NetContract.NetContract.Deserialize(str, out type, out data);
+                msgs.Add(new DeserializedMsg(type, data));
+            }
+
+            return msgs;
         }
 
         protected class BroadcastThreadState
@@ -45,14 +62,11 @@ namespace TaiPan.Common
             {
                 try
                 {
-                    string[] messagesCopy = OutgoingDequeueAll(castedState.clientID);
-                    if (messagesCopy.Length != 0)
+                    List<string> messagesCopy = OutgoingDequeueAll(castedState.clientID);
+                    if (messagesCopy.Count != 0)
                     {
                         foreach (string msg in messagesCopy)
-                        {
-                            Console.WriteLine("Sending: " + msg);
                             sw.WriteLine(msg);
-                        }
                         sw.Flush();
                     }
                     Thread.Sleep(TCP_THREAD_TICK);
@@ -74,14 +88,24 @@ namespace TaiPan.Common
         {
             NetworkStream ns = (NetworkStream)state;
             StreamReader sr = new StreamReader(ns);
+            StringBuilder tmp = new StringBuilder();
+
             while (true)
             {
                 while (ns.DataAvailable)
-                    incoming.Enqueue(sr.ReadLine());
+                {
+                    tmp.Append(sr.ReadLine());
+
+                    if (tmp.Length > 1 && tmp.ToString(tmp.Length - 2, 2) == "::")
+                    {
+                        incoming.Enqueue(tmp.ToString(0, tmp.Length - 2));
+                        tmp.Length = 0;
+                    }
+                }
                 Thread.Sleep(TCP_THREAD_TICK);
             }
         }
 
-        abstract protected string[] OutgoingDequeueAll(int clientID);
+        abstract protected List<string> OutgoingDequeueAll(int clientID);
     }
 }

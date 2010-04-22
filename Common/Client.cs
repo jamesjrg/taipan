@@ -54,7 +54,7 @@ namespace TaiPan.Common
             outgoing.Enqueue(message);
         }
 
-        override protected string[] OutgoingDequeueAll(int clientID)
+        override protected List<string> OutgoingDequeueAll(int clientID)
         {
             return outgoing.DequeueAll();
         }

@@ -2,43 +2,29 @@
 Section 1: vaguely reasonable ideas:
 ++++
 
-/////
-
-Contribute a bit to an OS project?
-
-////
-
-Logic:
-**this one would really make for a better system**
-- when traders sell warehoused goods to make profit on fateandguesswork prediction, prices should rebound back towards where they were before. this would require fateandgw keeping track of the price jumps that it has created, and then partially "undoing" them after sale of warehoused goods/futures settle
-
-- balance should actually be taken into account both for what transactions are allowed and what transactions actors take - currently it is totally ignored, and people are totally unaffected if they go into debt
-- shipping companies should have a limited number of freighters, which restricts which shipping contracts they can accept. even more complex, the location of their freighters is tracked, and they have to work out if they have any freighters nearby to the required goods departure point
-
-Documentation and UML
+//
+small things:
+- refactor OutgoingDequeueAll to not require clients give an unused clientID
 - UML class diagram (hopefully this can just be exported from Visual Studio? Or otherwise imported from C# code to MagicDraw)
 - export class documentation from XML doc strings
+- have option to actually return the sorted list from alg server
+- on resolver summary sheets, add stats on total distances travelled by freighters
 
-///
-
-Concurrency and networking:
-- read a bit of abstract concurrency theory, and then put this into practice with regard to having it vey clear how concurrency features of my system are well designed and error-resistant, and then add this to doc
+medium things:
+- when traders sell warehoused goods to make profit on fateandguesswork prediction, prices should rebound back towards where they were before. this would require fateandgw keeping track of the price jumps that it has created, and then partially "undoing" them after sale of warehoused goods/futures settle
+- balance should actually be taken into account both for what transactions are allowed and what transactions actors take - currently it is totally ignored, and people are totally unaffected if they go into debt
 - script to stress test concurrent aspects
+- on one of the resolver sheets have some distance between points/distance travelled by freighters info, and maybe make it use sql spatial data functions to do calculation
+
+big things:
+- Contribute a bit to an OS project?
+- shipping companies should have a limited number of freighters, which restricts which shipping contracts they can accept. even more complex, the location of their freighters is tracked, and they have to work out if they have any freighters nearby to the required goods departure point
+- read a bit of abstract concurrency theory, and then put this into practice with regard to having it vey clear how concurrency features of my system are well designed and error-resistant, and then add this to doc
 - do research on ways to improve stress testing
 - make processes be able to cope if other processes fall off network then reappear again (this would be a major undertaking)
-
-////
-
-algs server:
-
 - mapreduce (with some sort of made up query)
-- have option to actually return the sorted list
 
 ///
-
-sql:
-
-on one of the resolver sheets have some distance between points/distance travelled by freighters info, and maybe make it use sql spatial data functions to do calculation
 
 ++++
 Section 2: not especially reasonable ideas:
@@ -49,7 +35,6 @@ complex finance stuff removed for time being:
 - have stock prices affected by recent profit/loss and bank balance of each company
 - add more complex ideas of debt and interest payments - e.g. dividends on shares, or interest payments on loans to buy goods to warehouse
 - add trading in more complex derivatives
-- make sure my GBM calculations for stock/commodity price variation are are exactly as they should be
 - investigate R1 docs/example sheets for more complex finance ideas
 - along with all this, maybe add some complex sql queries/views which summarize data in various ways
 - and maybe try to do some proper stats analysis

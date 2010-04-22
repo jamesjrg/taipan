@@ -25,12 +25,12 @@ namespace TaiPan.FXServer
 
             DbConn dbConn = new DbConn();
             Console.WriteLine("Reading currencies from db");
-            SqlDataReader reader = dbConn.ExecuteQuery("SELECT ShortName, USDValue FROM Currency ORDER BY ID ASC");
+            SqlDataReader reader = dbConn.ExecuteQuery("SELECT ID, USDValue FROM Currency ORDER BY ID ASC");
             while (reader.Read()) {
-                string shortName = reader.GetString(0);
+                int id = reader.GetInt32(0);
                 decimal USDValue = reader.GetDecimal(1);
-                Console.WriteLine("{0}: {1}", shortName, USDValue);
-                currencies.Add(new CurrencyMsg(shortName, USDValue));
+                Console.WriteLine("{0}: {1}", id, USDValue);
+                currencies.Add(new CurrencyMsg(id, USDValue));
             }
             reader.Close();
             dbConn.Dispose();

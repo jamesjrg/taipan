@@ -5,6 +5,9 @@ using System.Text;
 
 namespace TaiPan.Common
 {
+    /// <summary>
+    /// Just a thread safe wrapper around a generic queue. Also adds a threadsafe DequeueAll method.
+    /// </summary>
     public class SyncQueue<T>
     {
         private Queue<T> internalQueue = new Queue<T>();
@@ -27,16 +30,16 @@ namespace TaiPan.Common
             return ret;
         }
 
-        public T[] DequeueAll()
+        public List<T> DequeueAll()
         {
-            T[] ret;
+            List<T> ret;
             lock (internalQueue)
             {
-                ret = new T[internalQueue.Count];
+                ret = new List<T>(internalQueue.Count);
 
                 for (int i = 0; i < internalQueue.Count; i++)
                 {
-                    ret[i] = internalQueue.Dequeue();
+                    ret.Add(internalQueue.Dequeue());
                 }                
             }
             return ret;

@@ -50,26 +50,33 @@ namespace TaiPan.Bank
 
         protected override bool Run()
         {
-            while (fxClient.incoming.Count != 0)
-                Console.WriteLine(fxClient.incoming.Dequeue());
-            while (fateClient.incoming.Count != 0)
-                Console.WriteLine(fateClient.incoming.Dequeue());
-
-            while (traderServer.incoming.Count != 0)
+            List<DeserializedMsg> fxIncoming = fxClient.IncomingDeserializeAll();
+            foreach (var msg in fxIncoming)
             {
-                string msg = traderServer.incoming.Dequeue();
-                NetMsgType type = NetContract.GetNetMsgTypeFromStr(msg);
-                object data = NetContract.Deserialize(type, msg);
-                switch (type)
+                switch (msg.type)
                 {
-                    case NetMsgType.Buy:                        
+                    case NetMsgType.Currency:
+                        updateCurrency((CurrencyMsg)(msg.data));
+                        break;
+                    default:
+                        throw new ApplicationException("fxClient received wrong type of net message");
+                }
+            }
+
+            List<DeserializedMsg> fateIncoming = fateClient.IncomingDeserializeAll();
+
+            List<DeserializedMsg> traderIncoming = traderServer.IncomingDeserializeAll();
+            foreach (var msg in traderIncoming)
+            {
+                switch (msg.type)
+                {
+                    case NetMsgType.Buy:                   
                         break;
                     case NetMsgType.Future:
                         break;
                     default:
                         throw new ApplicationException("traderServer received wrong type of net message");
                 }
-                Console.WriteLine(msg);
             }
 
             while (shippingServer.incoming.Count != 0)
@@ -78,14 +85,9 @@ namespace TaiPan.Bank
             return true;
         }
 
-        private void DbTest()
+        private void updateCurrency(CurrencyMsg msg)
         {
-            SqlDataReader reader = dbConn.ExecuteQuery("SELECT Name FROM Company");
-            while (reader.Read())
-                Console.WriteLine("{0}", reader.GetString(0));
-            reader.Close();
-
-            dbConn.ExecuteNonQuery("UPDATE Currency SET USDValue = 10 WHERE ID = 1");
-        }        
+            dbConn.ExecuteNonQuery(String.Format("UPDATE Currency SET USDValue = {0} WHERE ID = {1}", msg.USDValue, msg.id));
+        }
     }
 }

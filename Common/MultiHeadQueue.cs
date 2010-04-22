@@ -6,14 +6,29 @@ using System.Text;
 namespace TaiPan.Common
 {
     /// <summary>
-    /// A data structure a bit like a normal thread safe queue, except it manages a list of "subscribers", each of whom maintain a seperate head index into the queue - dequeueing only advances the callers head, not everyone else's. Also, rather than dequeueing a single item at a time, the DequeueAll method dequeues all remaining values (for the calling subscriber).
+    /// A data structure a bit like a normal thread safe queue, except:
+    /// a) it manages a list of "subscribers", each of whom maintain a seperate head index into the queue - dequeueing only advances the callers head, not everyone else's
+    /// b) it is possible for enqueued values to be added for all subscribers, or just one subscriber
+    /// c) rather than dequeueing a single item at a time, the DequeueAll method dequeues all remaining values (for the calling subscriber).
     /// </summary>
     public class MultiHeadQueue
     {
         private readonly int size;
         private readonly object syncRoot;
 
-        private string[] buffer;
+        private struct Item
+        {
+            public int targetID;
+            public string data;
+
+            public Item(int targetID, string data)
+            {
+                this.targetID = targetID;
+                this.data = data;
+            }
+        }
+
+        private Item[] buffer;
         private Dictionary<int, Subscriber> subscribers;
 
         //position for next enqueue
@@ -41,7 +56,7 @@ namespace TaiPan.Common
         {
             this.size = size;
             syncRoot = new object();
-            buffer = new string[size];
+            buffer = new Item[size];
             subscribers = new Dictionary<int, Subscriber>();
             newHead = 0;
             newCount = 0;
@@ -70,11 +85,17 @@ namespace TaiPan.Common
             }
         }
 
-        public void Enqueue(string value)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="value"></param>
+        /// <param name="targetID">0 means to everyone</param>
+        public void Enqueue(string value, int targetID)
         {
             lock (syncRoot)
             {
-                buffer[tail] = value;
+                buffer[tail].data = value;
+                buffer[tail].targetID = targetID;
                 tail = (tail + 1) % size;
                 foreach (var key in subscribers.Keys)
                 {
@@ -92,22 +113,23 @@ namespace TaiPan.Common
             }
         }
 
-        public string[] DequeueAll(int myID)
+        public List<string> DequeueAll(int myID)
         {
             if (subscribers[myID].count == -1)
-                throw new ApplicationException("FLAGRANT ERROR: Worker thread with id " + myID + " has become to out of sync with data queue");
- 
-            string[] values;
+                throw new TaiPanException("Worker thread with id " + myID + " has become to out of sync with data queue");
+
+            List<string> values;
 
             lock (syncRoot)
             {
-                values = new string[subscribers[myID].count];
+                values = new List<string>();
 
                 int pos = subscribers[myID].head;
                 for (int i = 0; i < subscribers[myID].count; i++)
                 {
-                    values[i] = buffer[pos];
-                    pos = (pos + 1) % size;                    
+                    if (buffer[pos].targetID == myID || buffer[pos].targetID == 0)
+                        values.Add(buffer[pos].data);
+                    pos = (pos + 1) % size;          
                 }
                 subscribers[myID].head = pos;
                 subscribers[myID].count = 0;

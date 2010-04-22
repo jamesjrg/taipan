@@ -1,5 +1,6 @@
 ﻿using TaiPan.Common;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Collections.Generic;
 namespace TestTaiPan
 {
     
@@ -68,8 +69,8 @@ namespace TestTaiPan
         {
             int size = 0; // TODO: Initialize to an appropriate value
             MultiHeadQueue target = new MultiHeadQueue(size); // TODO: Initialize to an appropriate value
-            string[] expected = null; // TODO: Initialize to an appropriate value
-            string[] actual;
+            List<string> expected = null; // TODO: Initialize to an appropriate valu
+            List<string> actual;
             int myID = 1;
             actual = target.DequeueAll(myID);
             Assert.AreEqual(expected, actual);
@@ -95,7 +96,7 @@ namespace TestTaiPan
         {
             int size = 0; // TODO: Initialize to an appropriate value
             MultiHeadQueue target = new MultiHeadQueue(size); // TODO: Initialize to an appropriate value
-            target.Enqueue("test");
+            target.Enqueue("test", 0);
             Assert.Inconclusive("A method that does not return a value cannot be verified.");
         }
     }

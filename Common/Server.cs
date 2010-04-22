@@ -40,12 +40,17 @@ namespace TaiPan.Common
 
         public void Send(string message)
         {
-            outgoing.Enqueue(message);
+            outgoing.Enqueue(message, 0);
+        }
+
+        public void Send(string message, int id)
+        {
+            outgoing.Enqueue(message, id);
         }
 
         //unused argument, have to mirror function used by server broadcast threads.
         //this is messy, should refactor, but then hard to make BroadcastThread code shared
-        override protected string[] OutgoingDequeueAll(int clientID)
+        override protected List<string> OutgoingDequeueAll(int clientID)
         {
             return outgoing.DequeueAll(clientID);
         }
