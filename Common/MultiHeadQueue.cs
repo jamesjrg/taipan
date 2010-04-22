@@ -48,25 +48,25 @@ namespace TaiPan.Common
             tail = 0;
         }
 
-        public int Subscribe(int myId)
+        public int Subscribe(int myID)
         {
             lock (syncRoot)
             {
-                if (subscribers.ContainsKey(myId))
+                if (subscribers.ContainsKey(myID))
                     throw new TaiPanException("Subscribe request for id already subscribed");
 
-                subscribers.Add(myId, new Subscriber(newHead, newCount));
+                subscribers.Add(myID, new Subscriber(newHead, newCount));
             }
             return 0;
         }
 
-        public void Unsubscribe(int myId)
+        public void Unsubscribe(int myID)
         {
             lock (syncRoot)
             {
-                if (!subscribers.ContainsKey(myId))
+                if (!subscribers.ContainsKey(myID))
                     throw new TaiPanException("Unsubscribe request for id not subscribed");
-                subscribers.Remove(myId);
+                subscribers.Remove(myID);
             }
         }
 
@@ -92,25 +92,25 @@ namespace TaiPan.Common
             }
         }
 
-        public string[] DequeueAll(int myId)
+        public string[] DequeueAll(int myID)
         {
-            if (subscribers[myId].count == -1)
-                throw new ApplicationException("FLAGRANT ERROR: Worker thread with id " + myId + " has become to out of sync with data queue");
+            if (subscribers[myID].count == -1)
+                throw new ApplicationException("FLAGRANT ERROR: Worker thread with id " + myID + " has become to out of sync with data queue");
  
             string[] values;
 
             lock (syncRoot)
             {
-                values = new string[subscribers[myId].count];
+                values = new string[subscribers[myID].count];
 
-                int pos = subscribers[myId].head;
-                for (int i = 0; i < subscribers[myId].count; i++)
+                int pos = subscribers[myID].head;
+                for (int i = 0; i < subscribers[myID].count; i++)
                 {
                     values[i] = buffer[pos];
                     pos = (pos + 1) % size;                    
                 }
-                subscribers[myId].head = pos;
-                subscribers[myId].count = 0;
+                subscribers[myID].head = pos;
+                subscribers[myID].count = 0;
             }
             return values;
         }

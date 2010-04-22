@@ -27,6 +27,21 @@ namespace TaiPan.Common
             return ret;
         }
 
+        public T[] DequeueAll()
+        {
+            T[] ret;
+            lock (internalQueue)
+            {
+                ret = new T[internalQueue.Count];
+
+                for (int i = 0; i < internalQueue.Count; i++)
+                {
+                    ret[i] = internalQueue.Dequeue();
+                }                
+            }
+            return ret;
+        }
+
         public int Count
         {
             get {

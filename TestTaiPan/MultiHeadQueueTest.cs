@@ -70,8 +70,8 @@ namespace TestTaiPan
             MultiHeadQueue target = new MultiHeadQueue(size); // TODO: Initialize to an appropriate value
             string[] expected = null; // TODO: Initialize to an appropriate value
             string[] actual;
-            int myId = 1;
-            actual = target.DequeueAll(myId);
+            int myID = 1;
+            actual = target.DequeueAll(myID);
             Assert.AreEqual(expected, actual);
             Assert.Inconclusive("Verify the correctness of this test method.");
         }

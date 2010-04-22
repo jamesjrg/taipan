@@ -13,10 +13,10 @@ namespace TaiPan.Trader
     {
         private int myID;
 
-        private Server shippingListener;
+        private Server shippingServer;
 
-        private Client bankPoller;
-        private Client fatePoller;
+        private Client bankClient;
+        private Client fateClient;
 
         public Trader(string[] args)
         {
@@ -34,17 +34,17 @@ namespace TaiPan.Trader
 
             var conf = ServerConfigs["Trader-Shipping"];
             conf.port = conf.port + (myID - 1);
-            shippingListener = new Server(conf, AppSettings);
+            shippingServer = new Server(conf, AppSettings, false);
 
-            bankPoller = new Client(ServerConfigs["Bank-Trader"], AppSettings);
+            bankClient = new Client(ServerConfigs["Bank-Trader"], AppSettings, myID, false);
 
-            fatePoller = new Client(ServerConfigs["FateAndGuesswork-Trader"], AppSettings);
+            fateClient = new Client(ServerConfigs["FateAndGuesswork-Trader"], AppSettings, myID, true);
         }
 
         protected override bool Run()
         {
-            while (fatePoller.incoming.Count != 0)
-                Console.WriteLine(fatePoller.incoming.Dequeue());
+            while (fateClient.incoming.Count != 0)
+                Console.WriteLine(fateClient.incoming.Dequeue());
             return true; 
         }
     }

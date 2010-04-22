@@ -5,7 +5,6 @@ using System.Text;
 
 using System.Net.Sockets;
 using System.Threading;
-using System.IO;
 using System.Collections.Specialized;
 
 namespace TaiPan.Common
@@ -16,19 +15,33 @@ namespace TaiPan.Common
 
         private TcpClient tcpClient;
         private NetworkStream ns;
-        private StreamReader sr;
 
-        public Client(Common.ServerConfig config, NameValueCollection appSettings):
+        //note incoming has public access, outgoing does not
+        protected SyncQueue<string> outgoing = new SyncQueue<string>();
+
+        public Client(Common.ServerConfig config, NameValueCollection appSettings, int myID, bool receiveOnly):
             base(appSettings)
         {
             ClientRetryTime = Convert.ToInt32(appSettings["ClientRetryTime"]);
             
             tcpClient = AttemptTCPConnect(config);
             ns = tcpClient.GetStream();
-            sr = new StreamReader(ns);
 
-            Thread thread = new Thread(MainLoop);
-            thread.Start();
+            //give them our id
+            Console.WriteLine("Sending id: {0}", myID);
+            byte[] buffer = BitConverter.GetBytes(myID);
+            ns.Write(buffer, 0, 4);
+            Console.WriteLine("Sent id");
+
+            Thread receiveThread = new Thread(ReceiveThread);
+            receiveThread.Start(ns);
+
+            if (!receiveOnly)
+            {
+                BroadcastThreadState broadcastState = new BroadcastThreadState(1, ns);
+                Thread broadcastThread = new Thread(BroadcastThread);
+                broadcastThread.Start(broadcastState);
+            }
         }
 
         public void Dispose()
@@ -36,14 +49,14 @@ namespace TaiPan.Common
             Util.CloseTcpClient(tcpClient);
         }
 
-        private void MainLoop()
+        public void Send(string message)
         {
-            while (true)
-            {
-                while (ns.DataAvailable)
-                    incoming.Enqueue(sr.ReadLine());
-                Thread.Sleep(TCP_THREAD_TICK);                
-            }
+            outgoing.Enqueue(message);
+        }
+
+        override protected string[] OutgoingDequeueAll(int clientID)
+        {
+            return outgoing.DequeueAll();
         }
 
         private TcpClient AttemptTCPConnect(Common.ServerConfig config)
@@ -70,7 +83,7 @@ namespace TaiPan.Common
                 }
             }
 
-            throw new ApplicationException("What the hell?");
+            throw new TaiPanException("What the hell?");
         }
     }
 }

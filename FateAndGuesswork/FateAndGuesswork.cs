@@ -13,8 +13,8 @@ namespace TaiPan.FateAndGuesswork
     /// </summary>
     class FateAndGuesswork : TaiPan.Common.EconomicPlayer
     {
-        private Server bankListener;
-        private Server traderListener;
+        private Server bankServer;
+        private Server traderServer;
 
         private List<CommodityPrice> commodityPrices = new List<CommodityPrice>();
         private List<Stock> stocks = new List<Stock>();
@@ -103,8 +103,8 @@ namespace TaiPan.FateAndGuesswork
             reader.Close();
             dbConn.Dispose();
 
-            bankListener = new TaiPan.Common.Server(ServerConfigs["FateAndGuesswork-Bank"], AppSettings);
-            traderListener = new TaiPan.Common.Server(ServerConfigs["FateAndGuesswork-Trader"], AppSettings);
+            bankServer = new TaiPan.Common.Server(ServerConfigs["FateAndGuesswork-Bank"], AppSettings, true);
+            traderServer = new TaiPan.Common.Server(ServerConfigs["FateAndGuesswork-Trader"], AppSettings, true);
         }
 
         protected override bool Run()
@@ -114,9 +114,9 @@ namespace TaiPan.FateAndGuesswork
             //DecideStockPrices();
 
             foreach (CommodityPrice commod in commodityPrices)
-                bankListener.Send("commodity," + commod.portId + ',' + commod.commodId + ',' + commod.localPrice);
+                bankServer.Send("commodity," + commod.portId + ',' + commod.commodId + ',' + commod.localPrice);
             foreach (Stock stock in stocks)
-                bankListener.Send("stock," + stock.companyId + ',' + stock.price);
+                bankServer.Send("stock," + stock.companyId + ',' + stock.price);
             return true;
         }
 

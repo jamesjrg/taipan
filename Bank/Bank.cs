@@ -18,11 +18,11 @@ namespace TaiPan.Bank
     {
         private DbConn dbConn;
 
-        private Server traderListener;
-        private Server shippingListener;
+        private Server traderServer;
+        private Server shippingServer;
 
-        private Client fxPoller;
-        private Client fatePoller;
+        private Client fxClient;
+        private Client fateClient;
 
         public Bank(string[] args)
         {
@@ -41,23 +41,23 @@ namespace TaiPan.Bank
 
             dbConn = new DbConn(false);
 
-            traderListener = new Server(ServerConfigs["Bank-Trader"], AppSettings);
-            shippingListener = new Server(ServerConfigs["Bank-Shipping"], AppSettings);
+            traderServer = new Server(ServerConfigs["Bank-Trader"], AppSettings, false);
+            shippingServer = new Server(ServerConfigs["Bank-Shipping"], AppSettings, false);
 
-            fxPoller = new Client(ServerConfigs["FXServer-Bank"], AppSettings);
-            fatePoller = new Client(ServerConfigs["FateAndGuesswork-Bank"], AppSettings);
+            fxClient = new Client(ServerConfigs["FXServer-Bank"], AppSettings, 1, true);
+            fateClient = new Client(ServerConfigs["FateAndGuesswork-Bank"], AppSettings, 1, true);
         }
 
         protected override bool Run()
         {
-            while (fxPoller.incoming.Count != 0)
-                Console.WriteLine(fxPoller.incoming.Dequeue());
-            while (fatePoller.incoming.Count != 0)
-                Console.WriteLine(fatePoller.incoming.Dequeue());
+            while (fxClient.incoming.Count != 0)
+                Console.WriteLine(fxClient.incoming.Dequeue());
+            while (fateClient.incoming.Count != 0)
+                Console.WriteLine(fateClient.incoming.Dequeue());
 
-            while (traderListener.incoming.Count != 0)
+            while (traderServer.incoming.Count != 0)
             {
-                string msg = traderListener.incoming.Dequeue();
+                string msg = traderServer.incoming.Dequeue();
                 NetMsgType type = NetContract.GetNetMsgTypeFromStr(msg);
                 object data = NetContract.Deserialize(type, msg);
                 switch (type)
@@ -67,13 +67,13 @@ namespace TaiPan.Bank
                     case NetMsgType.Future:
                         break;
                     default:
-                        throw new ApplicationException("traderListener received wrong type of net message");
+                        throw new ApplicationException("traderServer received wrong type of net message");
                 }
                 Console.WriteLine(msg);
             }
 
-            while (shippingListener.incoming.Count != 0)
-                Console.WriteLine(shippingListener.incoming.Dequeue());
+            while (shippingServer.incoming.Count != 0)
+                Console.WriteLine(shippingServer.incoming.Dequeue());
 
             return true;
         }

@@ -14,8 +14,8 @@ namespace TaiPan.ShippingCompany
     {
         private int myID;
 
-        private Client bankPoller;
-        private List<Client> traderPollers = new List<Client>();
+        private Client bankClient;
+        private List<Client> traderClients = new List<Client>();
 
         public ShippingCompany(string[] args)
         {
@@ -31,12 +31,12 @@ namespace TaiPan.ShippingCompany
                 throw new ApplicationException("Requires 2 command line arguments: first is id, second is number of traders");
             }
 
-            bankPoller = new Client(ServerConfigs["Bank-Shipping"], AppSettings);
+            bankClient = new Client(ServerConfigs["Bank-Shipping"], AppSettings, myID, false);
 
             var conf = ServerConfigs["Trader-Shipping"];
             for (int i = 0; i != nTraders; ++i)
             {
-                traderPollers.Add(new Client(conf, AppSettings));
+                traderClients.Add(new Client(conf, AppSettings, myID, false));
                 conf.port += 1;
             }
         }        

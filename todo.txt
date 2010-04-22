@@ -14,16 +14,16 @@
 - ideas from "ideas removed" file - infinite
 
 ////
+git change log:
+- rename *Listener + *Poller
 
 right now:
+- make both send and receive work for server and client
+- client/server threads should store the id of the process they are connected to, where applicable
+
 - read WCF chapter in more detail
-- make network serialization methods work
-- client/server threads should store the id of the process they are connected to, where applicable, this info will be need with certain message types. for this to work, first messages sent on opening of new connection should be server synchronous message "hey, this is my id" and client synchronous response "hey, this is mine". then needs to be stored in a class somewhere.
-
-
-
 - make traders send bank a bunch of test data, and make bank insert it into db
-- write tests for multihead queue
+- write tests for multihead queue and syncqueue
 
 - format for Bank broadcast to trader
 a) "buyconfirm,traderpacketid,warehouseid", sent to only one client
@@ -95,11 +95,34 @@ can't do it automatically because file might well be in use
 /////
 
 Next two sheets:
-4. Historical futures contracts, including details of how relevant prices of all involved values changed between start and end of contract, and profit made (CU)
-5. Historical commdity transports, including details of how relevant prices of all involved values changed between start and end of contract, and profit made (CU)
+3. Historical futures contracts, including details of how relevant prices of all involved values changed between start and end of contract, and profit made (CU)
+4. Historical commdity transports, including details of how relevant prices of all involved values changed between start and end of contract, and profit made (CU)
 
 Thirdly, summary data sets:
-6. Summary data on comparative historical record of countries, split into time periods
+
+5. Summary data for each trader, split into time periods
+Drop down to select trader
+- show name, balance, etc
+For each time period, have:
+- info on futures
+- info on warehouse buys
+- profit/loss
+- balance at end of period
+
+6. Summary data for each shipping company, split into time periods
+Drop down to select company
+- shown name of company's country, and its currency, and balance, and stock price
+For each time period, have:
+- number of different ports served
+- average quantity per load
+- min quantity in a single load
+- max quantity in a single load
+- av share price (own currency)
+- av share price (USD)
+- profit/loss
+- balance at end of period
+
+7. Summary data on comparative historical record of countries, split into time periods
 Drop down to select country
 - name of country's currency
 in each time period have
@@ -110,17 +133,6 @@ in each time period have
 - average diff between futures settled price in period and price they were agreed at
 - average value of currency vs USD
 
-7. Summary data for each shipping company, split into time periods
-Drop down to select company
-- name of company's country, and its currency
-For each time period, have:
-- number of different ports served
-- average quantity per load
-- min quantity in a single load
-- max quantity in a single load
-- av share price (own currency)
-- av share price (USD)
-- balance at end of period
 
 ////
 

@@ -4,7 +4,6 @@ using System.Text;
 
 using System.Net;
 using System.Net.Sockets;
-using System.IO;
 using System.Threading;
 
 using System.Collections.Specialized;
@@ -14,53 +13,29 @@ namespace TaiPan.Common
     public class Server : TCPConnection, IDisposable
     {
         private TcpListener tcpListener;
-        private List<ClientSubscriber> subscribers = new List<ClientSubscriber>();
+        private List<TcpClient> clients = new List<TcpClient>();
+        private bool broadcastOnly;
 
-        private class ClientSubscriber
-        {
-            public int myId;
-            public TcpClient client;
+        //note incoming has public access, outgoing does not
+        protected MultiHeadQueue outgoing;
 
-            public ClientSubscriber(int myId, TcpClient client)
-            {
-                this.myId = myId;
-                this.client = client;
-            }
-        }
-
-        public Server(Common.ServerConfig config, NameValueCollection appSettings):
+        public Server(Common.ServerConfig config, NameValueCollection appSettings, bool broadcastOnly):
             base(appSettings)
         {
-            Thread thread = new Thread(Listen);
+            this.broadcastOnly = broadcastOnly;
+            outgoing = new MultiHeadQueue(OUTGOING_QUEUE_SIZE);
+
+            Thread thread = new Thread(ListenForNew);
             thread.Start(config);
         }
 
         public void Dispose()
         {
-            foreach (ClientSubscriber subscriber in subscribers)
+            foreach (TcpClient client in clients)
             {
-                Util.CloseTcpClient(subscriber.client);
+                Util.CloseTcpClient(client);
             }
             tcpListener.Stop();
-        }
-
-        private void Listen(object o)
-        {
-            ServerConfig config = (ServerConfig)o;
-            IPAddress localAddr = IPAddress.Parse(config.address);
-            tcpListener = new TcpListener(localAddr, config.port);
-            Console.WriteLine("Server starting on " + config.address + ":" + config.port);
-            tcpListener.Start();
-            int newSubscriberId = 1;
-            while (true)
-            {
-                TcpClient tcpClient = tcpListener.AcceptTcpClient();
-                Console.WriteLine("Server accepted new connection");
-                ClientSubscriber subscriber = new ClientSubscriber(newSubscriberId, tcpClient);
-                subscribers.Add(subscriber);
-                ThreadPool.QueueUserWorkItem(Broadcast, subscriber);
-                newSubscriberId++;
-            }
         }
 
         public void Send(string message)
@@ -68,42 +43,41 @@ namespace TaiPan.Common
             outgoing.Enqueue(message);
         }
 
-        public void Broadcast(object state)
+        //unused argument, have to mirror function used by server broadcast threads.
+        //this is messy, should refactor, but then hard to make BroadcastThread code shared
+        override protected string[] OutgoingDequeueAll(int clientID)
         {
-            ClientSubscriber subscriber = (ClientSubscriber)state;
-            TcpClient tcpClient = subscriber.client;
-            int myId = subscriber.myId;
-            NetworkStream ns = tcpClient.GetStream();
-            StreamWriter sw = new StreamWriter(ns);
+            return outgoing.DequeueAll(clientID);
+        }
 
-            outgoing.Subscribe(myId);
-
+        private void ListenForNew(object o)
+        {
+            ServerConfig config = (ServerConfig)o;
+            IPAddress localAddr = IPAddress.Parse(config.address);
+            tcpListener = new TcpListener(localAddr, config.port);
+            Console.WriteLine("Server starting on " + config.address + ":" + config.port);
+            tcpListener.Start();
             while (true)
             {
-                try
-                {
-                    string[] messagesCopy = outgoing.DequeueAll(myId);
-                    if (messagesCopy.Length != 0)
-                    {
-                        foreach (string msg in messagesCopy)
-                        {
-                            Console.WriteLine("Sending: " + msg);
-                            sw.WriteLine(msg);
-                        }
-                        sw.Flush();
-                    }
-                    Thread.Sleep(TCP_THREAD_TICK);
-                }
-                catch (Exception e)
-                {
-                    if (!(e is IOException || e is ObjectDisposedException))
-                        throw;
+                TcpClient tcpClient = tcpListener.AcceptTcpClient();
+                NetworkStream ns = tcpClient.GetStream();
 
-                    Console.WriteLine("A client connection has been lost");
-                    sw.Close();
-                    ns.Close();
-                    break;
-                }
+                Console.WriteLine("Server accepted new connection");
+                clients.Add(tcpClient);
+
+                //get id
+                byte[] buffer = new byte[4];
+                Console.WriteLine("Waiting for id");
+                ns.Read(buffer, 0, 4);
+                int clientID = BitConverter.ToInt32(buffer, 0);
+                Console.WriteLine("Got id: {0}", clientID);
+
+                outgoing.Subscribe(clientID);
+
+                BroadcastThreadState broadcastState = new BroadcastThreadState(clientID, ns);
+                ThreadPool.QueueUserWorkItem(BroadcastThread, broadcastState);
+                if (!broadcastOnly)
+                    ThreadPool.QueueUserWorkItem(ReceiveThread, ns);
             }
         }
     }
