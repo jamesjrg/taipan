@@ -1,11 +1,9 @@
-﻿class Settings:
-    #global settings
-    connectString = "Driver={SQL Server};Server=DAPHNE-DURON\\SQLEXPRESS;Database=TaiPan;UID=taipan-r;PWD=fakepass;"
-    
+﻿#many settings are read in from the XML config file shared with C#
+class Settings:
+    xmlConfigFile = '../Common/Common.config'
+        
     #Settings common to Commodity Prices, Stock Prices, FX Rates:	
-    mainLoopTick = 5000
-    nTopUpdate = 30
+    nTopUpdate = 20
     
     #Geometric Brownian Motion constants
-    tickVolatility = 0.005
     gbmNTicks = 10

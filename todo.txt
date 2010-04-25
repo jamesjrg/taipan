@@ -15,12 +15,10 @@
 
 ////
 git change log:
-- work on statslib - now includes GBM, and better Box-Muller implementation
-- some more work on net messaging
 
 right now:
-- Resolver should read in tickvolatility, server connection string, mainlooptick etc from Common.config xml
-- make constant update work in Resolver, and use it to test commod price updating and stock price updating
+- make the resolver drop downs work
+- use Resolver to test commod price updating and stock price updating
 - Resolver FX forecast should show time as well as price
 - people can now send and receive messages, so make a first attempt at adding in all the logic that goes with this (though also still need to do a little more work with regard to keeping track of client/server ids)
 
@@ -60,8 +58,7 @@ Unit test individual functions
 
 First two tabs of Resolver sheet (GBM data streams):
 - make the basic update buttons work correctly
-- Brownian random walk predicted future graph - present data as a solid line, then a bunch of dashed lines for various possibilities. This is mutually exclusive with constant update - pressing one deletes data from the other, perhaps, or maybe disable button.
-Need to save a variable which says how many of the rows are real data, then this row is sent to brownian graph so it knows from where to draw dashed line.
+- Brownian random walk predicted future graph - present data as a solid line, then a bunch of dashed lines for various possibilities. Need to save a variable which says how many of the rows are real data, then this row is sent to brownian graph so it knows from where to draw dashed line.
 - make percentageDrift and percentageVolatility editable on spreadsheet, and different for currencies + commods
 
 brownian motion random walking:
@@ -82,7 +79,7 @@ can't do it automatically because file might well be in use
 
 - WPF graph program. Should have ability to create new windows, or add new data to current windows, also has option for real time update.
 - graph windows to include help instructions
-- maybe mention my thoughts on benefits of selective timed functions vs recalcualting whole workbook with RecalculateAfter
+- maybe mention my thoughts on benefits of selective timed functions vs recalcualting whole workbook with RecalculateAfter - e.g. readConfig is having to be updated every tick!
 
 /////
 
@@ -157,6 +154,7 @@ add to uml deployment.
 ///
 
 General Resolver things to do:
+- make ntopupdate a variable within the sheet, not in settings.py. separate for commod and fx.
 - Possibly some vaguely sensible management (decisions on when to reuse + close) of the db connection?
 
 ////
