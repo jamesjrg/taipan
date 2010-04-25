@@ -16,6 +16,7 @@ namespace TaiPan.Common
         protected NameValueCollection AppSettings = new NameValueCollection();
         protected Dictionary<string, ServerConfig> ServerConfigs = new Dictionary<string, ServerConfig>();
         protected readonly string CurrencyAccuracy;
+        protected readonly decimal TickVolatility;
 
         private readonly int MainLoopTick;
         
@@ -37,6 +38,7 @@ namespace TaiPan.Common
                 throw new ApplicationException("Flagrant error attempting to read appSettings from config file");
             MainLoopTick = Convert.ToInt32(AppSettings["MainLoopTick"]);
             CurrencyAccuracy = "F" + Convert.ToInt32(AppSettings["CurrencyAccuracy"]);
+            TickVolatility = Convert.ToDecimal(AppSettings["TickVolatility"]);
 
             ServersSection serversSection = config.GetSection("servers") as ServersSection;
             if (serversSection == null)

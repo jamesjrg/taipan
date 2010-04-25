@@ -15,13 +15,14 @@
 
 ////
 git change log:
+- work on statslib - now includes GBM, and better Box-Muller implementation
+- some more work on net messaging
 
 right now:
-- Box Muller should use sin and cos to provide two vars, is more efficient
-- move gbm func to statslib, and make it less messy
-- add NormStdRand to statslib
+- Resolver should read in tickvolatility, server connection string, mainlooptick etc from Common.config xml
+- make constant update work in Resolver, and use it to test commod price updating and stock price updating
+- Resolver FX forecast should show time as well as price
 - people can now send and receive messages, so make a first attempt at adding in all the logic that goes with this (though also still need to do a little more work with regard to keeping track of client/server ids)
-- write tests for multihead queue and syncqueue
 
 - format for Bank broadcast to trader
 a) "buyconfirm,traderpacketid,warehouseid", sent to only one client
@@ -31,13 +32,9 @@ b) "futuresettle,traderpacketid,warehouseid", sent to only one client
 a) "surplus,portid,commodid,1200,2010-04-15T20:10:00", sent to only one client
 b) "shortage,portid,commodid,1200,2010-04-15T20:10:00", sent to only one client
 
--format for FateAndGuesswork broadcast to Bank, something like:
-a) "stock,stockid,price"
-b) "commod,portid,commodid,price"
-
 - format traders to shipping companies something like:
-a) "advertise,warehouseid", sent to only one client, also client tcp thread needs to note id of sender
-b) "accept,warehouseid", sent to only one client, also client tcp thread needs to note id of sender
+a) "advertisemove,warehouseid", sent to only one client, also client tcp thread needs to note id of sender
+b) "confirmmove,warehouseid", sent to only one client, also client tcp thread needs to note id of sender
 
 - format from trader to bank something like:
 a) "buy,madeuppacketid,portid,commodid,quantity", also server tcp thread needs to note id of sender
@@ -48,7 +45,7 @@ a) "departure,warehouseid,depaturetime", also server tcp thread needs to note id
 b) "arrival,warehouseid,arrivaltime", also server tcp thread needs to note id of sender
 
 - format for messages from shipping company to traders something like:
-a) "accept,warehouseid", sent to only one client, also server tcp thread needs to note id of sender
+a) "acceptmove,warehouseid", sent to only one client, also server tcp thread needs to note id of sender
 
 ////
 
@@ -71,10 +68,7 @@ brownian motion random walking:
 I need to sample random distib. use my tiny statslib for both resolver and economicplayer.
 
 other people doing similar things:
-http://www.scipy.org/Cookbook/BrownianMotion
 the black-scholes R1 sheet
-http://en.wikipedia.org/wiki/Geometric_Brownian_motion
-http://en.wikipedia.org/wiki/Wiener_process	
 also:
 http://www.scipy.org/Cookbook/FittingData
 
@@ -163,7 +157,7 @@ add to uml deployment.
 ///
 
 General Resolver things to do:
-Possibly some vaguely sensible management (decisions on when to reuse + close) of the db connection?
+- Possibly some vaguely sensible management (decisions on when to reuse + close) of the db connection?
 
 ////
 
@@ -205,6 +199,8 @@ other ideas:
 ////
 
 testing:
+- write tests for multihead queue and syncqueue
+- check for bugs in StatsLib GBMSequence
 - unittest only bank can write to db
 - make processes do right thing when other processes go down, and have automated tests for all possibilities if differing orders of collapse.
 - unittest the algoriths and data structures service

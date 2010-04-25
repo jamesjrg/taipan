@@ -38,5 +38,7 @@ INSERT INTO dbo.HistoricalPortCommodityPrice
 GO
     
 COMMIT
+GO
+
 
 

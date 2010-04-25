@@ -9,9 +9,29 @@ namespace TaiPan.Common.NetContract
 {
     public enum NetMsgType
     {
+        //FXServer
         Currency = 0,
-        Buy = 1,
-        Future = 2,
+        //FateAndGW
+        Stock = 1,
+        Commodity = 2,
+        Surplus = 3,
+        Shortage = 4,
+
+        //Trader
+        Buy = 5,
+        Future = 6,
+        AdvertiseMove = 7,
+        ConfirmMove = 8,
+
+        //Shipping Company
+        Departure = 9,
+        Arrival = 10,
+        AcceptMove = 11,
+
+        //Bank
+        BuyConfirm = 12,
+        FutureSettle = 13,
+
     }
 
     public class DeserializedMsg
@@ -29,7 +49,6 @@ namespace TaiPan.Common.NetContract
     public class CurrencyMsg
     {
         public CurrencyMsg() { }
-
         public CurrencyMsg(int id, decimal USDValue)
         {
             this.id = id;
@@ -38,6 +57,48 @@ namespace TaiPan.Common.NetContract
 
         public int id;
         public decimal USDValue;
+    }
+
+    public class StockMsg
+    {
+        public StockMsg() { }
+        public StockMsg(int companyId, decimal price)
+        {
+            this.companyId = companyId;
+            this.price = price;
+        }
+
+        public int companyId;
+        public decimal price;
+    }
+
+    public class CommodityMsg
+    {
+        public CommodityMsg() {}
+        public CommodityMsg(int portId, int commodId, decimal localPrice)
+        {
+            this.portId = portId;
+            this.commodId = commodId;
+            this.localPrice = localPrice;
+        }
+
+        public int portId;
+        public int commodId;
+        public decimal localPrice;
+    }
+
+    public class SurplusMsg
+    {
+        public SurplusMsg()
+        {
+        }
+    }
+
+    public class ShortageMsg
+    {
+        public ShortageMsg()
+        {
+        }
     }
 
     public class BuyMsg
@@ -50,6 +111,55 @@ namespace TaiPan.Common.NetContract
     public class FutureMsg
     {
         public FutureMsg()
+        {
+        }
+    }
+
+    public class AdvertiseMoveMsg
+    {
+        public AdvertiseMoveMsg()
+        {
+        }
+    }
+
+    public class ConfirmMoveMsg
+    {
+        public ConfirmMoveMsg()
+        {
+        }
+    }
+
+    public class DepartureMsg
+    {
+        public DepartureMsg()
+        {
+        }
+    }
+
+    public class ArrivalMsg
+    {
+        public ArrivalMsg()
+        {
+        }
+    }
+
+    public class AcceptMoveMsg
+    {
+        public AcceptMoveMsg()
+        {
+        }
+    }
+
+    public class BuyConfirmMsg
+    {
+        public BuyConfirmMsg()
+        {
+        }
+    }
+
+    public class FutureSettleMsg
+    {
+        public FutureSettleMsg()
         {
         }
     }
@@ -96,14 +206,45 @@ namespace TaiPan.Common.NetContract
 
         private static Type GetClassFromNetMsgType(NetMsgType type)
         {
+            //XXX this could maybe be a dict, but then couldn't be static
             switch (type)
             {
+                //FXServer
                 case NetMsgType.Currency:
                     return typeof(CurrencyMsg);
+                //FateAndGW
+                case NetMsgType.Stock:
+                    return typeof(StockMsg);
+                case NetMsgType.Commodity:
+                    return typeof(CommodityMsg);
+                case NetMsgType.Surplus:
+                    return typeof(SurplusMsg);
+                case NetMsgType.Shortage:
+                    return typeof(ShortageMsg);
+
+                //trader
                 case NetMsgType.Buy:
                     return typeof(BuyMsg);
                 case NetMsgType.Future:
                     return typeof(FutureMsg);
+                case NetMsgType.AdvertiseMove:
+                    return typeof(AdvertiseMoveMsg);
+                case NetMsgType.ConfirmMove:
+                    return typeof(ConfirmMoveMsg);
+
+                //shippingcompany
+                case NetMsgType.Departure:
+                    return typeof(DepartureMsg);
+                case NetMsgType.Arrival:
+                    return typeof(ArrivalMsg);
+                case NetMsgType.AcceptMove:
+                    return typeof(AcceptMoveMsg);
+
+                //bank
+                case NetMsgType.BuyConfirm:
+                    return typeof(BuyConfirmMsg);
+                case NetMsgType.FutureSettle:
+                    return typeof(FutureSettleMsg);
                 default:
                     throw new TaiPanException("GetClassFromNetMsgType received unknown type");
             }

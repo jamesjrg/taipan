@@ -307,5 +307,5 @@ WHILE @@FETCH_STATUS = 0
 GO
     
 COMMIT
-
+GO
 

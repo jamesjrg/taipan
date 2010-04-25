@@ -37,19 +37,8 @@ def queryDb(query):
 #GBM functions        
         
 def createBrownian(currentPrice):
-    forecasts = []
-    sample = StatsLib.NormRand(0, 1, Settings.gbmNTicks)
+    return StatsLib.GBMSequence(currentPrice, Settings.tickVolatility, Settings.gbmNTicks)
     
-    for i in range(len(sample)):
-        changeInWiener = 0
-        if (i > 0):
-            changeInWiener = sample[i] - sample[i - 1]
-        else:
-            changeInWiener = sample[i]
-        
-        priceChange = Settings.tickVolatility * currentPrice * changeInWiener
-        currentPrice = currentPrice + priceChange
-        forecasts.append(currentPrice)
     return forecasts
 
 # Commodity Prices
@@ -79,7 +68,8 @@ def updateFXRates():
     
 def fxForecast():
     currentPrice = 100
-    print createBrownian(currentPrice)
+    forecast = createBrownian(currentPrice)
+    fxSheet.FillRange(forecast, 1, 3, 1, Settings.gbmNTicks + 1)
     
 # Country summary
 def queryCountrySummary():

@@ -326,3 +326,5 @@ SELECT i.PortID, i.CommodityID, GETDATE(), i.LocalPrice FROM inserted as i
 GO
     
 COMMIT
+GO
+

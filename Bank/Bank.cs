@@ -58,6 +58,12 @@ namespace TaiPan.Bank
                     case NetMsgType.Currency:
                         updateCurrency((CurrencyMsg)(msg.data));
                         break;
+                    case NetMsgType.Commodity:
+                        updateCommodity((CommodityMsg)(msg.data));
+                        break;
+                    case NetMsgType.Stock:
+                        updateStock((StockMsg)(msg.data));
+                        break;
                     default:
                         throw new ApplicationException("fxClient received wrong type of net message");
                 }
@@ -88,6 +94,16 @@ namespace TaiPan.Bank
         private void updateCurrency(CurrencyMsg msg)
         {
             dbConn.ExecuteNonQuery(String.Format("UPDATE Currency SET USDValue = {0} WHERE ID = {1}", msg.USDValue, msg.id));
+        }
+
+        private void updateCommodity(CommodityMsg msg)
+        {
+            dbConn.ExecuteNonQuery(String.Format("UPDATE PortCommodityPrice SET LocalPrice = {0} WHERE PortID = {1} and CommodityID = {2}", msg.localPrice, msg.portId, msg.commodId));
+        }
+
+        private void updateStock(StockMsg msg)
+        {
+            dbConn.ExecuteNonQuery(String.Format("UPDATE ShippingCompany SET USDStockPrice = {0} WHERE CompanyID = {1}", msg.price, msg.companyId));
         }
     }
 }

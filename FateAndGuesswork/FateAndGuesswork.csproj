@@ -54,6 +54,10 @@
       <Project>{0B2A1CDE-4E0E-4EDB-BF48-D17BE26697E8}</Project>
       <Name>Common</Name>
     </ProjectReference>
+    <ProjectReference Include="..\StatsLib\StatsLib.csproj">
+      <Project>{433D5C3E-C961-4857-8919-F10ED51BD375}</Project>
+      <Name>StatsLib</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -7,6 +7,7 @@ using System.Data.SqlClient;
 
 using TaiPan.Common;
 using TaiPan.Common.NetContract;
+using TaiPan.StatsLib;
 
 namespace TaiPan.FXServer
 {
@@ -51,10 +52,8 @@ namespace TaiPan.FXServer
         {
             for (int i = 0; i != currencies.Count; ++i)
             {
-                //nextdouble between 0 and 1.0
-                decimal newPrice = currencies[i].USDValue + (decimal)random.NextDouble() - 0.5m;
-                if (newPrice > 0)
-                    currencies[i].USDValue = newPrice;
+                decimal nextVal = StatsLib.StatsLib.GBMSequence(currencies[i].USDValue, TickVolatility, 1)[0];
+                currencies[i].USDValue = nextVal;
             }
         }
     }
