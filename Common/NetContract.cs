@@ -46,10 +46,10 @@ namespace TaiPan.Common.NetContract
         public object data;
     }
 
-    public class CurrencyMsg
+    public class CurrencyMsgItem
     {
-        public CurrencyMsg() { }
-        public CurrencyMsg(int id, decimal USDValue)
+        public CurrencyMsgItem() { }
+        public CurrencyMsgItem(int id, decimal USDValue)
         {
             this.id = id;
             this.USDValue = USDValue;
@@ -59,32 +59,56 @@ namespace TaiPan.Common.NetContract
         public decimal USDValue;
     }
 
-    public class StockMsg
+    public class CurrencyMsg
     {
-        public StockMsg() { }
-        public StockMsg(int companyId, decimal price)
+        public CurrencyMsg() {}
+        
+        public CurrencyMsgItem[] items;
+        public DateTime time;
+    }
+
+    public class StockMsgItem
+    {
+        public StockMsgItem() { }
+        public StockMsgItem(int companyID, decimal price)
         {
-            this.companyId = companyId;
+            this.companyID = companyID;
             this.price = price;
         }
 
-        public int companyId;
+        public int companyID;
         public decimal price;
+    }
+
+    public class StockMsg
+    {
+        public StockMsg() {}
+        
+        public StockMsgItem[] items;
+        public DateTime time;
+    }
+
+    public class CommodityMsgItem
+    {
+        public CommodityMsgItem() { }
+        public CommodityMsgItem(int portID, int commodID, decimal localPrice)
+        {
+            this.portID = portID;
+            this.commodID = commodID;
+            this.localPrice = localPrice;
+        }
+
+        public int portID;
+        public int commodID;
+        public decimal localPrice;
     }
 
     public class CommodityMsg
     {
         public CommodityMsg() {}
-        public CommodityMsg(int portId, int commodId, decimal localPrice)
-        {
-            this.portId = portId;
-            this.commodId = commodId;
-            this.localPrice = localPrice;
-        }
-
-        public int portId;
-        public int commodId;
-        public decimal localPrice;
+        
+        public CommodityMsgItem[] items;
+        public DateTime time;
     }
 
     public class SurplusMsg

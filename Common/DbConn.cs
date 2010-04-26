@@ -5,6 +5,7 @@ using System.Text;
 
 using System.Data.SqlClient;
 using System.Configuration;
+using System.Data;
 
 namespace TaiPan.Common
 {
@@ -36,6 +37,15 @@ namespace TaiPan.Common
         public void ExecuteNonQuery(string stmt)
         {
             SqlCommand cmd = new SqlCommand(stmt, conn);
+            cmd.ExecuteNonQuery();
+        }
+
+        public void StoredProc(string stmt, List<SqlParameter> parameters)
+        {
+            SqlCommand cmd = new SqlCommand(stmt, conn);
+            cmd.CommandType = CommandType.StoredProcedure;
+            foreach (var par in parameters)
+                cmd.Parameters.Add(par);
             cmd.ExecuteNonQuery();
         }
 

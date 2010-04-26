@@ -72,13 +72,13 @@ commodityPortId2 = 2
 commodityPortId3 = 3
 
 def updateCommodityPrices():
-    data = queryDb("select top %d ValueDate, LocalPrice from HistoricalPortCommodityPrice where PortID = %d and CommodityID = %d order by ValueDate ASC" % (Settings.nTopUpdate, commodityPortId1, commodityId))
-    commoditySheet.FillRange(data, 1, 3, 2, Settings.nTopUpdate + 1)
-
+    data = queryDb("select * from (select top %d ValueDate, LocalPrice from HistoricalPortCommodityPrice where PortID = %d and CommodityID = %d order by ValueDate DESC) as foo order by ValueDate ASC" % (Settings.nTopUpdate, commodityPortId1, commodityId))
+    commoditySheet.FillRange(data, 1, 2, 2, Settings.nTopUpdate + 1)
+    
 def commodForecast():
     currentPrice = 100
     forecast = createBrownian(currentPrice)
-    commoditySheet.FillRange(forecast, 1, 3, 1, Settings.gbmNTicks + 1)
+    commoditySheet.FillRange(forecast, 1, 2, 1, Settings.gbmNTicks + 1)
 
 def commodClearForecast():
         pass
@@ -98,13 +98,13 @@ def setCurrency(which, id):
     data = queryDb("select ShortName from Currency where ID = %d" % id)
    
 def updateFXRates():
-    data = queryDb("select top %d ValueDate, USDValue from HistoricalCurrencyPrice where CurrencyID = %d order by ValueDate ASC" % (Settings.nTopUpdate, currencyId1))
-    fxSheet.FillRange(data, 1, 3, 2, Settings.nTopUpdate + 1)
+    data = queryDb("select * from (select top %d ValueDate, USDValue from HistoricalCurrencyPrice where CurrencyID = %d order by ValueDate DESC) as foo order by ValueDate ASC" % (Settings.nTopUpdate, currencyId1))
+    fxSheet.FillRange(data, 1, 2, 2, Settings.nTopUpdate + 1)
     
 def fxForecast():
     currentPrice = 100
     forecast = createBrownian(currentPrice)
-    fxSheet.FillRange(forecast, 1, 3, 1, Settings.gbmNTicks + 1)
+    fxSheet.FillRange(forecast, 1, 2, 1, Settings.gbmNTicks + 1)
 
 def fxClearForecast():
     pass

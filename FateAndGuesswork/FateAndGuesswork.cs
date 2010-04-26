@@ -17,25 +17,25 @@ namespace TaiPan.FateAndGuesswork
         private Server bankServer;
         private Server traderServer;
 
-        private List<CommodityPrice> commodityPrices = new List<CommodityPrice>();
-        private List<CommodityMsg> commodityMsgs = new List<CommodityMsg>();
-        private List<StockMsg> stocks = new List<StockMsg>();
+        private List<CommodityInfo> commodityInfos = new List<CommodityInfo>();
+        private CommodityMsg commodityMsg = new CommodityMsg();
+        private StockMsg stocks = new StockMsg();
 
         private Random random = new Random();
 
-        private class CommodityPrice
+        private class CommodityInfo
         {
-            public CommodityPrice(int portId, int commodId, decimal localPrice, int surplusProb, int shortageProb)
+            public CommodityInfo(int portID, int commodID, decimal localPrice, int surplusProb, int shortageProb)
             {
-                this.portId = portId;
-                this.commodId = commodId;                
+                this.portID = portID;
+                this.commodID = commodID;                
                 this.localPrice = localPrice;
                 this.surplusProb = surplusProb;
                 this.shortageProb = shortageProb;
             }
 
-            public int portId;
-            public int commodId;
+            public int portID;
+            public int commodID;
             public decimal localPrice;
             public int surplusProb;
             public int shortageProb;
@@ -71,27 +71,33 @@ namespace TaiPan.FateAndGuesswork
             SqlDataReader reader = dbConn.ExecuteQuery("SELECT PortID, CommodityID, LocalPrice, ShortageProb, SurplusProb FROM PortCommodityPrice ORDER BY PortID ASC");
             while (reader.Read())
             {
-                int portId = reader.GetInt32(0);
-                int commodId = reader.GetInt32(1);
+                int portID = reader.GetInt32(0);
+                int commodID = reader.GetInt32(1);
                 decimal localPrice = reader.GetDecimal(2);
                 int shortageProb = reader.GetInt32(3);
                 int surplusProb = reader.GetInt32(4);
-                commodityPrices.Add(new CommodityPrice(portId, commodId, localPrice, shortageProb, surplusProb));
+                commodityInfos.Add(new CommodityInfo(portID, commodID, localPrice, shortageProb, surplusProb));
             }
             reader.Close();
 
+            commodityMsg.items = new CommodityMsgItem[commodityInfos.Count];
+            for (int i = 0; i != commodityInfos.Count; ++i )
+                commodityMsg.items[i] = new CommodityMsgItem(commodityInfos[i].portID, commodityInfos[i].commodID, commodityInfos[i].localPrice);
+
             Console.WriteLine("Reading stocks from db");
+            List<StockMsgItem> tmpList = new List<StockMsgItem>();
             reader = dbConn.ExecuteQuery("SELECT CompanyID, USDStockPrice from ShippingCompany ORDER BY CompanyID ASC");
             while (reader.Read())
             {
                 int id = reader.GetInt32(0);
                 decimal price = reader.GetDecimal(1);
                 Console.WriteLine("{0}: {1}", id, price);
-                stocks.Add(new StockMsg(id, price));
+                tmpList.Add(new StockMsgItem(id, price));
             }
+            stocks.items = tmpList.ToArray();
+            reader.Close();
 
             //close db conn
-            reader.Close();
             dbConn.Dispose();
 
             bankServer = new TaiPan.Common.Server(ServerConfigs["FateAndGuesswork-Bank"], AppSettings, true);
@@ -104,32 +110,30 @@ namespace TaiPan.FateAndGuesswork
             DecideStockPrices();
             DecideCommodPriceJumps();
 
-            foreach (CommodityMsg commod in commodityMsgs)
-                bankServer.Send(NetContract.Serialize(NetMsgType.Commodity, commod));
-            foreach (StockMsg stock in stocks)
-                bankServer.Send(NetContract.Serialize(NetMsgType.Stock, stock));
+            bankServer.Send(NetContract.Serialize(NetMsgType.Commodity, commodityMsg));
+            bankServer.Send(NetContract.Serialize(NetMsgType.Stock, stocks));
 
             return true;
         }
 
         private void DecideCommodPrices()
         {
-            commodityMsgs.Clear();
-
-            for (int i = 0; i != commodityPrices.Count; ++i)
+            commodityMsg.time = DateTime.Now;
+            for (int i = 0; i != commodityInfos.Count; ++i)
             {
-                decimal nextVal = StatsLib.StatsLib.GBMSequence(commodityPrices[i].localPrice, TickVolatility, 1)[0];
-                commodityPrices[i].localPrice = nextVal;
-                commodityMsgs.Add(new CommodityMsg(commodityPrices[i].portId, commodityPrices[i].commodId, commodityPrices[i].localPrice));
+                decimal nextVal = StatsLib.StatsLib.GBMSequence(commodityInfos[i].localPrice, TickVolatility, 1)[0];
+                commodityInfos[i].localPrice = nextVal;
+                commodityMsg.items[i].localPrice = nextVal;
             }
         }
 
         private void DecideStockPrices()
         {
-            for (int i = 0; i != stocks.Count; ++i)
+            stocks.time = DateTime.Now;
+            for (int i = 0; i != stocks.items.Length; ++i)
             {
-                decimal nextVal = StatsLib.StatsLib.GBMSequence(stocks[i].price, TickVolatility, 1)[0];
-                stocks[i].price = nextVal;
+                decimal nextVal = StatsLib.StatsLib.GBMSequence(stocks.items[i].price, TickVolatility, 1)[0];
+                stocks.items[i].price = nextVal;
             }
         }
 

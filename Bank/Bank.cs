@@ -8,6 +8,7 @@ using System.Threading;
 
 using TaiPan.Common;
 using TaiPan.Common.NetContract;
+using System.Transactions;
 
 namespace TaiPan.Bank
 {
@@ -57,7 +58,17 @@ namespace TaiPan.Bank
                 {
                     case NetMsgType.Currency:
                         updateCurrency((CurrencyMsg)(msg.data));
-                        break;
+                        break;                    
+                    default:
+                        throw new ApplicationException("fxClient received wrong type of net message");
+                }
+            }
+
+            List<DeserializedMsg> fateIncoming = fateClient.IncomingDeserializeAll();
+            foreach (var msg in fateIncoming)
+            {
+                switch (msg.type)
+                {
                     case NetMsgType.Commodity:
                         updateCommodity((CommodityMsg)(msg.data));
                         break;
@@ -65,11 +76,9 @@ namespace TaiPan.Bank
                         updateStock((StockMsg)(msg.data));
                         break;
                     default:
-                        throw new ApplicationException("fxClient received wrong type of net message");
+                        throw new ApplicationException("fateIncoming received wrong type of net message");
                 }
             }
-
-            List<DeserializedMsg> fateIncoming = fateClient.IncomingDeserializeAll();
 
             List<DeserializedMsg> traderIncoming = traderServer.IncomingDeserializeAll();
             foreach (var msg in traderIncoming)
@@ -93,17 +102,57 @@ namespace TaiPan.Bank
 
         private void updateCurrency(CurrencyMsg msg)
         {
-            dbConn.ExecuteNonQuery(String.Format("UPDATE Currency SET USDValue = {0} WHERE ID = {1}", msg.USDValue, msg.id));
+            using (TransactionScope scope = new TransactionScope(TransactionScopeOption
+.Required))
+            {
+                foreach (var item in msg.items)
+                {
+                    List<SqlParameter> pars = new List<SqlParameter>();
+                    pars.Add(new SqlParameter("@CurrencyID", item.id));
+                    pars.Add(new SqlParameter("@ValueDate", msg.time));
+                    pars.Add(new SqlParameter("@USDValue", item.USDValue));
+
+                    dbConn.StoredProc("procCurrencyUpdate", pars);
+                }
+                scope.Complete();
+            }
         }
 
         private void updateCommodity(CommodityMsg msg)
         {
-            dbConn.ExecuteNonQuery(String.Format("UPDATE PortCommodityPrice SET LocalPrice = {0} WHERE PortID = {1} and CommodityID = {2}", msg.localPrice, msg.portId, msg.commodId));
+            using (TransactionScope scope = new TransactionScope(TransactionScopeOption
+.Required))
+            {
+                foreach (var item in msg.items)
+                {
+                    List<SqlParameter> pars = new List<SqlParameter>();
+                    pars.Add(new SqlParameter("@PortID", item.portID));
+                    pars.Add(new SqlParameter("@CommodityID", item.commodID));
+                    pars.Add(new SqlParameter("@ValueDate", msg.time));
+                    pars.Add(new SqlParameter("@LocalPrice", item.localPrice));
+
+                    dbConn.StoredProc("procPortComodUpdate", pars);
+                }
+                scope.Complete();
+            }
         }
 
         private void updateStock(StockMsg msg)
         {
-            dbConn.ExecuteNonQuery(String.Format("UPDATE ShippingCompany SET USDStockPrice = {0} WHERE CompanyID = {1}", msg.price, msg.companyId));
+            using (TransactionScope scope = new TransactionScope(TransactionScopeOption
+.Required))
+            {
+                foreach (var item in msg.items)
+                {
+                    List<SqlParameter> pars = new List<SqlParameter>();
+                    pars.Add(new SqlParameter("@CompanyID", item.companyID));
+                    pars.Add(new SqlParameter("@PriceDate", msg.time));
+                    pars.Add(new SqlParameter("@USDStockPrice", item.price));
+
+                    dbConn.StoredProc("procStockUpdate", pars);
+                }
+                scope.Complete();
+            }
         }
     }
 }

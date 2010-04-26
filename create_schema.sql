@@ -28,6 +28,21 @@ BEGIN
 END
 GO
 
+--drop all procedures
+declare @procName varchar(500)
+declare cur cursor
+    for select [name] from sys.objects where type = 'p'
+open cur
+fetch next from cur into @procName
+while @@fetch_status = 0
+begin
+    if @procName <> 'DeleteAllProcedures'
+          exec('drop procedure ' + @procName)
+          fetch next from cur into @procName
+end
+close cur
+deallocate cur
+
 -- drop all tables
 EXEC sp_MSforeachtable @command1 = "DROP TABLE ?"
 GO
@@ -184,7 +199,7 @@ GO
 CREATE TABLE dbo.HistoricalStockPrice
 	(
 	ID int NOT NULL IDENTITY (1, 1) PRIMARY KEY CLUSTERED,
-    ShippingCompanyID int NOT NULL,
+    CompanyID int NOT NULL,
     PriceDate datetime NOT NULL,
     USDStockPrice Money NOT NULL,
 	)  ON [PRIMARY]
@@ -221,7 +236,7 @@ GO
 -- foreign keys (except those used for table inheritance concept, already declared)
 ALTER TABLE dbo.HistoricalStockPrice ADD
 	CONSTRAINT fkHistStockPrice FOREIGN KEY
-	(ShippingCompanyID) REFERENCES dbo.ShippingCompany (CompanyID)
+	(CompanyID) REFERENCES dbo.ShippingCompany (CompanyID)
 GO
 
 ALTER TABLE dbo.HistoricalBalance ADD
@@ -288,43 +303,50 @@ ALTER TABLE dbo.CommodityTransport ADD
 	(WarehousedCommodityID) REFERENCES dbo.WarehousedCommodity (ID);
 GO
     
--- triggers
-CREATE TRIGGER dbo.trgStockUpdate
-ON dbo.ShippingCompany
-AFTER update
-AS
-INSERT INTO dbo.HistoricalStockPrice
-    (ShippingCompanyID, PriceDate, USDStockPrice)
-SELECT i.CompanyID, GETDATE(), i.USDStockPrice FROM inserted as i
+-- ARG if this were another database these could be triggers with FOR EACH ROW
+CREATE PROCEDURE procStockUpdate 
+   @CompanyID int, 
+   @PriceDate datetime,
+   @USDStockPrice Money
+AS 
+insert into HistoricalStockPrice (CompanyID, PriceDate, USDStockPrice) VALUES (@CompanyID, @PriceDate, @USDStockPrice);
+update ShippingCompany set USDStockPrice = @USDStockPrice where CompanyID = @CompanyID;
 GO
 
-CREATE TRIGGER dbo.trgBalanceUpdate
-ON dbo.Company
-AFTER update
-AS
-INSERT INTO dbo.HistoricalBalance
-    (CompanyID, BalanceDate, Balance)
-SELECT i.ID, GETDATE(), i.Balance FROM inserted as i
+CREATE PROCEDURE procBalanceUpdate 
+   @CompanyID int, 
+   @BalanceDate datetime,
+   @Balance Money
+AS 
+BEGIN
+insert into HistoricalBalance (CompanyID, BalanceDate, Balance) VALUES (@CompanyID, @BalanceDate, @Balance);
+update Company set Balance = @Balance where ID = @CompanyID;
+END
 GO
 
-CREATE TRIGGER dbo.trgCurrencyUpdate
-ON dbo.Currency
-AFTER update
+CREATE PROCEDURE procCurrencyUpdate 
+   @CurrencyID int, 
+   @ValueDate datetime,
+   @USDValue Money
 AS
-INSERT INTO dbo.HistoricalCurrencyPrice
-    (CurrencyID, ValueDate, USDValue)
-SELECT i.ID, GETDATE(), i.USDValue FROM inserted as i
+BEGIN
+insert into HistoricalCurrencyPrice (CurrencyID, ValueDate, USDValue) VALUES (@CurrencyID, @ValueDate, @USDValue);
+update Currency set USDValue = @USDValue where ID = @CurrencyID;
+END
 GO
 
-CREATE TRIGGER dbo.trgPortComodUpdate
-ON dbo.PortCommodityPrice
-AFTER update
-AS
-INSERT INTO dbo.HistoricalPortCommodityPrice
-    (PortID, CommodityID, ValueDate, LocalPrice)
-SELECT i.PortID, i.CommodityID, GETDATE(), i.LocalPrice FROM inserted as i
+CREATE PROCEDURE procPortComodUpdate
+   @PortID int, 
+   @CommodityID int, 
+   @ValueDate datetime,
+   @LocalPrice Money
+AS 
+BEGIN
+    insert into HistoricalPortCommodityPrice (PortID, CommodityID, ValueDate, LocalPrice) VALUES (@PortID, @CommodityID, @ValueDate, @LocalPrice);
+    update PortCommodityPrice set LocalPrice = @LocalPrice where PortID = @PortID and CommodityID = @CommodityID;
+END
 GO
-    
+
 COMMIT
 GO
 

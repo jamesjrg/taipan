@@ -1,7 +1,7 @@
 <!--
 This spreadsheet is in the Public Domain.
 -->
-<document currentResultWorksheet="Shipping" verticalSplitterRatio="0.75" horizontalSplitterRatio="0.871657754011" splitterOrientation="Horizontal" suspendRecalculations="False" license="Public Domain" copyrightOwner="James Gregory" resolverVersion="1.8.1" resolverBuild="5061" documentVersion="12">
+<document currentResultWorksheet="FX Rates" verticalSplitterRatio="0.75" horizontalSplitterRatio="0.871657754011" splitterOrientation="Horizontal" suspendRecalculations="False" license="Public Domain" copyrightOwner="James Gregory" resolverVersion="1.8.1" resolverBuild="5061" documentVersion="12">
     <foldState license="True" imports="True" worksheetCreation="True" preConstantsUserCode="False" constants="True" preFormulaeUserCode="False" generated="False" postFormulaeUserCode="False"/>
     <traitDefaults>
 
@@ -32,7 +32,7 @@ execfile('TFPPreConstants.py')
             <virtualGridSize width="51" height="44" />
         </viewState>
         <viewState worksheet="Commodity Prices">
-            <currentCell col="4" row="4" />
+            <currentCell col="2" row="2" />
             <scrollPos col="1" row="1" />
             <virtualGridSize width="50" height="76" />
         </viewState>
@@ -52,8 +52,8 @@ execfile('TFPPreConstants.py')
             <virtualGridSize width="49" height="49" />
         </viewState>
         <viewState worksheet="FX Rates">
-            <currentCell col="6" row="2" />
-            <selection left="5" top="1" right="6" bottom="2" />
+            <currentCell col="3" row="17" />
+            <selection left="3" top="16" right="3" bottom="17" />
             <scrollPos col="1" row="1" />
             <virtualGridSize width="48" height="76" />
         </viewState>
@@ -151,11 +151,7 @@ execfile('TFPPreConstants.py')
         </cell>
         <cell name="H7" value="Random Walk Forecast" type="general">
         </cell>
-        <cell name="A2" value="x" type="general">
-        </cell>
         <cell name="I4" value="spam" type="general">
-        </cell>
-        <cell name="B2" value="x" type="general">
         </cell>
         <cell name="A1" value="Date" type="general">
         </cell>
@@ -170,10 +166,6 @@ execfile('TFPPreConstants.py')
         <cell name="I3" value="spam" type="general">
         </cell>
         <cell name="C1" value="nameofport" type="general">
-        </cell>
-        <cell name="D2" value="x" type="general">
-        </cell>
-        <cell name="C2" value="x" type="general">
         </cell>
         <cell name="H1" value="Commodity" type="general">
         </cell>
@@ -256,10 +248,6 @@ execfile('TFPPreConstants.py')
         <trait name="DecimalPlaces">
         </trait>
         <array expression="" left="1" top="5" right="1" bottom="10" />
-        <cell name="A2" value="x" type="general">
-        </cell>
-        <cell name="B2" value="x" type="general">
-        </cell>
         <cell name="A1" value="Date" type="general">
         </cell>
         <cell name="B1" value="Code" type="general">
@@ -269,10 +257,6 @@ execfile('TFPPreConstants.py')
         <cell name="D1" value="Code" type="general">
         </cell>
         <cell name="C1" value="Code" type="general">
-        </cell>
-        <cell name="D2" value="x" type="general">
-        </cell>
-        <cell name="C2" value="x" type="general">
         </cell>
         <cell name="H1" value="Currency 1" type="general">
         </cell>

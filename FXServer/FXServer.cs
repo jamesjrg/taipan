@@ -17,7 +17,7 @@ namespace TaiPan.FXServer
     class FXServer : EconomicPlayer
     {
         private Server bankServer;
-        private List<CurrencyMsg> currencies = new List<CurrencyMsg>();
+        private CurrencyMsg currencies = new CurrencyMsg();
         private Random random = new Random();
 
         public FXServer(string[] args)
@@ -25,15 +25,19 @@ namespace TaiPan.FXServer
             Console.Title = "FXServer";
 
             DbConn dbConn = new DbConn();
+
             Console.WriteLine("Reading currencies from db");
+            List<CurrencyMsgItem> tmpList = new List<CurrencyMsgItem>();
             SqlDataReader reader = dbConn.ExecuteQuery("SELECT ID, USDValue FROM Currency ORDER BY ID ASC");
             while (reader.Read()) {
                 int id = reader.GetInt32(0);
                 decimal USDValue = reader.GetDecimal(1);
                 Console.WriteLine("{0}: {1}", id, USDValue);
-                currencies.Add(new CurrencyMsg(id, USDValue));
+                tmpList.Add(new CurrencyMsgItem(id, USDValue));
             }
             reader.Close();
+            currencies.items = tmpList.ToArray();
+
             dbConn.Dispose();
 
             bankServer = new Server(ServerConfigs["FXServer-Bank"], AppSettings, true);
@@ -43,17 +47,18 @@ namespace TaiPan.FXServer
         {
             DecidePrices();
 
-            foreach (CurrencyMsg currency in currencies)
-                bankServer.Send(NetContract.Serialize(NetMsgType.Currency, currency));
+            bankServer.Send(NetContract.Serialize(NetMsgType.Currency, currencies));
+
             return true;
         }
 
         private void DecidePrices()
         {
-            for (int i = 0; i != currencies.Count; ++i)
+            currencies.time = DateTime.Now;
+            for (int i = 0; i != currencies.items.Length; ++i)
             {
-                decimal nextVal = StatsLib.StatsLib.GBMSequence(currencies[i].USDValue, TickVolatility, 1)[0];
-                currencies[i].USDValue = nextVal;
+                decimal nextVal = StatsLib.StatsLib.GBMSequence(currencies.items[i].USDValue, TickVolatility, 1)[0];
+                currencies.items[i].USDValue = nextVal;
             }
         }
     }
