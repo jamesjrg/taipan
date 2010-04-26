@@ -24,6 +24,16 @@ big things:
 - make processes be able to cope if other processes fall off network then reappear again (this would be a major undertaking)
 - mapreduce (with some sort of made up query)
 
+faff with database idea:
+- Read database management systems chapters 19, 20, 21
+- do some database normalisation and tuning, and security management
+- faff about with different sorts of indexes etc, maybe also so totally pointless striping, clustering, etc
+- maybe add some views for use by the various processes that need info from database?
+- do some normalisation some time after the design has changed a bit, and doc how I carried this out, and doc what normal form the db is in
+- doc optimization/tuning
+- stored procedures
+- faff with permissions and security and security schemas
+
 ///
 
 ++++

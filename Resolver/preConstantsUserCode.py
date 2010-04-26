@@ -107,10 +107,22 @@ def fxForecast():
     fxSheet.FillRange(forecast, 1, 3, 1, Settings.gbmNTicks + 1)
 
 def fxClearForecast():
-        pass
+    pass
 
+fxChart = None
 def fxGraph():
-        pass
+    global fxChart
+    from rslWPFChart import *
+    
+    title = "FX Prices"
+    yLabel = "USD"
+    
+    names = []
+    times = []
+    USDValues = []
+    
+    #fxChart = rslWPFChart(title ,yLabel, names, times, USDValues)
+    #fxChart.Start()
         
 # Country summary
 def queryCountrySummary():

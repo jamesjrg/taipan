@@ -1,26 +1,30 @@
 * finish all main points of network code and process logic
-- est 2.5 weeks FT
+- est 2 weeks FT
 
 * Read database management systems chapter 5
 * finish all main points of Resolver One view + WPF graphing, including GBM forecasting
 - est 2.5 weeks full time
 
-* read parts of algorithms book
+* read parts of algorithms book chapters Appendix A, Appendix B, then 1,2,3,4,5,6,7, then 10,11,12,13,14, then 
 * do algorithms bit
 - est 2.5 weeks full time
 
-- ideas about database normalisation and tuning - est 1 week FT
-- ideas about optimisation problem - est 1.5 weeks FT
+* read algorithms book chapters 22, 29, 34, 35, and a bunch of TSP/MS Solver stuff
+* do TSP stuff
+- est 1.5 weeks FT
+
 - ideas from "ideas removed" file - infinite
 
 ////
 git change log:
 
 right now:
+- change updates of currency prices and commod prices and stock prices such that the datetimes are included in the netmsg from fxserver and gateandgw (and should be the same for a single batch of updates), and msg also includes "tick" parameter which all prices within a single loop share, and then change db schema + uml such that price updates on these three all reference a new "TickTime" table which allows you to do joins on things that happened at the same time, so you can compare prices at a given tick
 - make the resolver drop downs work
 - use Resolver to test commod price updating and stock price updating
-- Resolver FX forecast should show time as well as price
+- Resolver FX forecast should show time as well as price, and should be italic.
 - people can now send and receive messages, so make a first attempt at adding in all the logic that goes with this (though also still need to do a little more work with regard to keeping track of client/server ids)
+- shippingcomps need to know distance between ports to work out how long journeys take, and banks need to know to work out how much shipping companies should charge for movements. should use db spatial functions. do this on shippingcomp init and create a dict of all the values, and then include distances in msgs to bank? or maybe create a computed database table with all this data, for use by both shippingcomp and bank. 2nd option is better.
 
 - format for Bank broadcast to trader
 a) "buyconfirm,traderpacketid,warehouseid", sent to only one client
@@ -53,12 +57,14 @@ Process logic and networking:
 Unit test individual functions
 - mega_start.bat script to start all C# processes at once, including algoserver (not Resolver though)
 - probably use sql spatial functions to work out distances for freighter travel - both for Bank and for Resolver
+- 
+
 
 ///
 
 First two tabs of Resolver sheet (GBM data streams):
 - make the basic update buttons work correctly
-- Brownian random walk predicted future graph - present data as a solid line, then a bunch of dashed lines for various possibilities. Need to save a variable which says how many of the rows are real data, then this row is sent to brownian graph so it knows from where to draw dashed line.
+- Brownian random walk predicted future graph - present data as a solid line, then a bunch of dashed lines for various possibilities. Should know where real data ends and where actual data begins from ntopupdate
 - make percentageDrift and percentageVolatility editable on spreadsheet, and different for currencies + commods
 
 brownian motion random walking:
@@ -128,11 +134,11 @@ in each time period have
 Fourthly, extreme contrivedness:
 8. Travelling freighter problem
 
-- do some reading
-- convert C# example code to Resolver
+- do lots of reading about it, but as far as the actual solution is concerned just convert the other guy's C# code to Python, and then write comment at top of file explaining how a) the code is just adapted from someone else but b) I really do understand what it is doing
 - doc: represent all shipping lanes between ports as a graph of interconnected nodes, and do a "travelling freighter problem" solution of shortest route for a freighter to visit each port exactly once. provide a diagram on web.
 
 particularly relevant:
+http://iris.gmu.edu/~khoffman/papers/trav_salesman.html
 http://code.msdn.microsoft.com/solverfoundation
 http://blogs.msdn.com/natbr/archive/2009/04/27/solving-traveling-salesman-problems-using-solver-foundation.aspx
 http://blogs.msdn.com/natbr/archive/2009/05/07/solver-foundation-tsp-part-ii-directives-solver-plugins-model-libraries.aspx
@@ -160,8 +166,6 @@ General Resolver things to do:
 ////
 
 Database stuff (needs adding to both a) UML diagram and b) actual SQL scripts):
-- maybe add some views for use by the various processes that need info from database?
-- do some normalisation some time after the design has changed a bit, and doc how I carried this out, and doc what normal form the db is in
 - make sure indexes, triggers, fks and pks (and their names), and constraints (and their names) match up UML <-> sql and vice versa
 - error handling on error being returned on database query
 
@@ -183,16 +187,6 @@ INSERT INTO dbo.CommodityTransport
      VALUES
      ()
 GO
-
-later SQL stuff:
-- Read database management systems chapters 19, 20, 21
-- do some database normalisation and tuning, and security management
-- faff about with different sorts of indexes etc, maybe also so totally pointless striping, clustering, etc
-- doc optimization/tuning
-other ideas:
-- views
-- stored procedures
-- faff with permissions and security and security schemas
 
 ////
 
@@ -218,6 +212,7 @@ Sequence:
 
 SQL:
 - add add spatial stuff, table inheritance stuff, correct trigger names
+- spatial indexes?
 - once project is finished, make sure it matches up with actual schema
 - stuff that should be kept in sync includes: add table inheritance stuff, triggers, constraints
 - maybe make currency short name the key, or at least make unique
@@ -254,14 +249,14 @@ method 2:
 
 - using info both in algos book and database book, have an entirely pointless AlgoServer (including on UML diagram, with a note of explanation) that has functions to create various complex data structures and run various algorithms.
 
-some examples:
+implement the following:
 - merge sort
 - quick sort
 - quick sort in place
 - heap sort
 - hash table
-- red black tree
-- b tree
+- red-black tree
+- b-tree
 
 It has two types of call, one returns the result, the other just returns how long the procedure took.
 
@@ -285,9 +280,9 @@ doc how even without 5 second delay in taking contracts for movements off broadc
 
 - describe use of bank and db as mediator of many interactions in system, mention any other patterns used
 
-shorter version for CV etc:
+short version for CV etc:
 
-•	A C# .NET, SQL Server and Python project written to improve my knowledge of various aspects of computer science and software engineering. A large number of heterogeneous multithreaded C# processes interact with each other by sending and receiving messages via TCP sockets. These processes manipulate data using various algorithms and data structures for producing and manipulating sequences of numbers. Much of the underlying state of the system is stored in a MS SQL Server instance. A user interface to the system is provided in the form of an IronPython-based spreadsheet that performs simplistic mathematical modelling (with help from Microsoft Solver Foundation). The spreadsheet is also linked to a C# program for producing WPF graphs. The project also uses UML, unit testing, source control, etc. Around 200 hours work so far.
+•	A C# .NET, SQL Server and Python project. A large number of heterogeneous, multithreaded C# processes interact with each other via TCP sockets. Much of the underlying state of the system is stored in a MS SQL Server instance, and I have tried to make use of various intermediate SQL features (spatial data, complex integrity constraints, triggers, cursors, etc). The system also includes implementations of B-Trees, Red-Black trees, hash tables, various sorting algorithms, and algorithms for producing various types of statistical distribution. A user interface to the system is provided in the form of an IronPython-based spreadsheet that makes queries both on the database and on a C# SOAP web service, and sends messages to a C# WPF application to produce graphs of the summary data. The spreadsheet also makes use of a mathematical optimization framework to solve a version of the Travelling Salesman Problem. The project is described by a series of UML diagrams, and partly covered by unit tests. Around 220 hours work so far.
 
 
 some phrases that could go in web doc:

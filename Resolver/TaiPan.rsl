@@ -1,7 +1,7 @@
 <!--
 This spreadsheet is in the Public Domain.
 -->
-<document currentResultWorksheet="Commodity Prices" verticalSplitterRatio="0.75" horizontalSplitterRatio="0.871657754011" splitterOrientation="Horizontal" suspendRecalculations="False" license="Public Domain" copyrightOwner="James Gregory" resolverVersion="1.8.1" resolverBuild="5061" documentVersion="12">
+<document currentResultWorksheet="Shipping" verticalSplitterRatio="0.75" horizontalSplitterRatio="0.871657754011" splitterOrientation="Horizontal" suspendRecalculations="False" license="Public Domain" copyrightOwner="James Gregory" resolverVersion="1.8.1" resolverBuild="5061" documentVersion="12">
     <foldState license="True" imports="True" worksheetCreation="True" preConstantsUserCode="False" constants="True" preFormulaeUserCode="False" generated="False" postFormulaeUserCode="False"/>
     <traitDefaults>
 
@@ -32,9 +32,9 @@ execfile('TFPPreConstants.py')
             <virtualGridSize width="51" height="44" />
         </viewState>
         <viewState worksheet="Commodity Prices">
-            <currentCell col="10" row="5" />
+            <currentCell col="4" row="4" />
             <scrollPos col="1" row="1" />
-            <virtualGridSize width="50" height="49" />
+            <virtualGridSize width="50" height="76" />
         </viewState>
         <viewState worksheet="Trader summary">
             <currentCell col="1" row="1" />
@@ -44,7 +44,7 @@ execfile('TFPPreConstants.py')
         <viewState worksheet="Futures">
             <currentCell col="6" row="8" />
             <scrollPos col="1" row="1" />
-            <virtualGridSize width="50" height="49" />
+            <virtualGridSize width="50" height="76" />
         </viewState>
         <viewState worksheet="Sorting Algorithms">
             <currentCell col="6" row="10" />
@@ -52,14 +52,15 @@ execfile('TFPPreConstants.py')
             <virtualGridSize width="49" height="49" />
         </viewState>
         <viewState worksheet="FX Rates">
-            <currentCell col="9" row="1" />
+            <currentCell col="6" row="2" />
+            <selection left="5" top="1" right="6" bottom="2" />
             <scrollPos col="1" row="1" />
-            <virtualGridSize width="48" height="49" />
+            <virtualGridSize width="48" height="76" />
         </viewState>
         <viewState worksheet="Shipping">
             <currentCell col="1" row="1" />
             <scrollPos col="1" row="1" />
-            <virtualGridSize width="51" height="44" />
+            <virtualGridSize width="51" height="76" />
         </viewState>
     </viewStates>
     <worksheetOrder>
@@ -84,7 +85,6 @@ execfile('TFPPreConstants.py')
         </trait>
         <trait name="ColWidth">
             <traitentry col="1" row="1" value="119" />
-            <traitentry col="1" row="2" value="119" />
             <traitentry col="1" row="3" value="119" />
             <traitentry col="1" row="4" value="119" />
             <traitentry col="1" row="5" value="119" />
@@ -92,13 +92,14 @@ execfile('TFPPreConstants.py')
             <traitentry col="1" row="7" value="119" />
             <traitentry col="1" row="8" value="119" />
             <traitentry col="1" row="9" value="119" />
+            <traitentry col="2" row="1" value="119" />
+            <traitentry col="3" row="1" value="119" />
+            <traitentry col="3" row="2" value="119" />
+            <traitentry col="4" row="1" value="119" />
+            <traitentry col="5" row="2" value="119" />
             <traitentry col="8" row="0" value="139" />
             <traitentry col="8" row="7" value="151" />
             <traitentry col="8" row="8" value="151" />
-            <traitentry col="3" row="1" value="119" />
-            <traitentry col="3" row="2" value="119" />
-            <traitentry col="5" row="1" value="119" />
-            <traitentry col="5" row="2" value="119" />
         </trait>
         <trait name="Alignment">
         </trait>
@@ -148,33 +149,35 @@ execfile('TFPPreConstants.py')
         </trait>
         <cell name="I1" value="spam" type="general">
         </cell>
-        <cell name="A1" value="nameofport" type="general">
+        <cell name="H7" value="Random Walk Forecast" type="general">
+        </cell>
+        <cell name="A2" value="x" type="general">
+        </cell>
+        <cell name="I4" value="spam" type="general">
+        </cell>
+        <cell name="B2" value="x" type="general">
+        </cell>
+        <cell name="A1" value="Date" type="general">
+        </cell>
+        <cell name="B1" value="nameofport" type="general">
+        </cell>
+        <cell name="H4" value="Port 3" type="general">
+        </cell>
+        <cell name="H3" value="Port 2" type="general">
+        </cell>
+        <cell name="D1" value="nameofport" type="general">
+        </cell>
+        <cell name="I3" value="spam" type="general">
+        </cell>
+        <cell name="C1" value="nameofport" type="general">
+        </cell>
+        <cell name="D2" value="x" type="general">
+        </cell>
+        <cell name="C2" value="x" type="general">
         </cell>
         <cell name="H1" value="Commodity" type="general">
         </cell>
         <cell name="I2" value="spam" type="general">
-        </cell>
-        <cell name="A2" value="Date" type="general">
-        </cell>
-        <cell name="B2" value="Price" type="general">
-        </cell>
-        <cell name="H4" value="Port 3" type="general">
-        </cell>
-        <cell name="E1" value="nameofport" type="general">
-        </cell>
-        <cell name="D2" value="Price" type="general">
-        </cell>
-        <cell name="C2" value="Date" type="general">
-        </cell>
-        <cell name="H7" value="Random Walk Forecast" type="general">
-        </cell>
-        <cell name="E2" value="Date" type="general">
-        </cell>
-        <cell name="H3" value="Port 2" type="general">
-        </cell>
-        <cell name="F2" value="Price" type="general">
-        </cell>
-        <cell name="C1" value="nameofport" type="general">
         </cell>
         <cell name="H2" value="Port 1" type="general">
         </cell>
@@ -190,7 +193,6 @@ execfile('TFPPreConstants.py')
         </trait>
         <trait name="ColWidth">
             <traitentry col="1" row="0" value="119" />
-            <traitentry col="3" row="1" value="119" />
             <traitentry col="3" row="2" value="119" />
             <traitentry col="5" row="1" value="119" />
             <traitentry col="5" row="2" value="119" />
@@ -254,27 +256,27 @@ execfile('TFPPreConstants.py')
         <trait name="DecimalPlaces">
         </trait>
         <array expression="" left="1" top="5" right="1" bottom="10" />
-        <cell name="A2" value="Date" type="general">
+        <cell name="A2" value="x" type="general">
         </cell>
-        <cell name="B2" value="Price" type="general">
+        <cell name="B2" value="x" type="general">
         </cell>
-        <cell name="A1" value="Code:" type="general">
+        <cell name="A1" value="Date" type="general">
         </cell>
-        <cell name="E2" value="Date" type="general">
+        <cell name="B1" value="Code" type="general">
         </cell>
         <cell name="H3" value="Currency 3" type="general">
         </cell>
-        <cell name="F2" value="Price" type="general">
+        <cell name="D1" value="Code" type="general">
         </cell>
-        <cell name="E1" value="Code:" type="general">
+        <cell name="C1" value="Code" type="general">
         </cell>
-        <cell name="C1" value="Code:" type="general">
+        <cell name="D2" value="x" type="general">
         </cell>
-        <cell name="D2" value="Price" type="general">
-        </cell>
-        <cell name="C2" value="Date" type="general">
+        <cell name="C2" value="x" type="general">
         </cell>
         <cell name="H1" value="Currency 1" type="general">
+        </cell>
+        <cell name="I2" value="spam" type="general">
         </cell>
         <cell name="H2" value="Currency 2" type="general">
         </cell>
