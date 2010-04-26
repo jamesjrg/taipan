@@ -26,11 +26,12 @@ from System.Windows.Media import Colors
 from System.Windows import Point
 
 #Import WPF chart from assembly
-assemblyfile = dirname(__file__)+"\\WpfChart2.exe"
+assemblyfile = dirname(__file__)+"/WpfChart/WpfChart/bin/Debug/WpfChart.exe"
+print "Loading: %s" % assemblyfile
 assembly = Assembly.LoadFile(assemblyfile)
 clr.AddReference(assembly)
-from WpfChart2 import WpfMultiChart
-from WpfChart2.TimeSeriesDataLib import TimeSeriesData, TimeSeriesDataPoint
+from WpfChart import WpfMultiChart
+from WpfChart.TimeSeriesDataLib import TimeSeriesData, TimeSeriesDataPoint
 
 class WPFChartForm(Form):
     """Main Windows Form that will use an ElementHost to run the WPFChart. This form will run in it's own thread.

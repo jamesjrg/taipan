@@ -7,28 +7,6 @@ import clr
 clr.AddReference("StatsLib")
 from TaiPan.StatsLib import StatsLib
 
-#init
-def readConfig():
-    try:
-        reader = XmlReader.Create(Settings.xmlConfigFile)
-    except:
-        raise Exception("Couldn't find Common.config at %s" % Settings.xmlConfigFile)
-        
-    while reader.Read():
-        if reader.NodeType == XmlNodeType.Element and reader.Name == 'add' and reader.HasAttributes:
-        
-            attribs = {}
-            while reader.MoveToNextAttribute():
-                attribs[reader.Name] = reader.Value
-                
-            if 'key' in attribs:
-                if attribs['key'] == 'TickVolatility':
-                    Settings.tickVolatility = float(attribs['value'])
-            elif 'name' in attribs and attribs['name'] == 'taipan-r':
-                Settings.connectString = 'Driver={SQL Server};' + attribs['connectionString'].replace(' ', '')
-        
-readConfig()
-
 commoditySheet = workbook['Commodity Prices']
 fxSheet = workbook['FX Rates']
 
@@ -40,6 +18,18 @@ shippingSumSheet = workbook['Shipping summary']
 TFPSheet = workbook['Travelling Freighter Problem']
 sortingSheet = workbook['Sorting Algorithms']
 
+#util
+def ItaliciseRange(startCellStr, endCellStr):
+    start = getattr(fxSheet.Cells, "%s" % (startCellStr))
+    end = getattr(fxSheet.Cells, "%s" % (endCellStr))
+    CellRange(start, end).Italic = True
+    
+def getForecastStartRow():
+    return Settings.nTopUpdate + 2
+    
+def getForecastEndRow():
+    return Settings.nTopUpdate + Settings.gbmNTicks + 2
+    
 #db functions
 
 def queryDb(query):
@@ -57,13 +47,36 @@ def queryDb(query):
                 ret[colIndex, rowIndex] = val
         return ret
 
+#init
+def readConfig():
+    try:
+        reader = XmlReader.Create(Settings.xmlConfigFile)
+    except:
+        raise Exception("Couldn't find Common.config at %s" % Settings.xmlConfigFile)
+        
+    while reader.Read():
+        if reader.NodeType == XmlNodeType.Element and reader.Name == 'add' and reader.HasAttributes:
+        
+            attribs = {}
+            while reader.MoveToNextAttribute():
+                attribs[reader.Name] = reader.Value
+                
+            if 'key' in attribs:
+                if attribs['key'] == 'TickVolatility':
+                    Settings.tickVolatility = float(attribs['value'])
+                elif attribs['key'] == 'CurrencyAccuracy':
+                    Settings.currencyAccuracy = int(attribs['value'])
+            elif 'name' in attribs and attribs['name'] == 'taipan-r':
+                Settings.connectString = 'Driver={SQL Server};' + attribs['connectionString'].replace(' ', '')
+               
 #GBM functions        
         
 def createBrownian(currentPrice):
-    print 'createBrownian: firstVal:%d, volatility:%f nticks:%d' % (currentPrice, Settings.tickVolatility, Settings.gbmNTicks)
-    return StatsLib.GBMSequence(currentPrice, Settings.tickVolatility, Settings.gbmNTicks)
-    
-    return forecasts
+    print 'createBrownian: firstVal:%f, volatility:%f nticks:%d' % (currentPrice, Settings.tickVolatility, Settings.gbmNTicks)
+    seq = StatsLib.GBMSequence(currentPrice, Settings.tickVolatility, Settings.gbmNTicks)
+    for i in range(len(seq)):
+        seq[i] = round(seq[i], Settings.currencyAccuracy)
+    return seq
 
 # Commodity Prices
 commodityId = 1
@@ -87,24 +100,43 @@ def commodGraph():
         pass
     
 # FX rates
-currencyId1 = 1
-currencyId2 = 2
-currencyId3 = 3        
-
-def queryCurrencies():
-    data = queryDb("select Name from Currency ORDER BY Name ASC")
-
-def setCurrency(which, id):
-    data = queryDb("select ShortName from Currency where ID = %d" % id)
    
+def setFXNames():
+    data = queryDb("select name from Currency order by name asc")
+    fxNames = [row for row in data]
+    
+    fxSheet.Cells.I1.DropdownItems = fxNames
+    fxSheet.Cells.I2.DropdownItems = fxNames
+    fxSheet.Cells.I3.DropdownItems = fxNames
+    
 def updateFXRates():
+    idsAndCodes = queryDb("select ID, ShortName from Currency where Name in ('%s', '%s', '%s')" % (fxSheet.I1, fxSheet.I2, fxSheet.I3))
+    fxSheet.B1 = idsAndCodes[1,0]
+    fxSheet.C1 = idsAndCodes[1,1]
+    fxSheet.D1 = idsAndCodes[1,2]
+   
+    currencyId1 = idsAndCodes[0,0]
+    currencyId2 = idsAndCodes[0,1]
+    currencyId3 = idsAndCodes[0,2]
+    
     data = queryDb("select * from (select top %d ValueDate, USDValue from HistoricalCurrencyPrice where CurrencyID = %d order by ValueDate DESC) as foo order by ValueDate ASC" % (Settings.nTopUpdate, currencyId1))
     fxSheet.FillRange(data, 1, 2, 2, Settings.nTopUpdate + 1)
-    
+    data = queryDb("select USDValue from (select top %d ValueDate, USDValue from HistoricalCurrencyPrice where CurrencyID = %d order by ValueDate DESC) as foo order by ValueDate ASC" % (Settings.nTopUpdate, currencyId2))
+    fxSheet.FillRange(data, 3, 2, 3, Settings.nTopUpdate + 1)
+    data = queryDb("select USDValue from (select top %d ValueDate, USDValue from HistoricalCurrencyPrice where CurrencyID = %d order by ValueDate DESC) as foo order by ValueDate ASC" % (Settings.nTopUpdate, currencyId3))
+    fxSheet.FillRange(data, 4, 2, 4, Settings.nTopUpdate + 1)
+ 
 def fxForecast():
-    currentPrice = 100
+    currentPrice = getattr(fxSheet, "B%d" % (Settings.nTopUpdate + 1))
     forecast = createBrownian(currentPrice)
-    fxSheet.FillRange(forecast, 1, 2, 1, Settings.gbmNTicks + 1)
+    
+    startRow = getForecastStartRow()
+    endRow = getForecastEndRow()
+    fxSheet.FillRange(forecast, 2, startRow, 2, endRow)
+    
+    ItaliciseRange("A%d" % (startRow), "A%d" % (endRow))
+    ItaliciseRange("B%d" % (startRow), "B%d" % (endRow))
+    ItaliciseRange("C%d" % (startRow), "C%d" % (endRow))    
 
 def fxClearForecast():
     pass
@@ -117,12 +149,17 @@ def fxGraph():
     title = "FX Prices"
     yLabel = "USD"
     
-    names = []
-    times = []
-    USDValues = []
+    names = [fxSheet.B1,fxSheet.C1,fxSheet.D1]
     
-    #fxChart = rslWPFChart(title ,yLabel, names, times, USDValues)
-    #fxChart.Start()
+    startRow = getForecastStartRow()
+    endRow = getForecastEndRow()
+    
+    times = ['26/04/2010 21:57:59', '26/04/2010 21:58:00']
+    USDValues = [[10, 20],[10, 20],[10, 20]]
+    
+    print title, yLabel, names, times, USDValues
+    fxChart = rslWPFChart(title, yLabel, names, times, USDValues)
+    fxChart.Start()
         
 # Country summary
 def queryCountrySummary():
@@ -136,6 +173,8 @@ def runSort():
 
 
 
+readConfig()
+setFXNames()
     
     
     
