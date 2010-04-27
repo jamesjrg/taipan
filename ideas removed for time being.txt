@@ -15,6 +15,7 @@ medium things:
 - balance should actually be taken into account both for what transactions are allowed and what transactions actors take - currently it is totally ignored, and people are totally unaffected if they go into debt
 - script to stress test concurrent aspects
 - on one of the resolver sheets have some distance between points/distance travelled by freighters info, and maybe make it use sql spatial data functions to do calculation
+- add indexes, constraints, stored procedures, data types etc to db uml diagram
 
 big things:
 - Contribute a bit to an OS project?
@@ -31,7 +32,6 @@ faff with database idea:
 - maybe add some views for use by the various processes that need info from database?
 - do some normalisation some time after the design has changed a bit, and doc how I carried this out, and doc what normal form the db is in
 - doc optimization/tuning
-- stored procedures
 - faff with permissions and security and security schemas
 
 ///

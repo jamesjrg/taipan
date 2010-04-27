@@ -93,9 +93,6 @@ def commodForecast():
     forecast = createBrownian(currentPrice)
     commoditySheet.FillRange(forecast, 1, 2, 1, Settings.gbmNTicks + 1)
 
-def commodClearForecast():
-        pass
-
 def commodGraph():
         pass
     
@@ -137,9 +134,6 @@ def fxForecast():
     ItaliciseRange("A%d" % (startRow), "A%d" % (endRow))
     ItaliciseRange("B%d" % (startRow), "B%d" % (endRow))
     ItaliciseRange("C%d" % (startRow), "C%d" % (endRow))    
-
-def fxClearForecast():
-    pass
 
 fxChart = None
 def fxGraph():
