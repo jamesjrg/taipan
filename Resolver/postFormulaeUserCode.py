@@ -31,5 +31,5 @@ TFPSheet.H4 = solveTFPButton
 
 runSortButton = Button("Run iterations")
 runSortButton.Click += runSort
-sortingSheet.H4 = runSortButton
+sortingSheet.F8 = runSortButton
 

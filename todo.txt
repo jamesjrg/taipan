@@ -4,7 +4,7 @@
 * finish all main points of Resolver One view + WPF graphing
 - est 1.5 weeks full time
 
-* read parts of algorithms book chapters Appendix A, Appendix B, then 1,2,3,4,5,6,7, then 10,11,12,13,14, then 
+* read parts of algorithms book chapters 2,3,4,5,6,7, then 10,11,12,13, then 18
 * do algorithms bit
 - est 2.5 weeks full time
 
@@ -22,8 +22,8 @@
 git change log:
 
 right now:
+- wcf service is broken for some reason
 - start working way through algos book
-- Resolver FX forecast should show time as well as price
 - people can now send and receive messages, so make a first attempt at adding in all the logic that goes with this (though also still need to do a little more work with regard to keeping track of client/server ids). for client keeping track of server ids, can just store connections in a dict
 - shippingcomps need to know distance between ports to work out how long journeys take, and banks need to know to work out how much shipping companies should charge for movements. should use db spatial functions. do this on shippingcomp init and create a dict of all the values, and then include distances in msgs to bank? or maybe create a computed database table with all this data, for use by both shippingcomp and bank. 2nd option is better.
 - DecideArrivals and MoveConfirmed in ShippingCompany
@@ -128,8 +128,7 @@ http://www.amsterdamoptimization.com/msf.html
 
 ///
 
-9. sheet that calls AlgoServer with various combinations of parameters (diff lists, diff algorithms), doing each one for a large number of iterations, and gets returned data on time taken. for each alg includes avg/min/max creation time and avg/min/max sort time (creation time not always relevant, otherwise 'N/A). Mark winner for each category with red X.
-add to uml deployment. 
+9. sheet that calls AlgoService sort methods with various combinations of parameters (diff lists, diff algorithms), doing each one for a large number of iterations, and gets returned data on time taken.Mark winner for each category by changing font color.
 
 ///
 
@@ -220,11 +219,14 @@ method 2:
 - using info both in algos book and database book, have an entirely pointless AlgoServer (including on UML diagram, with a note of explanation) that has functions to create various complex data structures and run various algorithms.
 
 implement the following:
+- insertion sort
 - merge sort
-- quick sort
-- quick sort in place
 - heap sort
+- quick sort
+- randomized quick sort
+- counting sort
 - hash table
+- binary search tree
 - red-black tree
 - b-tree
 

@@ -33,36 +33,33 @@ namespace AlgoService
         public static SortReturn MergeSort(int[] data)
         {
             Stopwatch sw = Stopwatch.StartNew();
-            int[] ret = new int[data.Length];
 
             sw.Stop();
-            return new SortReturn(sw.ElapsedMilliseconds, ret);
+            return new SortReturn(sw.ElapsedMilliseconds, data);
         }
 
         public static SortReturn HeapSort(int[] data)
         {
             Stopwatch sw = Stopwatch.StartNew();
-            int[] ret = new int[data.Length];
 
             sw.Stop();
-            return new SortReturn(sw.ElapsedMilliseconds, ret);
+            return new SortReturn(sw.ElapsedMilliseconds, data);
         }
 
         public static SortReturn QuickSort(int[] data)
         {
             Stopwatch sw = Stopwatch.StartNew();
-            int[] ret = new int[data.Length];
 
             sw.Stop();
-            return new SortReturn(sw.ElapsedMilliseconds, ret);
+            return new SortReturn(sw.ElapsedMilliseconds, data);
         }
 
-        public static SortReturn QuickSortInPlace(int[] data)
+        public static SortReturn RandomizedQuickSort(int[] data)
         {
             Stopwatch sw = Stopwatch.StartNew();
 
             sw.Stop();
-            return new SortReturn(sw.ElapsedMilliseconds, ret);
+            return new SortReturn(sw.ElapsedMilliseconds, data);
         }        
     }
 }

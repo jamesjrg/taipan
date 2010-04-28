@@ -9,30 +9,28 @@ namespace AlgoService
 {
     public class AlgoService : IAlgoService
     {
-        public StructureReturn CreateStructure(string type, List<int> data)
+        public SortReturn Sort(string type, int[] data)
         {
-            StructureReturn ret = new StructureReturn();
-            ret.Id = 0;
-            ret.Time = 0;
-            return ret;
+            switch (type)
+            {
+                case "insertion":
+                    return SortAlgs.InsertionSort(data);
+                default:
+                    throw new FaultException("sort type not recognised");
+            }
         }
 
-        public StructureReturn TimeStructureToArray(int structureId)
+        public StructureReturn CreateStructure(string type, int[] data)
         {
             StructureReturn ret = new StructureReturn();
-            ret.Id = 0;
-            ret.Time = 0;
+            ret.id = 0;
+            ret.time = 0;
             return ret;
         }
 
         public bool DeleteStructure(int structureId)
         {
             return true;
-        }
-
-        public int TimeSort(string type, List<int> data)
-        {
-            return 0;
         }
     }
 }

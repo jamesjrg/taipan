@@ -73,4 +73,7 @@
       </FlavorProperties>
     </VisualStudio>
   </ProjectExtensions>
+  <PropertyGroup>
+    <PostBuildEvent>copy $(ProjectDir)\App.config $(SolutionDir)\AlgoServer\bin\Debug\AlgoServer.exe.config</PostBuildEvent>
+  </PropertyGroup>
 </Project>

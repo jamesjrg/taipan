@@ -3,10 +3,25 @@ from System.Data import DataSet
 from System.Data.Odbc import OdbcConnection, OdbcDataAdapter
 from System.Xml import XmlReader, XmlNodeType
 
+#load in some assemblies
+from System.Reflection import Assembly
 import clr
-clr.AddReference("StatsLib")
+def loadAssembly(relPath):
+    dll = os.path.dirname(__file__) + '/' + relPath
+    print "Loading: %s" % dll
+    assembly = Assembly.LoadFile(dll)
+    clr.AddReference(assembly)
+
+loadAssembly("../StatsLib/bin/Debug/StatsLib.dll")
 from TaiPan.StatsLib import StatsLib
+
+loadAssembly("../AlgoServer/AlgoService/bin/Debug/AlgoService.dll")
+from AlgoService import AlgoService
+
+#init some variables
+
 stats = StatsLib()
+algoService = AlgoService()
 
 commoditySheet = workbook['Commodity Prices']
 fxSheet = workbook['FX Rates']
@@ -190,7 +205,10 @@ def queryCountrySummary():
 # sorting algorithms
 
 def runSort():
-    pass
+    arr = Array[int]([3,2,4,7,1,2])
+    ret = algoService.Sort("insertion", arr)
+    print ret.time
+    print ret.sortedData
 
 
 

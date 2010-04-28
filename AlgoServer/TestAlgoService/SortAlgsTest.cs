@@ -70,7 +70,7 @@ namespace TestAlgoService
         {
             int[] data = null; // TODO: Initialize to an appropriate value
             int[] expected = null; // TODO: Initialize to an appropriate value
-            int[] actual;
+            SortReturn actual;
             actual = SortAlgs.MergeSort(data);
             Assert.AreEqual(expected, actual);
             Assert.Inconclusive("Verify the correctness of this test method.");
@@ -84,7 +84,7 @@ namespace TestAlgoService
         {
             int[] data = null; // TODO: Initialize to an appropriate value
             int[] expected = null; // TODO: Initialize to an appropriate value
-            int[] actual;
+            SortReturn actual;
             actual = SortAlgs.QuickSort(data);
             Assert.AreEqual(expected, actual);
             Assert.Inconclusive("Verify the correctness of this test method.");

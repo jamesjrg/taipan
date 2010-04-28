@@ -1,1 +1,0 @@
-copy StatsLib\bin\Debug\StatsLib.dll Resolver

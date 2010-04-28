@@ -13,6 +13,7 @@ small things:
 - freighters should not always accept every single advertised move, like maybe they have limited freighters, or use idea from "big things" where freighters keep track of their positions
 
 medium things:
+- actually use the algservice data structure methods somewhere
 - when traders sell warehoused goods to make profit on fateandguesswork prediction, prices should rebound back towards where they were before. this would require fateandgw keeping track of the price jumps that it has created, and then partially "undoing" them after sale of warehoused goods/futures settle
 - balance should actually be taken into account both for what transactions are allowed and what transactions actors take - currently it is totally ignored, and people are totally unaffected if they go into debt
 - script to stress test concurrent aspects

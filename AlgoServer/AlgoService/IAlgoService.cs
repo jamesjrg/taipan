@@ -12,7 +12,7 @@ namespace AlgoService
     public interface IAlgoService
     {
         [OperationContract]
-        SortReturn InsertionSort(string type, int[] data);
+        SortReturn Sort(string type, int[] data);
 
         [OperationContract]
         StructureReturn CreateStructure(string type, int[] data);        
