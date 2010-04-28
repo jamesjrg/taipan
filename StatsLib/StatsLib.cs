@@ -7,11 +7,13 @@ namespace TaiPan.StatsLib
 {
     public class StatsLib
     {
+        //static member, we want to reuse it to get better random numbers (and if we didn't, we'd have to reseed
+        //it manually with each library call)
+        Random rand = new Random();
+
         //Box-Muller Transform of gaussian random variable
-        //XXX - Box Muller should use sin and cos to provide two vars, not one
-        public static double[] NormStdRand(int number)
+        public double[] NormStdRand(int number)
         {
-            Random rand = new Random();
             double[] ret = new double[number];
 
             //note indices
@@ -34,7 +36,7 @@ namespace TaiPan.StatsLib
             return ret;
         }
 
-        public static double[] NormRand(double mean, double stdDev, int number)
+        public double[] NormRand(double mean, double stdDev, int number)
         {
             double[]  values = NormStdRand(number);
 
@@ -49,7 +51,7 @@ namespace TaiPan.StatsLib
         //http://en.wikipedia.org/wiki/Geometric_Brownian_motion
         //http://en.wikipedia.org/wiki/Wiener_process	
         //http://www.scipy.org/Cookbook/BrownianMotion
-        public static decimal[] GBMSequence(decimal currentVal, decimal tickVolatility, int number)
+        public decimal[] GBMSequence(decimal currentVal, decimal tickVolatility, int number)
         {
             decimal[] ret = new decimal[number];
             double[] sample = NormStdRand(number);

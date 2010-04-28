@@ -139,39 +139,28 @@ namespace TaiPan.Common.NetContract
         }
     }
 
-    public class AdvertiseMoveMsg
+    public class MoveContractMsg
     {
-        public AdvertiseMoveMsg()
+        public MoveContractMsg() { }
+        public MoveContractMsg(int warehouseID)
         {
+            this.warehouseID = warehouseID;
         }
+
+        public int warehouseID;
     }
 
-    public class ConfirmMoveMsg
+    public class MovingMsg
     {
-        public ConfirmMoveMsg()
+        public MovingMsg() { }
+        public MovingMsg(int warehouseID, DateTime time)
         {
+            this.warehouseID = warehouseID;
+            this.time = time;
         }
-    }
 
-    public class DepartureMsg
-    {
-        public DepartureMsg()
-        {
-        }
-    }
-
-    public class ArrivalMsg
-    {
-        public ArrivalMsg()
-        {
-        }
-    }
-
-    public class AcceptMoveMsg
-    {
-        public AcceptMoveMsg()
-        {
-        }
+        public int warehouseID;
+        public DateTime time;
     }
 
     public class BuyConfirmMsg
@@ -252,17 +241,15 @@ namespace TaiPan.Common.NetContract
                 case NetMsgType.Future:
                     return typeof(FutureMsg);
                 case NetMsgType.AdvertiseMove:
-                    return typeof(AdvertiseMoveMsg);
                 case NetMsgType.ConfirmMove:
-                    return typeof(ConfirmMoveMsg);
+                    return typeof(MoveContractMsg);
 
                 //shippingcompany
                 case NetMsgType.Departure:
-                    return typeof(DepartureMsg);
                 case NetMsgType.Arrival:
-                    return typeof(ArrivalMsg);
+                    return typeof(MovingMsg);
                 case NetMsgType.AcceptMove:
-                    return typeof(AcceptMoveMsg);
+                    return typeof(MoveContractMsg);
 
                 //bank
                 case NetMsgType.BuyConfirm:

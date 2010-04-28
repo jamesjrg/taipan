@@ -1,4 +1,4 @@
-#See README - this code based on work by various other people
+#See README - this file mostly the work of Greg Bray, which is in turn based on the work of Li Ghao, Michael Foord and others
 #Test usage:
 #execfile("d:\\My Documents\\Resolver\\rslWPFCharts\\ResolverOneCode\\rslWPFChart.py")
 #myChart = rslWPFChart("title","yaxis", ["a","b"], ["1/1/2009","1/2/2009"],[[0.1,0.2],[0.3,0.4]])

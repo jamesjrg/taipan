@@ -9,6 +9,8 @@ small things:
 - export class documentation from XML doc strings
 - have option to actually return the sorted list from alg server
 - on resolver summary sheets, add stats on total distances travelled by freighters
+- maybe mention my thoughts on benefits of selective timed functions vs recalcualting whole workbook with RecalculateAfter - e.g. readConfig would have to be reupdated every tick, and combining constant update with buttons that create initial data just doesn't really work
+- freighters should not always accept every single advertised move, like maybe they have limited freighters, or use idea from "big things" where freighters keep track of their positions
 
 medium things:
 - when traders sell warehoused goods to make profit on fateandguesswork prediction, prices should rebound back towards where they were before. this would require fateandgw keeping track of the price jumps that it has created, and then partially "undoing" them after sale of warehoused goods/futures settle
@@ -16,6 +18,7 @@ medium things:
 - script to stress test concurrent aspects
 - on one of the resolver sheets have some distance between points/distance travelled by freighters info, and maybe make it use sql spatial data functions to do calculation
 - add indexes, constraints, stored procedures, data types etc to db uml diagram
+- there should be multiple random walks for each sequence on the WPF graphs, not just one
 
 big things:
 - Contribute a bit to an OS project?

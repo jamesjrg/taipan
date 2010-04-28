@@ -6,6 +6,7 @@ from System.Xml import XmlReader, XmlNodeType
 import clr
 clr.AddReference("StatsLib")
 from TaiPan.StatsLib import StatsLib
+stats = StatsLib()
 
 commoditySheet = workbook['Commodity Prices']
 fxSheet = workbook['FX Rates']
@@ -62,20 +63,21 @@ def readConfig():
                 attribs[reader.Name] = reader.Value
                 
             if 'key' in attribs:
-                if attribs['key'] == 'TickVolatility':
-                    Settings.tickVolatility = float(attribs['value'])
-                elif attribs['key'] == 'CurrencyAccuracy':
-                    Settings.currencyAccuracy = int(attribs['value'])
+                key = attribs['key']
+                if key == 'TickVolatility':
+                    Settings.config[key] = float(attribs['value'])
+                else:
+                    Settings.config[key] = int(attribs['value'])
             elif 'name' in attribs and attribs['name'] == 'taipan-r':
                 Settings.connectString = 'Driver={SQL Server};' + attribs['connectionString'].replace(' ', '')
                
 #GBM functions        
         
 def createBrownian(currentPrice):
-    print 'createBrownian: firstVal:%f, volatility:%f nticks:%d' % (currentPrice, Settings.tickVolatility, Settings.gbmNTicks)
-    seq = StatsLib.GBMSequence(currentPrice, Settings.tickVolatility, Settings.gbmNTicks)
+    print 'createBrownian: firstVal:%f, volatility:%f nticks:%d' % (currentPrice, Settings.config['TickVolatility'], Settings.gbmNTicks)
+    seq = stats.GBMSequence(currentPrice, Settings.config['TickVolatility'], Settings.gbmNTicks)
     for i in range(len(seq)):
-        seq[i] = round(seq[i], Settings.currencyAccuracy)
+        seq[i] = round(seq[i], Settings.config['CurrencyAccuracy'])
     return seq
 
 # Commodity Prices
@@ -124,16 +126,35 @@ def updateFXRates():
     fxSheet.FillRange(data, 4, 2, 4, Settings.nTopUpdate + 1)
  
 def fxForecast():
-    currentPrice = getattr(fxSheet, "B%d" % (Settings.nTopUpdate + 1))
-    forecast = createBrownian(currentPrice)
-    
     startRow = getForecastStartRow()
     endRow = getForecastEndRow()
+    
+    #times
+    currTime = getattr(fxSheet, "A%d" % (Settings.nTopUpdate + 1))
+    times = []
+    for i in range(Settings.gbmNTicks):
+        currTime = currTime.AddSeconds(Settings.config['MainLoopTick'] / 1000)
+        times.append(currTime)
+    fxSheet.FillRange(times, 1, startRow, 1, endRow)
+
+    #prices
+    currentPrice = getattr(fxSheet, "B%d" % (Settings.nTopUpdate + 1))
+    forecast = createBrownian(currentPrice)    
     fxSheet.FillRange(forecast, 2, startRow, 2, endRow)
     
+    currentPrice = getattr(fxSheet, "C%d" % (Settings.nTopUpdate + 1))
+    forecast = createBrownian(currentPrice)    
+    fxSheet.FillRange(forecast, 3, startRow, 3, endRow)
+    
+    currentPrice = getattr(fxSheet, "D%d" % (Settings.nTopUpdate + 1))
+    forecast = createBrownian(currentPrice)    
+    fxSheet.FillRange(forecast, 4, startRow, 4, endRow)
+    
+    #italicise
     ItaliciseRange("A%d" % (startRow), "A%d" % (endRow))
     ItaliciseRange("B%d" % (startRow), "B%d" % (endRow))
-    ItaliciseRange("C%d" % (startRow), "C%d" % (endRow))    
+    ItaliciseRange("C%d" % (startRow), "C%d" % (endRow))
+    ItaliciseRange("D%d" % (startRow), "D%d" % (endRow))    
 
 fxChart = None
 def fxGraph():
@@ -148,10 +169,16 @@ def fxGraph():
     startRow = getForecastStartRow()
     endRow = getForecastEndRow()
     
-    times = ['26/04/2010 21:57:59', '26/04/2010 21:58:00']
-    USDValues = [[10, 20],[10, 20],[10, 20]]
+    times = []
+    for row in fxSheet.Rows[2:]:
+        times.Add(str(row[1]))
+
+    USDValues = [[],[],[]]
+    for row in fxSheet.Rows[2:]:
+        USDValues[0].Add(row[2])
+        USDValues[1].Add(row[3])
+        USDValues[2].Add(row[4])
     
-    print title, yLabel, names, times, USDValues
     fxChart = rslWPFChart(title, yLabel, names, times, USDValues)
     fxChart.Start()
         

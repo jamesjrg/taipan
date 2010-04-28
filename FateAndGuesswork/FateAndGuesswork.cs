@@ -22,6 +22,7 @@ namespace TaiPan.FateAndGuesswork
         private StockMsg stocks = new StockMsg();
 
         private Random random = new Random();
+        private StatsLib.StatsLib stats = new StatsLib.StatsLib();
 
         private class CommodityInfo
         {
@@ -121,7 +122,7 @@ namespace TaiPan.FateAndGuesswork
             commodityMsg.time = DateTime.Now;
             for (int i = 0; i != commodityInfos.Count; ++i)
             {
-                decimal nextVal = StatsLib.StatsLib.GBMSequence(commodityInfos[i].localPrice, TickVolatility, 1)[0];
+                decimal nextVal = stats.GBMSequence(commodityInfos[i].localPrice, TickVolatility, 1)[0];
                 commodityInfos[i].localPrice = nextVal;
                 commodityMsg.items[i].localPrice = nextVal;
             }
@@ -132,7 +133,7 @@ namespace TaiPan.FateAndGuesswork
             stocks.time = DateTime.Now;
             for (int i = 0; i != stocks.items.Length; ++i)
             {
-                decimal nextVal = StatsLib.StatsLib.GBMSequence(stocks.items[i].price, TickVolatility, 1)[0];
+                decimal nextVal = stats.GBMSequence(stocks.items[i].price, TickVolatility, 1)[0];
                 stocks.items[i].price = nextVal;
             }
         }

@@ -18,8 +18,24 @@ namespace TaiPan.ShippingCompany
         private Client bankClient;
         private Dictionary<int, Client> traderClients = new Dictionary<int, Client>();
 
-        private List<DepartureMsg> departures = new List<DepartureMsg>();
-        private List<ArrivalMsg> arrivals = new List<ArrivalMsg>();
+        private List<MovingMsg> departures = new List<MovingMsg>();
+        private List<MovingMsg> arrivals = new List<MovingMsg>();
+
+        private List<ShipInProgress> shipsInProgress = new List<ShipInProgress>();
+        private List<MoveContractMsg> movesWishes = new List<MoveContractMsg>();
+
+        private class ShipInProgress
+        {
+            public ShipInProgress(int warehouseID, DateTime plannedArrivalTime)
+            {
+                this.warehouseID = warehouseID;
+                this.plannedArrivalTime = plannedArrivalTime;
+            }
+
+            public int warehouseID;
+            public DateTime plannedArrivalTime;
+        }
+
 
         public ShippingCompany(string[] args)
         {
@@ -47,21 +63,20 @@ namespace TaiPan.ShippingCompany
 
         protected override bool Run()
         {
-            DecideDepartures();
             DecideArrivals();
 
             foreach (var trader in traderClients)
             {
-                List<DeserializedMsg> traderIncoming = trader.IncomingDeserializeAll();
+                List<DeserializedMsg> traderIncoming = trader.Value.IncomingDeserializeAll();
                 foreach (var msg in traderIncoming)
                 {
                     switch (msg.type)
                     {
                         case NetMsgType.AdvertiseMove:
-                            MoveAdvertised((AdvertiseMoveMsg)(msg.data));
+                            MoveAdvertised((MoveContractMsg)(msg.data));
                             break;
                         case NetMsgType.ConfirmMove:
-                            MoveConfirmed((ConfirmMoveMsg)(msg.data));
+                            MoveConfirmed((MoveContractMsg)(msg.data));
                             break;
                         default:
                             throw new ApplicationException("fxClient received wrong type of net message");
@@ -70,7 +85,7 @@ namespace TaiPan.ShippingCompany
             }
 
             //foreach (var moveWish in moveWishes)
-            //  traderClient.Send(NetContract.Serialize(NetMsgType., moveWish));
+            //    traderClient.Send(NetContract.Serialize(NetMsgType, moveWish));
 
             foreach (var departure in departures)
                 bankClient.Send(NetContract.Serialize(NetMsgType.Departure, departure));
@@ -81,9 +96,20 @@ namespace TaiPan.ShippingCompany
             return true;
         }
 
-        private void DecideDepartures() {}
-        private void DecideArrivals() { }
-        private void MoveAdvertised(AdvertiseMoveMsg msg) { }
-        private void MoveConfirmed(ConfirmMoveMsg msg) { }
+        private void DecideArrivals()
+        {
+            arrivals.Add(new MovingMsg(1, DateTime.Now));
+        }
+
+        private void MoveAdvertised(MoveContractMsg msg)
+        {
+            movesWishes.Add(new MoveContractMsg(msg.warehouseID));
+        }
+
+        private void MoveConfirmed(MoveContractMsg msg)
+        {
+            departures.Add(new MovingMsg(1, DateTime.Now));
+            shipsInProgress.Add(new ShipInProgress(1, DateTime.Now.AddSeconds(5)));
+        }
     }
 }

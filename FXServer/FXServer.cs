@@ -18,6 +18,8 @@ namespace TaiPan.FXServer
     {
         private Server bankServer;
         private CurrencyMsg currencies = new CurrencyMsg();
+
+        private StatsLib.StatsLib stats = new StatsLib.StatsLib();
         private Random random = new Random();
 
         public FXServer(string[] args)
@@ -57,7 +59,7 @@ namespace TaiPan.FXServer
             currencies.time = DateTime.Now;
             for (int i = 0; i != currencies.items.Length; ++i)
             {
-                decimal nextVal = StatsLib.StatsLib.GBMSequence(currencies.items[i].USDValue, TickVolatility, 1)[0];
+                decimal nextVal =stats.GBMSequence(currencies.items[i].USDValue, TickVolatility, 1)[0];
                 currencies.items[i].USDValue = nextVal;
             }
         }
