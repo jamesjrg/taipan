@@ -63,6 +63,8 @@ div.wrapper {font: 100% Sans-serif; background-color: #D2DEFF; width: 94%; paddi
 
 <p>Within individual tables there are no repeating groups, no non-prime attributes that are functionally determined by only part of a candidate key, no non-prime attributes transitively dependent on a candidate key, and no prime attributes functionally determined by a proper subset of a candidate key. As such the schema is in Boyce-Codd normal form.</p>
 
+<p>makes use of various intermediate-level SQL features (spatial data, stored procedures, complex integrity constraints, triggers, cursors, etc)</p>
+
 <p>The vast majority of data manipulation is performed in C# and Python, with the database merely responding to queries, so I have not had to write any stored procedures or very complex SQL scripts. Still, I have made some minor use of triggers, constraints, and cursors to do a little data processing within the database where it makes sense to do so.</p>
 
 <p>I have given some basic thought to security and permissions - there are seperate read-only and read-write logins, and processes only use the read-write login where necessary - but complex permissions, views and security schemas would seem rather too contrived for a project being developed and run by a single person.</p>

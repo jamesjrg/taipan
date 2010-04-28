@@ -60,6 +60,14 @@ namespace AlgoService
 
             sw.Stop();
             return new SortReturn(sw.ElapsedMilliseconds, data);
-        }        
+        }
+
+        public static SortReturn CountingSort(int[] data, int maxPossible)
+        {
+            Stopwatch sw = Stopwatch.StartNew();
+
+            sw.Stop();
+            return new SortReturn(sw.ElapsedMilliseconds, data);
+        }  
     }
 }

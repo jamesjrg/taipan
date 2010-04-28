@@ -15,7 +15,16 @@ namespace AlgoService
         SortReturn Sort(string type, int[] data);
 
         [OperationContract]
-        StructureReturn CreateStructure(string type, int[] data);        
+        SortReturn CountingSort(int[] data, int maxPossible);
+
+        [OperationContract]
+        int CreateStructure(string type, int[] data);
+
+        [OperationContract]
+        void DeleteStructure(int id);
+
+        [OperationContract]
+        int Search(int id, int key);
     }
 
     [DataContract]
@@ -29,12 +38,5 @@ namespace AlgoService
 
         public long time = -1;
         public int[] sortedData;
-    }
-
-    [DataContract]
-    public class StructureReturn
-    {
-        public int id = -1;
-        public long time = -1;
     }
 }

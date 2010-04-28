@@ -22,8 +22,11 @@
 git change log:
 
 right now:
-- wcf service is broken for some reason
-- start working way through algos book
+- read about heap sort, quicksort, counting sort, binary search trees, rb trees, b trees, implement them
+- read about linear programming, graph problems, tsp, convert C# code to Python
+
+
+soon:
 - people can now send and receive messages, so make a first attempt at adding in all the logic that goes with this (though also still need to do a little more work with regard to keeping track of client/server ids). for client keeping track of server ids, can just store connections in a dict
 - shippingcomps need to know distance between ports to work out how long journeys take, and banks need to know to work out how much shipping companies should charge for movements. should use db spatial functions. do this on shippingcomp init and create a dict of all the values, and then include distances in msgs to bank? or maybe create a computed database table with all this data, for use by both shippingcomp and bank. 2nd option is better.
 - DecideArrivals and MoveConfirmed in ShippingCompany
@@ -254,7 +257,7 @@ doc how even without 5 second delay in taking contracts for movements off broadc
 
 short version for CV etc:
 
-•	A C# .NET, SQL Server and Python project. A large number of heterogeneous, multithreaded C# processes interact with each other via TCP sockets. Much of the underlying state of the system is stored in a MS SQL Server instance, which makes use of various intermediate-level SQL features (spatial data, stored procedures, complex integrity constraints, triggers, cursors, etc). The system also includes implementations of B-Trees, Red-Black trees, hash tables, various sorting algorithms, and algorithms for producing various types of statistical distribution.
+•	A C# .NET, SQL Server and Python project. A large number of heterogeneous, multithreaded C# processes interact with each other via TCP sockets. Much of the underlying state of the system is stored in a MS SQL Server instance. The system also includes implementations of B-Trees, Red-Black trees, hash tables, various sorting algorithms, and algorithms for producing various types of statistical distribution.
 A user interface to the system is provided in the form of an IronPython-based spreadsheet that makes queries both on the database and on a C# SOAP web service, and calls a seperate C# process to produce interactive graphs of the summary data. The spreadsheet also calls a mathematical optimization framework to solve a simple linear programming problem. The system is partly covered by unit tests, and the documentation for the project includes a variety of UML diagrams. Around 220 hours work so far.
 
 temp version:

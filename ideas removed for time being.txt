@@ -20,6 +20,7 @@ medium things:
 - on one of the resolver sheets have some distance between points/distance travelled by freighters info, and maybe make it use sql spatial data functions to do calculation
 - add indexes, constraints, stored procedures, data types etc to db uml diagram
 - there should be multiple random walks for each sequence on the WPF graphs, not just one
+- open addressing hash table
 
 big things:
 - Contribute a bit to an OS project?
