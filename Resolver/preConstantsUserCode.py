@@ -114,6 +114,9 @@ def commodGraph():
         pass
     
 # FX rates
+
+USDID = None
+currencyIds = [None,None,None]
    
 def setFXNames():
     data = queryDb("select name from Currency order by name asc")
@@ -129,15 +132,20 @@ def updateFXRates():
     fxSheet.C1 = idsAndCodes[1,1]
     fxSheet.D1 = idsAndCodes[1,2]
    
-    currencyId1 = idsAndCodes[0,0]
-    currencyId2 = idsAndCodes[0,1]
-    currencyId3 = idsAndCodes[0,2]
+    currencyIds[0] = idsAndCodes[0,0]
+    currencyIds[1] = idsAndCodes[0,1]
+    currencyIds[2] = idsAndCodes[0,2]
     
-    data = queryDb("select * from (select top %d ValueDate, USDValue from HistoricalCurrencyPrice where CurrencyID = %d order by ValueDate DESC) as foo order by ValueDate ASC" % (Settings.nTopUpdate, currencyId1))
+    for i in range(3):
+        if idsAndCodes[1,i] == 'USD':
+            USDID = idsAndCodes[0,i]
+            break
+    
+    data = queryDb("select * from (select top %d ValueDate, USDValue from HistoricalCurrencyPrice where CurrencyID = %d order by ValueDate DESC) as foo order by ValueDate ASC" % (Settings.nTopUpdate, currencyIds[0]))
     fxSheet.FillRange(data, 1, 2, 2, Settings.nTopUpdate + 1)
-    data = queryDb("select USDValue from (select top %d ValueDate, USDValue from HistoricalCurrencyPrice where CurrencyID = %d order by ValueDate DESC) as foo order by ValueDate ASC" % (Settings.nTopUpdate, currencyId2))
+    data = queryDb("select USDValue from (select top %d ValueDate, USDValue from HistoricalCurrencyPrice where CurrencyID = %d order by ValueDate DESC) as foo order by ValueDate ASC" % (Settings.nTopUpdate, currencyIds[1]))
     fxSheet.FillRange(data, 3, 2, 3, Settings.nTopUpdate + 1)
-    data = queryDb("select USDValue from (select top %d ValueDate, USDValue from HistoricalCurrencyPrice where CurrencyID = %d order by ValueDate DESC) as foo order by ValueDate ASC" % (Settings.nTopUpdate, currencyId3))
+    data = queryDb("select USDValue from (select top %d ValueDate, USDValue from HistoricalCurrencyPrice where CurrencyID = %d order by ValueDate DESC) as foo order by ValueDate ASC" % (Settings.nTopUpdate, currencyIds[2]))
     fxSheet.FillRange(data, 4, 2, 4, Settings.nTopUpdate + 1)
  
 def fxForecast():
@@ -153,24 +161,26 @@ def fxForecast():
     fxSheet.FillRange(times, 1, startRow, 1, endRow)
 
     #prices
-    currentPrice = getattr(fxSheet, "B%d" % (Settings.nTopUpdate + 1))
-    forecast = createBrownian(currentPrice)    
-    fxSheet.FillRange(forecast, 2, startRow, 2, endRow)
+    #should probably use zip, but I hate unreadable Python one liners
+    for i, id in enumerate(currencyIds):
+        #USD doesn't fluctuate vs USD
+        if id == USDID:
+            continue
+            
+        if i == 0:
+            letter = 'B'
+        elif i == 1:
+            letter = 'C'
+        else:
+            letter = 'D'         
     
-    currentPrice = getattr(fxSheet, "C%d" % (Settings.nTopUpdate + 1))
-    forecast = createBrownian(currentPrice)    
-    fxSheet.FillRange(forecast, 3, startRow, 3, endRow)
+        currentPrice = getattr(fxSheet, "%s%d" % (letter, Settings.nTopUpdate + 1))
+        forecast = createBrownian(currentPrice)    
+        fxSheet.FillRange(forecast, 2 + i, startRow, 2 + i, endRow)
+        
+        #style text
+        ItaliciseRange("%s%d" % (letter, startRow), "%s%d" % (letter, endRow))
     
-    currentPrice = getattr(fxSheet, "D%d" % (Settings.nTopUpdate + 1))
-    forecast = createBrownian(currentPrice)    
-    fxSheet.FillRange(forecast, 4, startRow, 4, endRow)
-    
-    #italicise
-    ItaliciseRange("A%d" % (startRow), "A%d" % (endRow))
-    ItaliciseRange("B%d" % (startRow), "B%d" % (endRow))
-    ItaliciseRange("C%d" % (startRow), "C%d" % (endRow))
-    ItaliciseRange("D%d" % (startRow), "D%d" % (endRow))    
-
 fxChart = None
 def fxGraph():
     global fxChart

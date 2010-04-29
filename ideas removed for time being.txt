@@ -13,6 +13,7 @@ small things:
 - freighters should not always accept every single advertised move, like maybe they have limited freighters, or use idea from "big things" where freighters keep track of their positions
 
 medium things:
+- add graphing to spreadsheets calls on algoservice
 - actually use the algservice data structure methods somewhere
 - when traders sell warehoused goods to make profit on fateandguesswork prediction, prices should rebound back towards where they were before. this would require fateandgw keeping track of the price jumps that it has created, and then partially "undoing" them after sale of warehoused goods/futures settle
 - balance should actually be taken into account both for what transactions are allowed and what transactions actors take - currently it is totally ignored, and people are totally unaffected if they go into debt
@@ -21,6 +22,7 @@ medium things:
 - add indexes, constraints, stored procedures, data types etc to db uml diagram
 - there should be multiple random walks for each sequence on the WPF graphs, not just one
 - open addressing hash table
+- brownian random walk on WPF graph should be dashed line. This is far more effort than I first imagined, because brushes are applied to each time series as a whole, so I would have to add a totally new list of data series for the brownian points, and then in every single function that mentions the data series, I would have to add special case code for forecast series (e.g. they shouldn't have a key)
 
 big things:
 - Contribute a bit to an OS project?

@@ -1,51 +1,76 @@
+#This code based on work by Nathan Brixius, see README
+
 import clr
 clr.AddReference('Microsoft.Solver.Foundation')
-clr.AddReference('System.Data')
-clr.AddReference('System.Data.DataSetExtensions')
-
 from Microsoft.SolverFoundation.Services import *
-from System.Data import DataSet,DataTable,DataRow
-from System.Data.DataTableExtensions import *
-from System.IO import *
-from random import randint
 
-# OML Model string
-strModel = "Model[Parameters[Sets,I,J],Parameters[Integers,d[I,J]],Decisions[Integers[1,9],x[I,J]],Constraints[Foreach[{i,I},{j,J},x[i,j]==d[i,j] | d[i,j]==0],Foreach[{i,I},Unequal[Foreach[{j,J},x[i,j]]]],Foreach[{j,J},Unequal[Foreach[{i,I},x[i,j]]]],Foreach[{ib,3},Foreach[{jb,3},Unequal[Foreach[{i,ib*3,ib*3+3},{j,jb*3,jb*3+3},x[i,j]]]]]]]"
-context = SolverContext.GetContext();
-context.LoadModel(FileFormat.OML, StringReader(strModel));
+import math
 
-def solveTFP():
-    p = context.CurrentModel.Parameters
-    for param in p:
-        if param.Name == "d":
-            ds = DataSet()
-            table = ds.Tables.Add("board")
-            table.Columns.Add("Row",int)
-            table.Columns.Add("Col",int)
-            table.Columns.Add("Value",int)
-            #the grid read logic and update it
-            sheet1 = workbook['Sheet1']
-            
-            for i in range(2,11):
-                for j in range(6,15):
-                    if sheet1.Cells[i,j].Value == Empty:
-                        value = 0
-                    else:
-                        value = sheet1.Cells[i,j].Value
-                    table.Rows.Add(i-2,j-6,value)
-            param.SetBinding[DataRow](AsEnumerable(table),"Value","Row","Col")
+class Coordinate:
+    def __init__(self, name, x, y):
+        self.name = name
+        self.x = x
+        self.y = y
+
+    #Latitude in radians.
+    def latitude():
+        return math.pi * (math.trunc(self.x) + 5 * (self.x - math.trunc(self.x)) / 3) / 180
+
+    #Longitude in radians.
+    def longitude():
+        return math.pi * (math.trunc(self.y) + 5 * (self.y - math.trunc(self.y)) / 3) / 180
+
+    #Geographic distance between two points (as an integer).
+    def distance(p):
+        q1 = math.cos(self.longitude() - p.longitude())
+        q2 = math.cos(self.latitude() - p.latitude())
+        q3 = math.cos(self.latitude() + p.latitude())
+        #There may rounding difficulties her if the points are close together...just sayin'.
+        return int(6378.388 * math.acos(0.5 * ((1 + q1) * q2 - (1 - q1) * q3)) + 1)
+
+class Arc:
+    city1 = None
+    city2 = None
+    distance = None
     
-    solution = context.Solve()
-    r = solution.Decisions
-    for w in r:
-        e = w
-    s = e.ToString().split(', ')
-    import re
-    pattern = re.compile(r'^\D*(\d{1})\D*(\d{1})\D*(\d{1})\D*(\d*)$')
-    for f in s:
-        [i,j,v,a] = pattern.search(f).groups()
-        sheet1.Cells[int(i)+2,int(j)+17].Value = int(v)
+# Burma14 from TSPLIB. Optimal tour = 3323.
+data = [
+  Coordinate(0, 16.47, 96.10),
+  Coordinate(1, 16.47, 94.44),
+  Coordinate(2, 20.09, 92.54),
+  Coordinate(3, 22.39, 93.37),
+  Coordinate(4, 25.23, 97.24),
+  Coordinate(5, 22.00, 96.05),
+  Coordinate(6, 20.47, 97.02),
+  Coordinate(7, 17.20, 96.29),
+  Coordinate(8, 16.30, 97.38),
+  Coordinate(9, 14.05, 98.12),
+  Coordinate(10, 16.53, 97.38),
+  Coordinate(11, 21.52, 95.59),
+  Coordinate(12, 19.41, 97.13),
+  Coordinate(13, 20.09, 94.55)]
         
+def solveTFP():
+    #Set up model
+    context = SolverContext.GetContext();
+    model = context.CreateModel();
+    
+    #Parameters
+    city = Set(Domain.IntegerNonnegative, "city")
+    
+    #Solve
+    solution = context.Solve()
+    
+    #Print result
+    print "Cost = %f" % goal.ToDouble()
+    print "Tour:"
+    
+    #XXX should probably be a generator, maybe
+    tours = [p[2] for p in assign.GetValues() if p[0] > 0.9]
+    
+    for tour in tours:
+        print "%s ->" % tour
+         
         
         
         

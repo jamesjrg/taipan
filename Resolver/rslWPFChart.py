@@ -39,8 +39,8 @@ class WPFChartForm(Form):
     
     def __init__(self):
         Form.__init__(self)
-        self.Text = "WPF Chart Example"
-        self.Name = "WPF Chart Example"
+        self.Text = "Tai-Pan Chart"
+        self.Name = "Tai-Pan Chart"
         self.Width = 640
         self.Height = 480
     

@@ -11,11 +11,6 @@ exec procBalanceUpdate 1, '2010-04-15T20:10:05', 10100;
 exec procBalanceUpdate 1, '2010-04-15T20:10:10', 98000;
 exec procBalanceUpdate 1, '2010-04-15T20:10:15', 54000;
 
-exec procCurrencyUpdate 1, '2010-04-15T20:10:00', 1.01;
-exec procCurrencyUpdate 1, '2010-04-15T20:10:05', 0.98;
-exec procCurrencyUpdate 1, '2010-04-15T20:10:10', 1;
-exec procCurrencyUpdate 1, '2010-04-15T20:10:15', 1.03;
-
 exec procPortComodUpdate 1, 1, '2010-04-15T20:10:00', 100;
 exec procPortComodUpdate 1, 1, '2010-04-15T20:10:05', 101;
 exec procPortComodUpdate 1, 1, '2010-04-15T20:10:10', 98;

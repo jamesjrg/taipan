@@ -19,9 +19,7 @@ div.wrapper {font: 100% Sans-serif; background-color: #D2DEFF; width: 94%; paddi
 
 <h3>Introduction</h3>
 
-<h3>BOTH THE PROJECT AND THIS DOCUMENT ARE FLAGRANTLY A WORK IN PROGRESS</h3>
-
-<p>"Tai-Pan" is a C# .NET, SQL Server and Python project written to improve my knowledge of various aspects of computer science and software engineering. A large number of heterogeneous multithreaded C# processes interact with each other by sending and receiving messages via TCP sockets. These processes manipulate data using various algorithms and data structures for producing and manipulating sequences of numbers. Much of the underlying state of the system is stored in a MS SQL Server instance. A user interface to the system is provided in the form of an IronPython-based spreadsheet that performs simplistic mathematical modelling (with help from Microsoft Solver Foundation). The spreadsheet is also linked to a C# program for producing WPF graphs. The project also uses UML, unit testing, source control, etc.</p>
+<p>"Tai-Pan" is a C# .NET, SQL Server and Python project written to improve my knowledge of various aspects of computer science and software engineering. A large number of heterogeneous, multithreaded C# processes interact with each other via TCP sockets. Much of the underlying state of the system is stored in a MS SQL Server instance. The system includes implementations of various data structures and algorithms (e.g. B-Trees, hash tables, numerous sorting algorithms, Gaussian and geometric Brownian probability distributions). A user interface to the system is provided in the form of an IronPython-based spreadsheet that a) makes queries on both the database and on a C# SOAP web service a) makes queries on both the database and on a C# SOAP web service b) loads a C# WPF assembly to produce interactive graphs of the summary data and c) utilises a mathematical optimization framework to solve a simple linear programming problem. The project also makes use of UML, unit testing, Git, etc. </p>
 
 <p>This web page provides an outline of the project, divided into the following sections:</p>
 <ul>
@@ -41,48 +39,48 @@ div.wrapper {font: 100% Sans-serif; background-color: #D2DEFF; width: 94%; paddi
 
 <p>The system is seperated into several different processes, and some of these processes have multiple copies running at once. Though in the above deployment diagram each process is running on a different node, in reality I test the program by having all the processes running on a single computer and communicating via localhost.</p>
 
-<p>With the exception of "AlgoServer", all of the processes interact as a single system. AlgoServer is an extremely contrived service which was mostly written as an exercise in learning more about various algorithms and complex ordered structures (see <a href="#hmath">math section</a>).</p>
+<p>With the exception of "AlgoServer", all of the processes interact as a single system. AlgoServer is an extremely contrived service which was mostly written as an exercise in learning more about various sorting algorithms and complex ordered structures (see <a href="#hmath">math section</a>).</p>
 
 <p>The system makes use of various design patterns both within each process and in the system as a whole. Patterns seen in system as a whole include the n-tier division of data, logic and view (the SQL Server instance, C# processes, and IronPython spreadsheet), and the use of the Bank as a mediator to the database (no other process has write access, leaving the Bank process to manage the stored state of the system).</p>
 
-<p>I used various standard software engineering techniques in the design and construction of the system. Near the beginning of the design process I created several UML diagrams describing various aspects of the system (as can be seen in various places within this document). I have written unit tests against the code to make the system more reliable and resistant to bugs. As with all projects I have worked on since around 2004 (commercial and non-commercial), the source is under version control (in this case git). See the <a href="#hlinks">links section</a> for a link to browse the repository.</p>
+<p>I used various standard software engineering techniques in the design and construction of the system. Near the beginning of the design process I created several UML diagrams describing various aspects of the system. I have written unit tests against the code to make the system more reliable. As with all projects I have worked on since around 2004 (commercial and non-commercial), the source is under version control (in this case git). See the <a href="#hlinks">links section</a> for a link to browse the repository.</p>
 
-<p>There are some things I could have done but didn't due to lack of time. I could have put more focus on unit testing by working via test driven development, but the constantly changing nature of my design, combined with the fact that much of the system is concurrent and multi-process and hence not suited to unit testing at all, meant that this didn't seem a worthwhile use of time. The multi-process, concurrent aspects of the system which cannot be unit tested would ideally instead be stress tested with a series of automated scripts, but I have not yet got around to this. </p>
+<p>There are some things I could have done but didn't due to lack of time. I could have put more focus on unit testing by working via test driven development, and indeed test coverage is very low, but the constantly changing nature of my design, combined with the fact that much of the system is concurrent and multi-process and hence not suited to unit testing at all, meant that this didn't seem a worthwhile use of time. The multi-process, concurrent aspects of the system which cannot be unit tested would ideally instead be stress tested with a series of automated scripts, but I have not currently built such a system.</p>
 
 <h3 id="hsql">Relational databases</h3>
 
 <p><img src="images/DB Schema.png"/></p>
 
-<p>The tangle of foreign key arrows here is a total mess, possibly I should do something to make the diagram more readable, but nevermind.</p>
-
-<p>Around the top left of the diagram are the classes which hold entries for the economic players represented as C# processes - Company, Trader, and ShippingCompany. "Company" is a base table for "Public Company" and for "Trader", with "inheritance" controlled by CompanyType and a series of constraints.</p>
-
-<p>Along the top are four tables containing historical data on monetary balances and values, each of which uses a trigger to update the current price attribute in the table for which they are recording historical data.</p>
-
-<p>The rest of the schema is made of tables which represent various aspects of the modelled system - countries, ports, futures contracts, commodities, etc.</p>
+<p>The tangle of foreign key arrows here is a total mess, possibly I should do something to make the diagram more readable, but nevermind. The schema also includes numerous integrity constraints and indexes which are not shown in this diagram.</p>
 
 <p>Within individual tables there are no repeating groups, no non-prime attributes that are functionally determined by only part of a candidate key, no non-prime attributes transitively dependent on a candidate key, and no prime attributes functionally determined by a proper subset of a candidate key. As such the schema is in Boyce-Codd normal form.</p>
 
-<p>makes use of various intermediate-level SQL features (spatial data, stored procedures, complex integrity constraints, triggers, cursors, etc)</p>
+<p>Around the top left of the diagram are the classes which hold entries for the economic players represented as C# processes - Company, Trader, and ShippingCompany. "Company" is a base table for "Public Company" and for "Trader", with "inheritance" controlled by CompanyType and a series of constraints.</p>
 
-<p>The vast majority of data manipulation is performed in C# and Python, with the database merely responding to queries, so I have not had to write any stored procedures or very complex SQL scripts. Still, I have made some minor use of triggers, constraints, and cursors to do a little data processing within the database where it makes sense to do so.</p>
+<p>Along the top are four tables containing historical data on various prices and balances. Originally a trigger updated the relevant tables whenever records were inserted into these tables, though SQL Server's lack of a FOR EACH ROW trigger means I have switched to using stored procedures.</p>
+
+<p>The rest of the schema is made of tables which represent various aspects of the modelled system - countries, ports, futures contracts, commodities, etc.</p>
+
+<p>The locations of the ports are stored using SQL Server's geography data type, this is used in various places to calculate distances between ports.</p>
+
+<p>The vast majority of data manipulation is performed in C# and Python, but the database does make some minor usage of stored procedures and cursors.</p>
 
 <p>I have given some basic thought to security and permissions - there are seperate read-only and read-write logins, and processes only use the read-write login where necessary - but complex permissions, views and security schemas would seem rather too contrived for a project being developed and run by a single person.</p>
 
-<p>blah blah relation algebra/calculus</p>
-<p>blah blah spatial data</p>
-<p>blah blah blah tuning and efficiency and indexes very large tables</p>
-
-</ul>
+<p>I have given some slight thought to indexes and efficiency, but I have not yet put any effort into index tuning, execution plan analysis analysis, etc.</p>
 </p>
 
 <h3 id="hconcurrency">Concurrency and distributed systems</h3>
 
-<p>xxx explain messaging protocol - relatively low level tcp sockets. wcf/SOAP just for AlgoServer, rest tcp sockets</p>
+<p>Most of the processes communicate via relatively low-level TCP sockets, though rather than writing my own application-level protocol I am for the most part simply using C#'s XML serialization and deserialization facilities to turn data into strings suitable for writing to a network stream. Some TCP connections consist of one server communicating with multiple peers, whilst others are simply peer-to-peer.</p>
 
-<p>blah blah talk about how some is server broadcast to all peers, some is directed to particular peers only. algoserver is SOAP request/response.</p>
+<p>AlgoServer is built using WCF (Windows Communication Foundation), which largely automates the process of making a server with methods available as a SOAP web service.</p>
 
-<p>blah blah threading vs callbacks, blah blah async vs async fire and forget vs sync. mention twisted, java set analyser, opera servers for Opera Mini etc.</p>
+<p>FOLLOWING SECTION FLAGRANTLY A WORK IN PROGRESS:</p>
+
+<p>blah blah threading vs callbacks, blah blah async vs async fire and forget vs sync. mention twisted, java set analyser</p>
+<p> say how threads generally a bad idea unless highly concurrent performance absolutely paramount, used as an exercise here, but in most real projects there are simpler, more reliable alternatives (i.e. asynchronous network read/writes, likely combined with callbacks for when data has finished sending or receiving, or otherwise combined with manual system of asynchronous acknowledgement messages between clients</p>
+
 <p>blah blah concurrency with processes and within processes with threading</p>
 
 <p><img src="images/SequenceSurplus.png"/></p>
@@ -95,31 +93,39 @@ div.wrapper {font: 100% Sans-serif; background-color: #D2DEFF; width: 94%; paddi
 
 <h3 id="hmath">Mathematics and algorithmics</h3>
 
-<p>[screenshot of a GBM sheet with graph to one side]</p>
+<p>FOLLOWING SECTION FLAGRANTLY A WORK IN PROGRESS:</p>
 
-<p>blah blah explain Resolver One</p>
+<p>A user interface to the system is provided in the form of an IronPython-based spreadsheet using a spreadsheet program called "Resolver One", billed as a "programable spreadsheet" or as a "mash-up of a spreadsheet and an IDE". Rather than allowing macros to be run against the spreadsheet in a limited fashion (as with Excel), in Resolver One the entire sheet is an IronPython script that you are free to modify. It is extremely flexible - you can load external .NET or Python libraries and write code utilising them to manipulate the cells in the workbook, and you can also add clickable buttons and drop downs to cells for user interaction.</p>
 
-<p>blah blah real time data from database, GBM, interactive graph, random walk forecast with Muller Transformation tiny lib shared with main prog, WPF (mostly copied code though), blah commod price and fx inc in spreadsheet, also stock price but didnt add a forecast sheet</p>
+<p><img src="images/gbm.png"/></p>
+
+<p>There are various prices and values that fluctuate in the model - commodity prices (generally follow geometric brownian motion but are subject to random price jumps), FX rates (entirely determined by geometric Brownian motion), share prices (entirely determined by geometric Brownian motion), and bank balances (determined by the interactions between the various players in the system). The IronPython spreadsheet code adds buttons to fetch the most recent commodity prices or FX rates from the database, buttons to optionally create predicted future random walk data points, and buttons to graph this data by instantiating a WPF graph window from a .NET assembly (the WPF chart code being almost entirely the public domain work of other people).</p>
+
+<p>The GBM sequences are produced using a tiny custom class library written in C# and shared by both the processes in the main system and the IronPython spreadsheet code. This library provides functions for Gaussian and Geometric Brownian sequences, the first based on the Box-Muller transformation, the latter based on sampling the former.</p>
+
+<p>The WPF chart assembly loaded by the spreadsheet (and the IronPython code that instantiates its window) is almost entirely the public domain work of other people. I spent a little while working on some minor modifications to the graph, but it turned out that the small modifications I wished to make would have required a major rewrite of the code, so I have put that idea on hold.
 
 <p>[screenshot of summary sheet]</p>
 
 <p>then two sheets of just real time data (Futures, Shipping),  then three summary sheets producing stats on activity during certain time periods, blah mild practice with sql queries - subselects, groupby, etc - but nothing very complex, mention various web apps like sde, forkd</p>
 
 <p><img src="images/TFP.png"/></p>
+
 <p>[screenshot of TFP result page]</p>
 
-<p>blah blah Travelling Salesman Problem, MS Solver Foundation, mention TUI</p>
+<p>blah blah Travelling Salesman Problem, MS Solver Foundation, linear programming and constraints, graph problems, mention TUI</p>
 <p>blah blah spatial data functions, though actually somewhat ridiculous as it assumes ships can travel in straight arcs from any two ports, without land getting in the way.</p>
 
 <p>[screenshot of alg timing sheet]</p>
 
-<p>blah blah wcf SOAP service, blah blah sheet makes lots of calls to test sorting algs - insertion sort, merge sort, heap sort, quick sort, randomized quick sort. counting sort. blah stats on their av/min/max time taken.</p>
+<p>AlgoServer provides implementations of various complex data structures and sorting algorithms: insertion sort, merge sort, heap sort, quick sort, randomized quick sort. counting sort, chained hash map, binary search tree, red-black tree, B-tree. These methods can be called as a SOAP web service. The sorting methods return both the sorted data and the amount of time the algorithm took on the server. blah blah sheet makes lots of calls to test sorting algs - i. blah stats on their av/min/max time taken.</p>
 
-<p>The C# web service also provides methods to tell the server to create complex data structures, to make queries on data strictures earlier created, or to delete data stuctures, and as such includes implementations of hash tables, binary search trees, red-black trees, and b-trees - but the spreadsheet does not make any use of these methods.</p>
+<p>On calling the web service to create a data structure the caller is returned an ID which can the client can then include as a parameter when requesting operations to be made on that data structure (e.g. search, insert, remove), or to delete it. However, these methods are not currently utilised by the spreadsheet.</p>
 
 <h3 id="hlinks">Links (including source code)</h3>
 
 <p>The repository for the project is at <a href="http://github.com/jamesjrg/taipan">http://github.com/jamesjrg/taipan</a>.</p>
+
 <p>A database of all the projects I have ever worked on is available at <a href="http://www.jameswritesstuff.co.uk/sde/">http://www.jameswritesstuff.co.uk/sde/</a>.</p>
 
 </div>

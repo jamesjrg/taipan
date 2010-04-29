@@ -1,7 +1,7 @@
 <!--
 This spreadsheet is in the Public Domain.
 -->
-<document currentResultWorksheet="Sorting Algorithms" verticalSplitterRatio="0.75" horizontalSplitterRatio="0.979472140762" splitterOrientation="Horizontal" suspendRecalculations="True" license="Public Domain" copyrightOwner="James Gregory" resolverVersion="1.8.1" resolverBuild="5061" documentVersion="12">
+<document currentResultWorksheet="FX Rates" verticalSplitterRatio="0.75" horizontalSplitterRatio="0.988580750408" splitterOrientation="Horizontal" suspendRecalculations="True" license="Public Domain" copyrightOwner="James Gregory" resolverVersion="1.8.1" resolverBuild="5061" documentVersion="12">
     <foldState license="True" imports="True" worksheetCreation="True" preConstantsUserCode="False" constants="True" preFormulaeUserCode="False" generated="False" postFormulaeUserCode="False"/>
     <traitDefaults>
 
@@ -17,9 +17,9 @@ execfile('TFPPreConstants.py')
     <names />
     <viewStates>
         <viewState worksheet="Travelling Freighter Problem">
-            <currentCell col="1" row="1" />
+            <currentCell col="3" row="7" />
             <scrollPos col="1" row="1" />
-            <virtualGridSize width="51" height="49" />
+            <virtualGridSize width="51" height="88" />
         </viewState>
         <viewState worksheet="Country summary">
             <currentCell col="1" row="2" />
@@ -29,13 +29,13 @@ execfile('TFPPreConstants.py')
         <viewState worksheet="Shipping summary">
             <currentCell col="1" row="1" />
             <scrollPos col="1" row="1" />
-            <virtualGridSize width="51" height="44" />
+            <virtualGridSize width="51" height="87" />
         </viewState>
         <viewState worksheet="Commodity Prices">
             <currentCell col="9" row="1" />
             <selection left="9" top="1" right="9" bottom="4" />
             <scrollPos col="1" row="1" />
-            <virtualGridSize width="50" height="58" />
+            <virtualGridSize width="50" height="87" />
         </viewState>
         <viewState worksheet="Trader summary">
             <currentCell col="1" row="1" />
@@ -48,20 +48,19 @@ execfile('TFPPreConstants.py')
             <virtualGridSize width="50" height="58" />
         </viewState>
         <viewState worksheet="Sorting Algorithms">
-            <currentCell col="4" row="5" />
-            <selection left="1" top="7" right="1" bottom="11" />
+            <currentCell col="1" row="7" />
             <scrollPos col="1" row="1" />
-            <virtualGridSize width="49" height="70" />
+            <virtualGridSize width="49" height="87" />
         </viewState>
         <viewState worksheet="FX Rates">
-            <currentCell col="3" row="13" />
+            <currentCell col="9" row="5" />
             <scrollPos col="1" row="1" />
-            <virtualGridSize width="47" height="70" />
+            <virtualGridSize width="47" height="88" />
         </viewState>
         <viewState worksheet="Shipping">
             <currentCell col="1" row="1" />
             <scrollPos col="1" row="1" />
-            <virtualGridSize width="51" height="76" />
+            <virtualGridSize width="51" height="88" />
         </viewState>
     </viewStates>
     <worksheetOrder>

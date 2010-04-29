@@ -21,14 +21,16 @@
 ////
 git change log:
 
+
 right now:
 - fix heap sort
-- read about + implement binary search trees, rb trees, b trees
-- read more detail from algs book
+- sql server process CPU usage way too high, fix it (+ doc)
 - read about linear programming, graph problems, tsp, convert C# code to Python
+- read more detail from algs book
 
 
 soon:
+- read about + implement binary search trees, rb trees, b trees
 - people can now send and receive messages, so make a first attempt at adding in all the logic that goes with this (though also still need to do a little more work with regard to keeping track of client/server ids). for client keeping track of server ids, can just store connections in a dict
 - shippingcomps need to know distance between ports to work out how long journeys take, and banks need to know to work out how much shipping companies should charge for movements. should use db spatial functions. do this on shippingcomp init and create a dict of all the values, and then include distances in msgs to bank? or maybe create a computed database table with all this data, for use by both shippingcomp and bank. 2nd option is better.
 - DecideArrivals and MoveConfirmed in ShippingCompany
@@ -63,7 +65,8 @@ Unit test individual functions
 ///
 
 First two tabs of Resolver sheet (GBM data streams):
-- Brownian random walk predicted future graph - present data as a solid line, then a bunch of dashed lines for various possibilities. Should know where real data ends and where actual data begins from ntopupdate
+- Brownian random walk predicted future graph - present data as a solid line
+
 
 /////
 
@@ -112,9 +115,12 @@ in each time period have
 Fourthly, extreme contrivedness:
 8. Travelling freighter problem
 
+- need to work out the distances between all the ports - in Python or in SQL? then cache
 - do lots of reading about it, but as far as the actual solution is concerned just convert the other guy's C# code to Python, and then write comment at top of file explaining how a) the code is just adapted from someone else but b) I really do understand what it is doing
 - maybe make some minor modifications to the constraints/problem, so I am having to think a bit more, and doc this on web
 - doc: represent all shipping lanes between ports as a graph of interconnected nodes, and do a "travelling freighter problem" solution of shortest route for a freighter to visit each port exactly once. provide a diagram on web.
+
+- #XXX should probably be a generator, maybe tours = [p[2] for p in assign.GetValues() if p[0] > 0.9]
 
 particularly relevant:
 http://iris.gmu.edu/~khoffman/papers/trav_salesman.html
@@ -247,29 +253,9 @@ doc:
 
 One day the description here, description in index.htm, description on CV, and description in Wolfie will all need to be synced...
 
-credit ppl from readme on web
-
 The name is a nod to book Tai Pan, that is the general point is that there are several large trading houses which ferry various goods very long distances, though actually here the trading houses have been split into two distinct entities, the "Shipping companies" who do the actual transporting of goods, and the "traders" who predict surpluses and shortages in the market and buy and sell goods accordingly.
-
-Mention how threads generally a bad idea, used as an exercise here, but in most real projects there are simpler, more reliable alternatives (i.e. asynchronous network read/writes, likely combined with callbacks for when data has finished sending or receiving, or otherwise combined with manual system of asynchronous acknowledgement messages between clients).
-
-doc how even without 5 second delay in taking contracts for movements off broadcast, the multithreaded nature of system would mean it would be possible for two threads to simultaneously accept the same request anyway
-
-- describe use of bank and db as mediator of many interactions in system, mention any other patterns used
 
 short version for CV etc:
 
-•	A C# .NET, SQL Server and Python project. A large number of heterogeneous, multithreaded C# processes interact with each other via TCP sockets. Much of the underlying state of the system is stored in a MS SQL Server instance. The system also includes implementations of B-Trees, Red-Black trees, hash tables, various sorting algorithms, and algorithms for producing various types of statistical distribution.
-A user interface to the system is provided in the form of an IronPython-based spreadsheet that makes queries both on the database and on a C# SOAP web service, and calls a seperate C# process to produce interactive graphs of the summary data. The spreadsheet also calls a mathematical optimization framework to solve a simple linear programming problem. The system is partly covered by unit tests, and the documentation for the project includes a variety of UML diagrams. Around 220 hours work so far.
-
-temp version:
-•	I am currently working on adding implementations of various complex data structures to one of the processes (B-Trees, hash tables, etc), and on using a mathematical optimization framework to solve a simple linear programming problem. Around 220 hours work so far.
-
-
-some phrases that could go in web doc:
-
-The front end utilises the spreadsheet/Python "mash up" “Resolver One” to provide analysis of the real time data from the database. The Python spreadsheet uses Microsoft's Solver Foundation to solve a version of the Travelling Salesman Problem, and o provide xxx fixme for some of the stochastic outputs of the system. A local C# program is called by the spreadsheet script to produce realtime WPF graphs on same aspects of this analysis.
-
-One final, especially contrived C# service uses WCF/SOAP to provide a network service that blah blah differing algorithms or data structures  blah blah spreadsheet integ
-
+•	A C# .NET, SQL Server and Python project written to improve my knowledge of various aspects of computer science and software engineering. A large number of heterogeneous, multithreaded C# processes interact with each other via TCP sockets. Much of the underlying state of the system is stored in a MS SQL Server instance. The system includes implementations of various data structures and algorithms (e.g. B-Trees, hash tables, numerous sorting algorithms, Gaussian and geometric Brownian probability distributions). A user interface to the system is provided in the form of an IronPython-based spreadsheet that a) makes queries on both the database and on a C# SOAP web service b) loads a C# WPF assembly to produce interactive graphs of the summary data and c) utilises a mathematical optimization framework to solve a simple linear programming problem. The project also makes use of UML, unit testing, Git, etc. Around 250 hours work so far.
 

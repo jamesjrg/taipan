@@ -18,6 +18,7 @@ namespace TaiPan.FXServer
     {
         private Server bankServer;
         private CurrencyMsg currencies = new CurrencyMsg();
+        private int USDID;
 
         private StatsLib.StatsLib stats = new StatsLib.StatsLib();
         private Random random = new Random();
@@ -30,12 +31,17 @@ namespace TaiPan.FXServer
 
             Console.WriteLine("Reading currencies from db");
             List<CurrencyMsgItem> tmpList = new List<CurrencyMsgItem>();
-            SqlDataReader reader = dbConn.ExecuteQuery("SELECT ID, USDValue FROM Currency ORDER BY ID ASC");
+            SqlDataReader reader = dbConn.ExecuteQuery("SELECT ID, ShortName, USDValue FROM Currency ORDER BY ID ASC");
             while (reader.Read()) {
                 int id = reader.GetInt32(0);
-                decimal USDValue = reader.GetDecimal(1);
+                string shortName = reader.GetString(1);
+                decimal USDValue = reader.GetDecimal(2);
                 Console.WriteLine("{0}: {1}", id, USDValue);
                 tmpList.Add(new CurrencyMsgItem(id, USDValue));
+
+                //we don't make the price of USD fluctuate relative to USD...
+                if (shortName == "USD")
+                    USDID = id;
             }
             reader.Close();
             currencies.items = tmpList.ToArray();
@@ -59,6 +65,9 @@ namespace TaiPan.FXServer
             currencies.time = DateTime.Now;
             for (int i = 0; i != currencies.items.Length; ++i)
             {
+                if (currencies.items[i].id == USDID)
+                    continue;
+
                 decimal nextVal =stats.GBMSequence(currencies.items[i].USDValue, TickVolatility, 1)[0];
                 currencies.items[i].USDValue = nextVal;
             }
