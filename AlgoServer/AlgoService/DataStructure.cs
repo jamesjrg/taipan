@@ -7,8 +7,8 @@ namespace AlgoService
 {
     interface DataStructure
     {
-        public void Insert(int key);
-        public void Delete(int key);
-        public int Search(int key);
+        void Insert(int key, int val);
+        void Delete(int key);
+        int Search(int key);
     }
 }

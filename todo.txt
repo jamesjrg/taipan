@@ -6,7 +6,7 @@
 
 * read parts of algorithms book chapters 2,3,4,5,6,7, then 10,11,12,13, then 18
 * do algorithms bit
-- est 2.5 weeks full time
+- est 2 weeks full time
 
 * read algorithms book chapters 22, 29, 34, 35, and a bunch of TSP/MS Solver stuff
 * do TSP stuff
@@ -22,7 +22,9 @@
 git change log:
 
 right now:
-- read about heap sort, quicksort, counting sort, binary search trees, rb trees, b trees, implement them
+- fix heap sort
+- read about + implement binary search trees, rb trees, b trees
+- read more detail from algs book
 - read about linear programming, graph problems, tsp, convert C# code to Python
 
 

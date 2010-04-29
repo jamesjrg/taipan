@@ -5,6 +5,8 @@ using System.Runtime.Serialization;
 using System.ServiceModel;
 using System.Text;
 
+using System.Diagnostics;
+
 namespace AlgoService
 {
     public class AlgoService : IAlgoService
@@ -13,29 +15,42 @@ namespace AlgoService
 
         public SortReturn Sort(string type, int[] data)
         {
+            Stopwatch sw = Stopwatch.StartNew();
             switch (type)
             {
                 case "insertion":
-                    return SortAlgs.InsertionSort(data);
+                    SortAlgs.InsertionSort(data);
+                    break;
                 case "merge":
-                    return SortAlgs.MergeSort(data);
+                    SortAlgs.MergeSort(data);
+                    break;
                 case "heap":
-                    return SortAlgs.HeapSort(data);
+                    SortAlgs.HeapSort(data);
+                    break;
                 case "quick":
-                    return SortAlgs.QuickSort(data);
+                    SortAlgs.QuickSort(data);
+                    break;
                 case "randomizedquick":
-                    return SortAlgs.RandomizedQuickSort(data);
+                    SortAlgs.RandomizedQuickSort(data);
+                    break;
                 default:
                     throw new FaultException("sort type not recognised");
             }
+            sw.Stop();
+
+            return new SortReturn(sw.ElapsedMilliseconds, data);
         }
 
         public SortReturn CountingSort(int[] data, int maxPossible)
         {
-            return SortAlgs.CountingSort(data, maxPossible);
+            Stopwatch sw = Stopwatch.StartNew();
+            SortAlgs.CountingSort(data, maxPossible);
+            sw.Stop();
+
+            return new SortReturn(sw.ElapsedMilliseconds, data);
         }
 
-        public StructureReturn CreateStructure(string type, int[] data)
+        public int CreateStructure(string type, int[] data)
         {            
             try
             {
