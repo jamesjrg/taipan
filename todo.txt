@@ -28,6 +28,7 @@ nowish:
 - read more about linear programming, graph problems, tsp, convert more C# code to Python
 - read more detail from algs book
 - fix heap sort
+- DecideMoveContracts in trader - add and remove
 - sql server process CPU usage way too high, fix it (+ doc)
 - read about + implement binary search trees, rb trees, b trees
 - people can now send and receive messages, so make a first attempt at adding in all the logic that goes with this (though also still need to do a little more work with regard to keeping track of client/server ids). for client keeping track of server ids, can just store connections in a dict
@@ -41,17 +42,15 @@ nowish:
 - bank interpret trader msgs
 - trader interpret forecast msgs
 - DecideCommodPriceJumps for fandgw
-
-- format traders to shipping companies something like:
-a) "advertisemove,warehouseid", sent to only one client, also client tcp thread needs to note id of sender
-b) "confirmmove,warehouseid", sent to only one client, also client tcp thread needs to note id of sender
+- shippingcompany interprets advertise moves
+- traders confirm moves
+- shippingcompany acts on moveconfirm
 
 ////
 
 Process logic and networking:
-- Trader/ShippingCompany interaction: delay between receiving acceptance of contract for movement of goods and taking contract off broadcast, requiring system of acks and locks
 - in server, clients should get removed from clients list if they are disconnected
-- net_msg_tdo.txt
+- net_msg_todo.txt
 - unit test individual functions
 - probably use sql spatial functions to work out distances for freighter travel - both for Bank and for Resolver
 - test that targeted messages are sent only to the correct server/client, and have exact steps to reproduce the test (inc fandgw to trader surplus and shortage)
@@ -60,6 +59,7 @@ Process logic and networking:
 
 First two tabs of Resolver sheet (GBM data streams):
 - make commod prices forecast + graphing work fully correctly
+- add special case code if there are not sufficient values in db?
 
 Next two sheets:
 3. Historical futures contracts, including details of how relevant prices of all involved values changed between start and end of contract, and profit made (CU)

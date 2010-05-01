@@ -25,6 +25,21 @@ namespace TaiPan.Bank
         private Client fxClient;
         private Client fateClient;
 
+        private List<ConfirmInfo> confirmedBuys = new List<ConfirmInfo>();
+        private List<ConfirmInfo> settledFutures = new List<ConfirmInfo>();
+
+        private class ConfirmInfo
+        {
+            public ConfirmInfo(int traderID, int portID, int commodID, int quantity, int warehouseID)
+            {
+                this.traderID = traderID;
+                this.msg = new BankConfirmMsg(portID, commodID, quantity, warehouseID);
+            }
+
+            public BankConfirmMsg msg;
+            public int traderID;
+        }
+
         public Bank(string[] args)
         {
             Console.Title = "Bank";
@@ -57,7 +72,7 @@ namespace TaiPan.Bank
                 switch (msg.type)
                 {
                     case NetMsgType.Currency:
-                        updateCurrency((CurrencyMsg)(msg.data));
+                        UpdateCurrency((CurrencyMsg)(msg.data));
                         break;                    
                     default:
                         throw new ApplicationException("fxClient received wrong type of net message");
@@ -70,10 +85,10 @@ namespace TaiPan.Bank
                 switch (msg.type)
                 {
                     case NetMsgType.Commodity:
-                        updateCommodity((CommodityMsg)(msg.data));
+                        UpdateCommodity((CommodityMsg)(msg.data));
                         break;
                     case NetMsgType.Stock:
-                        updateStock((StockMsg)(msg.data));
+                        UpdateStock((StockMsg)(msg.data));
                         break;
                     default:
                         throw new ApplicationException("fateIncoming received wrong type of net message");
@@ -85,22 +100,45 @@ namespace TaiPan.Bank
             {
                 switch (msg.type)
                 {
-                    case NetMsgType.Buy:                   
+                    case NetMsgType.Buy:
+                        EnactBuy((BuyMsg)msg.data);
                         break;
                     case NetMsgType.Future:
+                        EnactFuture((BuyMsg)msg.data);
                         break;
                     default:
                         throw new ApplicationException("traderServer received wrong type of net message");
                 }
             }
 
-            while (shippingServer.incoming.Count != 0)
-                Console.WriteLine(shippingServer.incoming.Dequeue());
+            List<DeserializedMsg> shippingIncoming = shippingServer.IncomingDeserializeAll();
+            foreach (var msg in shippingIncoming)
+            {
+                switch (msg.type)
+                {
+                    case NetMsgType.Departure:
+                        ShipDeparted((MovingMsg)msg.data);
+                        break;
+                    case NetMsgType.Arrival:
+                        ShipArrived((MovingMsg)msg.data);
+                        break;
+                    default:
+                        throw new ApplicationException("traderServer received wrong type of net message");
+                }
+            }
+
+            foreach (var info in confirmedBuys)
+                traderServer.Send(NetContract.Serialize(NetMsgType.BuyConfirm, info.msg), info.traderID);
+            confirmedBuys.Clear();
+
+            foreach (var info in settledFutures)
+                traderServer.Send(NetContract.Serialize(NetMsgType.FutureSettle, info.msg), info.traderID);
+            settledFutures.Clear();
 
             return true;
         }
 
-        private void updateCurrency(CurrencyMsg msg)
+        private void UpdateCurrency(CurrencyMsg msg)
         {
             using (TransactionScope scope = new TransactionScope(TransactionScopeOption
 .Required))
@@ -118,7 +156,7 @@ namespace TaiPan.Bank
             }
         }
 
-        private void updateCommodity(CommodityMsg msg)
+        private void UpdateCommodity(CommodityMsg msg)
         {
             using (TransactionScope scope = new TransactionScope(TransactionScopeOption
 .Required))
@@ -137,7 +175,7 @@ namespace TaiPan.Bank
             }
         }
 
-        private void updateStock(StockMsg msg)
+        private void UpdateStock(StockMsg msg)
         {
             using (TransactionScope scope = new TransactionScope(TransactionScopeOption
 .Required))
@@ -153,6 +191,24 @@ namespace TaiPan.Bank
                 }
                 scope.Complete();
             }
+        }
+
+        private void EnactFuture(BuyMsg msg)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void EnactBuy(BuyMsg msg)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void ShipDeparted(MovingMsg msg)
+        {
+        }
+
+        private void ShipArrived(MovingMsg msg)
+        {
         }
     }
 }

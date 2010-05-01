@@ -21,6 +21,32 @@ namespace TaiPan.Trader
 
         private List<FutureMsg> futureRequests = new List<FutureMsg>();
         private List<BuyMsg> buyRequests = new List<BuyMsg>();
+        private List<AdvertiseInfo> moveContracts = new List<AdvertiseInfo>();
+        private List<MoveConfirmInfo> moveConfirms = new List<MoveConfirmInfo>();
+
+        private class AdvertiseInfo
+        {
+            public AdvertiseInfo(int warehouseID, DateTime expires)
+            {
+                this.msg = new MoveContractMsg(warehouseID);
+                this.expires = expires;
+            }
+
+            public MoveContractMsg msg;
+            public DateTime expires;
+        }
+
+        private class MoveConfirmInfo
+        {
+            public MoveConfirmInfo(int warehouseID, int targetCompany)
+            {
+                this.msg = new MoveContractMsg(warehouseID);
+                this.targetCompany = targetCompany;
+            }
+
+            public MoveContractMsg msg;
+            int targetCompany;
+        }
 
         public Trader(string[] args)
         {
@@ -47,18 +73,33 @@ namespace TaiPan.Trader
 
         protected override bool Run()
         {
+            DecideMoveContracts();
+
             while (fateClient.incoming.Count != 0)
                 Console.WriteLine(fateClient.incoming.Dequeue());
 
             foreach (var msg in futureRequests)
                 bankClient.Send(NetContract.Serialize(NetMsgType.Future, msg));
             futureRequests.Clear();
-            return true;
-
+            
             foreach (var msg in buyRequests)
                 bankClient.Send(NetContract.Serialize(NetMsgType.Buy, msg));
             buyRequests.Clear();
+
+            foreach (var info in moveContracts)
+                shippingServer.Send(NetContract.Serialize(NetMsgType.AdvertiseMove, info.msg));
+
+            foreach (var info in moveConfirms)
+                shippingServer.Send(NetContract.Serialize(NetMsgType.ConfirmMove, info.msg));
+            moveConfirms.Clear();
+
             return true; 
+        }
+
+        private void DecideMoveContracts()
+        {
+            moveContracts.Add(new AdvertiseInfo(28, DateTime.Now.AddSeconds(MoveContractAdvertiseTime)));
+            moveContracts.RemoveAll(info => info.expires <= DateTime.Now);
         }
     }
 }

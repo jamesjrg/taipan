@@ -20,11 +20,23 @@ namespace TaiPan.FateAndGuesswork
         private List<CommodityInfo> commodityInfos = new List<CommodityInfo>();
         private CommodityMsg commodityMsg = new CommodityMsg();
         private StockMsg stocks = new StockMsg();
-        private List<ForecastMsg> shortages = new List<ForecastMsg>();
-        private List<ForecastMsg> surpluses = new List<ForecastMsg>();
+        private List<ForecastInfo> shortages = new List<ForecastInfo>();
+        private List<ForecastInfo> surpluses = new List<ForecastInfo>();
 
         private Random random = new Random();
         private StatsLib.StatsLib stats = new StatsLib.StatsLib();
+
+        private class ForecastInfo
+        {
+            public ForecastInfo(int traderID, int portID, int commodID, DateTime time)
+            {
+                this.traderID = traderID;
+                this.msg = new ForecastMsg(portID, commodID, time);
+            }
+
+            public ForecastMsg msg;
+            public int traderID;
+        }
 
         private class CommodityInfo
         {
@@ -116,12 +128,12 @@ namespace TaiPan.FateAndGuesswork
             bankServer.Send(NetContract.Serialize(NetMsgType.Commodity, commodityMsg));
             bankServer.Send(NetContract.Serialize(NetMsgType.Stock, stocks));
 
-            foreach (var msg in shortages)
-                traderServer.Send(NetContract.Serialize(NetMsgType.Shortage, msg), msg.traderID);
+            foreach (var info in shortages)
+                traderServer.Send(NetContract.Serialize(NetMsgType.Shortage, info.msg), info.traderID);
             shortages.Clear();
 
-            foreach (var msg in surpluses)
-                traderServer.Send(NetContract.Serialize(NetMsgType.Surplus, msg), msg.traderID);
+            foreach (var info in surpluses)
+                traderServer.Send(NetContract.Serialize(NetMsgType.Surplus, info.msg), info.traderID);
             surpluses.Clear();
 
             return true;
@@ -151,6 +163,10 @@ namespace TaiPan.FateAndGuesswork
         private void DecideCommodPriceJumps()
         {
             var clientIDs = traderServer.GetClientIDs();
+
+            if (clientIDs.Count == 0)
+                return;
+
             int rand = random.Next(0, clientIDs.Count);
             int targetTrader = clientIDs[rand];
 
@@ -159,9 +175,9 @@ namespace TaiPan.FateAndGuesswork
             DateTime time = DateTime.Now;
 
             if (random.Next(0, 2) == 0)
-                shortages.Add(new ForecastMsg(targetTrader, portID, commodID, time));
+                shortages.Add(new ForecastInfo(targetTrader, portID, commodID, time));
             else
-                surpluses.Add(new ForecastMsg(targetTrader, portID, commodID, time));
+                surpluses.Add(new ForecastInfo(targetTrader, portID, commodID, time));
         }
     }
 }

@@ -17,6 +17,7 @@ namespace TaiPan.Common
         protected Dictionary<string, ServerConfig> ServerConfigs = new Dictionary<string, ServerConfig>();
         protected readonly string CurrencyAccuracy;
         protected readonly decimal TickVolatility;
+        protected readonly int MoveContractAdvertiseTime;
 
         private readonly int MainLoopTick;
         
@@ -39,6 +40,7 @@ namespace TaiPan.Common
             MainLoopTick = Convert.ToInt32(AppSettings["MainLoopTick"]);
             CurrencyAccuracy = "F" + Convert.ToInt32(AppSettings["CurrencyAccuracy"]);
             TickVolatility = Convert.ToDecimal(AppSettings["TickVolatility"]);
+            MoveContractAdvertiseTime = Convert.ToInt32(AppSettings["MoveContractAdvertiseTime"]);
 
             ServersSection serversSection = config.GetSection("servers") as ServersSection;
             if (serversSection == null)

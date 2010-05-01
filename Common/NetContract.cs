@@ -114,17 +114,12 @@ namespace TaiPan.Common.NetContract
     public class ForecastMsg
     {
         public ForecastMsg() {}
-        public ForecastMsg(int traderID, int portID, int commodID, DateTime time)
+        public ForecastMsg(int portID, int commodID, DateTime time)
         {
-            this.traderID = traderID;
             this.portID = portID;
             this.commodID = commodID;
             this.time = time;
         }
-
-        //doesn't need to be sent with message
-        [NonSerialized]
-        public int traderID;
 
         public int portID;
         public int commodID;

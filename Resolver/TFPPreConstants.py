@@ -6,6 +6,11 @@ from Microsoft.SolverFoundation.Services import *
 
 import math
 
+#should be extension method
+def AssignmentConstraintsNoDiag(model, s, assign):
+        model.AddConstraint("A1", Model.ForEach(lambda s, i: Model.Sum(Model.ForEachWhere(lambda s, j: assign[i, j], lambda j: i != j)) == 1))
+        model.AddConstraint("A2", Model.ForEach(lambda s, i: Model.Sum(Model.ForEachWhere(lambda s, j: assign[i, j], lambda i: i != j)) == 1))
+    
 class Coordinate:
     def __init__(self, name, x, y):
         self.name = name
@@ -13,15 +18,15 @@ class Coordinate:
         self.y = y
 
     #Latitude in radians.
-    def latitude():
+    def latitude(self):
         return math.pi * (math.trunc(self.x) + 5 * (self.x - math.trunc(self.x)) / 3) / 180
 
     #Longitude in radians.
-    def longitude():
+    def longitude(self):
         return math.pi * (math.trunc(self.y) + 5 * (self.y - math.trunc(self.y)) / 3) / 180
 
     #Geographic distance between two points (as an integer).
-    def distance(p):
+    def distance(self, p):
         q1 = math.cos(self.longitude() - p.longitude())
         q2 = math.cos(self.latitude() - p.latitude())
         q3 = math.cos(self.latitude() + p.latitude())
@@ -29,11 +34,23 @@ class Coordinate:
         return int(6378.388 * math.acos(0.5 * ((1 + q1) * q2 - (1 - q1) * q3)) + 1)
 
 class Arc:
-    def __init__(city1, city2, distance)
-        self.city1 = city1
-        self.city2 = city2
-        self.distance = distance
+    def __init__(self, city1, city2, distance):
+        self.__city1 = city1
+        self.__city2 = city2
+        self.__distance = distance
     
+    @property 
+    def city1(self):
+        return self.__city1
+        
+    @property
+    def city2(self):
+        return self.__city2
+    
+    @property 
+    def distance(self):
+        return self.__distance
+        
 # Burma14 from TSPLIB. Optimal tour = 3323.
 data = [
   Coordinate(0, 16.47, 96.10),
@@ -61,11 +78,13 @@ def solveTFP():
     dist = Parameter(Domain.Real, "dist", city, city)
     
     #Add all the arcs
+    arcs = []
     for p1 in data:
         for p2 in data:
-            arcs.append(Arc(p1.Name, p2.Name, p1.distance(p2)))
-            
-    dist.SetBinding(arcs, "Distance", "City1", "City2")
+            arcs.append(Arc(p1.name, p2.name, p1.distance(p2)))
+        
+    for a in arcs: print a.distance
+    dist.SetBinding(arcs, "distance", "city1", "city2")
     model.AddParameters(dist)
     
     #Decisions
@@ -73,6 +92,18 @@ def solveTFP():
     rank = Decision(Domain.RealNonnegative, "rank", city)
     model.AddDecisions(assign, rank)
     
+    #Goal: minimize length of tour
+    goal = model.AddGoal("TourLength", GoalKind.Minimize,
+              Model.Sum(Model.ForEach(lambda city, i: Model.ForEachWhere(city, lambda j: dist[i, j] * assign[i, j], lambda j: i != j))))
+              
+    N = data.Length
+    model.AddConstraint("assign1",
+              Model.ForEach(lambda city, i: Model.Sum(Model.ForEachWhere(lambda city, j: assign[i, j],
+                lambda j: i != j)) == 1))
+    model.AddConstraint("assign2",
+              Model.ForEach(lambda city, j: Model.Sum(Model.ForEachWhere(lambda city, i: assign[i, j], lambda i: i != j)) == 1))
+    model.AssignmentConstraintsNoDiag(city, assign)
+              
     #Solve
     solution = context.Solve()
     

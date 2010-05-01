@@ -48,7 +48,6 @@ namespace TaiPan.Common
                 Util.CloseTcpClient(client.client);
             }
             tcpListener.Stop();
-            clients.Clear();
         }
 
         public void Send(string message)
