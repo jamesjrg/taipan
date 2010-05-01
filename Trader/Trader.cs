@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 
 using TaiPan.Common;
+using TaiPan.Common.NetContract;
 
 namespace TaiPan.Trader
 {
@@ -17,6 +18,9 @@ namespace TaiPan.Trader
 
         private Client bankClient;
         private Client fateClient;
+
+        private List<FutureMsg> futureRequests = new List<FutureMsg>();
+        private List<BuyMsg> buyRequests = new List<BuyMsg>();
 
         public Trader(string[] args)
         {
@@ -45,6 +49,15 @@ namespace TaiPan.Trader
         {
             while (fateClient.incoming.Count != 0)
                 Console.WriteLine(fateClient.incoming.Dequeue());
+
+            foreach (var msg in futureRequests)
+                bankClient.Send(NetContract.Serialize(NetMsgType.Future, msg));
+            futureRequests.Clear();
+            return true;
+
+            foreach (var msg in buyRequests)
+                bankClient.Send(NetContract.Serialize(NetMsgType.Buy, msg));
+            buyRequests.Clear();
             return true; 
         }
     }

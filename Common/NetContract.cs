@@ -111,32 +111,56 @@ namespace TaiPan.Common.NetContract
         public DateTime time;
     }
 
-    public class SurplusMsg
+    public class ForecastMsg
     {
-        public SurplusMsg()
+        public ForecastMsg() {}
+        public ForecastMsg(int traderID, int portID, int commodID, DateTime time)
         {
+            this.traderID = traderID;
+            this.portID = portID;
+            this.commodID = commodID;
+            this.time = time;
         }
-    }
 
-    public class ShortageMsg
-    {
-        public ShortageMsg()
-        {
-        }
+        //doesn't need to be sent with message
+        [NonSerialized]
+        public int traderID;
+
+        public int portID;
+        public int commodID;
+        public DateTime time;
     }
 
     public class BuyMsg
     {
-        public BuyMsg()
+        public BuyMsg() { }
+        public BuyMsg(int portID, int commodID, int quantity)
         {
+            this.portID = portID;
+            this.commodID = commodID;
+            this.quantity = quantity;
         }
+
+        public int portID;
+        public int commodID;
+        public int quantity;
     }
 
     public class FutureMsg
     {
-        public FutureMsg()
+        public FutureMsg() {}
+        public FutureMsg(int portID, int commodID, int quantity, DateTime time)
         {
+            this.portID = portID;
+            this.commodID = commodID;
+            this.quantity = quantity;
+            this.time = time;
         }
+
+        public int portID;
+        public int commodID;
+        public int quantity;
+        public DateTime time;
     }
 
     public class MoveContractMsg
@@ -163,18 +187,21 @@ namespace TaiPan.Common.NetContract
         public DateTime time;
     }
 
-    public class BuyConfirmMsg
+    public class BankConfirmMsg
     {
-        public BuyConfirmMsg()
+        public BankConfirmMsg() { }
+        public BankConfirmMsg(int portID, int commodID, int quantity, int warehouseID)
         {
+            this.portID = portID;
+            this.commodID = commodID;
+            this.quantity = quantity;
+            this.warehouseID = warehouseID;
         }
-    }
 
-    public class FutureSettleMsg
-    {
-        public FutureSettleMsg()
-        {
-        }
+        public int portID;
+        public int commodID;
+        public int quantity;
+        public int warehouseID;
     }
 
     public class NetContract
@@ -231,9 +258,8 @@ namespace TaiPan.Common.NetContract
                 case NetMsgType.Commodity:
                     return typeof(CommodityMsg);
                 case NetMsgType.Surplus:
-                    return typeof(SurplusMsg);
                 case NetMsgType.Shortage:
-                    return typeof(ShortageMsg);
+                    return typeof(ForecastMsg);
 
                 //trader
                 case NetMsgType.Buy:
@@ -253,9 +279,8 @@ namespace TaiPan.Common.NetContract
 
                 //bank
                 case NetMsgType.BuyConfirm:
-                    return typeof(BuyConfirmMsg);
                 case NetMsgType.FutureSettle:
-                    return typeof(FutureSettleMsg);
+                    return typeof(BankConfirmMsg);
                 default:
                     throw new TaiPanException("GetClassFromNetMsgType received unknown type");
             }

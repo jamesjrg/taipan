@@ -51,7 +51,19 @@ namespace AlgoService
 
         public void Delete(int key)
         {
-            //XXX finish me
+            currentCount--;
+            int index = Hash(key);
+
+            var chain = data[index];
+
+            for (int i = 0; i != chain.Count; ++i)
+            {
+                if (chain[i].key == key)
+                {
+                    chain.RemoveAt(i);
+                    break;
+                }
+            }
         }
 
         public int Search(int key)

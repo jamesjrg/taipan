@@ -13,11 +13,23 @@ namespace TaiPan.Common
     public class Server : TCPConnection, IDisposable
     {
         private TcpListener tcpListener;
-        private List<TcpClient> clients = new List<TcpClient>();
+        private List<ClientConnection> clients = new List<ClientConnection>();
         private bool broadcastOnly;
 
         //note incoming has public access, outgoing does not
         protected MultiHeadQueue outgoing;
+
+        private class ClientConnection
+        {
+            public ClientConnection(int id, TcpClient client)
+            {
+                this.id = id;
+                this.client = client;
+            }
+
+            public TcpClient client;
+            public int id;
+        }
 
         public Server(Common.ServerConfig config, NameValueCollection appSettings, bool broadcastOnly):
             base(appSettings)
@@ -31,11 +43,12 @@ namespace TaiPan.Common
 
         public void Dispose()
         {
-            foreach (TcpClient client in clients)
+            foreach (ClientConnection client in clients)
             {
-                Util.CloseTcpClient(client);
+                Util.CloseTcpClient(client.client);
             }
             tcpListener.Stop();
+            clients.Clear();
         }
 
         public void Send(string message)
@@ -46,6 +59,15 @@ namespace TaiPan.Common
         public void Send(string message, int id)
         {
             outgoing.Enqueue(message, id);
+        }
+
+        public List<int> GetClientIDs()
+        {
+            List<int> IDs = new List<int>();
+            foreach (var client in clients)
+                IDs.Add(client.id);
+
+            return IDs;
         }
 
         //unused argument, have to mirror function used by server broadcast threads.
@@ -68,8 +90,6 @@ namespace TaiPan.Common
                 NetworkStream ns = tcpClient.GetStream();
 
                 Console.WriteLine("Server accepted new connection");
-                clients.Add(tcpClient);
-
                 //get id
                 byte[] buffer = new byte[4];
                 Console.WriteLine("Waiting for id");
@@ -77,6 +97,7 @@ namespace TaiPan.Common
                 int clientID = BitConverter.ToInt32(buffer, 0);
                 Console.WriteLine("Got id: {0}", clientID);
 
+                clients.Add(new ClientConnection(clientID, tcpClient));
                 outgoing.Subscribe(clientID);
 
                 BroadcastThreadState broadcastState = new BroadcastThreadState(clientID, ns);

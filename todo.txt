@@ -1,20 +1,22 @@
 * finish all main points of network code and process logic
-- est 2 weeks FT
+- est 1 week FT
 
-* finish all main points of Resolver One view + WPF graphing
-- est 1.5 weeks full time
+* finish all main points of spreadsheet summary sheets
+- est 1 week full time
 
 * read parts of algorithms book chapters 2,3,4,5,6,7, then 10,11,12,13, then 18
-* do algorithms bit
-- est 2 weeks full time
+* do all basic of algorithms bit
+- est 1.5 weeks full time
 
 * read algorithms book chapters 22, 29, 34, 35, and a bunch of TSP/MS Solver stuff
 * do TSP stuff
-- est 1.5 weeks FT
+- est 1 week FT
 
 * doc a bit better
 - proper index.htm + screenshots
-- est 0.5 weeks FT
+- add version with static sql data to resolver exchange
+- est 2 days FT
+
 
 - ideas from "ideas removed" file - infinite
 
@@ -22,57 +24,48 @@
 git change log:
 
 
-right now:
+nowish:
+- read more about linear programming, graph problems, tsp, convert more C# code to Python
+- read more detail from algs book
 - fix heap sort
 - sql server process CPU usage way too high, fix it (+ doc)
-- read about linear programming, graph problems, tsp, convert C# code to Python
-- read more detail from algs book
-
-
-soon:
 - read about + implement binary search trees, rb trees, b trees
 - people can now send and receive messages, so make a first attempt at adding in all the logic that goes with this (though also still need to do a little more work with regard to keeping track of client/server ids). for client keeping track of server ids, can just store connections in a dict
 - shippingcomps need to know distance between ports to work out how long journeys take, and banks need to know to work out how much shipping companies should charge for movements. should use db spatial functions. do this on shippingcomp init and create a dict of all the values, and then include distances in msgs to bank? or maybe create a computed database table with all this data, for use by both shippingcomp and bank. 2nd option is better.
 - DecideArrivals and MoveConfirmed in ShippingCompany
 - traderClient.Send in ShippingCompany - sent to only one client, also server tcp thread needs to note id of sender for MoveAdvertised 
 - Bank interpret movingmsg from shippingcompany - needs to note id of sender
-
-- format for Bank broadcast to trader
-a) "buyconfirm,portid,commodid,quantity,warehouseid", sent to only one client
-b) "futuresettle,portid,commodid,quantity,warehouseid", sent to only one client
-
-- format for FateAndGuesswork broadcast to Trader, something like:
-a) "surplus,portid,commodid,1200,2010-04-15T20:10:00", sent to only one client
-b) "shortage,portid,commodid,1200,2010-04-15T20:10:00", sent to only one client
+- bank msgs to trader - buyconfirm, futuresettle
+- trader interpret forecast msgs
+- trader msgs to bank, and bank needs to note id of sender
+- bank interpret trader msgs
+- trader interpret forecast msgs
+- DecideCommodPriceJumps for fandgw
 
 - format traders to shipping companies something like:
 a) "advertisemove,warehouseid", sent to only one client, also client tcp thread needs to note id of sender
 b) "confirmmove,warehouseid", sent to only one client, also client tcp thread needs to note id of sender
 
-- format from trader to bank something like:
-a) "buy,portid,commodid,quantity", also server tcp thread needs to note id of sender
-b) "future,portid,commodid,quantity,when", also server tcp thread needs to note id of sender
-
 ////
 
 Process logic and networking:
 - Trader/ShippingCompany interaction: delay between receiving acceptance of contract for movement of goods and taking contract off broadcast, requiring system of acks and locks
-- make sure everything from outline_system_plan.txt is working.
-Unit test individual functions
-- mega_start.bat script to start all C# processes at once, including algoserver (not Resolver though)
+- in server, clients should get removed from clients list if they are disconnected
+- net_msg_tdo.txt
+- unit test individual functions
 - probably use sql spatial functions to work out distances for freighter travel - both for Bank and for Resolver
+- test that targeted messages are sent only to the correct server/client, and have exact steps to reproduce the test (inc fandgw to trader surplus and shortage)
 
 ///
 
 First two tabs of Resolver sheet (GBM data streams):
-- Brownian random walk predicted future graph - present data as a solid line
-
-
-/////
+- make commod prices forecast + graphing work fully correctly
 
 Next two sheets:
 3. Historical futures contracts, including details of how relevant prices of all involved values changed between start and end of contract, and profit made (CU)
 4. Historical commdity transports, including details of how relevant prices of all involved values changed between start and end of contract, and profit made (CU)
+
+Just some database queries
 
 Thirdly, summary data sets:
 
@@ -115,27 +108,31 @@ in each time period have
 Fourthly, extreme contrivedness:
 8. Travelling freighter problem
 
+- finish Python conversion
 - need to work out the distances between all the ports - in Python or in SQL? then cache
-- do lots of reading about it, but as far as the actual solution is concerned just convert the other guy's C# code to Python, and then write comment at top of file explaining how a) the code is just adapted from someone else but b) I really do understand what it is doing
-- maybe make some minor modifications to the constraints/problem, so I am having to think a bit more, and doc this on web
-- doc: represent all shipping lanes between ports as a graph of interconnected nodes, and do a "travelling freighter problem" solution of shortest route for a freighter to visit each port exactly once. provide a diagram on web.
+- provide dropdowns on the spreadsheets to select which ports are to be included in the tour
 
-- #XXX should probably be a generator, maybe tours = [p[2] for p in assign.GetValues() if p[0] > 0.9]
+links:
 
-particularly relevant:
+tsp generally:
+http://archive.ite.journal.informs.org/Vol7No1/LeeRaffensperger/
 http://iris.gmu.edu/~khoffman/papers/trav_salesman.html
+http://en.wikipedia.org/wiki/Travelling_salesman_problem
+
+solver foundation generally:
 http://code.msdn.microsoft.com/solverfoundation
-http://blogs.msdn.com/natbr/archive/2009/04/27/solving-traveling-salesman-problems-using-solver-foundation.aspx
-http://blogs.msdn.com/natbr/archive/2009/05/07/solver-foundation-tsp-part-ii-directives-solver-plugins-model-libraries.aspx
 http://yetanothermathprogrammingconsultant.blogspot.com/2009/02/ms-solver-foundation-gurobi-2.html
 http://yetanothermathprogrammingconsultant.blogspot.com/2009/02/tsp-powerset-formulation.html
-http://archive.ite.journal.informs.org/Vol7No1/LeeRaffensperger/
 http://blogs.msdn.com/lengningliu/archive/2009/11/04/using-solver-foundation-and-plug-in-solvers-in-ironpython.aspx
-http://en.wikipedia.org/wiki/Travelling_salesman_problem
-http://en.wikipedia.org/wiki/Priority_queue
+http://www.amsterdamoptimization.com/msf.html
+
+both together:
+http://blogs.msdn.com/natbr/archive/2009/04/27/solving-traveling-salesman-problems-using-solver-foundation.aspx
+http://blogs.msdn.com/natbr/archive/2009/05/07/solver-foundation-tsp-part-ii-directives-solver-plugins-model-libraries.aspx
 
 also:
-http://www.amsterdamoptimization.com/msf.html
+http://en.wikipedia.org/wiki/Linear_programming
+http://en.wikipedia.org/wiki/Priority_queue
 
 ///
 
@@ -149,58 +146,13 @@ General Resolver things to do:
 
 ////
 
-Database stuff (needs adding to both a) UML diagram and b) actual SQL scripts):
-- make sure names match up UML <-> sql and vice versa
-
-- test data (or maybe just store some real data from system?):
-INSERT INTO dbo.FuturesContract
-           (TraderID, CommodityID, PortID, Price, Quantity, PurchaseTime, SettlementTime, ActualSetTime)
-     VALUES
-     ()
-GO
-
-INSERT INTO dbo.WarehousedCommodity
-           (TraderID, CommodityID, PortID, FuturesContractID, Quantity, PurchasePrice, PurchaseTime, SaleTime, SalePrice, SalePortID)
-     VALUES
-     ()
-GO
-
-INSERT INTO dbo.CommodityTransport
-           (ShippingCompanyID, WarehousedCommodityID, DepartureTime, ArrivalTime)
-     VALUES
-     ()
-GO
-
-////
-
 testing:
 - write tests for multihead queue and syncqueue
-- check for bugs in StatsLib GBMSequence
 - unittest only bank can write to db
 - make processes do right thing when other processes go down, and have automated tests for all possibilities if differing orders of collapse.
 - unittest the algoriths and data structures service
 - unittest multiheadqueue
-- However multi-thread and multi-process concurrent aspects of program are not suited to normal unit testing frameworks. just write some sort of stress test script - i.e. start loads and loads of processes and look for obvious problems - including crashing and incorrect answers in data. Doc this (inc CV desc)
 - database connections should be closed when no longer needed
-
-- use stress test to try to find any bottlenecks that can be optimised away, and if I find any doc this (maybe inc CV desc).
-- need to think of some way of checking that servers have not gone out of sync
-
-////
-
-UML diagrams:
-
-SQL:
-- add add spatial stuff, table inheritance stuff, correct trigger names
-- spatial indexes?
-- once project is finished, make sure it matches up with actual schema
-- stuff that should be kept in sync includes: add table inheritance stuff, triggers, constraints
-- maybe make currency short name the key, or at least make unique
-- rearrange to be more tidy
-
-Deployment view:
-- are protocol labels OK without being a proper sterotype?
-- does anyone else access the db after start up?
 
 ////
 
@@ -251,11 +203,15 @@ It has two types of call, one returns the result, the other just returns how lon
 
 doc:
 
+The name is a nod to book Tai Pan, that is the general point is that there are several large trading houses which ferry various goods very long distances, though actually here the trading houses have been split into two distinct entities, the "Shipping companies" who do the actual transporting of goods, and the "traders" who predict surpluses and shortages in the market and buy and sell goods accordingly.
+
 One day the description here, description in index.htm, description on CV, and description in Wolfie will all need to be synced...
 
-The name is a nod to book Tai Pan, that is the general point is that there are several large trading houses which ferry various goods very long distances, though actually here the trading houses have been split into two distinct entities, the "Shipping companies" who do the actual transporting of goods, and the "traders" who predict surpluses and shortages in the market and buy and sell goods accordingly.
+Also make sure names match up UML <-> sql and vice versa
+
+Deployment UML diagram: does anyone else access the db after start up?
 
 short version for CV etc:
 
-•	A C# .NET, SQL Server and Python project written to improve my knowledge of various aspects of computer science and software engineering. A large number of heterogeneous, multithreaded C# processes interact with each other via TCP sockets. Much of the underlying state of the system is stored in a MS SQL Server instance. The system includes implementations of various data structures and algorithms (e.g. B-Trees, hash tables, numerous sorting algorithms, Gaussian and geometric Brownian probability distributions). A user interface to the system is provided in the form of an IronPython-based spreadsheet that a) makes queries on both the database and on a C# SOAP web service b) loads a C# WPF assembly to produce interactive graphs of the summary data and c) utilises a mathematical optimization framework to solve a simple linear programming problem. The project also makes use of UML, unit testing, Git, etc. Around 250 hours work so far.
+•	A C# .NET, SQL Server and Python project written to improve my knowledge of various aspects of computer science and software engineering. A large number of heterogeneous, multithreaded C# processes interact with each other via TCP sockets. Much of the underlying state of the system is stored in a MS SQL Server instance. The system includes implementations of various data structures and algorithms (e.g. B-Trees, hash tables, numerous sorting algorithms, a couple of probability distributions). A user interface to the system is provided in the form of an IronPython-based spreadsheet that a) makes queries on both the database and on a C# SOAP web service b) loads a C# WPF assembly to produce interactive graphs of the summary data and c) utilises a mathematical optimization framework to solve a simple linear programming problem. The project also makes use of UML, unit testing, Git, etc. Around 250 hours work so far.
 

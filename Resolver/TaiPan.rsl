@@ -1,7 +1,7 @@
 <!--
 This spreadsheet is in the Public Domain.
 -->
-<document currentResultWorksheet="FX Rates" verticalSplitterRatio="0.75" horizontalSplitterRatio="0.988580750408" splitterOrientation="Horizontal" suspendRecalculations="True" license="Public Domain" copyrightOwner="James Gregory" resolverVersion="1.8.1" resolverBuild="5061" documentVersion="12">
+<document currentResultWorksheet="Futures" verticalSplitterRatio="0.75" horizontalSplitterRatio="0.906137184116" splitterOrientation="Horizontal" suspendRecalculations="True" license="Public Domain" copyrightOwner="James Gregory" resolverVersion="1.8.1" resolverBuild="5061" documentVersion="12">
     <foldState license="True" imports="True" worksheetCreation="True" preConstantsUserCode="False" constants="True" preFormulaeUserCode="False" generated="False" postFormulaeUserCode="False"/>
     <traitDefaults>
 
@@ -32,10 +32,9 @@ execfile('TFPPreConstants.py')
             <virtualGridSize width="51" height="87" />
         </viewState>
         <viewState worksheet="Commodity Prices">
-            <currentCell col="9" row="1" />
-            <selection left="9" top="1" right="9" bottom="4" />
+            <currentCell col="8" row="5" />
             <scrollPos col="1" row="1" />
-            <virtualGridSize width="50" height="87" />
+            <virtualGridSize width="49" height="78" />
         </viewState>
         <viewState worksheet="Trader summary">
             <currentCell col="1" row="1" />
@@ -45,7 +44,7 @@ execfile('TFPPreConstants.py')
         <viewState worksheet="Futures">
             <currentCell col="6" row="8" />
             <scrollPos col="1" row="1" />
-            <virtualGridSize width="50" height="58" />
+            <virtualGridSize width="50" height="78" />
         </viewState>
         <viewState worksheet="Sorting Algorithms">
             <currentCell col="1" row="7" />
@@ -53,9 +52,9 @@ execfile('TFPPreConstants.py')
             <virtualGridSize width="49" height="87" />
         </viewState>
         <viewState worksheet="FX Rates">
-            <currentCell col="9" row="5" />
+            <currentCell col="8" row="4" />
             <scrollPos col="1" row="1" />
-            <virtualGridSize width="47" height="88" />
+            <virtualGridSize width="47" height="78" />
         </viewState>
         <viewState worksheet="Shipping">
             <currentCell col="1" row="1" />
@@ -93,6 +92,7 @@ execfile('TFPPreConstants.py')
             <traitentry col="8" row="0" value="139" />
             <traitentry col="8" row="7" value="151" />
             <traitentry col="8" row="8" value="151" />
+            <traitentry col="9" row="0" value="92" />
         </trait>
         <trait name="Alignment">
         </trait>
@@ -140,21 +140,21 @@ execfile('TFPPreConstants.py')
         </trait>
         <trait name="DecimalPlaces">
         </trait>
+        <cell name="I1" value="Citrus fruit" type="general">
+        </cell>
         <cell name="H7" value="Random Walk Forecast" type="general">
         </cell>
-        <cell name="A1" value="Date" type="general">
-        </cell>
-        <cell name="B1" value="nameofport" type="general">
+        <cell name="I4" value="Santos" type="general">
         </cell>
         <cell name="H4" value="Port 3" type="general">
         </cell>
         <cell name="H3" value="Port 2" type="general">
         </cell>
-        <cell name="D1" value="nameofport" type="general">
-        </cell>
-        <cell name="C1" value="nameofport" type="general">
+        <cell name="I3" value="Long Beach" type="general">
         </cell>
         <cell name="H1" value="Commodity" type="general">
+        </cell>
+        <cell name="I2" value="Antwerp" type="general">
         </cell>
         <cell name="H2" value="Port 1" type="general">
         </cell>

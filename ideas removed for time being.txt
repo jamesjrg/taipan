@@ -11,6 +11,8 @@ small things:
 - on resolver summary sheets, add stats on total distances travelled by freighters
 - maybe mention my thoughts on benefits of selective timed functions vs recalcualting whole workbook with RecalculateAfter - e.g. readConfig would have to be reupdated every tick, and combining constant update with buttons that create initial data just doesn't really work
 - freighters should not always accept every single advertised move, like maybe they have limited freighters, or use idea from "big things" where freighters keep track of their positions
+- some commodities not bought/sold at certain ports, for these places no price fluctuations (GBM or otherwise) are created
+- network protocol labels on deployment diagram should be in <<, but this requires faffing with custom stereotypes
 
 medium things:
 - add graphing to spreadsheets calls on algoservice
@@ -23,6 +25,8 @@ medium things:
 - there should be multiple random walks for each sequence on the WPF graphs, not just one
 - open addressing hash table
 - brownian random walk on WPF graph should be dashed line. This is far more effort than I first imagined, because brushes are applied to each time series as a whole, so I would have to add a totally new list of data series for the brownian points, and then in every single function that mentions the data series, I would have to add special case code for forecast series (e.g. they shouldn't have a key)
+- much more study of algorithms book
+- TSP: modify the problem to match up better with the supposed real world that the system models - e.g. to to disallow certain arcs which involve travelling directly over large land masses, but allowing optional stop overs at certain ports and allow visiting ports more than once. Alternatively, could add costs and benefits to certain arcs representing the different profits and losses to be made by fufilling freight movement contracts on those shipping routes
 
 big things:
 - Contribute a bit to an OS project?
@@ -89,7 +93,7 @@ mip optimization:
 ////
 
 hardcore comp sci custom db idea:
-- study more of algorithms book
+- study far more of algorithms book
 - study more advanced sections of databases book
 - Write a small custom database system in to replace SQL Server, either in C# or C++. If C++ would ideally find the Minibase source code and replace sections of that as needed. Would probably just have it manage a small part of the state data, and leave most to SQL server. Would have to implement threaded network connections/cursors complete with locking during file system access, transactions, query parsing and execution, permissions, indexing
 - would use UDP or TCP for connections, would ideally be very fast and scalable, either in C# or C++

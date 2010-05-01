@@ -19,7 +19,7 @@ div.wrapper {font: 100% Sans-serif; background-color: #D2DEFF; width: 94%; paddi
 
 <h3>Introduction</h3>
 
-<p>"Tai-Pan" is a C# .NET, SQL Server and Python project written to improve my knowledge of various aspects of computer science and software engineering. A large number of heterogeneous, multithreaded C# processes interact with each other via TCP sockets. Much of the underlying state of the system is stored in a MS SQL Server instance. The system includes implementations of various data structures and algorithms (e.g. B-Trees, hash tables, numerous sorting algorithms, Gaussian and geometric Brownian probability distributions). A user interface to the system is provided in the form of an IronPython-based spreadsheet that a) makes queries on both the database and on a C# SOAP web service a) makes queries on both the database and on a C# SOAP web service b) loads a C# WPF assembly to produce interactive graphs of the summary data and c) utilises a mathematical optimization framework to solve a simple linear programming problem. The project also makes use of UML, unit testing, Git, etc. </p>
+<p>"Tai-Pan" is a C# .NET, SQL Server and Python project written to improve my knowledge of various aspects of computer science and software engineering. A large number of heterogeneous, multithreaded C# processes interact with each other via TCP sockets. Much of the underlying state of the system is stored in a MS SQL Server instance. The system includes implementations of various data structures and algorithms (e.g. B-Trees, hash tables, numerous sorting algorithms, a couple of probability distributions). A user interface to the system is provided in the form of an IronPython-based spreadsheet that a) makes queries on both the database and on a C# SOAP web service a) makes queries on both the database and on a C# SOAP web service b) loads a C# WPF assembly to produce interactive graphs of the summary data and c) utilises a mathematical optimization framework to solve a simple linear programming problem. The project also makes use of UML, unit testing, Git, etc. </p>
 
 <p>This web page provides an outline of the project, divided into the following sections:</p>
 <ul>
@@ -43,9 +43,11 @@ div.wrapper {font: 100% Sans-serif; background-color: #D2DEFF; width: 94%; paddi
 
 <p>The system makes use of various design patterns both within each process and in the system as a whole. Patterns seen in system as a whole include the n-tier division of data, logic and view (the SQL Server instance, C# processes, and IronPython spreadsheet), and the use of the Bank as a mediator to the database (no other process has write access, leaving the Bank process to manage the stored state of the system).</p>
 
-<p>I used various standard software engineering techniques in the design and construction of the system. Near the beginning of the design process I created several UML diagrams describing various aspects of the system. I have written unit tests against the code to make the system more reliable. As with all projects I have worked on since around 2004 (commercial and non-commercial), the source is under version control (in this case git). See the <a href="#hlinks">links section</a> for a link to browse the repository.</p>
+<p>I used various standard software engineering techniques in the design and construction of the system. Near the beginning of the design process I created several UML diagrams describing various aspects of the system. I have written unit tests against sections of the code to make the system more reliable. As with all projects I have worked on since 2004 (commercial and non-commercial), the source is under version control (in this case git). See the <a href="#hlinks">links section</a> for a link to browse the repository.</p>
 
-<p>There are some things I could have done but didn't due to lack of time. I could have put more focus on unit testing by working via test driven development, and indeed test coverage is very low, but the constantly changing nature of my design, combined with the fact that much of the system is concurrent and multi-process and hence not suited to unit testing at all, meant that this didn't seem a worthwhile use of time. The multi-process, concurrent aspects of the system which cannot be unit tested would ideally instead be stress tested with a series of automated scripts, but I have not currently built such a system.</p>
+<p>There are some things I could have done but didn't due to lack of time. I could have put more focus on unit testing - either by working via test driven development, or at least by having a far high coverage of unit tests. However, most of the system logic is concurrent, spread across multiple processes, and often also stochastic, and hence not suited to unit testing at all. Meanwhile the user interface is sufficiently simple that unit testing isn't really necessary. The multi-process, concurrent aspects of the system which cannot be unit tested would ideally instead be stress tested with a series of automated scripts, but I have not currently built such a test system.</p>
+
+<p>&nbsp;</p>
 
 <h3 id="hsql">Relational databases</h3>
 
@@ -70,55 +72,57 @@ div.wrapper {font: 100% Sans-serif; background-color: #D2DEFF; width: 94%; paddi
 <p>I have given some slight thought to indexes and efficiency, but I have not yet put any effort into index tuning, execution plan analysis analysis, etc.</p>
 </p>
 
+<p>&nbsp;</p>
+
 <h3 id="hconcurrency">Concurrency and distributed systems</h3>
 
 <p>Most of the processes communicate via relatively low-level TCP sockets, though rather than writing my own application-level protocol I am for the most part simply using C#'s XML serialization and deserialization facilities to turn data into strings suitable for writing to a network stream. Some TCP connections consist of one server communicating with multiple peers, whilst others are simply peer-to-peer.</p>
 
 <p>AlgoServer is built using WCF (Windows Communication Foundation), which largely automates the process of making a server with methods available as a SOAP web service.</p>
 
+<p>The processes communicate entirely via asynchronous, fire and forget messages. Many of the messages are either a continuous broadcast or otherwise do not require a reply, and hence for the most part this approach is the correct one to take. The interaction between traders and shipping companies involves an exchange of several messages linked together, and so would be better suited to using a system of callbacks than continous polling, but I have thus far focused more on other aspects of the system. I have perviously had a small amount of experience working with event-driven networking with Python (Twisted) and Javascript (MochiKit and AJAX).</p>
+
+<p>The processes are themselves multithreaded, and so have to pay some attention to sharing data between threads in a safe manner, though the processes are sufficiently small that this was not a major undertaking. Data shared between threads is stored in instances of a custom synchronised, multi-headed queue structure, whereby the queue maintains a seperate head index for each subscribing thread.</p>
+
 <p>FOLLOWING SECTION FLAGRANTLY A WORK IN PROGRESS:</p>
 
-<p>blah blah threading vs callbacks, blah blah async vs async fire and forget vs sync. mention twisted, java set analyser</p>
-<p> say how threads generally a bad idea unless highly concurrent performance absolutely paramount, used as an exercise here, but in most real projects there are simpler, more reliable alternatives (i.e. asynchronous network read/writes, likely combined with callbacks for when data has finished sending or receiving, or otherwise combined with manual system of asynchronous acknowledgement messages between clients</p>
-
-<p>blah blah concurrency with processes and within processes with threading</p>
+<p>blah blah explanation of following diagram. blah blah contract for movements of goods and locking process</p> </p>blah blah real system would likely have more acknowledgement messages and error checking, but this would make things unnecessarily messy for the purposes of the exercise.</p>
 
 <p><img src="images/SequenceSurplus.png"/></p>
 
-<p>blah blah explanation of diagram. blah blah contract for movements of goods and locking process</p> </p>blah blah real system would likely have more acknowledgement messages and error checking, but this would make things unnecessarily messy for the purposes of the exercise.</p>
+<p>If a Trader receives a message indicating a predicted future shortage of a commodity at a port, a similar flow of actions results as for a predicted surplus:</p>
 
 <p><img src="images/SequenceShortage.png"/></p>
 
-<p>blah blah explanation of diagram</p>
+<p>&nbsp;</p>
 
 <h3 id="hmath">Mathematics and algorithmics</h3>
-
-<p>FOLLOWING SECTION FLAGRANTLY A WORK IN PROGRESS:</p>
 
 <p>A user interface to the system is provided in the form of an IronPython-based spreadsheet using a spreadsheet program called "Resolver One", billed as a "programable spreadsheet" or as a "mash-up of a spreadsheet and an IDE". Rather than allowing macros to be run against the spreadsheet in a limited fashion (as with Excel), in Resolver One the entire sheet is an IronPython script that you are free to modify. It is extremely flexible - you can load external .NET or Python libraries and write code utilising them to manipulate the cells in the workbook, and you can also add clickable buttons and drop downs to cells for user interaction.</p>
 
 <p><img src="images/gbm.png"/></p>
 
-<p>There are various prices and values that fluctuate in the model - commodity prices (generally follow geometric brownian motion but are subject to random price jumps), FX rates (entirely determined by geometric Brownian motion), share prices (entirely determined by geometric Brownian motion), and bank balances (determined by the interactions between the various players in the system). The IronPython spreadsheet code adds buttons to fetch the most recent commodity prices or FX rates from the database, buttons to optionally create predicted future random walk data points, and buttons to graph this data by instantiating a WPF graph window from a .NET assembly (the WPF chart code being almost entirely the public domain work of other people).</p>
+<p>There are various prices and values that fluctuate in the model. These include commodity prices at each port (which generally follow Geometric Brownian Motion but are subject to random price jumps), FX rates (entirely determined by Geometric Brownian Motion), share prices (entirely determined by Geometric Brownian Motion), and bank balances (determined by the interactions between the various players in the system). The IronPython spreadsheet code adds buttons to fetch the most recent commodity prices or FX rates from the database, buttons to optionally create predicted future random walk data points, and buttons to graph this data by instantiating a WPF graph window from a .NET assembly (the WPF chart code being almost entirely the public domain work of other people).</p>
 
 <p>The GBM sequences are produced using a tiny custom class library written in C# and shared by both the processes in the main system and the IronPython spreadsheet code. This library provides functions for Gaussian and Geometric Brownian sequences, the first based on the Box-Muller transformation, the latter based on sampling the former.</p>
 
-<p>The WPF chart assembly loaded by the spreadsheet (and the IronPython code that instantiates its window) is almost entirely the public domain work of other people. I spent a little while working on some minor modifications to the graph, but it turned out that the small modifications I wished to make would have required a major rewrite of the code, so I have put that idea on hold.
+<p>The WPF chart assembly loaded by the spreadsheet (and the IronPython code that instantiates its window) is almost entirely the public domain work of other people. I spent a little while working on some minor modifications to the graph, but it turned out that the small modifications I wished to make would have required a major rewrite of the code, so I have put that idea on hold.</p>
+
+<p>FOLLOWING SECTION FLAGRANTLY A WORK IN PROGRESS:</p>
 
 <p>[screenshot of summary sheet]</p>
 
-<p>then two sheets of just real time data (Futures, Shipping),  then three summary sheets producing stats on activity during certain time periods, blah mild practice with sql queries - subselects, groupby, etc - but nothing very complex, mention various web apps like sde, forkd</p>
+<p>blah blah then five sheets of summary data produced via SQL queries - first two sheets have pretty simple queries, next three sheets have slightly more complex queries which aggregate statistics on various sorts of activity, grouped into time periods.</p>
 
 <p><img src="images/TFP.png"/></p>
 
 <p>[screenshot of TFP result page]</p>
 
-<p>blah blah Travelling Salesman Problem, MS Solver Foundation, linear programming and constraints, graph problems, mention TUI</p>
-<p>blah blah spatial data functions, though actually somewhat ridiculous as it assumes ships can travel in straight arcs from any two ports, without land getting in the way.</p>
+<p>blah blah Travelling Salesman Problem -> travelling freighter problem solution of shortest route for a freighter to visit each port exactly once, MS Solver Foundation, linear programming and constraints as a possible way to deal with TSP, mention TUI</p>. blah blah started off reading about linear prgoramming and TSP, then took C# code from a blog post that used Solver to solve it, then converted it to Python. next step is to not use some predefined data but instead use the spatial data from the database on the locations of the various ports in the db, and to provide dropdowns on the spreadsheets to select which ports are to be included in the tour. This is actually somewhat ridiculous as it assumes ships can travel in straight arcs from any two ports, without land getting in the way, but anyway. The step after that will be to modify the problem to match up better with the supposed real world that the system models - e.g. to disallow certain arcs which involve travelling directly over large land masses, but allowing optional stop overs at certain ports and allow visiting ports more than once. Alternatively, I could add costs and benefits to certain arcs representing the different profits and losses to be made by fufilling freight movement contracts on those shipping routes.</p>
 
 <p>[screenshot of alg timing sheet]</p>
 
-<p>AlgoServer provides implementations of various complex data structures and sorting algorithms: insertion sort, merge sort, heap sort, quick sort, randomized quick sort. counting sort, chained hash map, binary search tree, red-black tree, B-tree. These methods can be called as a SOAP web service. The sorting methods return both the sorted data and the amount of time the algorithm took on the server. blah blah sheet makes lots of calls to test sorting algs - i. blah stats on their av/min/max time taken.</p>
+<p>AlgoServer provides implementations of various complex data structures and sorting algorithms: insertion sort, merge sort, heap sort, quick sort, randomized quick sort. counting sort, chained hash map, binary search tree, red-black tree, B-tree. These methods can be called as a SOAP web service. The sorting methods return both the sorted data and the amount of time the algorithm took on the server. blah blah sheet makes lots of calls to test sorting algs. blah stats on their av/min/max time taken.</p>
 
 <p>On calling the web service to create a data structure the caller is returned an ID which can the client can then include as a parameter when requesting operations to be made on that data structure (e.g. search, insert, remove), or to delete it. However, these methods are not currently utilised by the spreadsheet.</p>
 

@@ -29,9 +29,10 @@ class Coordinate:
         return int(6378.388 * math.acos(0.5 * ((1 + q1) * q2 - (1 - q1) * q3)) + 1)
 
 class Arc:
-    city1 = None
-    city2 = None
-    distance = None
+    def __init__(city1, city2, distance)
+        self.city1 = city1
+        self.city2 = city2
+        self.distance = distance
     
 # Burma14 from TSPLIB. Optimal tour = 3323.
 data = [
@@ -57,6 +58,20 @@ def solveTFP():
     
     #Parameters
     city = Set(Domain.IntegerNonnegative, "city")
+    dist = Parameter(Domain.Real, "dist", city, city)
+    
+    #Add all the arcs
+    for p1 in data:
+        for p2 in data:
+            arcs.append(Arc(p1.Name, p2.Name, p1.distance(p2)))
+            
+    dist.SetBinding(arcs, "Distance", "City1", "City2")
+    model.AddParameters(dist)
+    
+    #Decisions
+    assign = Decision(Domain.IntegerRange(0, 1), "assign", city, city)
+    rank = Decision(Domain.RealNonnegative, "rank", city)
+    model.AddDecisions(assign, rank)
     
     #Solve
     solution = context.Solve()
@@ -65,7 +80,6 @@ def solveTFP():
     print "Cost = %f" % goal.ToDouble()
     print "Tour:"
     
-    #XXX should probably be a generator, maybe
     tours = [p[2] for p in assign.GetValues() if p[0] > 0.9]
     
     for tour in tours:

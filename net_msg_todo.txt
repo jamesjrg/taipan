@@ -1,40 +1,29 @@
-Though some of this should be configurable, a reasonable ball park figure might be that we want to have running 5 Shipping Companies, 5 Traders, 1 FateAndGuesswork, 1 FXService, 1 Bank, 1 Resolver One spreadsheet, 0+ WpfGraphs,1 SQL Server instance, optionally 1 SortingServer + 1 SortingClient.
-
 Bank:
 Processes it receives messages from:
-1. FX Server for FX prices. Updated currency value then written to database.
-2. Shipping company departures and arrivals. On departure money is debited from trader and credited to shipping company, on basis of distance of journey. On arrival money is credited to trader on basis of price at port.
-3. FateAndGuesswork:
-a) market prices. Commodity prices in database are updated accordingly.
-b) stock prices. Database updated accordingly
-5. Traders:
+- Shipping company departures and arrivals. On departure money is debited from trader and credited to shipping company, on basis of distance of journey. On arrival money is credited to trader on basis of price at port.
+- Traders:
 a) decisions to buy goods to warehouse. db updated accordingly.
 b) decisions to organise a futures contract. db updated accordingly.
 Processes it sends messages to:
 a) sends warehouse ids to trader after receiving request for buys
 b) sends trader msg with warehouse id after a future has been settled
+c) sends trader buy confirms
 Things it calculates:
 1. whenever updating bank balances after an economic transaction, if movement it applies modifier from distance (= greater profit to freighter company, greater expense to trader), if trade in goods on open market takes into account current commodity price, if different currencies applies current FX multiplier
 2. carries out futures contracts at point in time specified
 
-Things it reads from database: nothing
-Things it writes to database: see above
 If process ends, what do other processes do:
 All processes sending data to bank should throw exception and end gracefully.
 
 ////
 
 FateAndGuesswork
-Processes it receives messages from: none
 Processes it sends messages to:
-1. To Trader, sends "guesswork" calculated future price jumps of a given commodity for a given port and with given time (note only ports which actually import/export a given commodity will ever produce a surplus/suffer shortage). Only sent to a single trader.
-2. To Bank:
-a) Current market price of all commodities. Goes up and down via GBM, except for planned jumps due to predictions for traders. Make sure places which neither import nor export a commodity do not have a price created (unit test this, also take account of this in GUI).
-b) Stock prices of each company. Goes up and down via GBM.
+To Trader, sends "guesswork" calculated future price jumps of a given commodity for a given port and with given time (note only ports which actually import/export a given commodity will ever produce a surplus/suffer shortage). Only sent to a single trader.
+
 Things it calculates:
 Semi-randomly calculates which ports will in future have a) have surplus of a commodity or b) have shortage of a commodity, i.e. how big the price will jump and at what date
-Things it reads from database: info on commodities (at startup only?).
-Things it writes to database: none
+
 If process ends, what do other processes do:
 All client processes should throw exception and end gracefully.
 
@@ -65,16 +54,12 @@ b) Whether acceptance of movement of goods has been confirmed
 Processes it sends messages to:
 1. To Traders, acceptance of contract to move goods
 2. To Bank, when it has collected goods, when it has delivered goods. See "CommodityTransport" database entity for attributes to broadcast.
-Things it calculates: which contracts for movement of goods to accept
-Things it reads from database: 
+
 If process ends, what do clients do:
 End of acceptances of contracts doesn't matter at all. End of messages about shipping departure and arrival will means some will end up losing out on money, but this shouldn't matter too much.
 
 FXServer
-Processes it sends messages to:
-1. fluctuating currency prices
-Things it calculates: fluctuating currency prices via GBM
-Things it reads from db: info on currencies (at startup only?)
+
 If process ends, what do clients do:
 Bank should throw error and halt, system should just end gracefully.
 

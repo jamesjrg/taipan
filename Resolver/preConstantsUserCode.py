@@ -96,13 +96,34 @@ def createBrownian(currentPrice):
     return seq
 
 # Commodity Prices
-commodityId = 1
-commodityPortId1 = 1
-commodityPortId2 = 2
-commodityPortId3 = 3
 
+portIDs = [None,None,None]
+
+def setPortNames():
+    data = queryDb("select name from Commodity order by name asc")
+    commodNames = [row for row in data]
+    
+    commoditySheet.Cells.I1.DropdownItems = commodNames
+    
+    data = queryDb("select name from Port order by name asc")
+    portNames = [row for row in data]    
+
+    commoditySheet.Cells.I2.DropdownItems = portNames
+    commoditySheet.Cells.I3.DropdownItems = portNames
+    commoditySheet.Cells.I4.DropdownItems = portNames
+    
 def updateCommodityPrices():
-    data = queryDb("select * from (select top %d ValueDate, LocalPrice from HistoricalPortCommodityPrice where PortID = %d and CommodityID = %d order by ValueDate DESC) as foo order by ValueDate ASC" % (Settings.nTopUpdate, commodityPortId1, commodityId))
+    commoditySheet.B1 = commoditySheet.I2
+    commoditySheet.C1 = commoditySheet.I3
+    commoditySheet.D1 = commoditySheet.I4
+    
+    commodityID = queryDb("select ID from Commodity where Name= '%s'" % commoditySheet.I1)[0,0]
+    ids = queryDb("select ID from Port where Name in ('%s', '%s', '%s') order by name ASC" % (commoditySheet.I2, commoditySheet.I3, commoditySheet.I4))
+    portIDs[0] = ids[0, 0]
+    portIDs[1] = ids[0, 1]
+    portIDs[2] = ids[0, 2]
+    
+    data = queryDb("select * from (select top %d ValueDate, LocalPrice from HistoricalPortCommodityPrice where PortID = %d and CommodityID = %d order by ValueDate DESC) as foo order by ValueDate ASC" % (Settings.nTopUpdate, portIDs[0], commodityID))
     commoditySheet.FillRange(data, 1, 2, 2, Settings.nTopUpdate + 1)
     
 def commodForecast():
@@ -159,9 +180,10 @@ def fxForecast():
         currTime = currTime.AddSeconds(Settings.config['MainLoopTick'] / 1000)
         times.append(currTime)
     fxSheet.FillRange(times, 1, startRow, 1, endRow)
+    ItaliciseRange("A%d" % (startRow), "A%d" % (endRow))
 
     #prices
-    #should probably use zip, but I hate unreadable Python one liners
+    #should probably use zip for letters, but I hate unreadable Python one liners
     for i, id in enumerate(currencyIds):
         #USD doesn't fluctuate vs USD
         if id == USDID:
@@ -223,6 +245,7 @@ def runSort():
 
 
 readConfig()
+setPortNames()
 setFXNames()
     
     

@@ -97,6 +97,7 @@ namespace Microsoft.SolverFoundation.Samples.TravelingSalesman
             var arcs = from p1 in data
                        from p2 in data
                        select new Arc { City1 = p1.Name, City2 = p2.Name, Distance = p1.Distance(p2) };
+
             dist.SetBinding(arcs, "Distance", "City1", "City2");
             model.AddParameters(dist);
 

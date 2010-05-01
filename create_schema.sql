@@ -127,7 +127,7 @@ CREATE TABLE dbo.Currency
 	(
 	ID int NOT NULL IDENTITY (1, 1) PRIMARY KEY CLUSTERED,
     Name nvarchar(50) NOT NULL,
-    ShortName nchar(3) NOT NULL CHECK (ShortName LIKE '[A-Z][A-Z][A-Z]'),
+    ShortName nchar(3) NOT NULL CHECK (ShortName LIKE '[A-Z][A-Z][A-Z]') UNIQUE,
     USDValue Money NOT NULL DEFAULT 1,
     constraint currency_alternate_pk unique (ShortName)
 	)  ON [PRIMARY]
