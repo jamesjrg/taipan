@@ -818,7 +818,8 @@ namespace WpfChart
 
         private void ZoomOut_Click(object sender, RoutedEventArgs e)
         {
-            Point ptZoom = new Point(this.panZoomCalculator.Zoom.X * 0.9, this.panZoomCalculator.Zoom.Y * 0.9);
+            //XXX
+            Point ptZoom = new Point(this.panZoomCalculator.Zoom.X, this.panZoomCalculator.Zoom.Y * 0.9);
 
             this.SetZoom(this.panZoomCalculator.Pan, ptZoom);
         }

@@ -47,51 +47,51 @@ GO
 INSERT INTO dbo.Country
            (Name, CurrencyID)
      VALUES
-           --('Algeria', 1),
+           --('Algeria', 0),
            ('Argentina', 1),
-           ('Australia', 1),
+           ('Australia', 2),
            
-           ('Belgium', 1),
-           ('Netherlands', 1),
-           ('United Kingdom', 1),
-           ('France', 1),
-           ('Germany', 1),
-           --('Italy', 1),
-           ('Spain', 1),
+           ('Belgium', 4),
+           ('Netherlands', 4),
+           ('United Kingdom', 3),
+           ('France', 4),
+           ('Germany', 4),
+           --('Italy', 4),
+           ('Spain', 4),
            
-           --('Bangladesh', 1),
-           ('Brazil', 1),
-           ('United States', 1),
-           ('Canada', 1),
-           ('Chile', 1),
-           ('China', 1),
-           --('Colombia', 1),
-           --('Denmark', 1),
-           ('Egypt', 1),
-           ('Hong Kong SAR', 1),
-           --('Iceland', 1),
-           ('India', 1),
-           ('Iran', 1),
-           --('Israel', 1),
-           ('Japan', 1),
+           --('Bangladesh', 0),
+           ('Brazil', 5),
+           ('United States', 6),
+           ('Canada', 7),
+           ('Chile', 8),
+           ('China', 9),
+           --('Colombia', ),
+           --('Denmark', 0),
+           ('Egypt', 10),
+           ('Hong Kong SAR', 11),
+           --('Iceland', 0),
+           ('India', 12),
+           ('Iran', 13),
+           --('Israel', 0),
+           ('Japan', 14),
            --('Madagascar', 1),
            --('Mexico', 1),
            --('Namibia', 1),
            --('New Zealand', 1),
            --('Norway', 1),
-           ('Pakistan', 1),
+           ('Pakistan', 15),
            --('Peru', 1),
-           ('Russia', 1),
-           ('Saudi Arabia', 1),
-           ('Singapore', 1),
-           --('South Africa', 1),
-           ('South Korea', 1),
-           --('Sweden', 1),
-           ('Taiwan', 1),
-           ('Thailand', 1),
-           --('Turkey', 1),
-           ('United Arab Emirates', 1)
-           --('Venezuela', 1)
+           ('Russia', 16),
+           ('Saudi Arabia', 17),
+           ('Singapore', 18),
+           --('South Africa', 0),
+           ('South Korea', 19),
+           --('Sweden', 0),
+           ('Taiwan', 20),
+           ('Thailand', 21),
+           --('Turkey', 0),
+           ('United Arab Emirates', 22)
+           --('Venezuela', 0)
 GO
 
 -- coordinates are in form longitude, latitude (i.e. x, y)
@@ -101,46 +101,46 @@ INSERT INTO dbo.Port
         --Algeria
         --('Algiers', 1, geography::STPointFromText('POINT(3.05 36.7833)', 4326)),
         --Argentina
-        ('Bahía Blanca', 2, geography::STPointFromText('POINT(-62.28 -38.72)', 4326)),
+        ('Bahía Blanca', 1, geography::STPointFromText('POINT(-62.28 -38.72)', 4326)),
         --('Buenos Aires', 2),        
         --Australia
-        ('Sydney', 3, geography::STPointFromText('POINT(151.211111 -33.859972)', 4326)),
-        ('Port Hedland', 3, geography::STPointFromText('POINT(118.601 -20.31)', 4326)),        
+        ('Sydney', 2, geography::STPointFromText('POINT(151.211111 -33.859972)', 4326)),
+        ('Port Hedland', 2, geography::STPointFromText('POINT(118.601 -20.31)', 4326)),        
         --('Melbourne', 3, geography::STPointFromText('POINT(0 0)', 4326)),        
         --Belgium
-        ('Antwerp', 4, geography::STPointFromText('POINT(4.42 51.22)', 4326)),
+        ('Antwerp', 3, geography::STPointFromText('POINT(4.42 51.22)', 4326)),
         --Netherlands
-        ('Rotterdam', 5, geography::STPointFromText('POINT(4.48 51.93)', 4326)),        
+        ('Rotterdam', 4, geography::STPointFromText('POINT(4.48 51.93)', 4326)),        
         --UK
-        ('Felixstowe', 6, geography::STPointFromText('POINT(1.305399 51.960637)', 4326)),
+        ('Felixstowe', 5, geography::STPointFromText('POINT(1.305399 51.960637)', 4326)),
         --('Grimsby and Immingham', 6, geography::STPointFromText('POINT(0 0)', 4326)),        
         --France
-        ('Le Havre', 7, geography::STPointFromText('POINT(0.12 49.5)', 4326)),
+        ('Le Havre', 6, geography::STPointFromText('POINT(0.12 49.5)', 4326)),
         --('Marseille', 7, geography::STPointFromText('POINT(0 0)', 4326)),        
         --Germany
-        ('Bremen', 8, geography::STPointFromText('POINT(8.81 53.08)', 4326)),
+        ('Bremen', 7, geography::STPointFromText('POINT(8.81 53.08)', 4326)),
         --('Hamburg', 8, geography::STPointFromText('POINT(0 0)', 4326)),        
        --Italy
        --('Gioia Tauro', 9, geography::STPointFromText('POINT(0 0)', 4326)),
        --Spain
-       ('Valencia', 1, geography::STPointFromText('POINT(-0.39 39.48)', 4326)),
+       ('Valencia', 8, geography::STPointFromText('POINT(-0.39 39.48)', 4326)),
        --('Algeciras', 1, geography::STPointFromText('POINT(0 0)', 4326)),    
        --Bangladesh
        --('Chittagong', 1, geography::STPointFromText('POINT(0 0)', 4326)),       
        --Brazil
-       ('Santos', 1, geography::STPointFromText('POINT(-46.33 -23.95)', 4326)),       
+       ('Santos', 9, geography::STPointFromText('POINT(-46.33 -23.95)', 4326)),       
        --United States
-       --('Los Angeles', 1, geography::STPointFromText('POINT(0 0)', 4326)),
-       ('Long Beach', 1, geography::STPointFromText('POINT(-118.16 33.79)', 4326)),
-       --('New York', 1, geography::STPointFromText('POINT(0 0)', 4326)),
-       ('Savannah', 1, geography::STPointFromText('POINT(-81.13 32.02)', 4326)),
+       --('Los Angeles', 10, geography::STPointFromText('POINT(0 0)', 4326)),
+       ('Long Beach', 10, geography::STPointFromText('POINT(-118.16 33.79)', 4326)),
+       --('New York', 10, geography::STPointFromText('POINT(0 0)', 4326)),
+       ('Savannah', 10, geography::STPointFromText('POINT(-81.13 32.02)', 4326)),
        --Canada
-       ('Vancouver', 1, geography::STPointFromText('POINT(-123.13 49.28)', 4326)),       
+       ('Vancouver', 11, geography::STPointFromText('POINT(-123.13 49.28)', 4326)),       
        --Chile
-       ('San Antonio', 1, geography::STPointFromText('POINT(-71.61 -33.6)', 4326)),       
+       ('San Antonio', 12, geography::STPointFromText('POINT(-71.61 -33.6)', 4326)),       
        --China
-       ('Shanghai', 1, geography::STPointFromText('POINT(121.47 31.23)', 4326)),
-       ('Shenzhen', 1, geography::STPointFromText('POINT(114.1 22.55)', 4326)),
+       ('Shanghai', 13, geography::STPointFromText('POINT(121.47 31.23)', 4326)),
+       ('Shenzhen', 13, geography::STPointFromText('POINT(114.1 22.55)', 4326)),
        --('Ningbo', 1, geography::STPointFromText('POINT(0 0)', 4326)),
        --('Guangzhou', 1, geography::STPointFromText('POINT(0 0)', 4326)),
        --('Qingdao', 1, geography::STPointFromText('POINT(0 0)', 4326)),
@@ -150,21 +150,21 @@ INSERT INTO dbo.Port
        --Denmark
        --('Fredericia', 1, geography::STPointFromText('POINT(0 0)', 4326)),       
        --Egypt
-       ('Port Said', 1, geography::STPointFromText('POINT(32.2845 31.2593)', 4326)),
+       ('Port Said', 14, geography::STPointFromText('POINT(32.2845 31.2593)', 4326)),
        --Hong Kong SAR
-       ('Hong Kong', 1, geography::STPointFromText('POINT(114.116667 22.333333)', 4326)),
+       ('Hong Kong', 15, geography::STPointFromText('POINT(114.116667 22.333333)', 4326)),
        --Iceland
        --('Reykjavík', 1, geography::STPointFromText('POINT(0 0)', 4326)),       
        --India
-       ('Nhava Sheva', 1, geography::STPointFromText('POINT(72.95 18.94)', 4326)),
+       ('Nhava Sheva', 16, geography::STPointFromText('POINT(72.95 18.94)', 4326)),
        --Iran
-       ('Bandar Abbas', 1, geography::STPointFromText('POINT(56.266667 27.183333)', 4326)),
+       ('Bandar Abbas', 17, geography::STPointFromText('POINT(56.266667 27.183333)', 4326)),
        --Israel
        --('Ashdod', 1, geography::STPointFromText('POINT(0 0)', 4326)),
        --Japan
        --('Nagoya', 1, geography::STPointFromText('POINT(0 0)', 4326)),
-       ('Tokyo', 1, geography::STPointFromText('POINT(139.741 35.6705)', 4326)),
-       ('Yokohama', 1, geography::STPointFromText('POINT(139.595 35.4527)', 4326)),       
+       ('Tokyo', 18, geography::STPointFromText('POINT(139.741 35.6705)', 4326)),
+       ('Yokohama', 18, geography::STPointFromText('POINT(139.595 35.4527)', 4326)),       
        --Madagascar
        --('Tamatave', 1, geography::STPointFromText('POINT(0 0)', 4326)),
        --Mexico
@@ -177,29 +177,29 @@ INSERT INTO dbo.Port
        --Norway
        --('Bergen', 1, geography::STPointFromText('POINT(0 0)', 4326)),
        --Pakistan
-       ('Karachi', 1, geography::STPointFromText('POINT(67.0285 24.8898)', 4326)),
+       ('Karachi', 19, geography::STPointFromText('POINT(67.0285 24.8898)', 4326)),
        --Peru
        --('Callao', 1, geography::STPointFromText('POINT(0 0)', 4326)),
        --Russia
-       ('Saint Petersburg', 1, geography::STPointFromText('POINT(30.3067 59.9327)', 4326)),
+       ('Saint Petersburg', 20, geography::STPointFromText('POINT(30.3067 59.9327)', 4326)),
        --Saudi Arabia
-       ('Jeddah', 1, geography::STPointFromText('POINT(39.172778 21.543333)', 4326)),
+       ('Jeddah', 21, geography::STPointFromText('POINT(39.172778 21.543333)', 4326)),
        --Singapore
-       ('Singapore', 1, geography::STPointFromText('POINT(103.828 1.36558)', 4326)),
+       ('Singapore', 22, geography::STPointFromText('POINT(103.828 1.36558)', 4326)),
        --South Africa
        --('Durban', 1, geography::STPointFromText('POINT(0 0)', 4326)),
        --South Korea
-        ('Busan', 1, geography::STPointFromText('POINT(129.033333 35.1)', 4326)),       
+        ('Busan', 23, geography::STPointFromText('POINT(129.033333 35.1)', 4326)),       
        --Sweden
        --('Gothenburg', 1, geography::STPointFromText('POINT(0 0)', 4326)),
        --Taiwan
-       ('Kaohsiung', 1, geography::STPointFromText('POINT(120.266667 22.633333)', 4326)),
+       ('Kaohsiung', 24, geography::STPointFromText('POINT(120.266667 22.633333)', 4326)),
        --Thailand
-       ('Laem Chabang', 1, geography::STPointFromText('POINT(100.883333 13.083333)', 4326)),
+       ('Laem Chabang', 25, geography::STPointFromText('POINT(100.883333 13.083333)', 4326)),
        --Turkey
        --('Istanbul', 1, geography::STPointFromText('POINT(0 0)', 4326)),
        --United Arab Emirates
-       ('Dubai', 1, geography::STPointFromText('POINT(55.3085 25.2694)', 4326))
+       ('Dubai', 26, geography::STPointFromText('POINT(55.3085 25.2694)', 4326))
        --Venezuela
        --('Caracas', 1, geography::STPointFromText('POINT(0 0)', 4326)),
        --('Maracaibo', 1)

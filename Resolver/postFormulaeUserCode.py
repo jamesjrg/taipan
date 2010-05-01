@@ -6,24 +6,24 @@ def makeButton(name, onClick):
     return b
 
 updateCommodityButton = makeButton("Update", updateCommodityPrices)
-commoditySheet.H6 = updateCommodityButton
+commoditySheet.H7 = updateCommodityButton
 
 commodForecastButton = makeButton("Random Walk Forecast", commodForecast)
-commoditySheet.H7 = commodForecastButton
+commoditySheet.H8 = commodForecastButton
 
 commodGraphButton = makeButton("Draw graph", commodGraph)
-commoditySheet.H8 = commodGraphButton
+commoditySheet.H9 = commodGraphButton
 
 updateFXButton = Button("Update")
 updateFXButton.Click += updateFXRates
-fxSheet.H5 = updateFXButton
+fxSheet.H6 = updateFXButton
 
 fxForecastButton = Button("Random Walk Forecast")
 fxForecastButton.Click += fxForecast
-fxSheet.H6 = fxForecastButton
+fxSheet.H7 = fxForecastButton
 
 fxGraphButton = makeButton("Draw graph", fxGraph)
-fxSheet.H7 = fxGraphButton
+fxSheet.H8 = fxGraphButton
 
 solveTFPButton = Button("Solve")
 solveTFPButton.Click += solveTFP

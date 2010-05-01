@@ -13,6 +13,7 @@ small things:
 - freighters should not always accept every single advertised move, like maybe they have limited freighters, or use idea from "big things" where freighters keep track of their positions
 - some commodities not bought/sold at certain ports, for these places no price fluctuations (GBM or otherwise) are created
 - network protocol labels on deployment diagram should be in <<, but this requires faffing with custom stereotypes
+- add special case code if there are not sufficient values in db for resolver gbm prediction and graphing buttons
 
 medium things:
 - add graphing to spreadsheets calls on algoservice

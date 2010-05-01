@@ -2,7 +2,7 @@
 - est 1 week FT
 
 * finish all main points of spreadsheet summary sheets
-- est 1 week full time
+- est 4 days week full time
 
 * read parts of algorithms book chapters 2,3,4,5,6,7, then 10,11,12,13, then 18
 * do all basic of algorithms bit
@@ -27,7 +27,9 @@ git change log:
 nowish:
 - read more about linear programming, graph problems, tsp, convert more C# code to Python
 - read more detail from algs book
+- finish binary search tree
 - fix heap sort
+- after getting commod sheet to work, take screenshot to replace current doc screenshot
 - DecideMoveContracts in trader - add and remove
 - sql server process CPU usage way too high, fix it (+ doc)
 - read about + implement binary search trees, rb trees, b trees
@@ -45,6 +47,8 @@ nowish:
 - shippingcompany interprets advertise moves
 - traders confirm moves
 - shippingcompany acts on moveconfirm
+- when bank process starts, it should clear all warehoused commods and futures
+- are futures and buys in USD or localprice?
 
 ////
 
@@ -57,11 +61,7 @@ Process logic and networking:
 
 ///
 
-First two tabs of Resolver sheet (GBM data streams):
-- make commod prices forecast + graphing work fully correctly
-- add special case code if there are not sufficient values in db?
-
-Next two sheets:
+Next two sheets for Resolver:
 3. Historical futures contracts, including details of how relevant prices of all involved values changed between start and end of contract, and profit made (CU)
 4. Historical commdity transports, including details of how relevant prices of all involved values changed between start and end of contract, and profit made (CU)
 
@@ -181,23 +181,16 @@ method 2:
 
 - using info both in algos book and database book, have an entirely pointless AlgoServer (including on UML diagram, with a note of explanation) that has functions to create various complex data structures and run various algorithms.
 
-implement the following:
-- insertion sort
-- merge sort
-- heap sort
-- quick sort
-- randomized quick sort
-- counting sort
-- hash table
+still need to implement the following:
 - binary search tree
 - red-black tree
 - b-tree
 
-It has two types of call, one returns the result, the other just returns how long the procedure took.
+still need to unit test the following:
+- hash table
+- counting sort
 
 - start script for algoserver
-- unit test
-- does data contract require I use get/set properties? how exactly does data contract work?
 
 ///
 

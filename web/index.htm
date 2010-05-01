@@ -65,7 +65,7 @@ div.wrapper {font: 100% Sans-serif; background-color: #D2DEFF; width: 94%; paddi
 
 <p>The locations of the ports are stored using SQL Server's geography data type, this is used in various places to calculate distances between ports.</p>
 
-<p>The vast majority of data manipulation is performed in C# and Python, but the database does make some minor usage of stored procedures and cursors.</p>
+<p>The vast majority of data manipulation is performed in C# and Python, but the database does make some usage of stored procedures and cursors.</p>
 
 <p>I have given some basic thought to security and permissions - there are seperate read-only and read-write logins, and processes only use the read-write login where necessary - but complex permissions, views and security schemas would seem rather too contrived for a project being developed and run by a single person.</p>
 
@@ -102,7 +102,7 @@ div.wrapper {font: 100% Sans-serif; background-color: #D2DEFF; width: 94%; paddi
 
 <p><img src="images/gbm.png"/></p>
 
-<p>There are various prices and values that fluctuate in the model. These include commodity prices at each port (which generally follow Geometric Brownian Motion but are subject to random price jumps), FX rates (entirely determined by Geometric Brownian Motion), share prices (entirely determined by Geometric Brownian Motion), and bank balances (determined by the interactions between the various players in the system). The IronPython spreadsheet code adds buttons to fetch the most recent commodity prices or FX rates from the database, buttons to optionally create predicted future random walk data points, and buttons to graph this data by instantiating a WPF graph window from a .NET assembly. The WPF chart code being almost entirely the public domain work of other people. I spent a little while working on some minor modifications to the graph, but it turned out that the small modifications I wished to make would have required a major rewrite of the code, so I have put that idea on hold.</p>
+<p>There are various prices and values that fluctuate in the model. These include commodity prices at each port (which generally follow Geometric Brownian Motion but are subject to random price jumps), FX rates (entirely determined by Geometric Brownian Motion), share prices (entirely determined by Geometric Brownian Motion), and bank balances (determined by the interactions between the various players in the system). The IronPython spreadsheet code adds buttons to fetch the most recent commodity prices or FX rates from the database, buttons to optionally create predicted future random walk data points, and buttons to graph this data by instantiating a WPF graph window from a .NET assembly. The WPF chart code is almost entirely the public domain work of other people. I started making some minor changes, but decided to focus on other things for the time being.</p>
 
 <p>The GBM sequences are produced using a tiny custom class library written in C# and shared by both the processes in the main system and the IronPython spreadsheet code. This library provides functions for Gaussian and Geometric Brownian sequences, the first based on the Box-Muller transformation, the latter based on sampling the former.</p>
 

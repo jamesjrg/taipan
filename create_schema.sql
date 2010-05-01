@@ -36,9 +36,22 @@ open cur
 fetch next from cur into @procName
 while @@fetch_status = 0
 begin
-    if @procName <> 'DeleteAllProcedures'
-          exec('drop procedure ' + @procName)
-          fetch next from cur into @procName
+    exec('drop procedure ' + @procName)
+    fetch next from cur into @procName
+end
+close cur
+deallocate cur
+
+--drop all functions
+declare @funcName varchar(500)
+declare cur cursor
+    for select [name] from sys.objects where type = 'fn'
+open cur
+fetch next from cur into @funcName
+while @@fetch_status = 0
+begin
+    exec('drop function ' + @funcName)
+    fetch next from cur into @funcName
 end
 close cur
 deallocate cur
@@ -344,6 +357,18 @@ AS
 BEGIN
     insert into HistoricalPortCommodityPrice (PortID, CommodityID, ValueDate, LocalPrice) VALUES (@PortID, @CommodityID, @ValueDate, @LocalPrice);
     update PortCommodityPrice set LocalPrice = @LocalPrice where PortID = @PortID and CommodityID = @CommodityID;
+END
+GO
+
+-- currency conversion
+CREATE FUNCTION funcGetUSDValue (@LocalPrice Money, @PortID int)
+RETURNS Money
+AS
+BEGIN
+declare @USDValue Money, @ConvertedPrice Money
+set @USDValue = (select USDValue from Currency inner join Country on Country.CurrencyID = Currency.ID inner join Port on Port.CountryID = Country.ID where port.id = @PortID)
+set @ConvertedPrice = (select @LocalPrice * @USDValue)
+return @ConvertedPrice
 END
 GO
 

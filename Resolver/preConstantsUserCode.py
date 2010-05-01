@@ -35,9 +35,9 @@ TFPSheet = workbook['Travelling Freighter Problem']
 sortingSheet = workbook['Sorting Algorithms']
 
 #util
-def ItaliciseRange(startCellStr, endCellStr):
-    start = getattr(fxSheet.Cells, "%s" % (startCellStr))
-    end = getattr(fxSheet.Cells, "%s" % (endCellStr))
+def ItaliciseRange(sheet, startCellStr, endCellStr):
+    start = getattr(sheet.Cells, "%s" % (startCellStr))
+    end = getattr(sheet.Cells, "%s" % (endCellStr))
     CellRange(start, end).Italic = True
     
 def getForecastStartRow():
@@ -86,7 +86,7 @@ def readConfig():
             elif 'name' in attribs and attribs['name'] == 'taipan-r':
                 Settings.connectString = 'Driver={SQL Server};' + attribs['connectionString'].replace(' ', '')
                
-#GBM functions        
+#Commodity/FX shared
         
 def createBrownian(currentPrice):
     print 'createBrownian: firstVal:%f, volatility:%f nticks:%d' % (currentPrice, Settings.config['TickVolatility'], Settings.gbmNTicks)
@@ -94,6 +94,16 @@ def createBrownian(currentPrice):
     for i in range(len(seq)):
         seq[i] = round(seq[i], Settings.config['CurrencyAccuracy'])
     return seq
+
+def addForecastTimes(sheet, startRow, endRow):
+    #times
+    currTime = getattr(sheet, "A%d" % (Settings.nTopUpdate + 1))
+    times = []
+    for i in range(Settings.gbmNTicks):
+        currTime = currTime.AddSeconds(Settings.config['MainLoopTick'] / 1000)
+        times.append(currTime)
+    sheet.FillRange(times, 1, startRow, 1, endRow)
+    ItaliciseRange(sheet, "A%d" % (startRow), "A%d" % (endRow))
 
 # Commodity Prices
 
@@ -123,16 +133,54 @@ def updateCommodityPrices():
     portIDs[1] = ids[0, 1]
     portIDs[2] = ids[0, 2]
     
-    data = queryDb("select * from (select top %d ValueDate, LocalPrice from HistoricalPortCommodityPrice where PortID = %d and CommodityID = %d order by ValueDate DESC) as foo order by ValueDate ASC" % (Settings.nTopUpdate, portIDs[0], commodityID))
+    #first query includes dates
+    data = queryDb("select ValueDate, Value from (select top %d ValueDate, dbo.funcGetUSDValue(LocalPrice, %d) as Value from HistoricalPortCommodityPrice where PortID = %d and CommodityID = %d order by ValueDate DESC) as foo order by ValueDate ASC" % (Settings.nTopUpdate, portIDs[0], portIDs[0], commodityID))    
     commoditySheet.FillRange(data, 1, 2, 2, Settings.nTopUpdate + 1)
     
+    for i in range(1, 3):        
+        data = queryDb("select Value from (select top %d ValueDate, dbo.funcGetUSDValue(LocalPrice, %d) as Value from HistoricalPortCommodityPrice where PortID = %d and CommodityID = %d order by ValueDate DESC) as foo order by ValueDate ASC" % (Settings.nTopUpdate, portIDs[i], portIDs[i], commodityID))
+        commoditySheet.FillRange(data, i + 2, 2, i + 2, Settings.nTopUpdate + 1)
+    
 def commodForecast():
-    currentPrice = 100
-    forecast = createBrownian(currentPrice)
-    commoditySheet.FillRange(forecast, 1, 2, 1, Settings.gbmNTicks + 1)
+    startRow = getForecastStartRow()
+    endRow = getForecastEndRow()
+    
+    addForecastTimes(commoditySheet, startRow, endRow)
+    
+    #prices
+    for i, id, letter in zip(range(3), portIDs, ['B', 'C', 'D']):   
+        currentPrice = getattr(commoditySheet, "%s%d" % (letter, Settings.nTopUpdate + 1))
+        forecast = createBrownian(currentPrice)    
+        commoditySheet.FillRange(forecast, 2 + i, startRow, 2 + i, endRow)
+        
+        #style text
+        ItaliciseRange(commoditySheet, "%s%d" % (letter, startRow), "%s%d" % (letter, endRow))
 
+commodChart = None
 def commodGraph():
-        pass
+    global commodChart
+    from rslWPFChart import *
+    
+    title = "Commodity Prices"
+    yLabel = "USD"
+    
+    names = [commoditySheet.B1,commoditySheet.C1,commoditySheet.D1]
+    
+    startRow = getForecastStartRow()
+    endRow = getForecastEndRow()
+    
+    times = []
+    for row in commoditySheet.Rows[2:]:
+        times.Add(str(row[1]))
+
+    USDValues = [[],[],[]]
+    for row in commoditySheet.Rows[2:]:
+        USDValues[0].Add(row[2])
+        USDValues[1].Add(row[3])
+        USDValues[2].Add(row[4])
+    
+    commodChart = rslWPFChart(title, yLabel, names, times, USDValues)
+    commodChart.Start()
     
 # FX rates
 
@@ -162,46 +210,33 @@ def updateFXRates():
             USDID = idsAndCodes[0,i]
             break
     
+    #first query includes dates
     data = queryDb("select * from (select top %d ValueDate, USDValue from HistoricalCurrencyPrice where CurrencyID = %d order by ValueDate DESC) as foo order by ValueDate ASC" % (Settings.nTopUpdate, currencyIds[0]))
     fxSheet.FillRange(data, 1, 2, 2, Settings.nTopUpdate + 1)
-    data = queryDb("select USDValue from (select top %d ValueDate, USDValue from HistoricalCurrencyPrice where CurrencyID = %d order by ValueDate DESC) as foo order by ValueDate ASC" % (Settings.nTopUpdate, currencyIds[1]))
-    fxSheet.FillRange(data, 3, 2, 3, Settings.nTopUpdate + 1)
-    data = queryDb("select USDValue from (select top %d ValueDate, USDValue from HistoricalCurrencyPrice where CurrencyID = %d order by ValueDate DESC) as foo order by ValueDate ASC" % (Settings.nTopUpdate, currencyIds[2]))
-    fxSheet.FillRange(data, 4, 2, 4, Settings.nTopUpdate + 1)
+    
+    for i in range(1, 3):        
+        data = queryDb("select USDValue from (select top %d ValueDate, USDValue from HistoricalCurrencyPrice where CurrencyID = %d order by ValueDate DESC) as foo order by ValueDate ASC" % (Settings.nTopUpdate, currencyIds[i]))
+        fxSheet.FillRange(data, i + 2, 2, i + 2, Settings.nTopUpdate + 1)
  
 def fxForecast():
     startRow = getForecastStartRow()
     endRow = getForecastEndRow()
     
     #times
-    currTime = getattr(fxSheet, "A%d" % (Settings.nTopUpdate + 1))
-    times = []
-    for i in range(Settings.gbmNTicks):
-        currTime = currTime.AddSeconds(Settings.config['MainLoopTick'] / 1000)
-        times.append(currTime)
-    fxSheet.FillRange(times, 1, startRow, 1, endRow)
-    ItaliciseRange("A%d" % (startRow), "A%d" % (endRow))
+    addForecastTimes(fxSheet, startRow, endRow)
 
     #prices
-    #should probably use zip for letters, but I hate unreadable Python one liners
-    for i, id in enumerate(currencyIds):
+    for i, id, letter in zip(range(3), currencyIds, ['B', 'C', 'D']):
         #USD doesn't fluctuate vs USD
         if id == USDID:
             continue
-            
-        if i == 0:
-            letter = 'B'
-        elif i == 1:
-            letter = 'C'
-        else:
-            letter = 'D'         
     
         currentPrice = getattr(fxSheet, "%s%d" % (letter, Settings.nTopUpdate + 1))
         forecast = createBrownian(currentPrice)    
         fxSheet.FillRange(forecast, 2 + i, startRow, 2 + i, endRow)
         
         #style text
-        ItaliciseRange("%s%d" % (letter, startRow), "%s%d" % (letter, endRow))
+        ItaliciseRange(fxSheet, "%s%d" % (letter, startRow), "%s%d" % (letter, endRow))
     
 fxChart = None
 def fxGraph():
