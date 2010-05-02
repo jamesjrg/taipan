@@ -1,13 +1,12 @@
 <!--
 This spreadsheet is in the Public Domain.
 -->
-<document currentResultWorksheet="Country summary" verticalSplitterRatio="0.75" horizontalSplitterRatio="0.610108303249" splitterOrientation="Horizontal" suspendRecalculations="True" license="Public Domain" copyrightOwner="James Gregory" resolverVersion="1.8.1" resolverBuild="5061" documentVersion="12">
+<document currentResultWorksheet="Sorting Algorithms" verticalSplitterRatio="0.75" horizontalSplitterRatio="0.610108303249" splitterOrientation="Horizontal" suspendRecalculations="True" license="Public Domain" copyrightOwner="James Gregory" resolverVersion="1.8.1" resolverBuild="5061" documentVersion="12">
     <foldState license="True" imports="True" worksheetCreation="True" preConstantsUserCode="False" constants="True" preFormulaeUserCode="False" generated="False" postFormulaeUserCode="False"/>
     <traitDefaults>
 
     </traitDefaults>
-    <preConstantsUserCode><![CDATA[import os.path
-execfile('settings.py')
+    <preConstantsUserCode><![CDATA[execfile('settings.py')
 execfile('GBMPreConstants.py')
 execfile('summaryPreConstants.py')
 execfile('algsPreConstants.py')
@@ -21,13 +20,13 @@ execfile('TFPPreConstants.py')
         <viewState worksheet="Travelling Freighter Problem">
             <currentCell col="3" row="7" />
             <scrollPos col="1" row="1" />
-            <virtualGridSize width="51" height="47" />
+            <virtualGridSize width="51" height="51" />
         </viewState>
         <viewState worksheet="Country summary">
             <currentCell col="3" row="2" />
             <selection left="3" top="2" right="3" bottom="2" />
             <scrollPos col="1" row="1" />
-            <virtualGridSize width="47" height="47" />
+            <virtualGridSize width="47" height="51" />
         </viewState>
         <viewState worksheet="Purchases">
             <currentCell col="2" row="1" />
@@ -59,7 +58,7 @@ execfile('TFPPreConstants.py')
         <viewState worksheet="Sorting Algorithms">
             <currentCell col="1" row="7" />
             <scrollPos col="1" row="1" />
-            <virtualGridSize width="49" height="47" />
+            <virtualGridSize width="49" height="51" />
         </viewState>
         <viewState worksheet="FX Rates">
             <currentCell col="8" row="14" />

@@ -27,6 +27,9 @@ AlgoServer/TestAlgoService/bin/
 AlgoServer/TestAlgoService/obj/
 AlgoServer/TestResults/
 
+Resolver/AlgoServiceProxy.cs
+Resolver/AlgoServiceProxy.dll
+
 Resolver/WpfChart/WpfChart.suo
 Resolver/WpfChart/WpfChart/bin/
 Resolver/WpfChart/WpfChart/obj/
