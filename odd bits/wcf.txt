@@ -1,5 +1,12 @@
-wsdl.exe /namespace:MathService http://www.dotnetjunkies.com/
-quickstart/aspplus/samples/services/MathService/
-CS/MathService.asmx
+svcutil.exe /config:AlgoService.config http://localhost:8731/Design_Time_Addresses/AlgoService/
+
+//
+
+wsdl.exe /namespace:MathService http://www.dotnetjunkies.com/ quickstart/aspplus/samples/services/MathService/ CS/MathService.asmx
 
 csc.exe /target:library MathService.cs
+
+///
+wsdl.exe  /namespace:AlgoService http://localhost:8731/Design_Time_Addresses/AlgoService/
+
+csc.exe /target:library AlgoServiceProxy.cs

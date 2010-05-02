@@ -25,12 +25,13 @@ git change log:
 
 
 nowish:
-- alg sheet on resolver isn't actually calling web service, it's calling the service library
+- calls from resolver to algservice fail to ever return
 - read more about linear programming, graph problems, tsp, convert more C# code to Python
 - currently possible for historical sheets to have multiple entries with same date, should alter schema with constraints and stored procs with check queries to make this impossible
 - read more detail from algs book
 - finish binary search tree
 - fix heap sort
+- all the stupid xSpecified argument in the generated WCF proxy code
 - sql server process CPU usage way too high, fix it (+ doc)
 - read about + implement binary search trees, rb trees, b trees
 - people can now send and receive messages, so make a first attempt at adding in all the logic that goes with this (though also still need to do a little more work with regard to keeping track of client/server ids). for client keeping track of server ids, can just store connections in a dict
