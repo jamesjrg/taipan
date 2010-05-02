@@ -22,6 +22,9 @@ sortingSheet = workbook['Sorting Algorithms']
 
 class Settings:
     xmlConfigFile = '../Common/Common.config'
+    pythonLibDir = "F:/Python26/Lib"
+    pythonSiteDir = "F:/Python26/Lib/site-packages"
+    pythonDllDir = 'F:/Python26/DLLs'
     
     #these settings are read in from the XML config file shared with C#
     config = {}

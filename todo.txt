@@ -25,7 +25,7 @@ git change log:
 
 
 nowish:
-- calls from resolver to algservice fail to ever return
+- switch to making alg sheet in resolver use ZSI, if possible
 - read more about linear programming, graph problems, tsp, convert more C# code to Python
 - currently possible for historical sheets to have multiple entries with same date, should alter schema with constraints and stored procs with check queries to make this impossible
 - read more detail from algs book
