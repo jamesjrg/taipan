@@ -13,10 +13,7 @@ namespace AlgoService
     public interface IAlgoService
     {
         [OperationContract]
-        SortReturn Sort(string type, int[] data);
-
-        [OperationContract]
-        SortReturn CountingSort(int[] data, int maxPossible);
+        SortReturn TimeSort(string type, int[] data, int iterations);
 
         [OperationContract]
         int CreateStructure(string type, int[] data);
@@ -37,7 +34,10 @@ namespace AlgoService
             this.sortedData = sortedData;
         }
 
+        [DataMember]
         public long time = -1;
+
+        [DataMember]
         public int[] sortedData;
     }
 }

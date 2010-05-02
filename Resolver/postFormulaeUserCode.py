@@ -40,7 +40,7 @@ for name in simpleSummaryNames + complexSummaryNames:
     
 #TDP sheet
 solveTFPButton = makeButton("Solve", solveTFP)
-TFPSheet.H4 = solveTFPButton
+TFPSheet.B9 = solveTFPButton
 
 #Algs sheet
 runSortButton = makeButton("Run iterations", runSort)

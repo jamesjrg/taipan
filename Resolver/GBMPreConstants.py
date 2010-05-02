@@ -52,8 +52,7 @@ def setPortNames():
     
     commoditySheet.Cells.I1.DropdownItems = commodNames
     
-    data = queryDb("select name from Port order by name asc")
-    portNames = [row for row in data]    
+    #port names set globally  
 
     commoditySheet.Cells.I2.DropdownItems = portNames
     commoditySheet.Cells.I3.DropdownItems = portNames

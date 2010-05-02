@@ -19,7 +19,7 @@ div.wrapper {font: 100% Sans-serif; background-color: #D2DEFF; width: 94%; paddi
 
 <h3>Introduction</h3>
 
-<p>"Tai-Pan" is a C# .NET, SQL Server and Python project written to improve my knowledge of various aspects of computer science and software engineering. A large number of heterogeneous, multithreaded C# processes interact with each other via TCP sockets. Much of the underlying state of the system is stored in a MS SQL Server instance. The system includes implementations of various data structures and algorithms (e.g. B-Trees, hash tables, numerous sorting algorithms, a couple of probability distributions). A user interface to the system is provided in the form of an IronPython-based spreadsheet that a) makes queries on both the database and on a C# SOAP web service a) makes queries on both the database and on a C# SOAP web service b) loads a C# WPF assembly to produce interactive graphs of the summary data and c) utilises a mathematical optimization framework to solve a simple linear programming problem. The project also makes use of UML, unit testing, Git, etc. </p>
+<p>"Tai-Pan" is a C# .NET, SQL Server and Python project written to improve my knowledge of various aspects of computer science and software engineering. A large number of heterogeneous, multithreaded C# processes interact with each other via TCP sockets. Much of the underlying state of the system is stored in a MS SQL Server instance. The system includes implementations of various data structures and algorithms (e.g. B-Trees, hash tables, numerous sorting algorithms, a couple of probability distributions). A user interface to the system is provided in the form of an IronPython-based spreadsheet that a) makes numerous queries on both the database and on a C# SOAP web service b) loads a C# WPF assembly to produce interactive graphs of the summary data and c) utilises a mathematical optimization framework to solve a linear programming problem, using data from the rest of the system. The project also makes use of UML, unit testing, Git, etc.</p>
 
 <p>This web page provides an outline of the project, divided into the following sections:</p>
 <ul>
@@ -80,13 +80,11 @@ div.wrapper {font: 100% Sans-serif; background-color: #D2DEFF; width: 94%; paddi
 
 <p>AlgoServer is built using WCF (Windows Communication Foundation), which largely automates the process of making a server with methods available as a SOAP web service.</p>
 
-<p>The processes communicate entirely via asynchronous, fire and forget messages. Many of the messages are either a continuous broadcast or otherwise do not require a reply, and hence for the most part this approach is the correct one to take. The interaction between traders and shipping companies involves an exchange of several messages linked together, and so would be better suited to using a system of callbacks than continous polling, but I have thus far focused more on other aspects of the system. I have perviously had a small amount of experience working with event-driven networking with Python (Twisted) and Javascript (MochiKit and AJAX).</p>
+<p>The processes communicate entirely via asynchronous, fire and forget messages. Many of the messages are either a continuous broadcast or otherwise do not require a reply, and hence for the most part this approach is the correct one to take. The interaction between traders and shipping companies involves an exchange of several messages linked together, and so would ideally be better suited to using a system of callbacks than continous polling. I have previously had a small amount of experience working with event-driven networking with Python (Twisted) and Javascript (MochiKit and AJAX).</p>
 
-<p>The processes are themselves multithreaded, and so have to pay some attention to sharing data between threads in a safe manner, though the processes are sufficiently small that this was not a major undertaking. Data shared between threads is stored in instances of a custom synchronised, multi-headed queue structure, whereby the queue maintains a seperate head index for each subscribing thread.</p>
+<p>The processes are themselves multithreaded, and so have to pay some attention to sharing data between threads in a safe manner, though the processes are sufficiently small that this was not a major undertaking. Data shared between threads is stored in instances of a synchronised, multi-headed queue structure, whereby the queue maintains a seperate head index for each subscribing thread.</p>
 
-<p>FOLLOWING SECTION FLAGRANTLY A WORK IN PROGRESS:</p>
-
-<p>blah blah explanation of following diagram. blah blah contract for movements of goods and locking process</p> </p>blah blah real system would likely have more acknowledgement messages and error checking, but this would make things unnecessarily messy for the purposes of the exercise.</p>
+<p>Below is a sequence diagram showing the network messaging sent as a result of a Trader receiving a forecast of a surplus of a given commodity at a given port at some point in the future. A real system would likely have more acknowledgement messages and error checking, but I have kept things fairly simple:</p>
 
 <p><img src="images/SequenceSurplus.png"/></p>
 
@@ -102,25 +100,35 @@ div.wrapper {font: 100% Sans-serif; background-color: #D2DEFF; width: 94%; paddi
 
 <p><img src="images/gbm.png"/></p>
 
-<p>There are various prices and values that fluctuate in the model. These include commodity prices at each port (which generally follow Geometric Brownian Motion but are subject to random price jumps), FX rates (entirely determined by Geometric Brownian Motion), share prices (entirely determined by Geometric Brownian Motion), and bank balances (determined by the interactions between the various players in the system). The IronPython spreadsheet code adds buttons to fetch the most recent USD-adjusted commodity prices or FX rates from the database, buttons to optionally create predicted future random walk data points, and buttons to graph this data by instantiating a WPF graph window from a .NET assembly. The WPF chart code is almost entirely the public domain work of other people. I started making some minor changes, but decided to focus on other things for the time being.</p>
+<p>There are various prices and values that fluctuate in the model. These include commodity prices at each port (which generally follow Geometric Brownian Motion but are subject to random price jumps), FX rates (entirely determined by Geometric Brownian Motion), share prices (entirely determined by Geometric Brownian Motion), and bank balances (determined by the interactions between the various players in the system). The first two sheets of the workbook (the sheets being the various tabs at the bottom of the above screenshot) include buttons to fetch the most recent USD-adjusted commodity prices or FX rates from the database, buttons to optionally create predicted future random walk data points, and buttons to graph this data by instantiating a WPF graph window from a .NET assembly. The WPF chart code is almost entirely the public domain work of other people, with only minor changes.</p>
 
 <p>The GBM sequences are produced using a tiny custom class library written in C# and shared by both the processes in the main system and the IronPython spreadsheet code. This library provides functions for Gaussian and Geometric Brownian sequences, the first based on the Box-Muller transformation, the latter based on sampling the former.</p>
 
-<p>The following six sheets show the results of various SQL queries on the database, aggregating summary data in various ways.</p>
-
-<p><img src="images/TFP.png"/></p>
+<p>The following six sheets display the results of various SQL queries on the database, aggregating summary data in various ways.</p>
 
 <p>FOLLOWING SECTION FLAGRANTLY A WORK IN PROGRESS:</p>
 
+<p>The next sheet after the "Country Summary" is the "Travelling Freighter Problem", a variation on the classic NP-hard "Travelling Salesman Problem". XXX define orif problem. xxx define my problem - globe rather than flat, maybe some extra constraints too (like ground in way). travelling freighter problem solution of shortest route for a freighter to visit each port exactly once. blah blah here's a diagram:</p>
+
+<p><img src="images/TFP.png"/></p>
+
 <p>[screenshot of TFP result page]</p>
 
-<p>blah blah Travelling Salesman Problem -> travelling freighter problem solution of shortest route for a freighter to visit each port exactly once, MS Solver Foundation, linear programming and constraints as a possible way to deal with TSP, mention TUI</p>. blah blah started off reading about linear prgoramming and TSP, then took C# code from a blog post that used Solver to solve it, then converted it to Python. next step is to not use some predefined data but instead use the spatial data from the database on the locations of the various ports in the db, and to provide dropdowns on the spreadsheets to select which ports are to be included in the tour. This is actually somewhat ridiculous as it assumes ships can travel in straight arcs from any two ports, without land getting in the way, but anyway. The step after that will be to modify the problem to match up better with the supposed real world that the system models - e.g. to disallow certain arcs which involve travelling directly over large land masses, but allowing optional stop overs at certain ports and allow visiting ports more than once. Alternatively, I could add costs and benefits to certain arcs representing the different profits and losses to be made by fufilling freight movement contracts on those shipping routes.</p>
+<p>various possible ways to approach TSP. simpel greedy algorithm, edges and vertices graph and miniumum spanning tree, flow solutions. blah blah One way is generic linear programming. blah blah MS Solver Foundation, linear programming and constraints as a possible way to deal with TSP, mention TUI.</p>
+
+<p>blah blah took C# code from a blog post that used Solver to solve it, then converted it to Python. next step is to not use some predefined data but instead use the spatial data from the database on the locations of the various ports in the db, and to provide dropdowns on the spreadsheets to select which ports are to be included in the tour. This is actually somewhat ridiculous as it assumes ships can travel in straight arcs from any two ports, without land getting in the way, but anyway. The step after that will be to modify the problem to match up better with the supposed real world that the system models - e.g. to disallow certain arcs which involve travelling directly over large land masses, but allowing optional stop overs at certain ports and allow visiting ports more than once. Alternatively, I could add costs and benefits to certain arcs representing the different profits and losses to be made by fufilling freight movement contracts on those shipping routes.</p>
 
 <p>[screenshot of alg timing sheet]</p>
 
-<p>AlgoServer provides implementations of various complex data structures and sorting algorithms: insertion sort, merge sort, heap sort, quick sort, randomized quick sort. counting sort, chained hash map, binary search tree, red-black tree, B-tree. These methods can be called as a SOAP web service. The sorting methods return both the sorted data and the amount of time the algorithm took on the server. blah blah sheet makes lots of calls to test sorting algs. blah stats on their av/min/max time taken.</p>
+<p>AlgoServer implements various complex data structures and sorting algorithms: insertion sort, merge sort, heap sort, quick sort, randomized quick sort. counting sort, chained hash map, binary search tree, red-black tree, B-tree. It provides a SOAP web service with several methods:</p>
 
-<p>On calling the web service to create a data structure the caller is returned an ID which can the client can then include as a parameter when requesting operations to be made on that data structure (e.g. search, insert, remove), or to delete it. However, these methods are not currently utilised by the spreadsheet.</p>
+<ul>
+<li>It provides a method called "TimeSort" which takes a sorting method, an array to be sorted, and a number of iterations to repeat the sorting on the original array. Returned is not only the sorted list, but also the time taken to perform the iterations. The spreadsheet provides dropdowns to select a number of different algorithms, and fields to choose a size of randomized list to create and the number of iterations to perform, and then displays the comparative time that algorithm's iterations took on the randomized list.
+</li>
+<li>There is a method to create a data structure of given type. On calling this method the server returns an ID which can the client can then include as a parameter when requesting operations to be made on that data structure (e.g. search, insert, remove), or to delete it. However, these methods are not currently utilised by the spreadsheet.</li>
+</ul>
+
+<p>&nbsp;</p>
 
 <h3 id="hlinks">Links (including source code)</h3>
 

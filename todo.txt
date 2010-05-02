@@ -17,7 +17,6 @@
 - add version with static sql data to resolver exchange
 - est 2 days FT
 
-
 - ideas from "ideas removed" file - infinite
 
 ////
@@ -25,18 +24,16 @@ git change log:
 
 
 nowish:
-- remove stuff from py settings on python paths
-- gitignore
-
-soon:
+- redo screenshoot for TSP graph - I think the solution may well be wrong
 - read more about linear programming, graph problems, tsp, convert more C# code to Python
-- currently possible for historical sheets to have multiple entries with same date, should alter schema with constraints and stored procs with check queries to make this impossible
+- fandandgw should keep track of its last tick time, if current tick time is the same time, skip
+- add constraint on historical sheets such that there can't be multiple entries for the same date - i.e. UNIQUE constraints on (PortID, commodityID, time) in PortCommodityPrice, unique constraint on (x, x, date) in other tables too. though what is effect on performance?
 - read more detail from algs book
 - finish binary search tree
 - fix heap sort
 - sql server process CPU usage way too high, fix it (+ doc)
 - read about + implement binary search trees, rb trees, b trees
-- people can now send and receive messages, so make a first attempt at adding in all the logic that goes with this (though also still need to do a little more work with regard to keeping track of client/server ids). for client keeping track of server ids, can just store connections in a dict
+- for clients keeping track of server ids, need to store connections in a dict
 - shippingcomps need to know distance between ports to work out how long journeys take, and banks need to know to work out how much shipping companies should charge for movements. should use db spatial functions. do this on shippingcomp init and create a dict of all the values, and then include distances in msgs to bank? or maybe create a computed database table with all this data, for use by both shippingcomp and bank. 2nd option is better.
 - traderClient.Send in ShippingCompany - sent to only one client, also server tcp thread needs to note id of sender for MoveAdvertised 
 - Bank EnactFuture, EnactBuy, ShipDeparted, shiparrived - all need to note id of sender
@@ -97,6 +94,7 @@ http://en.wikipedia.org/wiki/Priority_queue
 9. sheet that calls AlgoService sort methods with various combinations of parameters (diff lists, diff algorithms), doing each one for a large 
 number of iterations, and gets returned data on time taken.Mark winner for each category by changing font color.
 
+- switch counting sort to only find max value once, before iterations or timer begin
 - somehow remove all the stupid xSpecified arguments in the generated WCF proxy code?
 
 ///
@@ -164,9 +162,8 @@ One day the description here, description in index.htm, description on CV, and d
 Also make sure names match up UML <-> sql and vice versa
 - redo resolver screenshots
 
-- in uml for deployment, and web desc, change stuff about wcf proxy to just being a Python lib
 
 short version for CV etc:
 
-•	A C# .NET, SQL Server and Python project written to improve my knowledge of various aspects of computer science and software engineering. A large number of heterogeneous, multithreaded C# processes interact with each other via TCP sockets. Much of the underlying state of the system is stored in a MS SQL Server instance. The system includes implementations of various data structures and algorithms (e.g. B-Trees, hash tables, numerous sorting algorithms, a couple of probability distributions). A user interface to the system is provided in the form of an IronPython-based spreadsheet that a) makes queries on both the database and on a C# SOAP web service b) loads a C# WPF assembly to produce interactive graphs of the summary data and c) utilises a mathematical optimization framework to solve a simple linear programming problem. The project also makes use of UML, unit testing, Git, etc. Around 250 hours work so far.
+•	A C# .NET, SQL Server and Python project written to improve my knowledge of various aspects of computer science and software engineering. A large number of heterogeneous, multithreaded C# processes interact with each other via TCP sockets. Much of the underlying state of the system is stored in a MS SQL Server instance. The system includes implementations of various data structures and algorithms (e.g. B-Trees, hash tables, numerous sorting algorithms, a couple of probability distributions). A user interface to the system is provided in the form of an IronPython-based spreadsheet that a) makes numerous queries on both the database and on a C# SOAP web service b) loads a C# WPF assembly to produce interactive graphs of the summary data and c) utilises a mathematical optimization framework to solve a linear programming problem, using data from the rest of the system. The project also makes use of UML, unit testing, Git, etc. Around 270 hours work so far.
 

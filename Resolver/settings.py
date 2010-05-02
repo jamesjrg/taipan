@@ -6,6 +6,10 @@ from System import Array
 from System.Reflection import Assembly
 import clr
 
+import os
+
+#globals
+
 commoditySheet = workbook['Commodity Prices']
 fxSheet = workbook['FX Rates']
 
@@ -19,6 +23,8 @@ countrySumSheet = workbook['Country summary']
 
 TFPSheet = workbook['Travelling Freighter Problem']
 sortingSheet = workbook['Sorting Algorithms']
+
+portNames = []
 
 class Settings:
     xmlConfigFile = '../Common/Common.config'
@@ -58,7 +64,9 @@ def readConfig():
 
 #assembly loading
 def loadAssembly(relPath):
-    dll = os.path.dirname(__file__) + '/' + relPath
+    #NOTE NOTE NOTE if you include a forward slash here then the path fails to match up with the path the dll considers itself to live at,
+    #which means that if the dll is a web service proxy it will fall over with a cryptic error message
+    dll = os.path.dirname(__file__) + "\\" + relPath
     print "Loading: %s" % dll
     assembly = Assembly.LoadFile(dll)
     clr.AddReference(assembly)
@@ -79,4 +87,11 @@ def queryDb(query):
                 ret[colIndex, rowIndex] = val
         return ret
 
+def getPortNames():
+    global portNames
+    data = queryDb("select name from Port order by name asc")
+    portNames = [row for row in data]  
+
 readConfig()
+getPortNames()
+

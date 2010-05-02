@@ -12,39 +12,46 @@ namespace AlgoService
     public class AlgoService : IAlgoService
     {
         private List<DataStructure> structures = new List<DataStructure>();
+        delegate void SortDel(int[] data);
 
-        public SortReturn Sort(string type, int[] data)
+        public SortReturn TimeSort(string type, int[] data, int iterations)
         {
-            Stopwatch sw = Stopwatch.StartNew();
+            SortDel del;
+            
             switch (type)
             {
                 case "insertion":
-                    SortAlgs.InsertionSort(data);
+                    del = SortAlgs.InsertionSort;
                     break;
                 case "merge":
-                    SortAlgs.MergeSort(data);
+                    del = SortAlgs.MergeSort;
                     break;
                 case "heap":
-                    SortAlgs.HeapSort(data);
+                    del = SortAlgs.HeapSort;
                     break;
                 case "quick":
-                    SortAlgs.QuickSort(data);
+                    del = SortAlgs.QuickSort;
                     break;
                 case "randomizedquick":
-                    SortAlgs.RandomizedQuickSort(data);
+                    del = SortAlgs.RandomizedQuickSort;
+                    break;
+                case "counting":
+                    del = SortAlgs.CountingSort;
                     break;
                 default:
                     throw new FaultException("sort type not recognised");
             }
-            sw.Stop();
 
-            return new SortReturn(sw.ElapsedMilliseconds, data);
-        }
-
-        public SortReturn CountingSort(int[] data, int maxPossible)
-        {
+            //don't sort a pre-sorted array!
+            int[] argData = new int[data.Length];
+            Array.Copy(data, argData, data.Length);
+            
             Stopwatch sw = Stopwatch.StartNew();
-            SortAlgs.CountingSort(data, maxPossible);
+            for (int i = 0; i != iterations; ++i)
+            {
+                del.Invoke(argData);
+                Array.Copy(data, argData, data.Length);
+            }
             sw.Stop();
 
             return new SortReturn(sw.ElapsedMilliseconds, data);

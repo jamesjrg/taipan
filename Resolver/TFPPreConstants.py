@@ -83,7 +83,6 @@ def solveTFP():
         for p2 in data:
             arcs.append(Arc(p1.name, p2.name, p1.distance(p2)))
         
-    for a in arcs: print a.distance
     dist.SetBinding(arcs, "distance", "city1", "city2")
     model.AddParameters(dist)
     
@@ -115,7 +114,15 @@ def solveTFP():
     
     for tour in tours:
         print "%s ->" % tour
-         
         
+    TFPSheet.FillRange(tours, 2, 11, 2, len(tours) + 11)    
+ 
+def setPortDropdowns():
+    possibleNames = ['None']
+    possibleNames.extend(portNames)
+    for i in range(1,9):
+        getattr(TFPSheet.Cells, "B%d" % i).DropdownItems = possibleNames
         
-        
+setPortDropdowns()
+
+

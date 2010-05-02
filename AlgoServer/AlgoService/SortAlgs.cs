@@ -231,6 +231,13 @@ namespace AlgoService
         }
 
         //CountingSort
+
+        //this first method isn't really supposed to be part of counting sort, normally you provide the maximum value manually
+        public static void CountingSort(int[] data)
+        {
+            CountingSort(data, data.Max());
+        }
+
         public static void CountingSort(int[] data, int maxPossible)
         {
             int[] tmp = new int[data.Length];
