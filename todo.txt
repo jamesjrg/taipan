@@ -162,6 +162,7 @@ One day the description here, description in index.htm, description on CV, and d
 Also make sure names match up UML <-> sql and vice versa
 - redo resolver screenshots
 
+- release.bat - copy across sql scripts, AlgoServiceProxy.dll, dll creation script, Resolve.rsl and associated .pys, README, howtorun, web, wpfchart compiled version and source, precompiled statslib and source, a note on how this is a cut down static sql version without all the c# processes and include fact doc is in web dir
 
 short version for CV etc:
 

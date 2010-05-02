@@ -1,0 +1,11 @@
+blah blah dependencies: Resolver One (obviously), .NET framework (fairly obviously), Microsoft SQL Server (free Express edition is fine), Microsoft Solver Foundation (free Express edition is fine)
+
+create db, name TaiPan
+edit config file and sql creation scripts with correct username + password (can use same for read and rw if you want)
+run db creation script
+run start_algoserver.bat
+double click Resolver.rsl
+
+The generate_proxy.bat script can be ignored, it is used to generate AlgoServiceProxy.dll, but a precompiled version is included. I included the script in case it helps someone else do something similar. blah blah
+
+see web/index.htm for info and a little explanation

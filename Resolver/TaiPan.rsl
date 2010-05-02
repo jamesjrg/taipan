@@ -56,7 +56,7 @@ execfile('TFPPreConstants.py')
             <virtualGridSize width="50" height="47" />
         </viewState>
         <viewState worksheet="Sorting Algorithms">
-            <currentCell col="6" row="5" />
+            <currentCell col="4" row="11" />
             <scrollPos col="1" row="1" />
             <virtualGridSize width="49" height="71" />
         </viewState>
@@ -765,7 +765,7 @@ execfile('TFPPreConstants.py')
         </cell>
         <cell name="A2" value="Time taken" type="general">
         </cell>
-        <cell name="G5" value="1000" type="general">
+        <cell name="G5" value="300" type="general">
         </cell>
         <cell name="G6" value="1000" type="general">
         </cell>
