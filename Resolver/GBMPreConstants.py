@@ -1,38 +1,17 @@
-from System import Array
-from System.Data import DataSet
-from System.Data.Odbc import OdbcConnection, OdbcDataAdapter
-from System.Xml import XmlReader, XmlNodeType
-
-#load in some assemblies
-from System.Reflection import Assembly
-import clr
-def loadAssembly(relPath):
-    dll = os.path.dirname(__file__) + '/' + relPath
-    print "Loading: %s" % dll
-    assembly = Assembly.LoadFile(dll)
-    clr.AddReference(assembly)
-
-loadAssembly("../StatsLib/bin/Debug/StatsLib.dll")
+#loadAssembly("../StatsLib/bin/Debug/StatsLib.dll")
 from TaiPan.StatsLib import StatsLib
 
-loadAssembly("../AlgoServer/AlgoService/bin/Debug/AlgoService.dll")
-from AlgoService import AlgoService
+from rslWPFChart import *
 
-#init some variables
-
+#globals
 stats = StatsLib()
-algoService = AlgoService()
 
-commoditySheet = workbook['Commodity Prices']
-fxSheet = workbook['FX Rates']
+portIDs = [None,None,None]
+commodChart = None
 
-futuresSheet = workbook['Futures']
-shippingSheet = workbook['Shipping']
-countrySheet = workbook['Country summary']
-shippingSumSheet = workbook['Shipping summary']
-
-TFPSheet = workbook['Travelling Freighter Problem']
-sortingSheet = workbook['Sorting Algorithms']
+USDID = None
+currencyIds = [None,None,None]
+fxChart = None
 
 #util
 def ItaliciseRange(sheet, startCellStr, endCellStr):
@@ -44,48 +23,8 @@ def getForecastStartRow():
     return Settings.nTopUpdate + 2
     
 def getForecastEndRow():
-    return Settings.nTopUpdate + Settings.gbmNTicks + 2
-    
-#db functions
-
-def queryDb(query):
-    print 'DB query: %s' % query
-    connection = OdbcConnection(Settings.connectString)
-    adaptor = OdbcDataAdapter(query, connection)
-    dataSet = DataSet()
-    connection.Open()
-    adaptor.Fill(dataSet)    
-    connection.Close()
-    if len(dataSet.Tables) > 0 and len(dataSet.Tables[0].Rows) > 0:
-        ret = Array.CreateInstance(object, len(dataSet.Tables[0].Rows[0].ItemArray), len(dataSet.Tables[0].Rows))
-        for rowIndex, row in enumerate(dataSet.Tables[0].Rows):
-            for colIndex, val in enumerate([item for item in row.ItemArray]):
-                ret[colIndex, rowIndex] = val
-        return ret
-
-#init
-def readConfig():
-    try:
-        reader = XmlReader.Create(Settings.xmlConfigFile)
-    except:
-        raise Exception("Couldn't find Common.config at %s" % Settings.xmlConfigFile)
-        
-    while reader.Read():
-        if reader.NodeType == XmlNodeType.Element and reader.Name == 'add' and reader.HasAttributes:
-        
-            attribs = {}
-            while reader.MoveToNextAttribute():
-                attribs[reader.Name] = reader.Value
-                
-            if 'key' in attribs:
-                key = attribs['key']
-                if key == 'TickVolatility':
-                    Settings.config[key] = float(attribs['value'])
-                else:
-                    Settings.config[key] = int(attribs['value'])
-            elif 'name' in attribs and attribs['name'] == 'taipan-r':
-                Settings.connectString = 'Driver={SQL Server};' + attribs['connectionString'].replace(' ', '')
-               
+    return Settings.nTopUpdate + Settings.gbmNTicks + 2    
+            
 #Commodity/FX shared
         
 def createBrownian(currentPrice):
@@ -106,8 +45,6 @@ def addForecastTimes(sheet, startRow, endRow):
     ItaliciseRange(sheet, "A%d" % (startRow), "A%d" % (endRow))
 
 # Commodity Prices
-
-portIDs = [None,None,None]
 
 def setPortNames():
     data = queryDb("select name from Commodity order by name asc")
@@ -156,10 +93,8 @@ def commodForecast():
         #style text
         ItaliciseRange(commoditySheet, "%s%d" % (letter, startRow), "%s%d" % (letter, endRow))
 
-commodChart = None
 def commodGraph():
     global commodChart
-    from rslWPFChart import *
     
     title = "Commodity Prices"
     yLabel = "USD"
@@ -183,10 +118,7 @@ def commodGraph():
     commodChart.Start()
     
 # FX rates
-
-USDID = None
-currencyIds = [None,None,None]
-   
+  
 def setFXNames():
     data = queryDb("select name from Currency order by name asc")
     fxNames = [row for row in data]
@@ -195,7 +127,7 @@ def setFXNames():
     fxSheet.Cells.I2.DropdownItems = fxNames
     fxSheet.Cells.I3.DropdownItems = fxNames
     
-def updateFXRates():
+def updateFX():
     idsAndCodes = queryDb("select ID, ShortName from Currency where Name in ('%s', '%s', '%s')" % (fxSheet.I1, fxSheet.I2, fxSheet.I3))
     fxSheet.B1 = idsAndCodes[1,0]
     fxSheet.C1 = idsAndCodes[1,1]
@@ -238,11 +170,8 @@ def fxForecast():
         #style text
         ItaliciseRange(fxSheet, "%s%d" % (letter, startRow), "%s%d" % (letter, endRow))
     
-fxChart = None
 def fxGraph():
     global fxChart
-    from rslWPFChart import *
-    
     title = "FX Prices"
     yLabel = "USD"
     
@@ -264,22 +193,6 @@ def fxGraph():
     fxChart = rslWPFChart(title, yLabel, names, times, USDValues)
     fxChart.Start()
         
-# Country summary
-def queryCountrySummary():
-    data = queryDb("SELECT TOP 10 Name FROM Country ORDER BY Name DESC")
-   
-    
-# sorting algorithms
-
-def runSort():
-    arr = Array[int]([3,2,4,7,1,2])
-    ret = algoService.Sort("insertion", arr)
-    print ret.time
-    print ret.sortedData
-
-
-
-readConfig()
 setPortNames()
 setFXNames()
     

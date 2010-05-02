@@ -30,14 +30,7 @@ All client processes should throw exception and end gracefully.
 ////
 
 Trader
-Processes it receives messages from:
-1. FateAndGuesswork for predicted future times/places for futures contracts and goods buying
-2. Shipping Companies for acceptances of contracts to move goods
-Processes it sends messages to:
-1. To Bank
-a) decisions to buy goods at a given port b) to organise futures contracts.
-2. To Shipping Companies
-a) Contracts for movement of goods (from, to, expires) b) Acceptances of contracts for movement of goods
+
 Things it calculates:
 - maybe, at futures contract time, need to check db to make sure bank has successfully done transaction to give us the goods to sell?
 1. On basis of distance between ports and also predicted information on future shortage or surplus of a given commodity for a given company, they calculate the most profitable places to buy goods to warehouse in readiness to sell (i.e. somewhere nearby to and cheap for predicted future shortage, possibly the same port), or to organise a futures contract to buy goods in future in readiness to sell (i.e. at the actual port of the predicted future surplus). Then when price fluctuation actually happens, warehoused goods are sold to nearest place that has a demand for those goods, or otherwise futures contract is fufilled and goods become warehoused goods (inserted into db), for themselves being sold in most profitable way possible. Though unforseen variation and/or the error in the prediction by fate and guesswork could still lead to them losing money.

@@ -65,7 +65,7 @@ div.wrapper {font: 100% Sans-serif; background-color: #D2DEFF; width: 94%; paddi
 
 <p>The locations of the ports are stored using SQL Server's geography data type, this is used in various places to calculate distances between ports.</p>
 
-<p>The vast majority of data manipulation is performed in C# and Python, but the database does make some usage of stored procedures and cursors.</p>
+<p>The vast majority of data manipulation is performed in C# and Python, but the database does make some usage of stored procedures, user defined functions, and cursors.</p>
 
 <p>I have given some basic thought to security and permissions - there are seperate read-only and read-write logins, and processes only use the read-write login where necessary - but complex permissions, views and security schemas would seem rather too contrived for a project being developed and run by a single person.</p>
 
@@ -90,7 +90,7 @@ div.wrapper {font: 100% Sans-serif; background-color: #D2DEFF; width: 94%; paddi
 
 <p><img src="images/SequenceSurplus.png"/></p>
 
-<p>If a Trader receives a message indicating a predicted future shortage of a commodity at a port, a similar flow of actions results as for a predicted surplus:</p>
+<p>If a trader receives a message indicating a predicted future shortage of a commodity at a port, a similar flow of actions results as for a predicted surplus:</p>
 
 <p><img src="images/SequenceShortage.png"/></p>
 
@@ -102,17 +102,15 @@ div.wrapper {font: 100% Sans-serif; background-color: #D2DEFF; width: 94%; paddi
 
 <p><img src="images/gbm.png"/></p>
 
-<p>There are various prices and values that fluctuate in the model. These include commodity prices at each port (which generally follow Geometric Brownian Motion but are subject to random price jumps), FX rates (entirely determined by Geometric Brownian Motion), share prices (entirely determined by Geometric Brownian Motion), and bank balances (determined by the interactions between the various players in the system). The IronPython spreadsheet code adds buttons to fetch the most recent commodity prices or FX rates from the database, buttons to optionally create predicted future random walk data points, and buttons to graph this data by instantiating a WPF graph window from a .NET assembly. The WPF chart code is almost entirely the public domain work of other people. I started making some minor changes, but decided to focus on other things for the time being.</p>
+<p>There are various prices and values that fluctuate in the model. These include commodity prices at each port (which generally follow Geometric Brownian Motion but are subject to random price jumps), FX rates (entirely determined by Geometric Brownian Motion), share prices (entirely determined by Geometric Brownian Motion), and bank balances (determined by the interactions between the various players in the system). The IronPython spreadsheet code adds buttons to fetch the most recent USD-adjusted commodity prices or FX rates from the database, buttons to optionally create predicted future random walk data points, and buttons to graph this data by instantiating a WPF graph window from a .NET assembly. The WPF chart code is almost entirely the public domain work of other people. I started making some minor changes, but decided to focus on other things for the time being.</p>
 
 <p>The GBM sequences are produced using a tiny custom class library written in C# and shared by both the processes in the main system and the IronPython spreadsheet code. This library provides functions for Gaussian and Geometric Brownian sequences, the first based on the Box-Muller transformation, the latter based on sampling the former.</p>
 
-<p>FOLLOWING SECTION FLAGRANTLY A WORK IN PROGRESS:</p>
-
-<p>[screenshot of summary sheet]</p>
-
-<p>blah blah then five sheets of summary data produced via SQL queries - first two sheets have pretty simple queries, next three sheets have slightly more complex queries which aggregate statistics on various sorts of activity, grouped into time periods.</p>
+<p>The following six sheets show the results of various SQL queries on the database, aggregating summary data in various ways.</p>
 
 <p><img src="images/TFP.png"/></p>
+
+<p>FOLLOWING SECTION FLAGRANTLY A WORK IN PROGRESS:</p>
 
 <p>[screenshot of TFP result page]</p>
 

@@ -28,10 +28,10 @@ namespace TaiPan.FateAndGuesswork
 
         private class ForecastInfo
         {
-            public ForecastInfo(int traderID, int portID, int commodID, DateTime time)
+            public ForecastInfo(int traderID, int portID, int commodID, int quantity, DateTime time)
             {
                 this.traderID = traderID;
-                this.msg = new ForecastMsg(portID, commodID, time);
+                this.msg = new ForecastMsg(portID, commodID, quantity, time);
             }
 
             public ForecastMsg msg;
@@ -172,12 +172,13 @@ namespace TaiPan.FateAndGuesswork
 
             int portID = 0;
             int commodID = 0;
+            int quantity = 5;
             DateTime time = DateTime.Now;
 
             if (random.Next(0, 2) == 0)
-                shortages.Add(new ForecastInfo(targetTrader, portID, commodID, time));
+                shortages.Add(new ForecastInfo(targetTrader, portID, commodID, quantity, time));
             else
-                surpluses.Add(new ForecastInfo(targetTrader, portID, commodID, time));
+                surpluses.Add(new ForecastInfo(targetTrader, portID, commodID, quantity, time));
         }
     }
 }

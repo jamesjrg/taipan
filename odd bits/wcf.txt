@@ -1,0 +1,5 @@
+wsdl.exe /namespace:MathService http://www.dotnetjunkies.com/
+quickstart/aspplus/samples/services/MathService/
+CS/MathService.asmx
+
+csc.exe /target:library MathService.cs

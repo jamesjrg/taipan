@@ -5,6 +5,7 @@ def makeButton(name, onClick):
     b.Click += onClick
     return b
 
+#GBM sheets
 updateCommodityButton = makeButton("Update", updateCommodityPrices)
 commoditySheet.H7 = updateCommodityButton
 
@@ -14,22 +15,34 @@ commoditySheet.H8 = commodForecastButton
 commodGraphButton = makeButton("Draw graph", commodGraph)
 commoditySheet.H9 = commodGraphButton
 
-updateFXButton = Button("Update")
-updateFXButton.Click += updateFXRates
+updateFXButton = makeButton("Update", updateFX)
 fxSheet.H6 = updateFXButton
 
-fxForecastButton = Button("Random Walk Forecast")
-fxForecastButton.Click += fxForecast
+fxForecastButton = makeButton("Random Walk Forecast", fxForecast)
 fxSheet.H7 = fxForecastButton
 
 fxGraphButton = makeButton("Draw graph", fxGraph)
 fxSheet.H8 = fxGraphButton
 
-solveTFPButton = Button("Solve")
-solveTFPButton.Click += solveTFP
+#Summary sheets
+summaryButtons = []
+simpleSummaryNames = ('futures', 'purchases', 'shipping')
+complexSummaryNames = ('traderSum', 'shippingSum', 'countrySum')
+
+for name in simpleSummaryNames + complexSummaryNames:
+    button = makeButton("Update", globals()['%sUpdate' % name])
+    
+    if name in simpleSummaryNames:
+        globals()['%sSheet' % name].A1 = button
+    else:
+        globals()['%sSheet' % name].A2 = button
+    summaryButtons.append(button)
+    
+#TDP sheet
+solveTFPButton = makeButton("Solve", solveTFP)
 TFPSheet.H4 = solveTFPButton
 
-runSortButton = Button("Run iterations")
-runSortButton.Click += runSort
+#Algs sheet
+runSortButton = makeButton("Run iterations", runSort)
 sortingSheet.F8 = runSortButton
 

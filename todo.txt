@@ -25,28 +25,21 @@ git change log:
 
 
 nowish:
+- alg sheet on resolver isn't actually calling web service, it's calling the service library
 - read more about linear programming, graph problems, tsp, convert more C# code to Python
+- currently possible for historical sheets to have multiple entries with same date, should alter schema with constraints and stored procs with check queries to make this impossible
 - read more detail from algs book
 - finish binary search tree
 - fix heap sort
-- after getting commod sheet to work, take screenshot to replace current doc screenshot
-- DecideMoveContracts in trader - add and remove
 - sql server process CPU usage way too high, fix it (+ doc)
 - read about + implement binary search trees, rb trees, b trees
 - people can now send and receive messages, so make a first attempt at adding in all the logic that goes with this (though also still need to do a little more work with regard to keeping track of client/server ids). for client keeping track of server ids, can just store connections in a dict
 - shippingcomps need to know distance between ports to work out how long journeys take, and banks need to know to work out how much shipping companies should charge for movements. should use db spatial functions. do this on shippingcomp init and create a dict of all the values, and then include distances in msgs to bank? or maybe create a computed database table with all this data, for use by both shippingcomp and bank. 2nd option is better.
-- DecideArrivals and MoveConfirmed in ShippingCompany
 - traderClient.Send in ShippingCompany - sent to only one client, also server tcp thread needs to note id of sender for MoveAdvertised 
-- Bank interpret movingmsg from shippingcompany - needs to note id of sender
-- bank msgs to trader - buyconfirm, futuresettle
-- trader interpret forecast msgs
-- trader msgs to bank, and bank needs to note id of sender
-- bank interpret trader msgs
-- trader interpret forecast msgs
-- DecideCommodPriceJumps for fandgw
-- shippingcompany interprets advertise moves
-- traders confirm moves
-- shippingcompany acts on moveconfirm
+- Bank EnactFuture, EnactBuy, ShipDeparted, shiparrived - all need to note id of sender
+- trader MoveAccepted, buyconfirmed, futuresettled, SurplusForecast, shortageforecast
+- fandgw DecideCommodPriceJumps
+- shippingcompany MoveAdvertised, moveconfirmed, DecideArrivals
 - when bank process starts, it should clear all warehoused commods and futures
 - are futures and buys in USD or localprice?
 
@@ -61,47 +54,9 @@ Process logic and networking:
 
 ///
 
-Next two sheets for Resolver:
-3. Historical futures contracts, including details of how relevant prices of all involved values changed between start and end of contract, and profit made (CU)
-4. Historical commdity transports, including details of how relevant prices of all involved values changed between start and end of contract, and profit made (CU)
+Then a load of database query sheets
 
-Just some database queries
-
-Thirdly, summary data sets:
-
-5. Summary data for each trader, split into time periods
-Drop down to select trader
-- show name, balance, etc
-For each time period, have:
-- info on futures
-- info on warehouse buys
-- profit/loss
-- balance at end of period
-
-6. Summary data for each shipping company, split into time periods
-Drop down to select company
-- shown name of company's country, and its currency, and balance, and stock price
-For each time period, have:
-- number of different ports served
-- average quantity per load
-- min quantity in a single load
-- max quantity in a single load
-- av share price (own currency)
-- av share price (USD)
-- profit/loss
-- balance at end of period
-
-7. Summary data on comparative historical record of countries, split into time periods
-Drop down to select country
-- name of country's currency
-in each time period have
-- number of and total value of buys
-- number and total value of settled futures
-- overall outgoings, overall income, overall profit/loss
-- number of futures agreed in period
-- average diff between futures settled price in period and price they were agreed at
-- average value of currency vs USD
-
+ - Prices are converted from local currency to USD
 
 ////
 
@@ -201,8 +156,7 @@ The name is a nod to book Tai Pan, that is the general point is that there are s
 One day the description here, description in index.htm, description on CV, and description in Wolfie will all need to be synced...
 
 Also make sure names match up UML <-> sql and vice versa
-
-Deployment UML diagram: does anyone else access the db after start up?
+- redo resolver screenshots
 
 short version for CV etc:
 

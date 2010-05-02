@@ -1,14 +1,16 @@
 <!--
 This spreadsheet is in the Public Domain.
 -->
-<document currentResultWorksheet="Commodity Prices" verticalSplitterRatio="0.75" horizontalSplitterRatio="0.941908713693" splitterOrientation="Horizontal" suspendRecalculations="True" license="Public Domain" copyrightOwner="James Gregory" resolverVersion="1.8.1" resolverBuild="5061" documentVersion="12">
+<document currentResultWorksheet="Country summary" verticalSplitterRatio="0.75" horizontalSplitterRatio="0.610108303249" splitterOrientation="Horizontal" suspendRecalculations="True" license="Public Domain" copyrightOwner="James Gregory" resolverVersion="1.8.1" resolverBuild="5061" documentVersion="12">
     <foldState license="True" imports="True" worksheetCreation="True" preConstantsUserCode="False" constants="True" preFormulaeUserCode="False" generated="False" postFormulaeUserCode="False"/>
     <traitDefaults>
 
     </traitDefaults>
     <preConstantsUserCode><![CDATA[import os.path
 execfile('settings.py')
-execfile('preConstantsUserCode.py')
+execfile('GBMPreConstants.py')
+execfile('summaryPreConstants.py')
+execfile('algsPreConstants.py')
 execfile('TFPPreConstants.py')
 
 ]]></preConstantsUserCode>
@@ -19,53 +21,63 @@ execfile('TFPPreConstants.py')
         <viewState worksheet="Travelling Freighter Problem">
             <currentCell col="3" row="7" />
             <scrollPos col="1" row="1" />
-            <virtualGridSize width="51" height="88" />
+            <virtualGridSize width="51" height="47" />
         </viewState>
         <viewState worksheet="Country summary">
-            <currentCell col="1" row="2" />
+            <currentCell col="3" row="2" />
+            <selection left="3" top="2" right="3" bottom="2" />
             <scrollPos col="1" row="1" />
-            <virtualGridSize width="51" height="44" />
+            <virtualGridSize width="47" height="47" />
+        </viewState>
+        <viewState worksheet="Purchases">
+            <currentCell col="2" row="1" />
+            <selection left="2" top="1" right="2" bottom="1" />
+            <scrollPos col="1" row="1" />
+            <virtualGridSize width="51" height="47" />
         </viewState>
         <viewState worksheet="Shipping summary">
             <currentCell col="1" row="1" />
+            <selection left="1" top="1" right="5" bottom="11" />
             <scrollPos col="1" row="1" />
-            <virtualGridSize width="51" height="87" />
+            <virtualGridSize width="50" height="47" />
         </viewState>
         <viewState worksheet="Commodity Prices">
             <currentCell col="8" row="6" />
             <scrollPos col="1" row="1" />
-            <virtualGridSize width="49" height="71" />
+            <virtualGridSize width="49" height="47" />
         </viewState>
         <viewState worksheet="Trader summary">
-            <currentCell col="1" row="1" />
+            <currentCell col="2" row="1" />
             <scrollPos col="1" row="1" />
-            <virtualGridSize width="51" height="44" />
+            <virtualGridSize width="50" height="47" />
         </viewState>
         <viewState worksheet="Futures">
-            <currentCell col="6" row="8" />
+            <currentCell col="2" row="5" />
             <scrollPos col="1" row="1" />
-            <virtualGridSize width="50" height="79" />
+            <virtualGridSize width="50" height="47" />
         </viewState>
         <viewState worksheet="Sorting Algorithms">
             <currentCell col="1" row="7" />
             <scrollPos col="1" row="1" />
-            <virtualGridSize width="49" height="87" />
+            <virtualGridSize width="49" height="47" />
         </viewState>
         <viewState worksheet="FX Rates">
             <currentCell col="8" row="14" />
             <scrollPos col="1" row="1" />
-            <virtualGridSize width="47" height="71" />
+            <virtualGridSize width="47" height="47" />
         </viewState>
         <viewState worksheet="Shipping">
-            <currentCell col="1" row="1" />
+            <currentCell col="1" row="2" />
+            <selection left="1" top="2" right="8" bottom="2" />
             <scrollPos col="1" row="1" />
-            <virtualGridSize width="51" height="88" />
+            <virtualGridSize width="50" height="47" />
         </viewState>
     </viewStates>
     <worksheetOrder>
         <orderentry name="Commodity Prices" />
         <orderentry name="FX Rates" />
         <orderentry name="Futures" />
+        <orderentry name="Purchases" />
         <orderentry name="Shipping" />
         <orderentry name="Trader summary" />
         <orderentry name="Shipping summary" />
@@ -261,6 +273,8 @@ execfile('TFPPreConstants.py')
         <trait name="Unit">
         </trait>
         <trait name="ColWidth">
+            <traitentry col="7" row="0" value="109" />
+            <traitentry col="8" row="0" value="98" />
         </trait>
         <trait name="Alignment">
         </trait>
@@ -308,6 +322,22 @@ execfile('TFPPreConstants.py')
         </trait>
         <trait name="DecimalPlaces">
         </trait>
+        <cell name="A2" value="Commodity" type="general">
+        </cell>
+        <cell name="G2" value="Shipping Company" type="general">
+        </cell>
+        <cell name="B2" value="Quantity" type="general">
+        </cell>
+        <cell name="E2" value="Start time" type="general">
+        </cell>
+        <cell name="F2" value="End time" type="general">
+        </cell>
+        <cell name="D2" value="End port" type="general">
+        </cell>
+        <cell name="C2" value="Start port" type="general">
+        </cell>
+        <cell name="H2" value="Contracting Trader" type="general">
+        </cell>
     </worksheet>
     <worksheet name="Futures" value="" showGrid="True" showBounds="False" headerWidth="-1" headerHeight="-1">
         <trait name="FontSize">
@@ -319,9 +349,15 @@ execfile('TFPPreConstants.py')
         <trait name="Unit">
         </trait>
         <trait name="ColWidth">
-            <traitentry col="7" row="0" value="90" />
             <traitentry col="1" row="0" value="78" />
-            <traitentry col="6" row="0" value="102" />
+            <traitentry col="1" row="2" value="65" />
+            <traitentry col="2" row="1" value="139" />
+            <traitentry col="3" row="0" value="80" />
+            <traitentry col="6" row="2" value="102" />
+            <traitentry col="7" row="0" value="52" />
+            <traitentry col="8" row="0" value="90" />
+            <traitentry col="10" row="0" value="85" />
+            <traitentry col="11" row="0" value="112" />
         </trait>
         <trait name="Alignment">
         </trait>
@@ -369,19 +405,29 @@ execfile('TFPPreConstants.py')
         </trait>
         <trait name="DecimalPlaces">
         </trait>
-        <cell name="A2" value="Time bought" type="general">
+        <cell name="A2" value="Commodity" type="general">
         </cell>
-        <cell name="G2" value="Sale price" type="general">
+        <cell name="G2" value="Port" type="general">
         </cell>
-        <cell name="B2" value="Port" type="general">
+        <cell name="B2" value="Quantity" type="general">
+        </cell>
+        <cell name="B1" value="Prices are converted from local currency to USD" type="general">
         </cell>
         <cell name="E2" value="Buy price" type="general">
         </cell>
         <cell name="F2" value="Time sold" type="general">
         </cell>
-        <cell name="D2" value="Quantity" type="general">
+        <cell name="K2" value="Shipping Company" type="general">
         </cell>
-        <cell name="C2" value="Commodity" type="general">
+        <cell name="D2" value="Port" type="general">
+        </cell>
+        <cell name="C2" value="Time bought" type="general">
+        </cell>
+        <cell name="I2" value="Profit/Loss" type="general">
+        </cell>
+        <cell name="H2" value="Sale price" type="general">
+        </cell>
+        <cell name="J2" value="Trader" type="general">
         </cell>
     </worksheet>
     <worksheet name="Travelling Freighter Problem" value="" showGrid="True" showBounds="False" headerWidth="-1" headerHeight="-1">
@@ -452,6 +498,8 @@ execfile('TFPPreConstants.py')
         <trait name="Unit">
         </trait>
         <trait name="ColWidth">
+            <traitentry col="1" row="0" value="146" />
+            <traitentry col="5" row="2" value="109" />
         </trait>
         <trait name="Alignment">
         </trait>
@@ -499,6 +547,38 @@ execfile('TFPPreConstants.py')
         </trait>
         <trait name="DecimalPlaces">
         </trait>
+        <cell name="E4" value="Date range" type="general">
+        </cell>
+        <cell name="A1" value="Company:" type="general">
+        </cell>
+        <cell name="A11" value="Balance at end of period" type="general">
+        </cell>
+        <cell name="E2" value="Balance:" type="general">
+        </cell>
+        <cell name="A6" value="Number of ports served" type="general">
+        </cell>
+        <cell name="A5" value="Number of voyages" type="general">
+        </cell>
+        <cell name="C4" value="Date range" type="general">
+        </cell>
+        <cell name="E1" value="Currency:" type="general">
+        </cell>
+        <cell name="A10" value="Profit/Loss" type="general">
+        </cell>
+        <cell name="C1" value="Country:" type="general">
+        </cell>
+        <cell name="A9" value="Av quantity per voyage" type="general">
+        </cell>
+        <cell name="B4" value="Date range" type="general">
+        </cell>
+        <cell name="C2" value="Stock price:" type="general">
+        </cell>
+        <cell name="D4" value="Date range" type="general">
+        </cell>
+        <cell name="A7" value="Min quantity per voyage" type="general">
+        </cell>
+        <cell name="A8" value="Max quantity per voyage" type="general">
+        </cell>
     </worksheet>
     <worksheet name="Country summary" value="" showGrid="True" showBounds="False" headerWidth="-1" headerHeight="-1">
         <trait name="FontSize">
@@ -510,6 +590,12 @@ execfile('TFPPreConstants.py')
         <trait name="Unit">
         </trait>
         <trait name="ColWidth">
+            <traitentry col="1" row="0" value="161" />
+            <traitentry col="2" row="0" value="130" />
+            <traitentry col="3" row="0" value="148" />
+            <traitentry col="3" row="2" value="161" />
+            <traitentry col="3" row="4" value="115" />
+            <traitentry col="4" row="0" value="111" />
         </trait>
         <trait name="Alignment">
         </trait>
@@ -557,6 +643,28 @@ execfile('TFPPreConstants.py')
         </trait>
         <trait name="DecimalPlaces">
         </trait>
+        <cell name="A1" value="Country:" type="general">
+        </cell>
+        <cell name="A6" value="Number of exports" type="general">
+        </cell>
+        <cell name="A5" value="Number of imports" type="general">
+        </cell>
+        <cell name="C4" value="Date range" type="general">
+        </cell>
+        <cell name="C1" value="Currency:" type="general">
+        </cell>
+        <cell name="A9" value="Average currency value (USD)" type="general">
+        </cell>
+        <cell name="B4" value="Date range" type="general">
+        </cell>
+        <cell name="C2" value="Number of ports:" type="general">
+        </cell>
+        <cell name="D4" value="Date range" type="general">
+        </cell>
+        <cell name="A7" value="Total import value (USD)" type="general">
+        </cell>
+        <cell name="A8" value="Total export value (USD)" type="general">
+        </cell>
     </worksheet>
     <worksheet name="Sorting Algorithms" value="" showGrid="True" showBounds="False" headerWidth="-1" headerHeight="-1">
         <trait name="FontSize">
@@ -670,6 +778,8 @@ execfile('TFPPreConstants.py')
         <trait name="Unit">
         </trait>
         <trait name="ColWidth">
+            <traitentry col="1" row="0" value="142" />
+            <traitentry col="3" row="2" value="109" />
         </trait>
         <trait name="Alignment">
         </trait>
@@ -717,6 +827,123 @@ execfile('TFPPreConstants.py')
         </trait>
         <trait name="DecimalPlaces">
         </trait>
+        <cell name="E4" value="Date range" type="general">
+        </cell>
+        <cell name="A1" value="Company:" type="general">
+        </cell>
+        <cell name="A6" value="Number of futures settled" type="general">
+        </cell>
+        <cell name="A5" value="Number of futures bought" type="general">
+        </cell>
+        <cell name="C4" value="Date range" type="general">
+        </cell>
+        <cell name="E1" value="Currency:" type="general">
+        </cell>
+        <cell name="A10" value="Balance at end of period" type="general">
+        </cell>
+        <cell name="C1" value="Country:" type="general">
+        </cell>
+        <cell name="A9" value="Profit/Loss" type="general">
+        </cell>
+        <cell name="B4" value="Date range" type="general">
+        </cell>
+        <cell name="C2" value="Balance:" type="general">
+        </cell>
+        <cell name="D4" value="Date range" type="general">
+        </cell>
+        <cell name="A7" value="Number of purchases" type="general">
+        </cell>
+        <cell name="A8" value="Number of sales" type="general">
+        </cell>
+    </worksheet>
+    <worksheet name="Purchases" value="" showGrid="True" showBounds="False" headerWidth="-1" headerHeight="-1">
+        <trait name="FontSize">
+        </trait>
+        <trait name="BorderBottom">
+        </trait>
+        <trait name="ShowNegativeSymbol">
+        </trait>
+        <trait name="Unit">
+        </trait>
+        <trait name="ColWidth">
+            <traitentry col="2" row="1" value="139" />
+            <traitentry col="3" row="0" value="77" />
+            <traitentry col="6" row="2" value="102" />
+            <traitentry col="7" row="2" value="90" />
+            <traitentry col="8" row="2" value="90" />
+            <traitentry col="10" row="2" value="85" />
+            <traitentry col="11" row="2" value="112" />
+        </trait>
+        <trait name="Alignment">
+        </trait>
+        <trait name="BorderTop">
+        </trait>
+        <trait name="WebEditable">
+        </trait>
+        <trait name="Italic">
+        </trait>
+        <trait name="FontFamily">
+        </trait>
+        <trait name="ShowSeparators">
+        </trait>
+        <trait name="VerticalAlignment">
+        </trait>
+        <trait name="Formatter">
+        </trait>
+        <trait name="Underline">
+        </trait>
+        <trait name="Color">
+        </trait>
+        <trait name="RowHidden">
+        </trait>
+        <trait name="BorderLeft">
+        </trait>
+        <trait name="StripZeros">
+        </trait>
+        <trait name="ColHidden">
+        </trait>
+        <trait name="Wrap">
+        </trait>
+        <trait name="NegativeTextColor">
+        </trait>
+        <trait name="BorderRight">
+        </trait>
+        <trait name="RowHeight">
+        </trait>
+        <trait name="BackColor">
+        </trait>
+        <trait name="Bold">
+        </trait>
+        <trait name="Strikethrough">
+        </trait>
+        <trait name="ImagePlacement">
+        </trait>
+        <trait name="DecimalPlaces">
+        </trait>
+        <cell name="A2" value="Commodity" type="general">
+        </cell>
+        <cell name="G2" value="Port" type="general">
+        </cell>
+        <cell name="B2" value="Quantity" type="general">
+        </cell>
+        <cell name="B1" value="Prices are converted from local currency to USD" type="general">
+        </cell>
+        <cell name="E2" value="Buy price" type="general">
+        </cell>
+        <cell name="F2" value="Time sold" type="general">
+        </cell>
+        <cell name="K2" value="Shipping Company" type="general">
+        </cell>
+        <cell name="D2" value="Port" type="general">
+        </cell>
+        <cell name="C2" value="Time bought" type="general">
+        </cell>
+        <cell name="I2" value="Profit/Loss" type="general">
+        </cell>
+        <cell name="H2" value="Sale price" type="general">
+        </cell>
+        <cell name="J2" value="Trader" type="general">
+        </cell>
     </worksheet>
     <postFormulaeUserCode><![CDATA[execfile('postFormulaeUserCode.py')
 ]]></postFormulaeUserCode>

@@ -21,20 +21,9 @@ namespace TaiPan.Trader
 
         private List<FutureMsg> futureRequests = new List<FutureMsg>();
         private List<BuyMsg> buyRequests = new List<BuyMsg>();
-        private List<AdvertiseInfo> moveContracts = new List<AdvertiseInfo>();
+        private List<MoveContractMsg> moveContracts = new List<MoveContractMsg>();
+        private List<MoveContractMsg> unconfirmedContracts = new List<MoveContractMsg>();
         private List<MoveConfirmInfo> moveConfirms = new List<MoveConfirmInfo>();
-
-        private class AdvertiseInfo
-        {
-            public AdvertiseInfo(int warehouseID, DateTime expires)
-            {
-                this.msg = new MoveContractMsg(warehouseID);
-                this.expires = expires;
-            }
-
-            public MoveContractMsg msg;
-            public DateTime expires;
-        }
 
         private class MoveConfirmInfo
         {
@@ -73,10 +62,50 @@ namespace TaiPan.Trader
 
         protected override bool Run()
         {
-            DecideMoveContracts();
+            List<DeserializedMsg> bankIncoming = bankClient.IncomingDeserializeAll();
+            foreach (var msg in bankIncoming)
+            {
+                switch (msg.type)
+                {
+                    case NetMsgType.BuyConfirm:
+                        BuyConfirmed((BankConfirmMsg)(msg.data));
+                        break;
+                    case NetMsgType.FutureSettle:
+                        FutureSettled((BankConfirmMsg)(msg.data));
+                        break;
+                    default:
+                        throw new ApplicationException("bankClient received wrong type of net message");
+                }
+            }
 
-            while (fateClient.incoming.Count != 0)
-                Console.WriteLine(fateClient.incoming.Dequeue());
+            List<DeserializedMsg> fateIncoming = fateClient.IncomingDeserializeAll();
+            foreach (var msg in fateIncoming)
+            {
+                switch (msg.type)
+                {
+                    case NetMsgType.Surplus:
+                        SurplusForecast((ForecastMsg)(msg.data));
+                        break;
+                    case NetMsgType.Shortage:
+                        ShortageForecast((ForecastMsg)(msg.data));
+                        break;
+                    default:
+                        throw new ApplicationException("fateClient received wrong type of net message");
+                }
+            }
+
+            List<DeserializedMsg> shippingIncoming = shippingServer.IncomingDeserializeAll();
+            foreach (var msg in shippingIncoming)
+            {
+                switch (msg.type)
+                {
+                    case NetMsgType.AcceptMove:
+                        MoveAccepted((MoveContractMsg)(msg.data));
+                        break;                    
+                    default:
+                        throw new ApplicationException("shippingServer received wrong type of net message");
+                }
+            }
 
             foreach (var msg in futureRequests)
                 bankClient.Send(NetContract.Serialize(NetMsgType.Future, msg));
@@ -86,8 +115,12 @@ namespace TaiPan.Trader
                 bankClient.Send(NetContract.Serialize(NetMsgType.Buy, msg));
             buyRequests.Clear();
 
-            foreach (var info in moveContracts)
-                shippingServer.Send(NetContract.Serialize(NetMsgType.AdvertiseMove, info.msg));
+            foreach (var msg in moveContracts)
+            {
+                shippingServer.Send(NetContract.Serialize(NetMsgType.AdvertiseMove, msg));
+                unconfirmedContracts.Add(msg);
+            }
+            moveContracts.Clear();
 
             foreach (var info in moveConfirms)
                 shippingServer.Send(NetContract.Serialize(NetMsgType.ConfirmMove, info.msg));
@@ -96,10 +129,29 @@ namespace TaiPan.Trader
             return true; 
         }
 
-        private void DecideMoveContracts()
+        private void BuyConfirmed(BankConfirmMsg msg)
         {
-            moveContracts.Add(new AdvertiseInfo(28, DateTime.Now.AddSeconds(MoveContractAdvertiseTime)));
-            moveContracts.RemoveAll(info => info.expires <= DateTime.Now);
+            moveContracts.Add(new MoveContractMsg(28));
         }
+
+        private void FutureSettled(BankConfirmMsg msg)
+        {
+            moveContracts.Add(new MoveContractMsg(28));
+        }
+
+        private void MoveAccepted(MoveContractMsg msg)
+        {
+            //unconfirmedContracts
+            moveConfirms.Add(new MoveConfirmInfo(4, 5));
+        }
+
+        private void SurplusForecast(ForecastMsg msg)
+        {
+            futureRequests.Add(new FutureMsg(msg.portID, msg.commodID, msg, 1, msg.time));
+        }
+
+        private void ShortageForecast(ForecastMsg msg)
+        {
+        }        
     }
 }

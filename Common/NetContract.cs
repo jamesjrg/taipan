@@ -114,15 +114,17 @@ namespace TaiPan.Common.NetContract
     public class ForecastMsg
     {
         public ForecastMsg() {}
-        public ForecastMsg(int portID, int commodID, DateTime time)
+        public ForecastMsg(int portID, int commodID, int quantity, DateTime time)
         {
             this.portID = portID;
             this.commodID = commodID;
+            this.quantity = quantity;
             this.time = time;
         }
 
         public int portID;
         public int commodID;
+        public int quantity;
         public DateTime time;
     }
 
