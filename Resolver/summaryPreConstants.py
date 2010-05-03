@@ -7,7 +7,6 @@
     Commodity.Name as ComodName, f.Quantity, f.PurchaseTime, f.ActualSetTime,
     bp.Name as BPName, dbo.funcGetUSDValueAtDate(f.LocalPrice, f.PortID, f.ActualSetTime) as BPrice,
     wc.SaleTime, sp.Name as SPName, dbo.funcGetUSDValueAtDate(wc.SalePrice, wc.SalePortID, wc.SaleTime) as SPrice,
-    SPrice - BPrice as Profit,
     tcomp.Name as TradName, scomp.Name as ShipName
     from Commodity
     join FuturesContract as f on f.CommodityID = Commodity.ID

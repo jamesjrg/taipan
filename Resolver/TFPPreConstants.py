@@ -3,38 +3,26 @@
 import clr
 clr.AddReference('Microsoft.Solver.Foundation')
 from Microsoft.SolverFoundation.Services import *
-from TSPTestData import TSPTestData
 
-#should be extension method
-def AssignmentConstraintsNoDiag(model, s, assign):
-        model.AddConstraint("A1", Model.ForEach(lambda s, i: Model.Sum(Model.ForEachWhere(lambda s, j: assign[i, j], lambda j: i != j)) == 1))
-        model.AddConstraint("A2", Model.ForEach(lambda s, i: Model.Sum(Model.ForEachWhere(lambda s, j: assign[i, j], lambda i: i != j)) == 1))
+#Solver Foundation won't let you bind parameters to IronPython objects
+loadAssembly(".\\SolverBindingClasses\\SolverBindingClasses\\bin\\Debug\\SolverBindingClasses.dll")
+from SolverBindingClasses import Arc
 
-class Arc:
-    def __init__(self, city1, city2, distance):
-        self.__city1 = city1
-        self.__city2 = city2
-        self.__distance = distance
-    
-    @property 
-    def city1(self):
-        return self.__city1
-        
-    @property
-    def city2(self):
-        return self.__city2
-    
-    @property 
-    def distance(self):
-        return self.__distance
-        
-    def ToString(self):
-        return ", ". join((self.city1, self.city2, str(self.distance)))
-        
+from TSPTestData import getTestData
+
+###taken from Solver Foundation bankshiftsheduling example
+def const(i):
+	return Term.op_Implicit(i)
+
 def solveTFP():
-    #get input data
-    arcs = getPortArcs()
-    return
+    #get parameters from spreadsheet and database
+    #arcs, cityList = getPortArcs()
+    
+    #alternative static test data
+    arcs, cityList = getTestData()
+    
+    #make it typed so .NET will let us do binding
+    arcs = Array[Arc](arcs)
 
     #Set up model
     context = SolverContext.GetContext();
@@ -44,13 +32,7 @@ def solveTFP():
     city = Set(Domain.IntegerNonnegative, "city")
     dist = Parameter(Domain.Real, "dist", city, city)
     
-    #Add all the arcs
-    arcs = []
-    for p1 in TSPTestData:
-        for p2 in TSPTestData:
-            arcs.append(Arc(p1.name, p2.name, p1.distance(p2)))
-        
-    dist.SetBinding(arcs, "distance", "city1", "city2")
+    dist.SetBinding(arcs, "Distance", "City1", "City2")
     model.AddParameters(dist)
     
     #Decisions
@@ -60,16 +42,29 @@ def solveTFP():
     
     #Goal: minimize length of tour
     goal = model.AddGoal("TourLength", GoalKind.Minimize,
-              Model.Sum(Model.ForEach(lambda city, i: Model.ForEachWhere(city, lambda j: dist[i, j] * assign[i, j], lambda j: i != j))))
-              
-    N = data.Length
+              Model.Sum(Model.ForEach(city, lambda i: Model.ForEachWhere(city, lambda j: dist[i, j] * assign[i, j], lambda j: i != j))))
+
+    #Enter and leave each city exactly once
+    #note need const (defined above) to convert ints to Solver Term class
     model.AddConstraint("assign1",
-              Model.ForEach(lambda city, i: Model.Sum(Model.ForEachWhere(lambda city, j: assign[i, j],
-                lambda j: i != j)) == 1))
+              Model.ForEach(city, lambda i: Model.Sum(Model.ForEachWhere(city, lambda j: assign[i, j],
+                lambda j: i != j)) == const(1)))
     model.AddConstraint("assign2",
-              Model.ForEach(lambda city, j: Model.Sum(Model.ForEachWhere(lambda city, i: assign[i, j], lambda i: i != j)) == 1))
-    model.AssignmentConstraintsNoDiag(city, assign)
-              
+              Model.ForEach(city, lambda j: Model.Sum(Model.ForEachWhere(city, lambda i: assign[i, j],
+                lambda i: i != j)) == const(1)))
+    
+    #no subtours
+    nCities = len(cityList)
+    
+    model.AddConstraint("no_subtours",
+              Model.ForEach(city,
+                lambda i: Model.ForEachWhere(city,
+                  lambda j: rank[i] + const(1) <= rank[j] + const(nCities) * (const(1) - assign[i, j]),
+                  lambda j: Model.And(i != j, i >= const(1), j >= const(1))
+                )
+              )
+            )
+    
     #Solve
     solution = context.Solve()
     
@@ -105,14 +100,14 @@ def getPortArcs():
         otherPorts.remove(p)
         otherPorts = ", ".join(otherPorts)        
         data = queryDb(
-        """select p.Name, o.Name, p.Location.STDistance(o.Location) from Port p, Port o
+        """select p.ID, o.ID, p.Location.STDistance(o.Location), p.Name, o.Name from Port p, Port o
 where p.Name = %s and o.Name in (%s)""" % (p, otherPorts))
               
-        #So [0, x] is p.Name, [1,x] is o.Name, [2,x] is distance
+        #So [0, x] is p.ID, [1,x] is o.ID, [2,x] is distance, [3,x] is p.Name, [4,x] is o.Name, 
         for i in range(data.GetLength(1)):
             arcs.append(Arc(data[0, i], data[1, i], data[2, i]))
 
-    return arcs
+    return arcs, portsList
         
 setPortDropdowns()
 

@@ -192,7 +192,7 @@ CREATE TABLE dbo.WarehousedCommodity
     PurchasePrice Money NOT NULL,    
     PurchaseTime datetime NOT NULL,
     SaleTime datetime default null,
-    SalePrice datetime default null,
+    SalePrice Money default null,
     SalePortID int default null,
 	)  ON [PRIMARY]
 GO

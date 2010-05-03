@@ -25,30 +25,26 @@ git change log:
 
 nowish:
 - redo screenshoot for TSP graph - I think the solution may well be wrong
-- read more about linear programming, graph problems, tsp, convert more C# code to Python
+- read more about linear programming, graph problems, tsp
 - fandandgw should keep track of its last tick time, if current tick time is the same time, skip
-- add constraint on historical sheets such that there can't be multiple entries for the same date - i.e. UNIQUE constraints on (PortID, commodityID, time) in PortCommodityPrice, unique constraint on (x, x, date) in other tables too. though what is effect on performance?
 - read more detail from algs book
 - finish binary search tree
 - sql server process CPU usage way too high, fix it (+ doc)
 - read about + implement binary search trees, rb trees, b trees
 - for clients keeping track of server ids, need to store connections in a dict
-- shippingcomps need to know distance between ports to work out how long journeys take, and banks need to know to work out how much shipping companies should charge for movements. should use db spatial functions. do this on shippingcomp init and create a dict of all the values, and then include distances in msgs to bank? or maybe create a computed database table with all this data, for use by both shippingcomp and bank. 2nd option is better.
+- shippingcomps need to know distance between ports to work out how long journeys take, and banks need to know to work out how much shipping companies should charge for movements. copy sql query loop from tfp python code. needs to be stored in a dict of string -> distance (string will be of form "city1,city2" by both shippingcomp and bank, so put function to create lookup table in economicplayer.
 - traderClient.Send in ShippingCompany - sent to only one client, also server tcp thread needs to note id of sender for MoveAdvertised 
 - Bank EnactFuture, EnactBuy, ShipDeparted, shiparrived - all need to note id of sender
 - trader MoveAccepted, buyconfirmed, futuresettled, SurplusForecast, shortageforecast
 - fandgw DecideCommodPriceJumps
 - shippingcompany MoveAdvertised, moveconfirmed, DecideArrivals
 - when bank process starts, it should clear all warehoused commods and futures
-- unit test structures
-
 
 ////
 
 Process logic and networking:
 - in server, clients should get removed from clients list if they are disconnected
 - net_msg_todo.txt
-- correctly deal with System.ObjectDisposedException for ReceiveThread
 - unit test individual functions
 - probably use sql spatial functions to work out distances for freighter travel - both for Bank and for Resolver
 - test that targeted messages are sent only to the correct server/client, and have exact steps to reproduce the test (inc fandgw to trader surplus and shortage)
@@ -56,17 +52,13 @@ Process logic and networking:
 ///
 
 Then a load of database query sheets
--  test funcGetUSDValueAtDate
  - Prices are converted from local currency to historical USD value
 
 ////
 
 Fourthly, extreme contrivedness:
 8. Travelling freighter problem
-
-- finish Python conversion
-- need to work out the distances between all the ports - in Python or in SQL? then cache
-- provide dropdowns on the spreadsheets to select which ports are to be included in the tour
+- integrate better with my model
 
 links:
 
@@ -92,54 +84,14 @@ http://en.wikipedia.org/wiki/Priority_queue
 
 ///
 
-9. sheet that calls AlgoService sort methods with various combinations of parameters (diff lists, diff algorithms), doing each one for a large 
-number of iterations, and gets returned data on time taken.Mark winner for each category by changing font color.
-
-- switch counting sort to only find max value once, before iterations or timer begin
-- somehow remove all the stupid xSpecified arguments in the generated WCF proxy code?
-
-///
-
-General Resolver things to do:
-- make ntopupdate a variable within the sheet, not in settings.py. separate for commod and fx.
-- Possibly some vaguely sensible management (decisions on when to reuse + close) of the db connection?
-
-////
-
 testing:
 - write tests for multihead queue and syncqueue
 - unittest only bank can write to db
 - make processes do right thing when other processes go down, and have automated tests for all possibilities if differing orders of collapse.
-- unittest the algoriths and data structures service
+- unittest the algoserver data structures
 - unittest multiheadqueue
-- database connections should be closed when no longer needed
 
 ////
-
-algorithms bit:
-following remote methods
-
-CreateStructure()
-args: which structure, list
-returns: structure id, time taken
-
-Time results from structure()
-args: structureid
-returns: structure id, time taken
-
-Time results from sort alg()
-args: method, list
-returns: time taken
-
-DeleteStructure
-args: structure id
-returns: success or failure
-
-TimeMethod
-method 2: 
-1. enum of method to use 2. the list 3. whether to return
-
-- using info both in algos book and database book, have an entirely pointless AlgoServer (including on UML diagram, with a note of explanation) that has functions to create various complex data structures and run various algorithms.
 
 still need to implement the following:
 - binary search tree
@@ -150,7 +102,8 @@ still need to unit test the following:
 - hash table
 - counting sort
 
-- start script for algoserver
+- switch counting sort to only find max value once, before iterations or timer begin
+- do soap methods for manipulating data structures
 
 ///
 
@@ -161,11 +114,10 @@ The name is a nod to book Tai Pan, that is the general point is that there are s
 One day the description here, description in index.htm, description on CV, and description in Wolfie will all need to be synced...
 
 Also make sure names match up UML <-> sql and vice versa
-- redo resolver screenshots
 
 - release.bat - copy across sql scripts, AlgoServiceProxy.dll, dll creation script, Resolve.rsl and associated .pys, README, howtorun, web, wpfchart compiled version and source, precompiled statslib and source, a note on how this is a cut down static sql version without all the c# processes and include fact doc is in web dir
 
 short version for CV etc:
 
-•	A C# .NET, SQL Server and Python project written to improve my knowledge of various aspects of computer science and software engineering. A large number of heterogeneous, multithreaded C# processes interact with each other via TCP sockets. Much of the underlying state of the system is stored in a MS SQL Server instance. The system includes implementations of various data structures and algorithms (e.g. B-Trees, hash tables, numerous sorting algorithms, a couple of probability distributions). A user interface to the system is provided in the form of an IronPython-based spreadsheet that a) makes numerous queries on both the database and on a C# SOAP web service b) loads a C# WPF assembly to produce interactive graphs of the summary data and c) utilises a mathematical optimization framework to solve a linear programming problem, using data from the rest of the system. The project is described by a series of UML diagrams, and partly covered by unit tests. The source code is available on GitHub. Around 300 hours work so far.
+•	A C# .NET, SQL Server and Python project written to improve my knowledge of various aspects of computer science and software engineering. A large number of heterogeneous, multithreaded C# processes interact with each other via TCP sockets. Much of the underlying state of the system is stored in a MS SQL Server instance. The system includes implementations of various data structures (e.g. B-Trees, hash tables), numerous sorting algorithms, and algorithms for simulating stochastic processes. A user interface to the system is provided in the form of an IronPython-based spreadsheet that a) makes numerous queries on both the database and on a C# SOAP web service b) loads a C# WPF assembly to produce interactive graphs of the summary data and c) utilises a mathematical optimization framework to solve a linear programming problem, using data from the rest of the system. The project is described by a series of UML diagrams, and partly covered by unit tests. The source code is available on GitHub. Around 300 hours work so far.
 

@@ -1,4 +1,4 @@
-loadAssembly("../StatsLib/bin/Debug/StatsLib.dll")
+loadAssembly("..\\StatsLib\\bin\\Debug\\StatsLib.dll")
 from TaiPan.StatsLib import StatsLib
 
 from rslWPFChart import *

@@ -1,7 +1,7 @@
 <!--
 This spreadsheet is in the Public Domain.
 -->
-<document currentResultWorksheet="Commodity Prices" verticalSplitterRatio="0.75" horizontalSplitterRatio="0.991724137931" splitterOrientation="Horizontal" suspendRecalculations="True" license="Public Domain" copyrightOwner="James Gregory" resolverVersion="1.8.1" resolverBuild="5061" documentVersion="12">
+<document currentResultWorksheet="Futures" verticalSplitterRatio="0.75" horizontalSplitterRatio="0.991724137931" splitterOrientation="Horizontal" suspendRecalculations="True" license="Public Domain" copyrightOwner="James Gregory" resolverVersion="1.8.1" resolverBuild="5061" documentVersion="12">
     <foldState license="True" imports="False" worksheetCreation="True" preConstantsUserCode="False" constants="True" preFormulaeUserCode="False" generated="False" postFormulaeUserCode="False"/>
     <traitDefaults>
 
@@ -18,9 +18,9 @@ execfile('TFPPreConstants.py')
     <names />
     <viewStates>
         <viewState worksheet="Travelling Freighter Problem">
-            <currentCell col="3" row="6" />
+            <currentCell col="4" row="13" />
             <scrollPos col="1" row="1" />
-            <virtualGridSize width="51" height="73" />
+            <virtualGridSize width="51" height="69" />
         </viewState>
         <viewState worksheet="Country summary">
             <currentCell col="3" row="2" />
@@ -43,7 +43,7 @@ execfile('TFPPreConstants.py')
         <viewState worksheet="Commodity Prices">
             <currentCell col="6" row="28" />
             <scrollPos col="1" row="1" />
-            <virtualGridSize width="49" height="88" />
+            <virtualGridSize width="49" height="69" />
         </viewState>
         <viewState worksheet="Trader summary">
             <currentCell col="2" row="1" />
@@ -51,9 +51,10 @@ execfile('TFPPreConstants.py')
             <virtualGridSize width="50" height="73" />
         </viewState>
         <viewState worksheet="Futures">
-            <currentCell col="3" row="4" />
+            <currentCell col="10" row="33" />
+            <selection left="10" top="3" right="10" bottom="33" />
             <scrollPos col="1" row="1" />
-            <virtualGridSize width="50" height="88" />
+            <virtualGridSize width="50" height="67" />
         </viewState>
         <viewState worksheet="Sorting Algorithms">
             <currentCell col="4" row="11" />
@@ -413,17 +414,17 @@ execfile('TFPPreConstants.py')
         </trait>
         <trait name="DecimalPlaces">
         </trait>
-        <cell name="A2" value="Commodity" type="general">
-        </cell>
         <cell name="G2" value="Time sold" type="general">
-        </cell>
-        <cell name="B2" value="Quantity" type="general">
         </cell>
         <cell name="B1" value="Prices are converted from local currency to historical USD value" type="general">
         </cell>
-        <cell name="E2" value="Port bought at" type="general">
+        <cell name="I2" value="Sale price" type="general">
         </cell>
-        <cell name="F2" value="Buy price" type="general">
+        <cell name="J2" value="Profit/Loss" type="general">
+        </cell>
+        <cell name="A2" value="Commodity" type="general">
+        </cell>
+        <cell name="B2" value="Quantity" type="general">
         </cell>
         <cell name="L2" value="Shipping Company" type="general">
         </cell>
@@ -433,11 +434,11 @@ execfile('TFPPreConstants.py')
         </cell>
         <cell name="C2" value="Time bought" type="general">
         </cell>
-        <cell name="I2" value="Sale price" type="general">
+        <cell name="E2" value="Port bought at" type="general">
+        </cell>
+        <cell name="F2" value="Buy price" type="general">
         </cell>
         <cell name="H2" value="Port sold at" type="general">
-        </cell>
-        <cell name="J2" value="Profit/Loss" type="general">
         </cell>
     </worksheet>
     <worksheet name="Travelling Freighter Problem" value="" showGrid="True" showBounds="False" headerWidth="-1" headerHeight="-1">
@@ -512,7 +513,7 @@ execfile('TFPPreConstants.py')
         </cell>
         <cell name="A6" value="Port:" type="general">
         </cell>
-        <cell name="B6" value="Saint Petersburg" type="general">
+        <cell name="B6" value="Bandar Abbas" type="general">
         </cell>
         <cell name="A5" value="Port:" type="general">
         </cell>

@@ -6,15 +6,6 @@ using Microsoft.SolverFoundation.Services;
 
 namespace Microsoft.SolverFoundation.Samples.TravelingSalesman
 {
-    public static class ModelingExtensions
-    {
-        public static void AssignmentConstraintsNoDiag(this Model model, Set s, Decision assign)
-        {
-            model.AddConstraint("A1", Model.ForEach(s, i => Model.Sum(Model.ForEachWhere(s, j => assign[i, j], j => i != j)) == 1));
-            model.AddConstraint("A2", Model.ForEach(s, j => Model.Sum(Model.ForEachWhere(s, i => assign[i, j], i => i != j)) == 1));
-        }
-    }
-
     class Program
     {
         // TSP coordinate.
@@ -120,7 +111,6 @@ namespace Microsoft.SolverFoundation.Samples.TravelingSalesman
                 j => i != j)) == 1));
             model.AddConstraint("assign2",
               Model.ForEach(city, j => Model.Sum(Model.ForEachWhere(city, i => assign[i, j], i => i != j)) == 1));
-            model.AssignmentConstraintsNoDiag(city, assign);
 
             // Forbid subtours (Miller, Tucker, Zemlin - 1960...)
             model.AddConstraint("no_subtours",

@@ -1,5 +1,9 @@
 #This code based on work by Nathan Brixius, see README
 
+#Solver Foundation won't let you bind parameters to IronPython objects
+#N.B. assume SolverBindingClasses.dll already loaded
+from SolverBindingClasses import Arc
+
 import math
 
 class Coordinate:
@@ -41,4 +45,12 @@ TSPTestData = [
   Coordinate(12, 19.41, 97.13),
   Coordinate(13, 20.09, 94.55)]
 
-
+def getTestData():
+    arcs = []
+    for p1 in TSPTestData:
+        for p2 in TSPTestData:
+            arcs.append(Arc(p1.name, p2.name, p1.distance(p2)))
+            
+    return arcs, TSPTestData
+    
+    

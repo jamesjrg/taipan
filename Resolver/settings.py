@@ -1,12 +1,6 @@
-﻿from System.Xml import XmlReader, XmlNodeType
-from System.Data import DataSet
-from System.Data.Odbc import OdbcConnection, OdbcDataAdapter
-from System import Array
+﻿from util import *
 
-from System.Reflection import Assembly
-import clr
-
-import os
+from System.Xml import XmlReader, XmlNodeType
 
 #globals
 
@@ -62,15 +56,6 @@ def readConfig():
             elif 'name' in attribs and attribs['name'] == 'taipan-r':
                 Settings.connectString = 'Driver={SQL Server};' + attribs['connectionString'].replace(' ', '')
 
-#assembly loading
-def loadAssembly(relPath):
-    #NOTE NOTE NOTE if you include a forward slash here then the path fails to match up with the path the dll considers itself to live at,
-    #which means that if the dll is a web service proxy it will fall over with a cryptic error message
-    dll = os.path.dirname(__file__) + "\\" + relPath
-    print "Loading: %s" % dll
-    assembly = Assembly.LoadFile(dll)
-    clr.AddReference(assembly)
-
 #db functions
 def queryDb(query):
     print 'DB query: %s' % query
@@ -86,7 +71,7 @@ def queryDb(query):
             for colIndex, val in enumerate([item for item in row.ItemArray]):
                 ret[colIndex, rowIndex] = val
         return ret
-
+                
 def getPortNames():
     global portNames
     data = queryDb("select name from Port order by name asc")
