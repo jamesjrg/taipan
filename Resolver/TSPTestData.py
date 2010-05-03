@@ -2,7 +2,8 @@
 
 #Solver Foundation won't let you bind parameters to IronPython objects
 #N.B. assume SolverBindingClasses.dll already loaded
-from SolverBindingClasses import Arc
+
+from arc import Arc
 
 import math
 

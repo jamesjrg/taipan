@@ -1,28 +1,43 @@
 #This code based on work by Nathan Brixius, see README
 
+from System.Data import DataSet,DataTable,DataRow
+
+#for AsEnumerable
+clr.AddReference('System.Data.DataSetExtensions')
+from System.Data.DataTableExtensions import *
+
 import clr
 clr.AddReference('Microsoft.Solver.Foundation')
 from Microsoft.SolverFoundation.Services import *
 
-#Solver Foundation won't let you bind parameters to IronPython objects
-loadAssembly(".\\SolverBindingClasses\\SolverBindingClasses\\bin\\Debug\\SolverBindingClasses.dll")
-from SolverBindingClasses import Arc
-
 from TSPTestData import getTestData
+from arc import Arc
 
-#taken from Solver Foundation bankshiftsheduling example
+#taken from Solver Foundation bankshiftsheduling example - use .NET implicit cast from built in type to Term
 def const(i):
 	return Term.op_Implicit(i)
 
 def solveTFP():
-    #get parameters from spreadsheet and database
+    #get parameters from spreadsheet and database:
+    
     arcs, cityList, portsNamesMap = getPortArcs()
     
     #alternative static test data
     #arcs, cityList = getTestData()
     
-    #make it typed so .NET will let us do binding
-    arcs = Array[Arc](arcs)
+    #make arcs into a typed array so .NET will let us do binding:
+    
+    ds = DataSet()
+    table = ds.Tables.Add("arcs")
+    table.Columns.Add("City1",int)
+    table.Columns.Add("City2",int)
+    #N.B. Python float is C# double
+    table.Columns.Add("Distance",float)
+    
+    for a in arcs:
+        table.Rows.Add(a.city1, a.city2, a.distance)
+        
+    #And now actual Solver calls:
 
     #Set up model
     context = SolverContext.GetContext();
@@ -32,7 +47,7 @@ def solveTFP():
     city = Set(Domain.IntegerNonnegative, "city")
     dist = Parameter(Domain.Real, "dist", city, city)
     
-    dist.SetBinding(arcs, "Distance", "City1", "City2")
+    dist.SetBinding[DataRow](AsEnumerable(table), "Distance", "City1", "City2")
     model.AddParameters(dist)
     
     #Decisions
