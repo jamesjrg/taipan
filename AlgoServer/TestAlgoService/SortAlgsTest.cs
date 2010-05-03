@@ -117,6 +117,11 @@ namespace TestAlgoService
             return true;
         }
 
+        private string MakeErrorMessage(int[] expected, int[] actual)
+        {
+            return ArrayToString(expected) + " Actual: " + ArrayToString(actual);
+        }
+
         private string ArrayToString(int[] array)
         {
             string[] tmp = new string[array.Length];
@@ -144,7 +149,7 @@ namespace TestAlgoService
             {
                 int[] theArray = (int[])data.InputClone();
                 SortAlgs.MergeSort(theArray);
-                Assert.IsTrue(ArraysEqual(data.expected, theArray), ArrayToString(data.expected));
+                Assert.IsTrue(ArraysEqual(data.expected, theArray), MakeErrorMessage(data.expected, theArray));
             }
         }
 
@@ -155,7 +160,7 @@ namespace TestAlgoService
             {
                 int[] theArray = (int[])data.InputClone();
                 SortAlgs.HeapSort(theArray);
-                Assert.IsTrue(ArraysEqual(data.expected, theArray), ArrayToString(data.expected));
+                Assert.IsTrue(ArraysEqual(data.expected, theArray), MakeErrorMessage(data.expected, theArray));
             }
         }
 

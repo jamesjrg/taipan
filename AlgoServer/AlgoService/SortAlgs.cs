@@ -115,19 +115,19 @@ namespace AlgoService
         private static int HeapParent(int i)
         {
             //floor
-            return i >> 1;
+            return (i >> 1) - 1;
         }
 
         private static int HeapLeft(int i)
         {
             //floor
-            return i << 1;
+            return (i << 1) + 1;
         }
 
         private static int HeapRight(int i)
         {
             //floor
-            return (i << 1) + 1;
+            return (i << 1) + 2;
         }
 
         private static void BuildMaxHeap(Heap heap)
@@ -140,7 +140,7 @@ namespace AlgoService
         private static void MaxHeapify(Heap heap, int i)
         {
             int l = HeapLeft(i);
-            int r = HeapLeft(i);
+            int r = HeapRight(i);
             int largest;
 
             if (l <= heap.size - 1 && heap.data[l] > heap.data[i])
@@ -157,6 +157,8 @@ namespace AlgoService
                 int tmp = heap.data[i];
                 heap.data[i] = heap.data[largest];
                 heap.data[largest] = tmp;
+
+                MaxHeapify(heap, largest);
             }
         }
 
