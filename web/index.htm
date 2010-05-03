@@ -63,7 +63,7 @@ div.wrapper {font: 100% Sans-serif; background-color: #D2DEFF; width: 94%; paddi
 
 <p>The rest of the schema is made of tables which represent various aspects of the modelled system - countries, ports, futures contracts, commodities, etc.</p>
 
-<p>I have made some use of various intermediate SQL features. The locations of the ports are stored using SQL Server's geography data type, this is used in various places to calculate distances between ports. I have also written several user defined functions and cursors to aid the SQL queries carried out by both the C# processes and the spreadsheet user frontend.</p>
+<p>I have made some use of various intermediate SQL features. The locations of the ports are stored using SQL Server's spatial geography  data type, this is used in various places to calculate distances between ports. I have also written several user defined functions and cursors to aid the SQL queries carried out by both the C# processes and the spreadsheet user frontend.</p>
 
 <p>I have given some basic thought to security and permissions - there are seperate read-only and read-write logins, and processes only use the read-write login where necessary - but complex permissions, views and security schemas would seem rather too contrived for a project being developed and run by a single person.</p>
 
@@ -76,7 +76,7 @@ div.wrapper {font: 100% Sans-serif; background-color: #D2DEFF; width: 94%; paddi
 
 <p>Most of the processes communicate via relatively low-level TCP sockets, though rather than writing my own application-level protocol I am for the most part simply using C#'s XML serialization and deserialization facilities to turn data into strings suitable for writing to a network stream. Some TCP connections consist of one server communicating with multiple peers, whilst others are simply peer-to-peer.</p>
 
-<p>AlgoServer is built using WCF (Windows Communication Foundation), which largely automates the process of making a server with methods available as a SOAP web service.</p>
+<p>Unlike the other processes, AlgoServer functions as a SOAP web service, and was built using WCF (Windows Communication Foundation). The spreadsheet connects to this with a small proxy assembly, which after a lot of fighting configuration parameters was eventually generated using Microsoft's command line tools.</p>
 
 <p>The processes communicate entirely via asynchronous, fire and forget messages. Many of the messages are either a continuous broadcast or otherwise do not require a reply, and hence for the most part this approach is the correct one to take. The interaction between traders and shipping companies involves an exchange of several messages linked together, and so would ideally be better suited to using a system of callbacks than continous polling. I have previously had a small amount of experience working with event-driven networking with Python (Twisted) and Javascript (MochiKit and AJAX).</p>
 
@@ -104,19 +104,19 @@ div.wrapper {font: 100% Sans-serif; background-color: #D2DEFF; width: 94%; paddi
 
 <p>The following six sheets display the results of various SQL queries on the database, aggregating summary data in various ways.</p>
 
-<p>FOLLOWING SECTION FLAGRANTLY A WORK IN PROGRESS:</p>
+<p>The next sheet after the "Country Summary" is the "Travelling Freighter Problem", a variation on the classic NP-hard "Travelling Salesman Problem". The Travelling Salesman Problem is: "Given a list of cities and their pairwise distances, find the shortest possible tour that visits each city exactly once.". This is a classic problem in the study of optimization methods, and there are numerous approaches to solving it - a simple greedy approximation algorithm, treating the problem as a graph and using a minimum spanning tree approximation, cutting plane approaches, matrix flow approaches, and surely many others. One approach is to treat it as a generic linear programming problem - that is, a problem defined as minimizing (or maximizing) a given linear function subject to given linear inequalities. I took some public domain C# code that used Microsoft's Solver Foundation library to solve the TSP as a linear programming problem and converted it to IronPython (easier said than done given Solver's reliance on typed user-defined classes and implicit C# type conversions). I then placed it into the Resolver spreadsheet, and added drop down menus to select a group of ports from the database. SQL Server's spatial data functions are used to find out the length of the arc between each port (ignoring the fact that land is often in the way, but nevermind), and this data is then fed to Solver, and the optimum tour output to the spreadsheet. The problem is very marginally different to the TSP as normally stated in that the nature of the globe means that arcs are really in 3 dimensions, not 2 dimensions, though this doesn't affect the algorithm at all.</p>
 
-<p>The next sheet after the "Country Summary" is the "Travelling Freighter Problem", a variation on the classic NP-hard "Travelling Salesman Problem". XXX define orif problem. xxx define my problem - globe rather than flat, maybe some extra constraints too (like ground in way). travelling freighter problem solution of shortest route for a freighter to visit each port exactly once. blah blah here's a diagram:</p>
+<p>I made this visualisation using UML tools, it is not automatically generated by the spreadsheet:</p>
 
 <p><img src="images/TFP.png"/></p>
 
-<p>[screenshot of TFP result page]</p>
+<p>The result page in the spreadsheet:</p>
 
-<p>various possible ways to approach TSP. simpel greedy appromixation algorithm, edges and vertices graph and miniumum spanning tree approximation, cutting plane, flow matrix solution. blah blah One way is generic linear programming. blah blah MS Solver Foundation, linear programming and constraints as a possible way to deal with TSP, mention TUI.</p>
+<p><img src="images/tfp_result.png"/></p>
 
-<p>blah blah took C# code from a blog post that used Solver to solve it, then converted it to Python. next step is to not use some predefined data but instead use the spatial data from the database on the locations of the various ports in the db, and to provide dropdowns on the spreadsheets to select which ports are to be included in the tour. This is actually somewhat ridiculous as it assumes ships can travel in straight arcs from any two ports, without land getting in the way, but anyway. The step after that will be to modify the problem to match up better with the supposed real world that the system models - e.g. to disallow certain arcs which involve travelling directly over large land masses, but allowing optional stop overs at certain ports and allow visiting ports more than once. Alternatively, I could add costs and benefits to certain arcs representing the different profits and losses to be made by fufilling freight movement contracts on those shipping routes.</p>
+<p>When working for Thomson Airways I worked on a much larger optimization system used for airline crew planning, with thousands of rules and constraints, though my role there only involving maintaining the high level code that stated the system's rules and constraints, and did not require any understanding of the underlying system and linear programming.</p>
 
-<p>AlgoServer implements various complex data structures and sorting algorithms: insertion sort, merge sort, heap sort, quick sort, randomized quick sort. counting sort, chained hash map, binary search tree, red-black tree, B-tree. It provides a SOAP web service with several methods:</p>
+<p>The final sheet connects to a C# web service called "AlgoServer". This service implements various complex data structures and sorting algorithms: insertion sort, merge sort, heap sort, quick sort, randomized quick sort. counting sort, chained hash map, binary search tree, red-black tree, B-tree. It provides a SOAP web service with several methods:</p>
 
 <ul>
 <li>It provides a method called "TimeSort" which takes a sorting method, an array to be sorted, and a number of iterations to repeat the sorting on the original array. Returned is not only the sorted list, but also the time taken to perform the iterations. The spreadsheet provides dropdowns to select a number of different algorithms, and fields to choose a size of randomized list to create and the number of iterations to perform, and then displays the comparative time that algorithm's iterations took on the randomized list.

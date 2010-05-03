@@ -1,0 +1,18 @@
+﻿http://archive.ite.journal.informs.org/Vol7No1/LeeRaffensperger/
+http://iris.gmu.edu/~khoffman/papers/trav_salesman.html
+http://en.wikipedia.org/wiki/Travelling_salesman_problem
+
+solver foundation generally:
+http://code.msdn.microsoft.com/solverfoundation
+http://yetanothermathprogrammingconsultant.blogspot.com/2009/02/ms-solver-foundation-gurobi-2.html
+http://yetanothermathprogrammingconsultant.blogspot.com/2009/02/tsp-powerset-formulation.html
+http://blogs.msdn.com/lengningliu/archive/2009/11/04/using-solver-foundation-and-plug-in-solvers-in-ironpython.aspx
+http://www.amsterdamoptimization.com/msf.html
+
+both together:
+http://blogs.msdn.com/natbr/archive/2009/04/27/solving-traveling-salesman-problems-using-solver-foundation.aspx
+http://blogs.msdn.com/natbr/archive/2009/05/07/solver-foundation-tsp-part-ii-directives-solver-plugins-model-libraries.aspx
+
+also:
+http://en.wikipedia.org/wiki/Linear_programming
+http://en.wikipedia.org/wiki/Priority_queue

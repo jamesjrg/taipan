@@ -13,9 +13,8 @@
 - est 4 days FT
 
 * doc a bit better
-- proper index.htm + screenshots
-- add version with static sql data to resolver exchange
-- est 2 days FT
+- add version with static sql data to resolver exchange, complete with doc
+- est 1 days FT
 
 - ideas from "ideas removed" file - infinite
 
@@ -24,10 +23,7 @@ git change log:
 
 
 nowish:
-- redo screenshoot for TSP graph - I think the solution may well be wrong
-- read more about linear programming, graph problems, tsp
 - fandandgw should keep track of its last tick time, if current tick time is the same time, skip
-- read more detail from algs book
 - finish binary search tree
 - sql server process CPU usage way too high, fix it (+ doc)
 - read about + implement binary search trees, rb trees, b trees
@@ -39,6 +35,11 @@ nowish:
 - fandgw DecideCommodPriceJumps
 - shippingcompany MoveAdvertised, moveconfirmed, DecideArrivals
 - when bank process starts, it should clear all warehoused commods and futures
+
+general reading:
+- read more about linear programming, graph problems
+- read more about tsp (see links, also my two books on algorithms and computing theory)
+- read more detail from algs book
 
 ////
 
@@ -55,34 +56,6 @@ Then a load of database query sheets
  - Prices are converted from local currency to historical USD value
 
 ////
-
-Fourthly, extreme contrivedness:
-8. Travelling freighter problem
-- integrate better with my model
-
-links:
-
-tsp generally:
-http://archive.ite.journal.informs.org/Vol7No1/LeeRaffensperger/
-http://iris.gmu.edu/~khoffman/papers/trav_salesman.html
-http://en.wikipedia.org/wiki/Travelling_salesman_problem
-
-solver foundation generally:
-http://code.msdn.microsoft.com/solverfoundation
-http://yetanothermathprogrammingconsultant.blogspot.com/2009/02/ms-solver-foundation-gurobi-2.html
-http://yetanothermathprogrammingconsultant.blogspot.com/2009/02/tsp-powerset-formulation.html
-http://blogs.msdn.com/lengningliu/archive/2009/11/04/using-solver-foundation-and-plug-in-solvers-in-ironpython.aspx
-http://www.amsterdamoptimization.com/msf.html
-
-both together:
-http://blogs.msdn.com/natbr/archive/2009/04/27/solving-traveling-salesman-problems-using-solver-foundation.aspx
-http://blogs.msdn.com/natbr/archive/2009/05/07/solver-foundation-tsp-part-ii-directives-solver-plugins-model-libraries.aspx
-
-also:
-http://en.wikipedia.org/wiki/Linear_programming
-http://en.wikipedia.org/wiki/Priority_queue
-
-///
 
 testing:
 - write tests for multihead queue and syncqueue

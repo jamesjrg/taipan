@@ -10,16 +10,16 @@ from SolverBindingClasses import Arc
 
 from TSPTestData import getTestData
 
-###taken from Solver Foundation bankshiftsheduling example
+#taken from Solver Foundation bankshiftsheduling example
 def const(i):
 	return Term.op_Implicit(i)
 
 def solveTFP():
     #get parameters from spreadsheet and database
-    #arcs, cityList = getPortArcs()
+    arcs, cityList, portsNamesMap = getPortArcs()
     
     #alternative static test data
-    arcs, cityList = getTestData()
+    #arcs, cityList = getTestData()
     
     #make it typed so .NET will let us do binding
     arcs = Array[Arc](arcs)
@@ -74,10 +74,11 @@ def solveTFP():
     
     tours = [p[2] for p in assign.GetValues() if p[0] > 0.9]
     
-    for tour in tours:
-        print "%s ->" % tour
+    print " ->".join([str(t) for t in tours])
+    
+    tourNames = [portsNamesMap[t] for t in tours]
         
-    TFPSheet.FillRange(tours, 2, 11, 2, len(tours) + 11)    
+    TFPSheet.FillRange(tourNames, 2, 11, 2, len(tourNames) + 11)    
  
 def setPortDropdowns():
     possibleNames = ['']
@@ -86,11 +87,22 @@ def setPortDropdowns():
         getattr(TFPSheet.Cells, "B%d" % i).DropdownItems = possibleNames
         
 def getPortArcs():
-    portsList = []    
-    ports = TFPSheet.Cells.B1.to.B8
-    for port in ports:
+    portsList = []
+    portsNamesMap = {}
+    portsIDsMap = {}
+       
+    portsRange = TFPSheet.Cells.B1.to.B8
+    for port in portsRange:
         if port:
-            portsList.append("'%s'" % port)
+            portsList.append(port)
+    
+    #convert to continuous range of ints for Solver
+    for i, port in enumerate(portsList):
+        portsNamesMap[i] = port
+        portsIDsMap[port] = i
+    
+    #add quotes for SQL
+    portsList = ["'%s'" % port for port in portsList]
     portsStr = ", ".join(portsList)
     
     arcs = []
@@ -100,14 +112,14 @@ def getPortArcs():
         otherPorts.remove(p)
         otherPorts = ", ".join(otherPorts)        
         data = queryDb(
-        """select p.ID, o.ID, p.Location.STDistance(o.Location), p.Name, o.Name from Port p, Port o
+        """select p.Name, o.Name, p.Location.STDistance(o.Location) from Port p, Port o
 where p.Name = %s and o.Name in (%s)""" % (p, otherPorts))
               
-        #So [0, x] is p.ID, [1,x] is o.ID, [2,x] is distance, [3,x] is p.Name, [4,x] is o.Name, 
+        #So [0, x] is p.Name, etc
         for i in range(data.GetLength(1)):
-            arcs.append(Arc(data[0, i], data[1, i], data[2, i]))
+            arcs.append(Arc(portsIDsMap[data[0, i]], portsIDsMap[data[1, i]], data[2, i]))
 
-    return arcs, portsList
+    return arcs, portsList, portsNamesMap
         
 setPortDropdowns()
 
