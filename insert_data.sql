@@ -299,7 +299,10 @@ WHILE @@FETCH_STATUS = 0
         FETCH FIRST FROM Commodity_Cursor INTO @commodity_id;
             WHILE @@FETCH_STATUS = 0
                 BEGIN
-                    INSERT INTO PortCommodityPrice (PortID, CommodityID) VALUES (@port_id, @commodity_id)
+                    DECLARE @made_up_price int
+                    SET @made_up_price = 80 + (RAND() * 40)
+                    SET @made_up_price = (1 / dbo.funcGetUSDValue(1, @port_id)) * @made_up_price
+                    INSERT INTO PortCommodityPrice (PortID, CommodityID, LocalPrice) VALUES (@port_id, @commodity_id, @made_up_price)
                     FETCH NEXT FROM Commodity_Cursor INTO @commodity_id;
                 END;
         FETCH NEXT FROM Port_Cursor INTO @port_id;

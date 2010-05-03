@@ -1,7 +1,7 @@
 <!--
 This spreadsheet is in the Public Domain.
 -->
-<document currentResultWorksheet="Futures" verticalSplitterRatio="0.75" horizontalSplitterRatio="0.991724137931" splitterOrientation="Horizontal" suspendRecalculations="True" license="Public Domain" copyrightOwner="James Gregory" resolverVersion="1.8.1" resolverBuild="5061" documentVersion="12">
+<document currentResultWorksheet="Commodity Prices" verticalSplitterRatio="0.75" horizontalSplitterRatio="0.991724137931" splitterOrientation="Horizontal" suspendRecalculations="True" license="Public Domain" copyrightOwner="James Gregory" resolverVersion="1.8.1" resolverBuild="5061" documentVersion="12">
     <foldState license="True" imports="False" worksheetCreation="True" preConstantsUserCode="False" constants="True" preFormulaeUserCode="False" generated="False" postFormulaeUserCode="False"/>
     <traitDefaults>
 
@@ -32,7 +32,7 @@ execfile('TFPPreConstants.py')
             <currentCell col="2" row="1" />
             <selection left="2" top="1" right="2" bottom="1" />
             <scrollPos col="1" row="1" />
-            <virtualGridSize width="51" height="73" />
+            <virtualGridSize width="51" height="88" />
         </viewState>
         <viewState worksheet="Shipping summary">
             <currentCell col="1" row="1" />
@@ -41,9 +41,9 @@ execfile('TFPPreConstants.py')
             <virtualGridSize width="50" height="73" />
         </viewState>
         <viewState worksheet="Commodity Prices">
-            <currentCell col="11" row="1" />
+            <currentCell col="6" row="28" />
             <scrollPos col="1" row="1" />
-            <virtualGridSize width="49" height="55" />
+            <virtualGridSize width="49" height="88" />
         </viewState>
         <viewState worksheet="Trader summary">
             <currentCell col="2" row="1" />
@@ -51,9 +51,9 @@ execfile('TFPPreConstants.py')
             <virtualGridSize width="50" height="73" />
         </viewState>
         <viewState worksheet="Futures">
-            <currentCell col="1" row="3" />
+            <currentCell col="3" row="4" />
             <scrollPos col="1" row="1" />
-            <virtualGridSize width="49" height="73" />
+            <virtualGridSize width="50" height="88" />
         </viewState>
         <viewState worksheet="Sorting Algorithms">
             <currentCell col="4" row="11" />
@@ -63,13 +63,13 @@ execfile('TFPPreConstants.py')
         <viewState worksheet="FX Rates">
             <currentCell col="8" row="14" />
             <scrollPos col="1" row="1" />
-            <virtualGridSize width="47" height="73" />
+            <virtualGridSize width="47" height="88" />
         </viewState>
         <viewState worksheet="Shipping">
             <currentCell col="2" row="1" />
             <selection left="2" top="1" right="2" bottom="1" />
             <scrollPos col="1" row="1" />
-            <virtualGridSize width="50" height="73" />
+            <virtualGridSize width="50" height="88" />
         </viewState>
     </viewStates>
     <worksheetOrder>
@@ -163,7 +163,7 @@ execfile('TFPPreConstants.py')
         </cell>
         <cell name="I3" value="Long Beach" type="general">
         </cell>
-        <cell name="H6" value="Prices are converted from local currency to USD" type="general">
+        <cell name="H6" value="Prices are converted from local currency to historical USD value" type="general">
         </cell>
         <cell name="H1" value="Commodity" type="general">
         </cell>
@@ -355,11 +355,17 @@ execfile('TFPPreConstants.py')
             <traitentry col="2" row="0" value="57" />
             <traitentry col="3" row="0" value="80" />
             <traitentry col="4" row="0" value="79" />
-            <traitentry col="6" row="2" value="102" />
+            <traitentry col="5" row="0" value="86" />
+            <traitentry col="6" row="0" value="63" />
             <traitentry col="7" row="0" value="71" />
+            <traitentry col="7" row="2" value="102" />
             <traitentry col="8" row="0" value="79" />
+            <traitentry col="8" row="2" value="71" />
+            <traitentry col="9" row="2" value="79" />
             <traitentry col="10" row="0" value="85" />
-            <traitentry col="11" row="0" value="112" />
+            <traitentry col="10" row="2" value="65" />
+            <traitentry col="11" row="0" value="67" />
+            <traitentry col="12" row="2" value="112" />
         </trait>
         <trait name="Alignment">
         </trait>
@@ -409,27 +415,29 @@ execfile('TFPPreConstants.py')
         </trait>
         <cell name="A2" value="Commodity" type="general">
         </cell>
-        <cell name="G2" value="Port sold at" type="general">
+        <cell name="G2" value="Time sold" type="general">
         </cell>
         <cell name="B2" value="Quantity" type="general">
         </cell>
         <cell name="B1" value="Prices are converted from local currency to historical USD value" type="general">
         </cell>
-        <cell name="E2" value="Buy price" type="general">
+        <cell name="E2" value="Port bought at" type="general">
         </cell>
-        <cell name="F2" value="Time sold" type="general">
+        <cell name="F2" value="Buy price" type="general">
         </cell>
-        <cell name="K2" value="Shipping Company" type="general">
+        <cell name="L2" value="Shipping Company" type="general">
         </cell>
-        <cell name="D2" value="Port bought at" type="general">
+        <cell name="K2" value="Trader" type="general">
+        </cell>
+        <cell name="D2" value="Time settled" type="general">
         </cell>
         <cell name="C2" value="Time bought" type="general">
         </cell>
-        <cell name="I2" value="Profit/Loss" type="general">
+        <cell name="I2" value="Sale price" type="general">
         </cell>
-        <cell name="H2" value="Sale price" type="general">
+        <cell name="H2" value="Port sold at" type="general">
         </cell>
-        <cell name="J2" value="Trader" type="general">
+        <cell name="J2" value="Profit/Loss" type="general">
         </cell>
     </worksheet>
     <worksheet name="Travelling Freighter Problem" value="" showGrid="True" showBounds="False" headerWidth="-1" headerHeight="-1">

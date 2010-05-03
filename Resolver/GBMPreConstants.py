@@ -70,7 +70,7 @@ def updateCommodityPrices():
     portIDs[2] = ids[0, 2]
     
     #first query includes dates
-    data = queryDb("select ValueDate, Value from (select top %d ValueDate, dbo.funcGetUSDValue(LocalPrice, %d) as Value from HistoricalPortCommodityPrice where PortID = %d and CommodityID = %d order by ValueDate DESC) as foo order by ValueDate ASC" % (Settings.nTopUpdate, portIDs[0], portIDs[0], commodityID))    
+    data = queryDb("select ValueDate, Value from (select top %d ValueDate, dbo.funcGetUSDValueAtDate(LocalPrice, %d, ValueDate) as Value from HistoricalPortCommodityPrice where PortID = %d and CommodityID = %d order by ValueDate DESC) as foo order by ValueDate ASC" % (Settings.nTopUpdate, portIDs[0], portIDs[0], commodityID))    
     commoditySheet.FillRange(data, 1, 2, 2, Settings.nTopUpdate + 1)
     
     for i in range(1, 3):        
@@ -106,7 +106,7 @@ def commodGraph():
     times = []
     for row in commoditySheet.Rows[2:]:
         times.Add(str(row[1]))
-
+    
     USDValues = [[],[],[]]
     for row in commoditySheet.Rows[2:]:
         USDValues[0].Add(row[2])

@@ -150,7 +150,7 @@ CREATE TABLE dbo.PortCommodityPrice
 	(
 	PortID int NOT NULL,
     CommodityID int NOT NULL,
-    LocalPrice Money NOT NULL DEFAULT 100,
+    LocalPrice Money NOT NULL,
     ShortageProb int NOT NULL CHECK (ShortageProb >= 0) DEFAULT 50,
     SurplusProb int NOT NULL CHECK (SurplusProb >= 0) DEFAULT 50,
     CONSTRAINT PK_PCP PRIMARY KEY (PortID, CommodityID),
