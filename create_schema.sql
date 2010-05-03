@@ -173,7 +173,7 @@ CREATE TABLE dbo.FuturesContract
     TraderID int NOT NULL,
     CommodityID int NOT NULL,
     PortID int NOT NULL,
-    Price Money  NOT NULL,
+    LocalPrice Money  NOT NULL,
     Quantity int NOT NULL,
     PurchaseTime datetime NOT NULL,
     SettlementTime datetime NOT NULL,
@@ -366,11 +366,23 @@ RETURNS Money
 AS
 BEGIN
 declare @USDValue Money, @ConvertedPrice Money
-set @USDValue = (select USDValue from Currency inner join Country on Country.CurrencyID = Currency.ID inner join Port on Port.CountryID = Country.ID where port.id = @PortID)
+set @USDValue = (select USDValue from Currency join Country on Country.CurrencyID = Currency.ID join Port on Port.CountryID = Country.ID where port.id = @PortID)
 set @ConvertedPrice = (select @LocalPrice * @USDValue)
 return @ConvertedPrice
 END
 GO
+
+CREATE FUNCTION funcGetUSDValueAtDate(@LocalPrice Money, @PortID int, @TheDate datetime)
+RETURNS Money
+AS
+BEGIN
+declare @USDValue Money, @ConvertedPrice Money
+set @USDValue = (select TOP 1 USDValue from HistoricalCurrencyPrice join Country on Country.CurrencyID = HistoricalCurrencyPrice.ID  join Port on Port.CountryID = Country.ID where port.id = @PortID and HistoricalCurrencyPrice.ValueDate < @TheDate order by ValueDate DESC)
+set @ConvertedPrice = (select @LocalPrice * @USDValue)
+return @ConvertedPrice
+END
+GO
+
 
 COMMIT
 GO

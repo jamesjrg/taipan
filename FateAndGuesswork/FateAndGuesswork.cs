@@ -22,9 +22,13 @@ namespace TaiPan.FateAndGuesswork
         private StockMsg stocks = new StockMsg();
         private List<ForecastInfo> shortages = new List<ForecastInfo>();
         private List<ForecastInfo> surpluses = new List<ForecastInfo>();
+        private List<int> portIDs = new List<int>();
 
         private Random random = new Random();
         private StatsLib.StatsLib stats = new StatsLib.StatsLib();
+
+        const int MIN_QUANTITY = 100;
+        const int MAX_QUANTITY = 500;
 
         private class ForecastInfo
         {
@@ -112,6 +116,16 @@ namespace TaiPan.FateAndGuesswork
             stocks.items = tmpList.ToArray();
             reader.Close();
 
+            Console.WriteLine("Reading port ids from db");
+            reader = dbConn.ExecuteQuery("SELECT ID from Port");
+            while (reader.Read())
+            {
+                int id = reader.GetInt32(0);
+                portIDs.Add(id);
+            }
+            stocks.items = tmpList.ToArray();
+            reader.Close();
+
             //close db conn
             dbConn.Dispose();
 
@@ -170,9 +184,13 @@ namespace TaiPan.FateAndGuesswork
             int rand = random.Next(0, clientIDs.Count);
             int targetTrader = clientIDs[rand];
 
-            int portID = 0;
-            int commodID = 0;
-            int quantity = 5;
+            int portIndex = random.Next(0, portIDs.Count);
+            int portID = portIDs[portIndex];
+
+            //int commodIndex = random.Next(0, commodityInfos.;
+            int commodID = 4;
+
+            int quantity = random.Next(MIN_QUANTITY, MAX_QUANTITY);
             DateTime time = DateTime.Now;
 
             if (random.Next(0, 2) == 0)

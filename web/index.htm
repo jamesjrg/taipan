@@ -59,13 +59,11 @@ div.wrapper {font: 100% Sans-serif; background-color: #D2DEFF; width: 94%; paddi
 
 <p>Around the top left of the diagram are the classes which hold entries for the economic players represented as C# processes - Company, Trader, and ShippingCompany. "Company" is a base table for "Public Company" and for "Trader", with "inheritance" controlled by CompanyType and a series of constraints.</p>
 
-<p>Along the top are four tables containing historical data on various prices and balances. Originally a trigger updated the relevant tables whenever records were inserted into these tables, though SQL Server's lack of a FOR EACH ROW trigger means I have switched to using stored procedures.</p>
+<p>Along the top are four tables containing historical data on various prices and balances. Originally a trigger updated the relevant tables whenever records were inserted into these tables, though SQL Server's lack of a FOR EACH ROW trigger means I have switched to using stored procedures for updating these tables.</p>
 
 <p>The rest of the schema is made of tables which represent various aspects of the modelled system - countries, ports, futures contracts, commodities, etc.</p>
 
-<p>The locations of the ports are stored using SQL Server's geography data type, this is used in various places to calculate distances between ports.</p>
-
-<p>The vast majority of data manipulation is performed in C# and Python, but the database does make some usage of stored procedures, user defined functions, and cursors.</p>
+<p>I have made some use of various intermediate SQL features. The locations of the ports are stored using SQL Server's geography data type, this is used in various places to calculate distances between ports. I have also written several user defined functions and cursors to aid the SQL queries carried out by both the C# processes and the spreadsheet user frontend.</p>
 
 <p>I have given some basic thought to security and permissions - there are seperate read-only and read-write logins, and processes only use the read-write login where necessary - but complex permissions, views and security schemas would seem rather too contrived for a project being developed and run by a single person.</p>
 

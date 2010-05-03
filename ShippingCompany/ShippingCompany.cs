@@ -98,7 +98,12 @@ namespace TaiPan.ShippingCompany
 
         private void DecideArrivals()
         {
-            arrivals.Add(new MovingMsg(1, DateTime.Now));
+            var shipsInProgressCopy = new List<ShipInProgress>(shipsInProgress);
+            foreach (var ship in shipsInProgressCopy)
+            {
+                arrivals.Add(new MovingMsg(1, DateTime.Now));
+                shipsInProgress.Remove(ship);
+            }
         }
 
         private void MoveAdvertised(MoveContractMsg msg)

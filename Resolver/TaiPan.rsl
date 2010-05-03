@@ -1,7 +1,7 @@
 <!--
 This spreadsheet is in the Public Domain.
 -->
-<document currentResultWorksheet="Sorting Algorithms" verticalSplitterRatio="0.75" horizontalSplitterRatio="0.991724137931" splitterOrientation="Horizontal" suspendRecalculations="True" license="Public Domain" copyrightOwner="James Gregory" resolverVersion="1.8.1" resolverBuild="5061" documentVersion="12">
+<document currentResultWorksheet="Futures" verticalSplitterRatio="0.75" horizontalSplitterRatio="0.991724137931" splitterOrientation="Horizontal" suspendRecalculations="True" license="Public Domain" copyrightOwner="James Gregory" resolverVersion="1.8.1" resolverBuild="5061" documentVersion="12">
     <foldState license="True" imports="False" worksheetCreation="True" preConstantsUserCode="False" constants="True" preFormulaeUserCode="False" generated="False" postFormulaeUserCode="False"/>
     <traitDefaults>
 
@@ -20,7 +20,7 @@ execfile('TFPPreConstants.py')
         <viewState worksheet="Travelling Freighter Problem">
             <currentCell col="3" row="6" />
             <scrollPos col="1" row="1" />
-            <virtualGridSize width="23" height="44" />
+            <virtualGridSize width="51" height="73" />
         </viewState>
         <viewState worksheet="Country summary">
             <currentCell col="3" row="2" />
@@ -32,13 +32,13 @@ execfile('TFPPreConstants.py')
             <currentCell col="2" row="1" />
             <selection left="2" top="1" right="2" bottom="1" />
             <scrollPos col="1" row="1" />
-            <virtualGridSize width="51" height="47" />
+            <virtualGridSize width="51" height="73" />
         </viewState>
         <viewState worksheet="Shipping summary">
             <currentCell col="1" row="1" />
             <selection left="1" top="1" right="5" bottom="11" />
             <scrollPos col="1" row="1" />
-            <virtualGridSize width="50" height="51" />
+            <virtualGridSize width="50" height="73" />
         </viewState>
         <viewState worksheet="Commodity Prices">
             <currentCell col="11" row="1" />
@@ -48,28 +48,28 @@ execfile('TFPPreConstants.py')
         <viewState worksheet="Trader summary">
             <currentCell col="2" row="1" />
             <scrollPos col="1" row="1" />
-            <virtualGridSize width="50" height="47" />
+            <virtualGridSize width="50" height="73" />
         </viewState>
         <viewState worksheet="Futures">
-            <currentCell col="2" row="5" />
+            <currentCell col="1" row="3" />
             <scrollPos col="1" row="1" />
-            <virtualGridSize width="50" height="47" />
+            <virtualGridSize width="49" height="73" />
         </viewState>
         <viewState worksheet="Sorting Algorithms">
             <currentCell col="4" row="11" />
             <scrollPos col="1" row="1" />
-            <virtualGridSize width="49" height="71" />
+            <virtualGridSize width="49" height="88" />
         </viewState>
         <viewState worksheet="FX Rates">
             <currentCell col="8" row="14" />
             <scrollPos col="1" row="1" />
-            <virtualGridSize width="47" height="47" />
+            <virtualGridSize width="47" height="73" />
         </viewState>
         <viewState worksheet="Shipping">
-            <currentCell col="1" row="2" />
-            <selection left="1" top="2" right="8" bottom="2" />
+            <currentCell col="2" row="1" />
+            <selection left="2" top="1" right="2" bottom="1" />
             <scrollPos col="1" row="1" />
-            <virtualGridSize width="50" height="47" />
+            <virtualGridSize width="50" height="73" />
         </viewState>
     </viewStates>
     <worksheetOrder>
@@ -327,6 +327,8 @@ execfile('TFPPreConstants.py')
         </cell>
         <cell name="B2" value="Quantity" type="general">
         </cell>
+        <cell name="B1" value="Prices are converted from local currency to historical USD value" type="general">
+        </cell>
         <cell name="E2" value="Start time" type="general">
         </cell>
         <cell name="F2" value="End time" type="general">
@@ -350,11 +352,12 @@ execfile('TFPPreConstants.py')
         <trait name="ColWidth">
             <traitentry col="1" row="0" value="78" />
             <traitentry col="1" row="2" value="65" />
-            <traitentry col="2" row="1" value="139" />
+            <traitentry col="2" row="0" value="57" />
             <traitentry col="3" row="0" value="80" />
+            <traitentry col="4" row="0" value="79" />
             <traitentry col="6" row="2" value="102" />
-            <traitentry col="7" row="0" value="52" />
-            <traitentry col="8" row="0" value="90" />
+            <traitentry col="7" row="0" value="71" />
+            <traitentry col="8" row="0" value="79" />
             <traitentry col="10" row="0" value="85" />
             <traitentry col="11" row="0" value="112" />
         </trait>
@@ -406,11 +409,11 @@ execfile('TFPPreConstants.py')
         </trait>
         <cell name="A2" value="Commodity" type="general">
         </cell>
-        <cell name="G2" value="Port" type="general">
+        <cell name="G2" value="Port sold at" type="general">
         </cell>
         <cell name="B2" value="Quantity" type="general">
         </cell>
-        <cell name="B1" value="Prices are converted from local currency to USD" type="general">
+        <cell name="B1" value="Prices are converted from local currency to historical USD value" type="general">
         </cell>
         <cell name="E2" value="Buy price" type="general">
         </cell>
@@ -418,7 +421,7 @@ execfile('TFPPreConstants.py')
         </cell>
         <cell name="K2" value="Shipping Company" type="general">
         </cell>
-        <cell name="D2" value="Port" type="general">
+        <cell name="D2" value="Port bought at" type="general">
         </cell>
         <cell name="C2" value="Time bought" type="general">
         </cell>
@@ -487,35 +490,33 @@ execfile('TFPPreConstants.py')
         </trait>
         <trait name="DecimalPlaces">
         </trait>
-        <cell name="B7" value="None" type="general">
-        </cell>
-        <cell name="B8" value="None" type="general">
+        <cell name="B7" value="Savannah" type="general">
         </cell>
         <cell name="A2" value="Port:" type="general">
         </cell>
-        <cell name="B2" value="None" type="general">
+        <cell name="B2" value="Port Hedland" type="general">
         </cell>
         <cell name="A1" value="Port:" type="general">
         </cell>
         <cell name="A11" value="Optimum route:" type="general">
         </cell>
-        <cell name="B1" value="None" type="general">
+        <cell name="B1" value="Antwerp" type="general">
         </cell>
         <cell name="A6" value="Port:" type="general">
         </cell>
-        <cell name="B6" value="None" type="general">
+        <cell name="B6" value="Saint Petersburg" type="general">
         </cell>
         <cell name="A5" value="Port:" type="general">
         </cell>
-        <cell name="B5" value="None" type="general">
+        <cell name="B5" value="Kaohsiung" type="general">
         </cell>
         <cell name="A3" value="Port:" type="general">
         </cell>
         <cell name="A4" value="Port:" type="general">
         </cell>
-        <cell name="B3" value="None" type="general">
+        <cell name="B3" value="Port Said" type="general">
         </cell>
-        <cell name="B4" value="None" type="general">
+        <cell name="B4" value="San Antonio" type="general">
         </cell>
         <cell name="A7" value="Port:" type="general">
         </cell>
@@ -880,7 +881,6 @@ execfile('TFPPreConstants.py')
         <trait name="Unit">
         </trait>
         <trait name="ColWidth">
-            <traitentry col="2" row="1" value="139" />
             <traitentry col="3" row="0" value="77" />
             <traitentry col="6" row="2" value="102" />
             <traitentry col="7" row="2" value="90" />
@@ -940,7 +940,7 @@ execfile('TFPPreConstants.py')
         </cell>
         <cell name="B2" value="Quantity" type="general">
         </cell>
-        <cell name="B1" value="Prices are converted from local currency to USD" type="general">
+        <cell name="B1" value="Prices are converted from local currency to historical USD value" type="general">
         </cell>
         <cell name="E2" value="Buy price" type="general">
         </cell>

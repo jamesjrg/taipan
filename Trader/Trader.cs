@@ -147,7 +147,7 @@ namespace TaiPan.Trader
 
         private void SurplusForecast(ForecastMsg msg)
         {
-            futureRequests.Add(new FutureMsg(msg.portID, msg.commodID, msg, 1, msg.time));
+            futureRequests.Add(new FutureMsg(msg.portID, msg.commodID, 1, msg.time));
         }
 
         private void ShortageForecast(ForecastMsg msg)

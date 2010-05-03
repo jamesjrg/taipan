@@ -104,7 +104,7 @@ namespace TaiPan.Bank
                         EnactBuy((BuyMsg)msg.data);
                         break;
                     case NetMsgType.Future:
-                        EnactFuture((BuyMsg)msg.data);
+                        EnactFuture((FutureMsg)msg.data);
                         break;
                     default:
                         throw new ApplicationException("traderServer received wrong type of net message");
@@ -193,14 +193,17 @@ namespace TaiPan.Bank
             }
         }
 
-        private void EnactFuture(BuyMsg msg)
+        private void EnactFuture(FutureMsg msg)
         {
-            throw new NotImplementedException();
+            dbConn.ExecuteNonQuery(String.Format(@"INSERT INTO dbo.FuturesContract
+           (TraderID, CommodityID, PortID, LocalPrice, Quantity, PurchaseTime, SettlementTime, ActualSetTime)
+     VALUES
+     ({0}, {1}, {2}, {3}, {4}, '{5}', '{6}', '{7}')", 1, msg.commodID, msg.portID, 4.44, msg.quantity, DateTime.Now, msg.time, msg.time));
         }
 
         private void EnactBuy(BuyMsg msg)
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
 
         private void ShipDeparted(MovingMsg msg)

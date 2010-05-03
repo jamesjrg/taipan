@@ -1,5 +1,5 @@
 ﻿INSERT INTO dbo.FuturesContract
-           (TraderID, CommodityID, PortID, Price, Quantity, PurchaseTime, SettlementTime, ActualSetTime)
+           (TraderID, CommodityID, PortID, LocalPrice, Quantity, PurchaseTime, SettlementTime, ActualSetTime)
      VALUES
      ()
 GO

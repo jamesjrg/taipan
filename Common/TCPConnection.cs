@@ -92,17 +92,25 @@ namespace TaiPan.Common
 
             while (true)
             {
-                while (ns.DataAvailable)
+                try
                 {
-                    tmp.Append(sr.ReadLine());
-
-                    if (tmp.Length > 1 && tmp.ToString(tmp.Length - 2, 2) == "::")
+                    while (ns.DataAvailable)
                     {
-                        incoming.Enqueue(tmp.ToString(0, tmp.Length - 2));
-                        tmp.Length = 0;
+                        tmp.Append(sr.ReadLine());
+
+                        if (tmp.Length > 1 && tmp.ToString(tmp.Length - 2, 2) == "::")
+                        {
+                            incoming.Enqueue(tmp.ToString(0, tmp.Length - 2));
+                            tmp.Length = 0;
+                        }
                     }
+                    Thread.Sleep(TCP_THREAD_TICK);
                 }
-                Thread.Sleep(TCP_THREAD_TICK);
+
+                catch (ObjectDisposedException e)
+                {
+                    Console.WriteLine("Server closed connection");
+                }
             }
         }
 

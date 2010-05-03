@@ -3,35 +3,12 @@
 import clr
 clr.AddReference('Microsoft.Solver.Foundation')
 from Microsoft.SolverFoundation.Services import *
-
-import math
+from TSPTestData import TSPTestData
 
 #should be extension method
 def AssignmentConstraintsNoDiag(model, s, assign):
         model.AddConstraint("A1", Model.ForEach(lambda s, i: Model.Sum(Model.ForEachWhere(lambda s, j: assign[i, j], lambda j: i != j)) == 1))
         model.AddConstraint("A2", Model.ForEach(lambda s, i: Model.Sum(Model.ForEachWhere(lambda s, j: assign[i, j], lambda i: i != j)) == 1))
-    
-class Coordinate:
-    def __init__(self, name, x, y):
-        self.name = name
-        self.x = x
-        self.y = y
-
-    #Latitude in radians.
-    def latitude(self):
-        return math.pi * (math.trunc(self.x) + 5 * (self.x - math.trunc(self.x)) / 3) / 180
-
-    #Longitude in radians.
-    def longitude(self):
-        return math.pi * (math.trunc(self.y) + 5 * (self.y - math.trunc(self.y)) / 3) / 180
-
-    #Geographic distance between two points (as an integer).
-    def distance(self, p):
-        q1 = math.cos(self.longitude() - p.longitude())
-        q2 = math.cos(self.latitude() - p.latitude())
-        q3 = math.cos(self.latitude() + p.latitude())
-        #There may rounding difficulties her if the points are close together...just sayin'.
-        return int(6378.388 * math.acos(0.5 * ((1 + q1) * q2 - (1 - q1) * q3)) + 1)
 
 class Arc:
     def __init__(self, city1, city2, distance):
@@ -51,24 +28,14 @@ class Arc:
     def distance(self):
         return self.__distance
         
-# Burma14 from TSPLIB. Optimal tour = 3323.
-data = [
-  Coordinate(0, 16.47, 96.10),
-  Coordinate(1, 16.47, 94.44),
-  Coordinate(2, 20.09, 92.54),
-  Coordinate(3, 22.39, 93.37),
-  Coordinate(4, 25.23, 97.24),
-  Coordinate(5, 22.00, 96.05),
-  Coordinate(6, 20.47, 97.02),
-  Coordinate(7, 17.20, 96.29),
-  Coordinate(8, 16.30, 97.38),
-  Coordinate(9, 14.05, 98.12),
-  Coordinate(10, 16.53, 97.38),
-  Coordinate(11, 21.52, 95.59),
-  Coordinate(12, 19.41, 97.13),
-  Coordinate(13, 20.09, 94.55)]
+    def ToString(self):
+        return ", ". join((self.city1, self.city2, str(self.distance)))
         
 def solveTFP():
+    #get input data
+    arcs = getPortArcs()
+    return
+
     #Set up model
     context = SolverContext.GetContext();
     model = context.CreateModel();
@@ -79,8 +46,8 @@ def solveTFP():
     
     #Add all the arcs
     arcs = []
-    for p1 in data:
-        for p2 in data:
+    for p1 in TSPTestData:
+        for p2 in TSPTestData:
             arcs.append(Arc(p1.name, p2.name, p1.distance(p2)))
         
     dist.SetBinding(arcs, "distance", "city1", "city2")
@@ -118,10 +85,34 @@ def solveTFP():
     TFPSheet.FillRange(tours, 2, 11, 2, len(tours) + 11)    
  
 def setPortDropdowns():
-    possibleNames = ['None']
+    possibleNames = ['']
     possibleNames.extend(portNames)
     for i in range(1,9):
         getattr(TFPSheet.Cells, "B%d" % i).DropdownItems = possibleNames
+        
+def getPortArcs():
+    portsList = []    
+    ports = TFPSheet.Cells.B1.to.B8
+    for port in ports:
+        if port:
+            portsList.append("'%s'" % port)
+    portsStr = ", ".join(portsList)
+    
+    arcs = []
+    
+    for p in portsList:
+        otherPorts = portsList[:]
+        otherPorts.remove(p)
+        otherPorts = ", ".join(otherPorts)        
+        data = queryDb(
+        """select p.Name, o.Name, p.Location.STDistance(o.Location) from Port p, Port o
+where p.Name = %s and o.Name in (%s)""" % (p, otherPorts))
+              
+        #So [0, x] is p.Name, [1,x] is o.Name, [2,x] is distance
+        for i in range(data.GetLength(1)):
+            arcs.append(Arc(data[0, i], data[1, i], data[2, i]))
+
+    return arcs
         
 setPortDropdowns()
 

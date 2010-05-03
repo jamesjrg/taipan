@@ -1,16 +1,16 @@
 * finish all main points of network code and process logic
-- est 1 week FT
+- est 4 days FT
 
 * finish all main points of spreadsheet summary sheets
 - est 3 days week full time
 
 * read parts of algorithms book chapters 2,3,4,5,6,7, then 10,11,12,13, then 18
 * do all basic of algorithms bit
-- est 1.5 weeks full time
+- est 8 days full time
 
 * read algorithms book chapters 22, 29, 34, 35, and a bunch of TSP/MS Solver stuff
 * do TSP stuff
-- est 1 week FT
+- est 4 days FT
 
 * doc a bit better
 - proper index.htm + screenshots
@@ -30,7 +30,6 @@ nowish:
 - add constraint on historical sheets such that there can't be multiple entries for the same date - i.e. UNIQUE constraints on (PortID, commodityID, time) in PortCommodityPrice, unique constraint on (x, x, date) in other tables too. though what is effect on performance?
 - read more detail from algs book
 - finish binary search tree
-- fix heap sort
 - sql server process CPU usage way too high, fix it (+ doc)
 - read about + implement binary search trees, rb trees, b trees
 - for clients keeping track of server ids, need to store connections in a dict
@@ -41,13 +40,15 @@ nowish:
 - fandgw DecideCommodPriceJumps
 - shippingcompany MoveAdvertised, moveconfirmed, DecideArrivals
 - when bank process starts, it should clear all warehoused commods and futures
-- are futures and buys in USD or localprice?
+- unit test structures
+
 
 ////
 
 Process logic and networking:
 - in server, clients should get removed from clients list if they are disconnected
 - net_msg_todo.txt
+- correctly deal with System.ObjectDisposedException for ReceiveThread
 - unit test individual functions
 - probably use sql spatial functions to work out distances for freighter travel - both for Bank and for Resolver
 - test that targeted messages are sent only to the correct server/client, and have exact steps to reproduce the test (inc fandgw to trader surplus and shortage)
@@ -55,8 +56,8 @@ Process logic and networking:
 ///
 
 Then a load of database query sheets
-
- - Prices are converted from local currency to USD
+-  test funcGetUSDValueAtDate
+ - Prices are converted from local currency to historical USD value
 
 ////
 
