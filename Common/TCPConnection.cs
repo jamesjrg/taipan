@@ -14,8 +14,7 @@ namespace TaiPan.Common
         protected readonly int OUTGOING_QUEUE_SIZE;
         protected readonly int TCP_THREAD_TICK;
 
-        //note incoming has public access, outgoing does not
-        public SyncQueue<string> incoming = new SyncQueue<string>();
+        //incoming in dict of int to syncqueue for server, syncqueue for client
         //outgoing in multiheadqueue for server, syncqueue for client
 
         public TCPConnection(NameValueCollection appSettings)
@@ -24,25 +23,9 @@ namespace TaiPan.Common
             TCP_THREAD_TICK = Convert.ToInt32(appSettings["TCPThreadTick"]);
         }
 
-        public List<DeserializedMsg> IncomingDeserializeAll()
+        protected class TCPThreadState
         {
-            List<String> strings = incoming.DequeueAll();
-            List<DeserializedMsg> msgs = new List<DeserializedMsg>();
-            
-            foreach (string str in strings)
-            {
-                NetMsgType type;
-                object data;
-                NetContract.NetContract.Deserialize(str, out type, out data);
-                msgs.Add(new DeserializedMsg(type, data));
-            }
-
-            return msgs;
-        }
-
-        protected class BroadcastThreadState
-        {
-            public BroadcastThreadState(int clientID, NetworkStream ns)
+            public TCPThreadState(int clientID, NetworkStream ns)
             {
                 this.clientID = clientID;
                 this.ns = ns;
@@ -54,8 +37,8 @@ namespace TaiPan.Common
 
         protected void BroadcastThread(object state)
         {
-            BroadcastThreadState castedState = (BroadcastThreadState)state;
-            NetworkStream ns = castedState.ns; ;
+            TCPThreadState castedState = (TCPThreadState)state;
+            NetworkStream ns = castedState.ns;
             StreamWriter sw = new StreamWriter(ns);
 
             while (true)
@@ -86,7 +69,8 @@ namespace TaiPan.Common
 
         protected void ReceiveThread(object state)
         {
-            NetworkStream ns = (NetworkStream)state;
+            TCPThreadState castedState = (TCPThreadState)state;
+            NetworkStream ns = castedState.ns;
             StreamReader sr = new StreamReader(ns);
             StringBuilder tmp = new StringBuilder();
 
@@ -100,7 +84,7 @@ namespace TaiPan.Common
 
                         if (tmp.Length > 1 && tmp.ToString(tmp.Length - 2, 2) == "::")
                         {
-                            incoming.Enqueue(tmp.ToString(0, tmp.Length - 2));
+                            IncomingEnqueue(castedState.clientID, tmp.ToString(0, tmp.Length - 2));
                             tmp.Length = 0;
                         }
                     }
@@ -114,6 +98,23 @@ namespace TaiPan.Common
             }
         }
 
+        protected List<DeserializedMsg> SerializeList(List<string> strings)
+        {
+            List<DeserializedMsg> msgs = new List<DeserializedMsg>();
+
+            foreach (string str in strings)
+            {
+                NetMsgType type;
+                object data;
+                NetContract.NetContract.Deserialize(str, out type, out data);
+                msgs.Add(new DeserializedMsg(type, data));
+            }
+
+            return msgs;
+        }
+
+        //XXX clientID never needed by client versions, should refactor
+        abstract protected void IncomingEnqueue(int clientID, string msg);
         abstract protected List<string> OutgoingDequeueAll(int clientID);
     }
 }

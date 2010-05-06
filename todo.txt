@@ -14,6 +14,7 @@
 
 * doc a bit better
 - add version with static sql data to resolver exchange, complete with doc
+- remove works in progress bit from index.htm
 - est 1 days FT
 
 - ideas from "ideas removed" file - infinite
@@ -21,20 +22,17 @@
 ////
 git change log:
 
-
 nowish:
-- fandandgw should keep track of its last tick time, if current tick time is the same time, skip
+- do a bit of testing, perhaps try to automate said testing a little
+- Bank EnactFuture, EnactBuy, ShipDeparted, shiparrived, futuresettlements
 - finish binary search tree
 - sql server process CPU usage way too high, fix it (+ doc)
-- read about + implement binary search trees, rb trees, b trees
-- for clients keeping track of server ids, need to store connections in a dict
+- read about + implement rb trees, b-trees
 - shippingcomps need to know distance between ports to work out how long journeys take, and banks need to know to work out how much shipping companies should charge for movements. copy sql query loop from tfp python code. needs to be stored in a dict of string -> distance (string will be of form "city1,city2" by both shippingcomp and bank, so put function to create lookup table in economicplayer.
-- traderClient.Send in ShippingCompany - sent to only one client, also server tcp thread needs to note id of sender for MoveAdvertised 
-- Bank EnactFuture, EnactBuy, ShipDeparted, shiparrived - all need to note id of sender
 - trader MoveAccepted, buyconfirmed, futuresettled, SurplusForecast, shortageforecast
 - fandgw DecideCommodPriceJumps
-- shippingcompany MoveAdvertised, moveconfirmed, DecideArrivals
-- when bank process starts, it should clear all warehoused commods and futures
+- shippingcompany moveconfirmed, DecideArrivals
+- when bank process starts, it should clear db of all warehoused commods and futures
 
 general reading:
 - read more about linear programming, graph problems
@@ -48,7 +46,6 @@ Process logic and networking:
 - net_msg_todo.txt
 - unit test individual functions
 - probably use sql spatial functions to work out distances for freighter travel - both for Bank and for Resolver
-- test that targeted messages are sent only to the correct server/client, and have exact steps to reproduce the test (inc fandgw to trader surplus and shortage)
 
 ///
 
@@ -63,6 +60,8 @@ testing:
 - make processes do right thing when other processes go down, and have automated tests for all possibilities if differing orders of collapse.
 - unittest the algoserver data structures
 - unittest multiheadqueue
+- test: fandandgw should keep track of its last tick time, if current tick time is the same time, skip
+- test that targeted messages are sent only to the correct server/client, and have exact steps to reproduce the test (inc fandgw to trader surplus and shortage)
 
 ////
 
@@ -92,5 +91,9 @@ Also make sure names match up UML <-> sql and vice versa
 
 short version for CV etc:
 
-•	A C# .NET, SQL Server and Python project written to improve my knowledge of various aspects of computer science and software engineering. A large number of heterogeneous, multithreaded C# processes interact with each other via TCP sockets. Much of the underlying state of the system is stored in a MS SQL Server instance. The system includes implementations of various data structures (e.g. B-Trees, hash tables), numerous sorting algorithms, and algorithms for simulating stochastic processes. A user interface to the system is provided in the form of an IronPython-based spreadsheet that a) makes numerous queries on both the database and on a C# SOAP web service b) loads a C# WPF assembly to produce interactive graphs of the summary data and c) utilises a mathematical optimization framework to solve a linear programming problem, using data from the rest of the system. The project is described by a series of UML diagrams, and partly covered by unit tests. The source code is available on GitHub. Around 300 hours work so far.
+•	A C# .NET, SQL Server and Python project written to improve my knowledge of various aspects of computer science and software engineering. A large number of heterogeneous, multithreaded C# processes interact with each other via TCP sockets. Much of the underlying state of the system is stored in a MS SQL Server instance.
+
+The system includes implementations of various data structures (e.g. B-Trees, hash tables), numerous sorting algorithms, and algorithms for simulating stochastic processes. A user interface to the system is provided in the form of an IronPython-based spreadsheet that a) makes numerous queries on both the database and on a C# SOAP web service b) loads a C# WPF assembly to produce interactive graphs of the summary data and c) utilises a mathematical optimization framework to solve a linear programming problem, using data from the rest of the system.
+
+The project is described by a series of UML diagrams, and partly covered by unit tests. The source code is available on GitHub. Around 300 hours work so far.
 

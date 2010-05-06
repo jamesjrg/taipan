@@ -27,6 +27,8 @@ namespace TaiPan.FateAndGuesswork
         private Random random = new Random();
         private StatsLib.StatsLib stats = new StatsLib.StatsLib();
 
+        private DateTime lastTick = new DateTime(0);
+
         const int MIN_QUANTITY = 100;
         const int MAX_QUANTITY = 500;
 
@@ -135,6 +137,12 @@ namespace TaiPan.FateAndGuesswork
 
         protected override bool Run()
         {
+            //don't want multiple ticks with the exact same timestamp on the db entries, though assuming tick is at least one second this shouldn't happen anyway
+            if (lastTick == DateTime.Now)
+                return true;
+            else
+                lastTick = DateTime.Now;
+
             DecideCommodPrices();
             DecideStockPrices();
             DecideCommodPriceJumps();

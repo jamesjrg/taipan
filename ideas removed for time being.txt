@@ -4,7 +4,7 @@ Section 1: vaguely reasonable ideas:
 
 //
 small things:
-- refactor OutgoingDequeueAll to not require clients give an unused clientID
+- refactor OutgoingDequeueAll to not require clients give an unused clientID, same with IncomingEnqueue
 - UML class diagram (hopefully this can just be exported from Visual Studio? Or otherwise imported from C# code to MagicDraw)
 - export class documentation from XML doc strings
 - on resolver summary sheets, add stats on total distances travelled by freighters

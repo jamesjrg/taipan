@@ -22,7 +22,7 @@ namespace TaiPan.ShippingCompany
         private List<MovingMsg> arrivals = new List<MovingMsg>();
 
         private List<ShipInProgress> shipsInProgress = new List<ShipInProgress>();
-        private List<MoveContractMsg> movesWishes = new List<MoveContractMsg>();
+        private Dictionary<int, List<MoveContractMsg>> moveWishes = new Dictionary<int, List<MoveContractMsg>>();
 
         private class ShipInProgress
         {
@@ -57,6 +57,7 @@ namespace TaiPan.ShippingCompany
             for (int i = 0; i != nTraders; ++i)
             {
                 traderClients[conf.port] = new Client(conf, AppSettings, myID, false);
+                moveWishes[conf.port] = new List<MoveContractMsg>();
                 conf.port += 1;
             }
         }        
@@ -73,10 +74,10 @@ namespace TaiPan.ShippingCompany
                     switch (msg.type)
                     {
                         case NetMsgType.AdvertiseMove:
-                            MoveAdvertised((MoveContractMsg)(msg.data));
+                            MoveAdvertised(trader.Key, (MoveContractMsg)msg.data);
                             break;
                         case NetMsgType.ConfirmMove:
-                            MoveConfirmed((MoveContractMsg)(msg.data));
+                            MoveConfirmed(trader.Key, (MoveContractMsg)msg.data);
                             break;
                         default:
                             throw new ApplicationException("fxClient received wrong type of net message");
@@ -84,8 +85,11 @@ namespace TaiPan.ShippingCompany
                 }
             }
 
-            //foreach (var moveWish in moveWishes)
-            //    traderClient.Send(NetContract.Serialize(NetMsgType, moveWish));
+            foreach (var keyValPair in moveWishes)
+            {
+                traderClients[keyValPair.Key].Send(NetContract.Serialize(NetMsgType.AcceptMove, keyValPair.Value));
+                moveWishes[keyValPair.Key].Clear();
+            }
 
             foreach (var departure in departures)
                 bankClient.Send(NetContract.Serialize(NetMsgType.Departure, departure));
@@ -106,12 +110,12 @@ namespace TaiPan.ShippingCompany
             }
         }
 
-        private void MoveAdvertised(MoveContractMsg msg)
+        private void MoveAdvertised(int traderPort, MoveContractMsg msg)
         {
-            movesWishes.Add(new MoveContractMsg(msg.warehouseID));
+            moveWishes[traderPort].Add(new MoveContractMsg(msg.warehouseID));
         }
 
-        private void MoveConfirmed(MoveContractMsg msg)
+        private void MoveConfirmed(int traderPort, MoveContractMsg msg)
         {
             departures.Add(new MovingMsg(1, DateTime.Now));
             shipsInProgress.Add(new ShipInProgress(1, DateTime.Now.AddSeconds(5)));

@@ -66,6 +66,8 @@ namespace TaiPan.Bank
 
         protected override bool Run()
         {
+            FutureSettlements();
+
             List<DeserializedMsg> fxIncoming = fxClient.IncomingDeserializeAll();
             foreach (var msg in fxIncoming)
             {
@@ -95,35 +97,41 @@ namespace TaiPan.Bank
                 }
             }
 
-            List<DeserializedMsg> traderIncoming = traderServer.IncomingDeserializeAll();
-            foreach (var msg in traderIncoming)
+            foreach (var client in traderServer.clients)
             {
-                switch (msg.type)
+                List<DeserializedMsg> traderIncoming = traderServer.IncomingDeserializeAll(client.id);
+                foreach (var msg in traderIncoming)
                 {
-                    case NetMsgType.Buy:
-                        EnactBuy((BuyMsg)msg.data);
-                        break;
-                    case NetMsgType.Future:
-                        EnactFuture((FutureMsg)msg.data);
-                        break;
-                    default:
-                        throw new ApplicationException("traderServer received wrong type of net message");
+                    switch (msg.type)
+                    {
+                        case NetMsgType.Buy:
+                            EnactBuy(client.id, (BuyMsg)msg.data);
+                            break;
+                        case NetMsgType.Future:
+                            EnactFuture(client.id, (FutureMsg)msg.data);
+                            break;
+                        default:
+                            throw new ApplicationException("traderServer received wrong type of net message");
+                    }
                 }
             }
 
-            List<DeserializedMsg> shippingIncoming = shippingServer.IncomingDeserializeAll();
-            foreach (var msg in shippingIncoming)
+            foreach (var client in shippingServer.clients)
             {
-                switch (msg.type)
+                List<DeserializedMsg> shippingIncoming = shippingServer.IncomingDeserializeAll(client.id);
+                foreach (var msg in shippingIncoming)
                 {
-                    case NetMsgType.Departure:
-                        ShipDeparted((MovingMsg)msg.data);
-                        break;
-                    case NetMsgType.Arrival:
-                        ShipArrived((MovingMsg)msg.data);
-                        break;
-                    default:
-                        throw new ApplicationException("traderServer received wrong type of net message");
+                    switch (msg.type)
+                    {
+                        case NetMsgType.Departure:
+                            ShipDeparted(client.id, (MovingMsg)msg.data);
+                            break;
+                        case NetMsgType.Arrival:
+                            ShipArrived(client.id, (MovingMsg)msg.data);
+                            break;
+                        default:
+                            throw new ApplicationException("traderServer received wrong type of net message");
+                    }
                 }
             }
 
@@ -136,6 +144,10 @@ namespace TaiPan.Bank
             settledFutures.Clear();
 
             return true;
+        }
+
+        private void FutureSettlements()
+        {
         }
 
         private void UpdateCurrency(CurrencyMsg msg)
@@ -193,24 +205,28 @@ namespace TaiPan.Bank
             }
         }
 
-        private void EnactFuture(FutureMsg msg)
+        private void EnactFuture(int traderID, FutureMsg msg)
         {
+            object localPrice = dbConn.ExecuteScalar(@"");
+            
             dbConn.ExecuteNonQuery(String.Format(@"INSERT INTO dbo.FuturesContract
-           (TraderID, CommodityID, PortID, LocalPrice, Quantity, PurchaseTime, SettlementTime, ActualSetTime)
+           (TraderID, CommodityID, PortID, LocalPrice, Quantity, PurchaseTime, SettlementTime)
      VALUES
-     ({0}, {1}, {2}, {3}, {4}, '{5}', '{6}', '{7}')", 1, msg.commodID, msg.portID, 4.44, msg.quantity, DateTime.Now, msg.time, msg.time));
+     ({0}, {1}, {2},
+(select LocalPrice from PortCommodityPrice where PortID = {2} and CommodityID = {1}),
+{3}, '{4}', '{5}')", traderID, msg.commodID, msg.portID, msg.quantity, DateTime.Now, msg.time));
         }
 
-        private void EnactBuy(BuyMsg msg)
+        private void EnactBuy(int traderID, BuyMsg msg)
         {
             //throw new NotImplementedException();
         }
 
-        private void ShipDeparted(MovingMsg msg)
+        private void ShipDeparted(int companyID, MovingMsg msg)
         {
         }
 
-        private void ShipArrived(MovingMsg msg)
+        private void ShipArrived(int companyID, MovingMsg msg)
         {
         }
     }

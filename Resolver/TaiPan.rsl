@@ -20,13 +20,13 @@ execfile('TFPPreConstants.py')
         <viewState worksheet="Travelling Freighter Problem">
             <currentCell col="3" row="7" />
             <scrollPos col="1" row="1" />
-            <virtualGridSize width="51" height="71" />
+            <virtualGridSize width="50" height="78" />
         </viewState>
         <viewState worksheet="Country summary">
             <currentCell col="3" row="2" />
             <selection left="3" top="2" right="3" bottom="2" />
             <scrollPos col="1" row="1" />
-            <virtualGridSize width="47" height="51" />
+            <virtualGridSize width="47" height="88" />
         </viewState>
         <viewState worksheet="Purchases">
             <currentCell col="2" row="1" />
@@ -450,7 +450,7 @@ execfile('TFPPreConstants.py')
         <trait name="Unit">
         </trait>
         <trait name="ColWidth">
-            <traitentry col="1" row="0" value="80" />
+            <traitentry col="1" row="0" value="111" />
         </trait>
         <trait name="Alignment">
         </trait>
@@ -510,7 +510,7 @@ execfile('TFPPreConstants.py')
         </cell>
         <cell name="A6" value="Port:" type="general">
         </cell>
-        <cell name="B6" value="Rotterdam" type="general">
+        <cell name="B6" value="Sydney" type="general">
         </cell>
         <cell name="A5" value="Port:" type="general">
         </cell>

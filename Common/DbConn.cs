@@ -40,6 +40,12 @@ namespace TaiPan.Common
             cmd.ExecuteNonQuery();
         }
 
+        public object ExecuteScalar(string query)
+        {
+            SqlCommand cmd = new SqlCommand(query, conn);
+            return cmd.ExecuteScalar();
+        }
+
         public void StoredProc(string stmt, List<SqlParameter> parameters)
         {
             SqlCommand cmd = new SqlCommand(stmt, conn);

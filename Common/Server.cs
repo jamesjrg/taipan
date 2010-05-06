@@ -7,19 +7,20 @@ using System.Net.Sockets;
 using System.Threading;
 
 using System.Collections.Specialized;
+using TaiPan.Common.NetContract;
 
 namespace TaiPan.Common
 {
     public class Server : TCPConnection, IDisposable
     {
         private TcpListener tcpListener;
-        private List<ClientConnection> clients = new List<ClientConnection>();
+        public List<ClientConnection> clients = new List<ClientConnection>();
         private bool broadcastOnly;
 
-        //note incoming has public access, outgoing does not
+        protected Dictionary<int, SyncQueue<string>> incoming = new Dictionary<int, SyncQueue<string>>();
         protected MultiHeadQueue outgoing;
 
-        private class ClientConnection
+        public class ClientConnection
         {
             public ClientConnection(int id, TcpClient client)
             {
@@ -69,8 +70,17 @@ namespace TaiPan.Common
             return IDs;
         }
 
-        //unused argument, have to mirror function used by server broadcast threads.
-        //this is messy, should refactor, but then hard to make BroadcastThread code shared
+        public List<DeserializedMsg> IncomingDeserializeAll(int clientID)
+        {
+            List<String> strings = incoming[clientID].DequeueAll();
+            return base.SerializeList(strings);
+        }
+
+        override protected void IncomingEnqueue(int clientID, string msg)
+        {
+            incoming[clientID].Enqueue(msg);
+        }
+
         override protected List<string> OutgoingDequeueAll(int clientID)
         {
             return outgoing.DequeueAll(clientID);
@@ -98,11 +108,14 @@ namespace TaiPan.Common
 
                 clients.Add(new ClientConnection(clientID, tcpClient));
                 outgoing.Subscribe(clientID);
-
-                BroadcastThreadState broadcastState = new BroadcastThreadState(clientID, ns);
-                ThreadPool.QueueUserWorkItem(BroadcastThread, broadcastState);
+                
+                TCPThreadState TCPState = new TCPThreadState(clientID, ns);
+                ThreadPool.QueueUserWorkItem(BroadcastThread, TCPState);
                 if (!broadcastOnly)
-                    ThreadPool.QueueUserWorkItem(ReceiveThread, ns);
+                {
+                    ThreadPool.QueueUserWorkItem(ReceiveThread, TCPState);
+                    incoming[clientID] = new SyncQueue<string>();
+                }
             }
         }
     }

@@ -6,6 +6,7 @@ using System.Text;
 using System.Net.Sockets;
 using System.Threading;
 using System.Collections.Specialized;
+using TaiPan.Common.NetContract;
 
 namespace TaiPan.Common
 {
@@ -16,7 +17,7 @@ namespace TaiPan.Common
         private TcpClient tcpClient;
         private NetworkStream ns;
 
-        //note incoming has public access, outgoing does not
+        protected SyncQueue<string> incoming = new SyncQueue<string>();
         protected SyncQueue<string> outgoing = new SyncQueue<string>();
 
         public Client(Common.ServerConfig config, NameValueCollection appSettings, int myID, bool receiveOnly):
@@ -33,14 +34,15 @@ namespace TaiPan.Common
             ns.Write(buffer, 0, 4);
             Console.WriteLine("Sent id");
 
+            TCPThreadState TCPState = new TCPThreadState(myID, ns);
+
             Thread receiveThread = new Thread(ReceiveThread);
-            receiveThread.Start(ns);
+            receiveThread.Start(TCPState);
 
             if (!receiveOnly)
             {
-                BroadcastThreadState broadcastState = new BroadcastThreadState(1, ns);
                 Thread broadcastThread = new Thread(BroadcastThread);
-                broadcastThread.Start(broadcastState);
+                broadcastThread.Start(TCPState);
             }
         }
 
@@ -52,6 +54,17 @@ namespace TaiPan.Common
         public void Send(string message)
         {
             outgoing.Enqueue(message);
+        }
+
+        public List<DeserializedMsg> IncomingDeserializeAll()
+        {
+            List<String> strings = incoming.DequeueAll();
+            return base.SerializeList(strings);
+        }
+        
+        override protected void IncomingEnqueue(int clientID, string msg)
+        {
+            incoming.Enqueue(msg);
         }
 
         override protected List<string> OutgoingDequeueAll(int clientID)

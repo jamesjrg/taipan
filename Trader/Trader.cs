@@ -94,16 +94,19 @@ namespace TaiPan.Trader
                 }
             }
 
-            List<DeserializedMsg> shippingIncoming = shippingServer.IncomingDeserializeAll();
-            foreach (var msg in shippingIncoming)
+            foreach (var client in shippingServer.clients)
             {
-                switch (msg.type)
+                List<DeserializedMsg> shippingIncoming = shippingServer.IncomingDeserializeAll(client.id);
+                foreach (var msg in shippingIncoming)
                 {
-                    case NetMsgType.AcceptMove:
-                        MoveAccepted((MoveContractMsg)(msg.data));
-                        break;                    
-                    default:
-                        throw new ApplicationException("shippingServer received wrong type of net message");
+                    switch (msg.type)
+                    {
+                        case NetMsgType.AcceptMove:
+                            MoveAccepted((MoveContractMsg)(msg.data));
+                            break;                    
+                        default:
+                            throw new ApplicationException("shippingServer received wrong type of net message");
+                    }
                 }
             }
 
