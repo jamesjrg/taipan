@@ -22,7 +22,9 @@ namespace TaiPan.FateAndGuesswork
         private StockMsg stocks = new StockMsg();
         private List<ForecastInfo> shortages = new List<ForecastInfo>();
         private List<ForecastInfo> surpluses = new List<ForecastInfo>();
-        private List<int> portIDs = new List<int>();
+        
+        private readonly int nPorts;
+        private readonly int nCommodities;
 
         private Random random = new Random();
         private StatsLib.StatsLib stats = new StatsLib.StatsLib();
@@ -101,6 +103,8 @@ namespace TaiPan.FateAndGuesswork
             }
             reader.Close();
 
+            nCommodities = (int)dbConn.ExecuteScalar("select count * from Commodity");
+
             commodityMsg.items = new CommodityMsgItem[commodityInfos.Count];
             for (int i = 0; i != commodityInfos.Count; ++i )
                 commodityMsg.items[i] = new CommodityMsgItem(commodityInfos[i].portID, commodityInfos[i].commodID, commodityInfos[i].localPrice);
@@ -118,16 +122,8 @@ namespace TaiPan.FateAndGuesswork
             stocks.items = tmpList.ToArray();
             reader.Close();
 
-            Console.WriteLine("Reading port ids from db");
-            reader = dbConn.ExecuteQuery("SELECT ID from Port");
-            while (reader.Read())
-            {
-                int id = reader.GetInt32(0);
-                portIDs.Add(id);
-            }
-            stocks.items = tmpList.ToArray();
-            reader.Close();
-
+            nPorts = (int)dbConn.ExecuteScalar("select count * from Port");
+            
             //close db conn
             dbConn.Dispose();
 
@@ -192,11 +188,8 @@ namespace TaiPan.FateAndGuesswork
             int rand = random.Next(0, clientIDs.Count);
             int targetTrader = clientIDs[rand];
 
-            int portIndex = random.Next(0, portIDs.Count);
-            int portID = portIDs[portIndex];
-
-            //int commodIndex = random.Next(0, commodityInfos.;
-            int commodID = 4;
+            int portID = random.Next(1, nPorts + 1);
+            int commodID = random.Next(1, nCommodities + 1);
 
             int quantity = random.Next(MIN_QUANTITY, MAX_QUANTITY);
             DateTime time = DateTime.Now;

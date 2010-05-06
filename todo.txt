@@ -6,16 +6,11 @@
 
 * read parts of algorithms book chapters 2,3,4,5,6,7, then 10,11,12,13, then 18
 * do all basic of algorithms bit
-- est 8 days full time
-
-* read algorithms book chapters 22, 29, 34, 35, and a bunch of TSP/MS Solver stuff
-* do TSP stuff
-- est 4 days FT
+- est 7 days full time
 
 * doc a bit better
-- add version with static sql data to resolver exchange, complete with doc
 - remove works in progress bit from index.htm
-- est 1 days FT
+- est 1 day FT
 
 - ideas from "ideas removed" file - infinite
 
@@ -23,16 +18,13 @@
 git change log:
 
 nowish:
-- do a bit of testing, perhaps try to automate said testing a little
 - Bank EnactFuture, EnactBuy, ShipDeparted, shiparrived, futuresettlements
 - finish binary search tree
-- sql server process CPU usage way too high, fix it (+ doc)
 - read about + implement rb trees, b-trees
 - shippingcomps need to know distance between ports to work out how long journeys take, and banks need to know to work out how much shipping companies should charge for movements. copy sql query loop from tfp python code. needs to be stored in a dict of string -> distance (string will be of form "city1,city2" by both shippingcomp and bank, so put function to create lookup table in economicplayer.
 - trader MoveAccepted, buyconfirmed, futuresettled, SurplusForecast, shortageforecast
-- fandgw DecideCommodPriceJumps
+- fandgw "time" in DecideCommodPriceJumps
 - shippingcompany moveconfirmed, DecideArrivals
-- when bank process starts, it should clear db of all warehoused commods and futures
 
 general reading:
 - read more about linear programming, graph problems
@@ -59,6 +51,7 @@ testing:
 - unittest only bank can write to db
 - make processes do right thing when other processes go down, and have automated tests for all possibilities if differing orders of collapse.
 - unittest the algoserver data structures
+- some sort of test that does create db, then start all processes, then run 10 seconds, then bunch of sql queries, then check data is sane
 - unittest multiheadqueue
 - test: fandandgw should keep track of its last tick time, if current tick time is the same time, skip
 - test that targeted messages are sent only to the correct server/client, and have exact steps to reproduce the test (inc fandgw to trader surplus and shortage)

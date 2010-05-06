@@ -87,7 +87,8 @@ namespace TaiPan.ShippingCompany
 
             foreach (var keyValPair in moveWishes)
             {
-                traderClients[keyValPair.Key].Send(NetContract.Serialize(NetMsgType.AcceptMove, keyValPair.Value));
+                foreach (var msg in keyValPair.Value)
+                    traderClients[keyValPair.Key].Send(NetContract.Serialize(NetMsgType.AcceptMove, msg));
                 moveWishes[keyValPair.Key].Clear();
             }
 

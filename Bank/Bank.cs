@@ -57,6 +57,12 @@ namespace TaiPan.Bank
 
             dbConn = new DbConn(false);
 
+            //truncate some of the tables in the database which don't make sense if not cleared between
+            //runs
+                dbConn.ExecuteNonQuery("delete from CommodityTransport");
+                dbConn.ExecuteNonQuery("delete from WarehousedCommodity");
+                dbConn.ExecuteNonQuery("delete from FuturesContract;");
+
             traderServer = new Server(ServerConfigs["Bank-Trader"], AppSettings, false);
             shippingServer = new Server(ServerConfigs["Bank-Shipping"], AppSettings, false);
 
@@ -207,8 +213,6 @@ namespace TaiPan.Bank
 
         private void EnactFuture(int traderID, FutureMsg msg)
         {
-            object localPrice = dbConn.ExecuteScalar(@"");
-            
             dbConn.ExecuteNonQuery(String.Format(@"INSERT INTO dbo.FuturesContract
            (TraderID, CommodityID, PortID, LocalPrice, Quantity, PurchaseTime, SettlementTime)
      VALUES
