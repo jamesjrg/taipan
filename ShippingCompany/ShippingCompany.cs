@@ -24,7 +24,7 @@ namespace TaiPan.ShippingCompany
         private List<ShipInProgress> shipsInProgress = new List<ShipInProgress>();
         private Dictionary<int, List<MoveContractMsg>> moveWishes = new Dictionary<int, List<MoveContractMsg>>();
 
-        private Dictionary<string, float> portDistances;
+        private Dictionary<string, int> portDistances;
 
         private class ShipInProgress
         {
@@ -114,9 +114,12 @@ namespace TaiPan.ShippingCompany
             var shipsInProgressCopy = new List<ShipInProgress>(shipsInProgress);
             foreach (var ship in shipsInProgressCopy)
             {
-                //providing departure portID, though never actually needed
-                arrivals.Add(new MovingMsg(ship.destID, ship.transactionID, DateTime.Now));
-                shipsInProgress.Remove(ship);
+                if (ship.plannedArrivalTime <= DateTime.Now)
+                {
+                    //sending departure portID, though never actually needed
+                    arrivals.Add(new MovingMsg(ship.destID, ship.transactionID, DateTime.Now));
+                    shipsInProgress.Remove(ship);
+                }
             }
         }
 
@@ -127,6 +130,8 @@ namespace TaiPan.ShippingCompany
 
         private void MoveConfirmed(int traderPort, MoveContractMsg msg)
         {
+            int distance = portDistances[msg.departureID + "," + msg.destID];
+            int time = distance / FREIGHTER_SPEED;
             DateTime plannedArrivalTime = DateTime.Now.AddSeconds(5);
 
             departures.Add(new MovingMsg(msg.departureID, msg.transactionID, DateTime.Now));

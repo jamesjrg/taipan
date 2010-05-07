@@ -248,17 +248,17 @@ GO
 INSERT INTO dbo.Company
            (Name, CompanyTypeID, CountryID, Balance)
      VALUES
-           ('Devlin MacGregor', 1, 1, 102300),
-           ('Jackson Steinem', 1, 1, 123231),
-           ('Ecumena', 1, 1, 133781),
-           ('Pierce & Pierce', 1, 1, 123891),
-           ('Khumalo', 1, 1, 234237),
+           ('Devlin MacGregor', 1, 10, 102300),
+           ('Jackson Steinem', 1, 10, 123231),
+           ('Ecumena', 1, 14, 133781),
+           ('Pierce & Pierce', 1, 5, 123891),
+           ('Khumalo', 1, 4, 234237),
                      
-           ('CHOAM', 2, 1, 763231),
-           ('M & M Enterprises', 2, 1, 935231),
-           ('Delos', 2, 1, 138571),
-           ('Bluecorp', 2, 1, 204831),
-           ('Planet Express', 2, 1, 395231)
+           ('CHOAM', 2, 20, 763231),
+           ('M & M Enterprises', 2, 10, 935231),
+           ('Delos', 2, 9, 138571),
+           ('Bluecorp', 2, 13, 204831),
+           ('Planet Express', 2, 16, 395231)
 GO
 
 INSERT INTO dbo.ShippingCompany

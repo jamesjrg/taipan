@@ -18,14 +18,20 @@
 git change log:
 
 nowish:
-- finish implementing rb trees, b-trees
-- more unit testing
-- Btree: if (root == -1) is that right?
-- Bank EnactFuture, EnactBuy, ShipDeparted, shiparrived, futuresettlements
-- trader MoveAccepted, buyconfirmed, SurplusForecast, shortageforecast, DecideSales
+needs writing now:
+- finish Bank EnactFuture, shiparrived, futuresettlements
+- finish trader MoveAccepted, buyconfirmed, SurplusForecast, shortageforecast, DecideSales
 - trader decidesales: needs to take into account distance * fuel price to each port, also commod price at each port, also exchange rate at each port
-- shippingcompany moveconfirmed, DecideArrivals
-- tweak fuelcost
+- finish shippingcompany moveconfirmed
+- finish implementing rb trees, b-trees
+- Btree: if (root == -1) is that right?
+
+needs testing now:
+- more unit testing
+- test GetPortDistancesLookup
+- test shippingcompany DecideArrivals
+- test Bank EnactBuy, ShipDeparted
+- tweak fuelcost, FreighterSpeed
 
 ////
 

@@ -20,7 +20,8 @@ namespace TaiPan.Common
         protected readonly int MoveContractAdvertiseTime;
         protected readonly int MAIN_LOOP_TICK;
 
-        private readonly float FuelCost;
+        protected readonly decimal FUEL_COST;
+        protected readonly int FREIGHTER_SPEED;
         
         public EconomicPlayer()
         {
@@ -42,7 +43,8 @@ namespace TaiPan.Common
             CurrencyAccuracy = "F" + Convert.ToInt32(AppSettings["CurrencyAccuracy"]);
             TickVolatility = Convert.ToDecimal(AppSettings["TickVolatility"]);
             MoveContractAdvertiseTime = Convert.ToInt32(AppSettings["MoveContractAdvertiseTime"]);
-            FuelCost = Convert.ToInt32(AppSettings["FuelCost"]);
+            FUEL_COST = Convert.ToDecimal(AppSettings["FuelCost"]);
+            FREIGHTER_SPEED = Convert.ToInt32(AppSettings["FreighterSpeed"]);
 
             ServersSection serversSection = config.GetSection("servers") as ServersSection;
             if (serversSection == null)
@@ -54,9 +56,9 @@ namespace TaiPan.Common
 
         //no dispose here or in derived classes because when this class is no longer needed, the whole program is ending
 
-        public Dictionary<string, float> GetPortDistancesLookup(DbConn dbConn)
+        public Dictionary<string, int> GetPortDistancesLookup(DbConn dbConn)
         {   
-            Dictionary<string, float> ret = new Dictionary<string, float>();
+            Dictionary<string, int> ret = new Dictionary<string, int>();
             int nPorts = (int)dbConn.ExecuteScalar("select count * from Port");
 
             List<int> ports = new List<int>();
@@ -78,7 +80,7 @@ namespace TaiPan.Common
                 {
                     int pid = reader.GetInt32(0);
                     int oid = reader.GetInt32(1);
-                    float distance = reader.GetFloat(2);
+                    int distance = reader.GetInt32(2);
                     ret[pid + "," + oid] = distance;
                 }
                 reader.Close();

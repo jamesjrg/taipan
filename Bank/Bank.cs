@@ -28,7 +28,7 @@ namespace TaiPan.Bank
         private List<ConfirmInfo> confirmedBuys = new List<ConfirmInfo>();
         private List<ConfirmInfo> settledFutures = new List<ConfirmInfo>();
 
-        private Dictionary<string, float> portDistances;
+        private Dictionary<string, int> portDistances;
 
         private class ConfirmInfo
         {
@@ -232,7 +232,29 @@ namespace TaiPan.Bank
 
         private void EnactBuy(int traderID, BuyMsg msg)
         {
-            
+            //first, debit trader's account
+            decimal amount = (decimal)dbConn.ExecuteScalar(String.Format(
+            @"select (LocalPrice * {0}) from PortCommodityPrice where PortID = {1} and CommodityID = {2};",
+            msg.quantity, msg.portID, msg.commodID));
+
+            List<SqlParameter> pars = new List<SqlParameter>();
+            pars.Add(new SqlParameter("@CompanyID", traderID));
+            pars.Add(new SqlParameter("@PortID", msg.portID));
+            pars.Add(new SqlParameter("@Amount", amount));
+
+            dbConn.StoredProc("procSubtractBalance", pars);
+
+            //next, create CommodityTransaction
+            int transID = (int)dbConn.ExecuteScalar(String.Format(
+            @"insert into CommodityTransaction
+            (TraderID, CommodityID, PortID, Quantity, PurchasePrice, PurchaseTime)
+            VALUES ({0}, {1}, {2}, {3}, {4}, {5});
+
+            SELECT ID FROM CommodityTransaction WHERE ID = @@IDENTITY
+", traderID, msg.commodID, msg.portID, msg.quantity, amount, DateTime.Now));
+
+            //last, add msg to confirmedBuys
+            confirmedBuys.Add(new ConfirmInfo(traderID, msg.portID, msg.commodID, msg.quantity, transID));
         }
 
         private void ShipDeparted(int companyID, MovingMsg msg)
@@ -245,7 +267,7 @@ namespace TaiPan.Bank
             dbConn.ExecuteNonQuery(String.Format(@"update CommodityTransport SET ArrivalTime = {0} WHERE CommodityTransactionID = {1}", msg.time, msg.transactionID));
 
             //int departPort = dbConn.ExecuteScalar(select PortID from CommodityTransaction
-            //float distance = portDistances[]
+            //int distance = portDistances[]
             //int fuelCost = fuel price * distance
             //int shippingCompanyCharge = fuelCost * shippingCompanyProfitMargin
 

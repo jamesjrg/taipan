@@ -183,6 +183,7 @@ namespace TaiPan.Trader
 
         private void ShortageForecast(ForecastMsg msg)
         {
+            //buy
         }        
     }
 }

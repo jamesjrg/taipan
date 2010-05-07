@@ -360,6 +360,42 @@ BEGIN
 END
 GO
 
+CREATE PROCEDURE procAddBalance
+   @CompanyID int, 
+   @PortID int, 
+   @Amount Money
+AS 
+BEGIN
+	update Company SET Balance =
+	Balance +
+	(SELECT dbo.funcGetUSDValue(@Amount, @PortID) /
+		(select USDValue from Currency
+			join Country on Country.CurrencyID = Currency.ID
+			join Company on Company.CountryID = Country.ID
+			where Company.ID = @CompanyID)
+	)
+	WHERE ID = @CompanyID
+END
+GO
+
+CREATE PROCEDURE procSubtractBalance
+   @CompanyID int, 
+   @PortID int, 
+   @Amount Money
+AS 
+BEGIN
+	update Company SET Balance =
+	Balance -
+	(SELECT dbo.funcGetUSDValue(@Amount, @PortID) /
+		(select USDValue from Currency
+			join Country on Country.CurrencyID = Currency.ID
+			join Company on Company.CountryID = Country.ID
+			where Company.ID = @CompanyID)
+	)
+	WHERE ID = @CompanyID
+END
+GO
+
 -- currency conversion
 CREATE FUNCTION funcGetUSDValue (@LocalPrice Money, @PortID int)
 RETURNS Money
