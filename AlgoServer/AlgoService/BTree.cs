@@ -3,36 +3,43 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
+using System.Runtime.InteropServices;
 
 namespace AlgoService
 {
-    class BTree
+    /// <summary>
+    /// A B-Tree. Very much unsafe code, lots of pointers and byte-level file manipulation.
+    /// </summary>
+    unsafe class BTree
     {
-        private string filenamePrefix;
+        private string filename;
+        private FileStream fs;
 
         private const int MIN_DEGREE = 4;
         private const int MIN_KEYS = MIN_DEGREE - 1;
         private const int MAX_KEYS = 2 * MIN_DEGREE - 1;
         private const int MAX_CHILDREN = 2 * MIN_DEGREE;
 
-        private Node root;
+        private readonly int NODE_SIZE;
 
-        public class Node
+        //pseudo pointer, i.e. we seek disk to find nodes rather than storing them in memory
+        private int root;
+
+        Node currentNode;
+
+        //a struct with fixed length arrays so it is easy to serialize
+        public struct Node
         {
-            public Node()
-            {
-                keys = new int[MAX_KEYS];
-                children = new Node[MAX_CHILDREN];
-            }
-
             public int count;
-            public int[] keys;
-            public Node[] children;
+            public fixed int keys[MAX_KEYS];
+            //pseudo pointer, i.e. we seek disk to find nodes rather than storing them in memory
+            public fixed int children[MAX_CHILDREN];
             public bool leaf;
         }
 
         public class NodeIndexPair
         {
+            //note passed by value, will create copy of node
             public NodeIndexPair(Node node, int index)
             {
                 this.node = node;
@@ -43,19 +50,26 @@ namespace AlgoService
             public int index;
         }
 
-        public BTree(int id, bool truncate)
+        unsafe public BTree(int id, bool truncate)
         {
-            filenamePrefix = "btree" + id + "-";
-            
+            filename = "btree" + id;
+
+            NODE_SIZE = sizeof(Node);
+
             if (truncate)
             {
-                DirectoryInfo dir = new DirectoryInfo(".");
-                FileInfo[] myfiles = dir.GetFiles(filenamePrefix + "*");
-                foreach (FileInfo f in myfiles)
-                    f.Delete();
-            }
+                if (File.Exists(filename))
+                    File.Delete(filename);
+                fs = File.Open(filename, FileMode.Open, FileAccess.ReadWrite);
 
-            root = null;
+                //XXX root = something;
+            }
+            else
+            {
+                fs = File.Open(filename, FileMode.Open, FileAccess.ReadWrite);
+
+                //XXX root = something
+            }
         }
 
         public NodeIndexPair SearchRoot(int k)
@@ -64,51 +78,51 @@ namespace AlgoService
             if (root == null)
                 return null;
 
-            return Search(root, k);
+            DiskReadNode(root);
+            return Search(k);
         }
 
-        public NodeIndexPair Search(Node x, int k)
+        public NodeIndexPair Search(int k)
         {
             int i = 0;
-            while (i != x.count && k > x.keys[i])
+            while (i != currentNode.count && k > currentNode.keys[i])
                 i++;
 
-            if (i != x.count && k == x.keys[i])
-                return new NodeIndexPair(x, i);
-            else if (x.leaf)
+            if (i != currentNode.count && k == currentNode.keys[i])
+                return new NodeIndexPair(currentNode, i);
+            else if (currentNode.leaf)
                 return null;
             else
             {
-                Node child = DiskReadNode(x, i);
-                return Search(x.children[i], k);
+                DiskReadNode(i);
+                return Search(k);
             }
         }
 
-        private Node DiskReadNode(Node parent, int index)
+        private void DiskReadNode(int index)
         {
-            //ClassToSerialize c = new ClassToSerialize();
-            //File f = new File("temp.dat");
-            //Stream s = f.Open(FileMode.Open);
-            //BinaryFormatter b = new BinaryFormatter();
-            //c = (ClassToSerialize)b.Deserialize(s);
-            //Console.WriteLine(c.name);
+            //byte[] b = new byte[1024];
+            //UTF8Encoding temp = new UTF8Encoding(true);
+            //while (fs.Read(b, 0, b.Length) > 0)
+            //{
+            //    Console.WriteLine(temp.GetString(b));
+            //}
 
-            return new Node();
+            currentNode = new Node();
         }
 
         private void DiskWriteNode()
         {
-            //if (File.Exists(path))
-            //    File.Delete(path);
+            //I'm assuming just sizeof(Node) is fine, I mean come on
+            //int len = Marshal.SizeOf(obj);
 
-            //File.Create(path);
+            byte[] arr = new byte[NODE_SIZE];
+            IntPtr ptr = Marshal.AllocHGlobal(NODE_SIZE);
+            Marshal.StructureToPtr(currentNode, ptr, true);
+            Marshal.Copy(ptr, arr, 0, NODE_SIZE);
+            Marshal.FreeHGlobal(ptr);
 
-            //ClassToSerialize c = new ClassToSerialize();
-            //File f = new File("temp.dat");
-            //Stream s = f.Open(FileMode.Create);
-            //BinaryFormatter b = new BinaryFormatter();
-            //b.Serialize(s, c);
-            //s.Close();
+            //fs.Write(info, 0, info.Length);
         }
     }
 }
