@@ -28,15 +28,15 @@ namespace TaiPan.ShippingCompany
 
         private class ShipInProgress
         {
-            public ShipInProgress(int destID, int warehouseID, DateTime plannedArrivalTime)
+            public ShipInProgress(int destID, int transactionID, DateTime plannedArrivalTime)
             {
                 this.destID = destID;
-                this.warehouseID = warehouseID;
+                this.transactionID = transactionID;
                 this.plannedArrivalTime = plannedArrivalTime;
             }
 
             public int destID;
-            public int warehouseID;
+            public int transactionID;
             public DateTime plannedArrivalTime;
         }
 
@@ -114,22 +114,23 @@ namespace TaiPan.ShippingCompany
             var shipsInProgressCopy = new List<ShipInProgress>(shipsInProgress);
             foreach (var ship in shipsInProgressCopy)
             {
-                arrivals.Add(new MovingMsg(ship.destID, ship.warehouseID, DateTime.Now));
+                //providing departure portID, though never actually needed
+                arrivals.Add(new MovingMsg(ship.destID, ship.transactionID, DateTime.Now));
                 shipsInProgress.Remove(ship);
             }
         }
 
         private void MoveAdvertised(int traderPort, MoveContractMsg msg)
         {
-            moveWishes[traderPort].Add(new MoveContractMsg(msg.departureID, msg.destID, msg.warehouseID));
+            moveWishes[traderPort].Add(new MoveContractMsg(msg.departureID, msg.destID, msg.transactionID));
         }
 
         private void MoveConfirmed(int traderPort, MoveContractMsg msg)
         {
             DateTime plannedArrivalTime = DateTime.Now.AddSeconds(5);
 
-            departures.Add(new MovingMsg(msg.departureID, msg.warehouseID, DateTime.Now));
-            shipsInProgress.Add(new ShipInProgress(msg.destID, msg.warehouseID, plannedArrivalTime));
+            departures.Add(new MovingMsg(msg.departureID, msg.transactionID, DateTime.Now));
+            shipsInProgress.Add(new ShipInProgress(msg.destID, msg.transactionID, plannedArrivalTime));
         }
     }
 }

@@ -75,7 +75,7 @@ namespace AlgoService
         public NodeIndexPair SearchRoot(int k)
         {
             //empty tree?
-            if (root == null)
+            if (root == -1)
                 return null;
 
             DiskReadNode(root);
@@ -85,17 +85,20 @@ namespace AlgoService
         public NodeIndexPair Search(int k)
         {
             int i = 0;
-            while (i != currentNode.count && k > currentNode.keys[i])
-                i++;
-
-            if (i != currentNode.count && k == currentNode.keys[i])
-                return new NodeIndexPair(currentNode, i);
-            else if (currentNode.leaf)
-                return null;
-            else
+            fixed (int* ptr = currentNode.keys)
             {
-                DiskReadNode(i);
-                return Search(k);
+                while (i != currentNode.count && k > ptr[i])
+                    i++;
+
+                if (i != currentNode.count && k == ptr[i])
+                    return new NodeIndexPair(currentNode, i);
+                else if (currentNode.leaf)
+                    return null;
+                else
+                {
+                    DiskReadNode(i);
+                    return Search(k);
+                }
             }
         }
 

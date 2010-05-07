@@ -25,6 +25,8 @@ namespace TaiPan.Trader
         private List<MoveContractMsg> unconfirmedContracts = new List<MoveContractMsg>();
         private List<MoveConfirmInfo> moveConfirms = new List<MoveConfirmInfo>();
 
+        private List<WarehousedGood> warehousedGoods = new List<WarehousedGood>();
+
         private class MoveConfirmInfo
         {
             public MoveConfirmInfo(MoveContractMsg msg, int targetCompany)
@@ -35,6 +37,22 @@ namespace TaiPan.Trader
 
             public MoveContractMsg msg;
             int targetCompany;
+        }
+
+        private class WarehousedGood
+        {
+            public WarehousedGood(int transactionID, int portID, int commodityID, DateTime saletime)
+            {
+                this.transactionID = transactionID;
+                this.portID = portID;
+                this.commodityID = commodityID;
+                this.saleTime = saleTime;
+            }
+
+            public int transactionID;
+            public int portID;
+            public int commodityID;
+            public DateTime saleTime;            
         }
 
         public Trader(string[] args)
@@ -136,16 +154,19 @@ namespace TaiPan.Trader
 
         private void DecideSales()
         {
-            //moveContracts.Add(new MoveContractMsg(msg.portID, destID, msg.warehouseID));
+            //warehousedGoods
+            //moveContracts.Add(new MoveContractMsg(msg.portID, destID, msg.transactionID));
         }
 
         private void BuyConfirmed(BankConfirmMsg msg)
-        {            
+        {
+            //warehousedGoods
         }
 
+        //just add to warehousedGoods and leave for DecideSales to deal with
         private void FutureSettled(BankConfirmMsg msg)
         {
-            //moveContracts.Add(new MoveContractMsg(28));
+            warehousedGoods.Add(new WarehousedGood(msg.transactionID, msg.portID, msg.commodID, DateTime.Now));
         }
 
         private void MoveAccepted(int companyID, MoveContractMsg msg)

@@ -18,14 +18,14 @@
 git change log:
 
 nowish:
-- when shippingcompany sends depart/arrive messages, involved port has to be sent
-- read about + implement rb trees, b-trees
+- finish implementing rb trees, b-trees
 - more unit testing
-- I probably need to give RBTrees a null sentinel node, lets see what happens without
+- Btree: if (root == -1) is that right?
 - Bank EnactFuture, EnactBuy, ShipDeparted, shiparrived, futuresettlements
-- fandgw "time" in DecideCommodPriceJumps
-- trader MoveAccepted, buyconfirmed, futuresettled, SurplusForecast, shortageforecast, DecideSales
+- trader MoveAccepted, buyconfirmed, SurplusForecast, shortageforecast, DecideSales
+- trader decidesales: needs to take into account distance * fuel price to each port, also commod price at each port, also exchange rate at each port
 - shippingcompany moveconfirmed, DecideArrivals
+- tweak fuelcost
 
 ////
 
@@ -54,13 +54,9 @@ still need to unit test the following data structures:
 - binary search tree, rb tree, b-tree
 - counting sort
 
-
 ////
 
 algorithms/data structures stuff:
-- red-black tree
-- b-tree
-
 - switch counting sort to only find max value once, before iterations or timer begin
 - do soap methods for manipulating data structures
 

@@ -18,8 +18,9 @@ namespace TaiPan.Common
         protected readonly string CurrencyAccuracy;
         protected readonly decimal TickVolatility;
         protected readonly int MoveContractAdvertiseTime;
+        protected readonly int MAIN_LOOP_TICK;
 
-        private readonly int MainLoopTick;
+        private readonly float FuelCost;
         
         public EconomicPlayer()
         {
@@ -37,10 +38,11 @@ namespace TaiPan.Common
             
             if (AppSettings.Count == 0)
                 throw new ApplicationException("Flagrant error attempting to read appSettings from config file");
-            MainLoopTick = Convert.ToInt32(AppSettings["MainLoopTick"]);
+            MAIN_LOOP_TICK = Convert.ToInt32(AppSettings["MainLoopTick"]);
             CurrencyAccuracy = "F" + Convert.ToInt32(AppSettings["CurrencyAccuracy"]);
             TickVolatility = Convert.ToDecimal(AppSettings["TickVolatility"]);
             MoveContractAdvertiseTime = Convert.ToInt32(AppSettings["MoveContractAdvertiseTime"]);
+            FuelCost = Convert.ToInt32(AppSettings["FuelCost"]);
 
             ServersSection serversSection = config.GetSection("servers") as ServersSection;
             if (serversSection == null)
@@ -112,7 +114,7 @@ namespace TaiPan.Common
             Console.WriteLine("Running");
             while (Run() == true)
             {
-                System.Threading.Thread.Sleep(MainLoopTick);
+                System.Threading.Thread.Sleep(MAIN_LOOP_TICK);
             }
 
             Console.WriteLine("Shutdown");

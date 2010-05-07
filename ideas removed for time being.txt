@@ -28,7 +28,8 @@ medium things:
 - there should be multiple random walks for each sequence on the WPF graphs, not just one
 - open addressing hash table
 - brownian random walk on WPF graph should be dashed line. This is far more effort than I first imagined, because brushes are applied to each time series as a whole, so I would have to add a totally new list of data series for the brownian points, and then in every single function that mentions the data series, I would have to add special case code for forecast series (e.g. they shouldn't have a key)
-- much more study of algorithms book (more on efficiency of algorithms, more on linear programming, more on everything)
+- better understanding of rb trees and b-trees and algorithmic efficiency
+- more on linear programming
 - TSP: modify the problem to match up better with the supposed real world that the system models - e.g. to to disallow certain arcs which involve travelling directly over large land masses, but allowing optional stop overs at certain ports and allow visiting ports more than once. Alternatively, could add costs and benefits to certain arcs representing the different profits and losses to be made by fufilling freight movement contracts on those shipping routes
 - somehow remove all the stupid xSpecified arguments in the generated WCF proxy code?
 - b+ tree

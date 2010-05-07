@@ -32,10 +32,10 @@ namespace TaiPan.Bank
 
         private class ConfirmInfo
         {
-            public ConfirmInfo(int traderID, int portID, int commodID, int quantity, int warehouseID)
+            public ConfirmInfo(int traderID, int portID, int commodID, int quantity, int transactionID)
             {
                 this.traderID = traderID;
-                this.msg = new BankConfirmMsg(portID, commodID, quantity, warehouseID);
+                this.msg = new BankConfirmMsg(portID, commodID, quantity, transactionID);
             }
 
             public BankConfirmMsg msg;
@@ -217,35 +217,50 @@ namespace TaiPan.Bank
 
         private void EnactFuture(int traderID, FutureMsg msg)
         {
+            //first, debit trader's account
+            //XXX
+            //update Company set balance = balance - 
+            //quantity, PortCommodityPrice, Currency, etc
+
             dbConn.ExecuteNonQuery(String.Format(@"INSERT INTO dbo.FuturesContract
            (TraderID, CommodityID, PortID, LocalPrice, Quantity, PurchaseTime, SettlementTime)
      VALUES
      ({0}, {1}, {2},
 (select LocalPrice from PortCommodityPrice where PortID = {2} and CommodityID = {1}),
-{3}, '{4}', '{5}')", traderID, msg.commodID, msg.portID, msg.quantity, DateTime.Now, msg.time));
+{3}, '{4}', '{5}')", traderID, msg.commodID, msg.portID, msg.quantity, DateTime.Now, msg.time));            
         }
 
         private void EnactBuy(int traderID, BuyMsg msg)
         {
-            //throw new NotImplementedException();
+            
         }
 
         private void ShipDeparted(int companyID, MovingMsg msg)
         {
-            dbConn.ExecuteNonQuery(String.Format(@"insert into CommodityTransport (ShippingCompanyID, CommodityTransactionID, DepartureTime) VALUES ({0}, {1}, {2})", companyID, msg.warehouseID, msg.time));
+            dbConn.ExecuteNonQuery(String.Format(@"insert into CommodityTransport (ShippingCompanyID, CommodityTransactionID, DepartureTime) VALUES ({0}, {1}, {2})", companyID, msg.transactionID, msg.time));
         }
 
         private void ShipArrived(int companyID, MovingMsg msg)
         {
-            dbConn.ExecuteNonQuery(String.Format(@"update CommodityTransport SET ArrivalTime = {0} WHERE CommodityTransactionID = {1}", msg.time, msg.warehouseID));
-            
-            //int departPort = dbConn.ExecuteScalar(select PortID from CommodityTransaction
+            dbConn.ExecuteNonQuery(String.Format(@"update CommodityTransport SET ArrivalTime = {0} WHERE CommodityTransactionID = {1}", msg.time, msg.transactionID));
 
-            //update CommodityTransaction saletime, saleprice, SalePortID
-            
+            //int departPort = dbConn.ExecuteScalar(select PortID from CommodityTransaction
             //float distance = portDistances[]
-            //XXX money shifting
-            //money is debited from trader and credited to shipping company, and credited to trader on basis of price at port.
+            //int fuelCost = fuel price * distance
+            //int shippingCompanyCharge = fuelCost * shippingCompanyProfitMargin
+
+            //first, pay from trader to shipping company
+            //update Company set balance = balance -
+            //update Company set balance = balance +
+            
+            //next, shipping company debiting for fuel cost
+            //update Company set balance = balance -
+
+            //lastly, credit money to trader for sale of item
+            //select LocalPrice * fxrate * quantity
+            //update Company set balance = balance +
+            
+            //"update CommodityTransaction set saletime = {0}, saleprice={1}, SalePortID={2}", DateTime.Now, price, msg.portID
         }
     }
 }

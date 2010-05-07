@@ -163,48 +163,48 @@ namespace TaiPan.Common.NetContract
     public class MoveContractMsg
     {
         public MoveContractMsg() { }
-        public MoveContractMsg(int departureID, int destID, int warehouseID)
+        public MoveContractMsg(int departureID, int destID, int transactionID)
         {
             this.departureID = departureID;
             this.destID = destID;
-            this.warehouseID = warehouseID;
+            this.transactionID = transactionID;
         }
 
         public int departureID;
         public int destID;
-        public int warehouseID;
+        public int transactionID;
     }
 
     public class MovingMsg
     {
         public MovingMsg() { }
-        public MovingMsg(int portID, int warehouseID, DateTime time)
+        public MovingMsg(int portID, int transactionID, DateTime time)
         {
             this.portID = portID;
-            this.warehouseID = warehouseID;
+            this.transactionID = transactionID;
             this.time = time;
         }
 
         public int portID;
-        public int warehouseID;
+        public int transactionID;
         public DateTime time;
     }
 
     public class BankConfirmMsg
     {
         public BankConfirmMsg() { }
-        public BankConfirmMsg(int portID, int commodID, int quantity, int warehouseID)
+        public BankConfirmMsg(int portID, int commodID, int quantity, int transactionID)
         {
             this.portID = portID;
             this.commodID = commodID;
             this.quantity = quantity;
-            this.warehouseID = warehouseID;
+            this.transactionID = transactionID;
         }
 
         public int portID;
         public int commodID;
         public int quantity;
-        public int warehouseID;
+        public int transactionID;
     }
 
     public class NetContract
