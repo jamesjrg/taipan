@@ -52,6 +52,39 @@ namespace TaiPan.Common
 
         //no dispose here or in derived classes because when this class is no longer needed, the whole program is ending
 
+        public Dictionary<string, float> GetPortDistancesLookup(DbConn dbConn)
+        {   
+            Dictionary<string, float> ret = new Dictionary<string, float>();
+            int nPorts = (int)dbConn.ExecuteScalar("select count * from Port");
+
+            List<int> ports = new List<int>();
+            for (int i = 1; i != nPorts + 1; ++i)
+                ports.Add(i);
+
+            foreach (var port in ports)
+            {
+                var otherPorts = new List<int>(ports);
+                otherPorts.Remove(port);
+
+                string otherPortsStr = "";
+                foreach (var otherPort in otherPorts)
+                    otherPortsStr += "%d, ";
+                otherPortsStr = otherPortsStr.Substring(0, otherPortsStr.Length - 2);
+
+                var reader = dbConn.ExecuteQuery(String.Format(@"select p.ID, o.ID, p.Location.STDistance(o.Location) from Port p, Port o where p.ID = {0} and o.Name in ({1})", port, otherPortsStr));
+                while (reader.Read())
+                {
+                    int pid = reader.GetInt32(0);
+                    int oid = reader.GetInt32(1);
+                    float distance = reader.GetFloat(2);
+                    ret[pid + "," + oid] = distance;
+                }
+                reader.Close();
+            }
+
+            return ret;
+        }
+
         public void Go()
         {
 #if DEBUG

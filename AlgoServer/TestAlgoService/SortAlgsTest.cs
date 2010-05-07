@@ -2,6 +2,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using System;
+
 namespace TestAlgoService
 {
     [TestClass()]
@@ -100,37 +101,6 @@ namespace TestAlgoService
             //could do negative numbers?
         }
 
-        private bool ArraysEqual(int[] a1, int[] a2)
-        {
-            if (a1 == null || a2 == null)
-                return false;
-
-            if (a1.Length != a2.Length)
-                return false;
-
-            for (int i = 0; i != a1.Length; ++i)
-            {
-                if (a1[i] != a2[i])
-                    return false;
-            }
-
-            return true;
-        }
-
-        private string MakeErrorMessage(int[] expected, int[] actual)
-        {
-            return ArrayToString(expected) + " Actual: " + ArrayToString(actual);
-        }
-
-        private string ArrayToString(int[] array)
-        {
-            string[] tmp = new string[array.Length];
-            for (int i = 0; i != array.Length; ++i)
-                tmp[i] = array[i].ToString();
-            return String.Join(", ", tmp);
-
-        }
-
         [TestMethod()]
         public void InsertionSortTest()
         {
@@ -138,7 +108,7 @@ namespace TestAlgoService
             {
                 int[] theArray = (int[])data.InputClone();
                 SortAlgs.InsertionSort(theArray);
-                Assert.IsTrue(ArraysEqual(data.expected, theArray));
+                Assert.IsTrue(Util.ArraysEqual(data.expected, theArray));
             }
         }
 
@@ -149,7 +119,7 @@ namespace TestAlgoService
             {
                 int[] theArray = (int[])data.InputClone();
                 SortAlgs.MergeSort(theArray);
-                Assert.IsTrue(ArraysEqual(data.expected, theArray), MakeErrorMessage(data.expected, theArray));
+                Assert.IsTrue(Util.ArraysEqual(data.expected, theArray), Util.MakeErrorMessage(data.expected, theArray));
             }
         }
 
@@ -160,7 +130,7 @@ namespace TestAlgoService
             {
                 int[] theArray = (int[])data.InputClone();
                 SortAlgs.HeapSort(theArray);
-                Assert.IsTrue(ArraysEqual(data.expected, theArray), MakeErrorMessage(data.expected, theArray));
+                Assert.IsTrue(Util.ArraysEqual(data.expected, theArray), Util.MakeErrorMessage(data.expected, theArray));
             }
         }
 
@@ -171,7 +141,7 @@ namespace TestAlgoService
             {
                 int[] theArray = (int[])data.InputClone();
                 SortAlgs.QuickSort(theArray);
-                Assert.IsTrue(ArraysEqual(data.expected, theArray), ArrayToString(data.expected));
+                Assert.IsTrue(Util.ArraysEqual(data.expected, theArray), Util.MakeErrorMessage(data.expected, theArray));
             }
         }
 
@@ -182,7 +152,7 @@ namespace TestAlgoService
             {
                 int[] theArray = (int[])data.InputClone();
                 SortAlgs.RandomizedQuickSort(theArray);
-                Assert.IsTrue(ArraysEqual(data.expected, theArray), ArrayToString(data.expected));
+                Assert.IsTrue(Util.ArraysEqual(data.expected, theArray), Util.MakeErrorMessage(data.expected, theArray));
             }
         }
     }

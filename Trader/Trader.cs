@@ -27,9 +27,9 @@ namespace TaiPan.Trader
 
         private class MoveConfirmInfo
         {
-            public MoveConfirmInfo(int warehouseID, int targetCompany)
+            public MoveConfirmInfo(MoveContractMsg msg, int targetCompany)
             {
-                this.msg = new MoveContractMsg(warehouseID);
+                this.msg = msg;
                 this.targetCompany = targetCompany;
             }
 
@@ -102,13 +102,15 @@ namespace TaiPan.Trader
                     switch (msg.type)
                     {
                         case NetMsgType.AcceptMove:
-                            MoveAccepted((MoveContractMsg)(msg.data));
+                            MoveAccepted(client.id, (MoveContractMsg)(msg.data));
                             break;                    
                         default:
                             throw new ApplicationException("shippingServer received wrong type of net message");
                     }
                 }
             }
+
+            DecideSales();
 
             foreach (var msg in futureRequests)
                 bankClient.Send(NetContract.Serialize(NetMsgType.Future, msg));
@@ -132,20 +134,25 @@ namespace TaiPan.Trader
             return true; 
         }
 
-        private void BuyConfirmed(BankConfirmMsg msg)
+        private void DecideSales()
         {
-            moveContracts.Add(new MoveContractMsg(28));
+            //moveContracts.Add(new MoveContractMsg(msg.portID, destID, msg.warehouseID));
+        }
+
+        private void BuyConfirmed(BankConfirmMsg msg)
+        {            
         }
 
         private void FutureSettled(BankConfirmMsg msg)
         {
-            moveContracts.Add(new MoveContractMsg(28));
+            //moveContracts.Add(new MoveContractMsg(28));
         }
 
-        private void MoveAccepted(MoveContractMsg msg)
+        private void MoveAccepted(int companyID, MoveContractMsg msg)
         {
-            //unconfirmedContracts
-            moveConfirms.Add(new MoveConfirmInfo(4, 5));
+            //XXX search unconfirmedContracts to check it hasn't already beeen accepted
+            moveConfirms.Add(new MoveConfirmInfo(msg, companyID));
+            //XXX remove from unconfirmedContracts
         }
 
         private void SurplusForecast(ForecastMsg msg)

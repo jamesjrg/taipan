@@ -31,7 +31,6 @@ def solveTFP():
     table = ds.Tables.Add("arcs")
     table.Columns.Add("City1",int)
     table.Columns.Add("City2",int)
-    #N.B. Python float is C# double
     table.Columns.Add("Distance",float)
     
     for a in arcs:

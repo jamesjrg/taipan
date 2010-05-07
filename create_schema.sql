@@ -181,7 +181,7 @@ CREATE TABLE dbo.FuturesContract
 	)  ON [PRIMARY]
 GO
 
-CREATE TABLE dbo.WarehousedCommodity
+CREATE TABLE dbo.CommodityTransaction
 	(
 	ID int NOT NULL IDENTITY (1, 1) PRIMARY KEY CLUSTERED,
     TraderID int NOT NULL,
@@ -201,7 +201,7 @@ CREATE TABLE dbo.CommodityTransport
 	(
 	ID int NOT NULL IDENTITY (1, 1) PRIMARY KEY CLUSTERED,
     ShippingCompanyID int NOT NULL,
-    WarehousedCommodityID int NOT NULL,
+    CommodityTransactionID int NOT NULL,
     DepartureTime datetime NOT NULL,
     ArrivalTime datetime default null,
     )  ON [PRIMARY]
@@ -291,7 +291,7 @@ ALTER TABLE dbo.FuturesContract ADD
 	(CommodityID) REFERENCES dbo.Commodity (ID);
 GO
 
-ALTER TABLE dbo.WarehousedCommodity ADD
+ALTER TABLE dbo.CommodityTransaction ADD
 	CONSTRAINT fkWareCommodTrader FOREIGN KEY
 	(TraderID) REFERENCES dbo.Trader (CompanyID),
     CONSTRAINT fkWareCommodCommod FOREIGN KEY
@@ -312,8 +312,8 @@ GO
 ALTER TABLE dbo.CommodityTransport ADD
 	CONSTRAINT fkCommTransportShippingComp FOREIGN KEY
 	(ShippingCompanyID) REFERENCES dbo.ShippingCompany (CompanyID),
-    CONSTRAINT fkCommTransportWarehouse FOREIGN KEY
-	(WarehousedCommodityID) REFERENCES dbo.WarehousedCommodity (ID);
+    CONSTRAINT fkCommTransportTrans FOREIGN KEY
+	(CommodityTransactionID) REFERENCES dbo.CommodityTransaction (ID);
 GO
     
 -- ARG if this were another database these could be triggers with FOR EACH ROW

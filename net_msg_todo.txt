@@ -1,16 +1,4 @@
-Bank:
-Processes it receives messages from:
-- Shipping company departures and arrivals. On departure money is debited from trader and credited to shipping company, on basis of distance of journey. On arrival money is credited to trader on basis of price at port.
-- Traders:
-a) decisions to buy goods to warehouse. db updated accordingly.
-b) decisions to organise a futures contract. db updated accordingly.
-Processes it sends messages to:
-a) sends warehouse ids to trader after receiving request for buys
-b) sends trader msg with warehouse id after a future has been settled
-c) sends trader buy confirms
-Things it calculates:
-1. whenever updating bank balances after an economic transaction, if movement it applies modifier from distance (= greater profit to freighter company, greater expense to trader), if trade in goods on open market takes into account current commodity price, if different currencies applies current FX multiplier
-2. carries out futures contracts at point in time specified
+Bank
 
 If process ends, what do other processes do:
 All processes sending data to bank should throw exception and end gracefully.
@@ -18,11 +6,6 @@ All processes sending data to bank should throw exception and end gracefully.
 ////
 
 FateAndGuesswork
-Processes it sends messages to:
-To Trader, sends "guesswork" calculated future price jumps of a given commodity for a given port and with given time (note only ports which actually import/export a given commodity will ever produce a surplus/suffer shortage). Only sent to a single trader.
-
-Things it calculates:
-Semi-randomly calculates which ports will in future have a) have surplus of a commodity or b) have shortage of a commodity, i.e. how big the price will jump and at what date
 
 If process ends, what do other processes do:
 All client processes should throw exception and end gracefully.
@@ -32,7 +15,6 @@ All client processes should throw exception and end gracefully.
 Trader
 
 Things it calculates:
-- maybe, at futures contract time, need to check db to make sure bank has successfully done transaction to give us the goods to sell?
 1. On basis of distance between ports and also predicted information on future shortage or surplus of a given commodity for a given company, they calculate the most profitable places to buy goods to warehouse in readiness to sell (i.e. somewhere nearby to and cheap for predicted future shortage, possibly the same port), or to organise a futures contract to buy goods in future in readiness to sell (i.e. at the actual port of the predicted future surplus). Then when price fluctuation actually happens, warehoused goods are sold to nearest place that has a demand for those goods, or otherwise futures contract is fufilled and goods become warehoused goods (inserted into db), for themselves being sold in most profitable way possible. Though unforseen variation and/or the error in the prediction by fate and guesswork could still lead to them losing money.
 2. it stores data on planned sale times of bought goods and settlement dates of futures. futures settlement dates also stored in db.
 Things it reads from database: distance between ports, which ports import/export a given commodity
@@ -40,13 +22,6 @@ If process ends, what do clients do:
 1. End of decisions to buy goods/futures contract/sell goods/move goods does not bother others. acceptances of movement contracts don't matter because shipping companies assume refused if not acked, and once accepted they can be actioned with no further input from trader.
 
 ShippingCompany
-Processes it receives messages from:
-1. From Trader:
-a) Available contracts for movement of goods from traders
-b) Whether acceptance of movement of goods has been confirmed
-Processes it sends messages to:
-1. To Traders, acceptance of contract to move goods
-2. To Bank, when it has collected goods, when it has delivered goods. See "CommodityTransport" database entity for attributes to broadcast.
 
 If process ends, what do clients do:
 End of acceptances of contracts doesn't matter at all. End of messages about shipping departure and arrival will means some will end up losing out on money, but this shouldn't matter too much.

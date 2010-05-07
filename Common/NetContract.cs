@@ -163,23 +163,29 @@ namespace TaiPan.Common.NetContract
     public class MoveContractMsg
     {
         public MoveContractMsg() { }
-        public MoveContractMsg(int warehouseID)
+        public MoveContractMsg(int departureID, int destID, int warehouseID)
         {
+            this.departureID = departureID;
+            this.destID = destID;
             this.warehouseID = warehouseID;
         }
 
+        public int departureID;
+        public int destID;
         public int warehouseID;
     }
 
     public class MovingMsg
     {
         public MovingMsg() { }
-        public MovingMsg(int warehouseID, DateTime time)
+        public MovingMsg(int portID, int warehouseID, DateTime time)
         {
+            this.portID = portID;
             this.warehouseID = warehouseID;
             this.time = time;
         }
 
+        public int portID;
         public int warehouseID;
         public DateTime time;
     }

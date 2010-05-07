@@ -2,12 +2,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace TestAlgoService
 {
-    
-    
-    /// <summary>
-    ///This is a test class for HashTableTest and is intended
-    ///to contain all HashTableTest Unit Tests
-    ///</summary>
     [TestClass()]
     public class HashTableTest
     {

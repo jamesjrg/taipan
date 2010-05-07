@@ -227,7 +227,7 @@ INSERT INTO dbo.Commodity
            --('Meat'),
            ('Gemstones'),
            ('Cotton'),
-           ('Rice'),
+           --('Rice'),
            ('Steel'),
            ('Coffee')
            --('Tea'),

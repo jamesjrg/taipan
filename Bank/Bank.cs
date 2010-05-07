@@ -28,6 +28,8 @@ namespace TaiPan.Bank
         private List<ConfirmInfo> confirmedBuys = new List<ConfirmInfo>();
         private List<ConfirmInfo> settledFutures = new List<ConfirmInfo>();
 
+        private Dictionary<string, float> portDistances;
+
         private class ConfirmInfo
         {
             public ConfirmInfo(int traderID, int portID, int commodID, int quantity, int warehouseID)
@@ -59,9 +61,11 @@ namespace TaiPan.Bank
 
             //truncate some of the tables in the database which don't make sense if not cleared between
             //runs
-                dbConn.ExecuteNonQuery("delete from CommodityTransport");
-                dbConn.ExecuteNonQuery("delete from WarehousedCommodity");
-                dbConn.ExecuteNonQuery("delete from FuturesContract;");
+            dbConn.ExecuteNonQuery("delete from CommodityTransport");
+            dbConn.ExecuteNonQuery("delete from CommodityTransaction");
+            dbConn.ExecuteNonQuery("delete from FuturesContract;");
+
+            portDistances = GetPortDistancesLookup(dbConn);
 
             traderServer = new Server(ServerConfigs["Bank-Trader"], AppSettings, false);
             shippingServer = new Server(ServerConfigs["Bank-Shipping"], AppSettings, false);
@@ -228,10 +232,20 @@ namespace TaiPan.Bank
 
         private void ShipDeparted(int companyID, MovingMsg msg)
         {
+            dbConn.ExecuteNonQuery(String.Format(@"insert into CommodityTransport (ShippingCompanyID, CommodityTransactionID, DepartureTime) VALUES ({0}, {1}, {2})", companyID, msg.warehouseID, msg.time));
         }
 
         private void ShipArrived(int companyID, MovingMsg msg)
         {
+            dbConn.ExecuteNonQuery(String.Format(@"update CommodityTransport SET ArrivalTime = {0} WHERE CommodityTransactionID = {1}", msg.time, msg.warehouseID));
+            
+            //int departPort = dbConn.ExecuteScalar(select PortID from CommodityTransaction
+
+            //update CommodityTransaction saletime, saleprice, SalePortID
+            
+            //float distance = portDistances[]
+            //XXX money shifting
+            //money is debited from trader and credited to shipping company, and credited to trader on basis of price at port.
         }
     }
 }

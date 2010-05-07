@@ -24,14 +24,18 @@ namespace TaiPan.ShippingCompany
         private List<ShipInProgress> shipsInProgress = new List<ShipInProgress>();
         private Dictionary<int, List<MoveContractMsg>> moveWishes = new Dictionary<int, List<MoveContractMsg>>();
 
+        private Dictionary<string, float> portDistances;
+
         private class ShipInProgress
         {
-            public ShipInProgress(int warehouseID, DateTime plannedArrivalTime)
+            public ShipInProgress(int destID, int warehouseID, DateTime plannedArrivalTime)
             {
+                this.destID = destID;
                 this.warehouseID = warehouseID;
                 this.plannedArrivalTime = plannedArrivalTime;
             }
 
+            public int destID;
             public int warehouseID;
             public DateTime plannedArrivalTime;
         }
@@ -50,6 +54,10 @@ namespace TaiPan.ShippingCompany
             {
                 throw new ApplicationException("Requires 2 command line arguments: first is id, second is number of traders");
             }
+
+            DbConn dbConn = new DbConn();
+            portDistances = GetPortDistancesLookup(dbConn);
+            dbConn.Dispose();
 
             bankClient = new Client(ServerConfigs["Bank-Shipping"], AppSettings, myID, false);
 
@@ -106,20 +114,22 @@ namespace TaiPan.ShippingCompany
             var shipsInProgressCopy = new List<ShipInProgress>(shipsInProgress);
             foreach (var ship in shipsInProgressCopy)
             {
-                arrivals.Add(new MovingMsg(1, DateTime.Now));
+                arrivals.Add(new MovingMsg(ship.destID, ship.warehouseID, DateTime.Now));
                 shipsInProgress.Remove(ship);
             }
         }
 
         private void MoveAdvertised(int traderPort, MoveContractMsg msg)
         {
-            moveWishes[traderPort].Add(new MoveContractMsg(msg.warehouseID));
+            moveWishes[traderPort].Add(new MoveContractMsg(msg.departureID, msg.destID, msg.warehouseID));
         }
 
         private void MoveConfirmed(int traderPort, MoveContractMsg msg)
         {
-            departures.Add(new MovingMsg(1, DateTime.Now));
-            shipsInProgress.Add(new ShipInProgress(1, DateTime.Now.AddSeconds(5)));
+            DateTime plannedArrivalTime = DateTime.Now.AddSeconds(5);
+
+            departures.Add(new MovingMsg(msg.departureID, msg.warehouseID, DateTime.Now));
+            shipsInProgress.Add(new ShipInProgress(msg.destID, msg.warehouseID, plannedArrivalTime));
         }
     }
 }
