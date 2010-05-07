@@ -69,12 +69,63 @@ namespace TestAlgoService
                 return tree;
             }
 
-            private int[] input;
+            public int[] input;
+            public List<KeyValuePair<int, int>> predecessorTests = new List<KeyValuePair<int, int>>();
+            public List<KeyValuePair<int, int>> successorTests = new List<KeyValuePair<int, int>>();
         }
 
         [ClassInitialize()]
         public static void MyClassInitialize(TestContext testContext)
         {
+            int[] input;
+
+            //empty
+            assertData.Add(new AssertData(new int[0]));
+
+            //single entry
+            assertData.Add(new AssertData(new int[1] { 1 }));
+
+            //some test sequences
+            input = new int[] { 1, 2, 3, 4, 5 };
+            assertData.Add(new AssertData(input));
+            
+            input = new int[] { 5, 4, 3, 2, 1 };
+            assertData.Add(new AssertData(input));
+
+            input = new int[] { 1, 3, 2, 4, 5 };
+            assertData.Add(new AssertData(input));
+
+            foreach (var data in assertData)
+            {
+                data.predecessorTests.Add(new KeyValuePair<int,int>(5, 4));
+                data.predecessorTests.Add(new KeyValuePair<int,int>(4, 3));
+                data.predecessorTests.Add(new KeyValuePair<int,int>(3, 2));
+                data.predecessorTests.Add(new KeyValuePair<int,int>(2, 1));
+                data.predecessorTests.Add(new KeyValuePair<int,int>(1, -1));
+
+                data.successorTests.Add(new KeyValuePair<int, int>(1, 2));
+                data.successorTests.Add(new KeyValuePair<int, int>(2, 3));
+                data.successorTests.Add(new KeyValuePair<int, int>(3, 4));
+                data.successorTests.Add(new KeyValuePair<int, int>(4, 5));
+                data.successorTests.Add(new KeyValuePair<int, int>(5, -1));
+            }
+        }
+
+        [TestMethod()]
+        public void TreePredecessorTest()
+        {
+            foreach (var data in assertData)
+            {
+                BinarySearchTree target = new BinarySearchTree();
+
+                foreach (var entry in data.input)
+                    target.TreeInsert(entry);
+
+                foreach (var pair in data.predecessorTests)
+                {
+                    BinarySearchTree.Node actual = target.TreePredecessor(x);
+                }                
+            }
         }
 
         [TestMethod()]
@@ -97,18 +148,6 @@ namespace TestAlgoService
             BinarySearchTree.Node expected = null; // TODO: Initialize to an appropriate value
             BinarySearchTree.Node actual;
             actual = target.TreeSearch(k);
-            Assert.AreEqual(expected, actual);
-            Assert.Inconclusive("Verify the correctness of this test method.");
-        }
-
-        [TestMethod()]
-        public void TreePredecessorTest()
-        {
-            BinarySearchTree target = new BinarySearchTree(); // TODO: Initialize to an appropriate value
-            BinarySearchTree.Node x = null; // TODO: Initialize to an appropriate value
-            BinarySearchTree.Node expected = null; // TODO: Initialize to an appropriate value
-            BinarySearchTree.Node actual;
-            actual = target.TreePredecessor(x);
             Assert.AreEqual(expected, actual);
             Assert.Inconclusive("Verify the correctness of this test method.");
         }

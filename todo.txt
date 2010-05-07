@@ -1,12 +1,12 @@
 * finish all main points of network code and process logic
-- est 4 days FT
+- est 3 days FT
 
 * finish all main points of spreadsheet summary sheets
-- est 3 days week full time
+- est 2 days week full time
 
 * read parts of algorithms book chapters 2,3,4,5,6,7, then 10,11,12,13, then 18
 * do all basic of algorithms bit
-- est 7 days full time
+- est 6 days full time
 
 * doc a bit better
 - remove works in progress bit from index.htm

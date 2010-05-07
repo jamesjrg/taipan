@@ -116,7 +116,7 @@ div.wrapper {font: 100% Sans-serif; background-color: #D2DEFF; width: 94%; paddi
 
 <p>When working for Thomson Airways I worked on a much larger optimization system used for airline crew planning, with thousands of rules and constraints, though my role there only involving maintaining the high level code that stated the system's rules and constraints, and did not require any understanding of the underlying system and linear programming.</p>
 
-<p>The final sheet connects to a C# web service called "AlgoServer". This service implements various complex data structures and sorting algorithms: insertion sort, merge sort, heap sort, quick sort, randomized quick sort. counting sort, chained hash map, binary search tree, red-black tree, B-tree (the final two being works in progress). It provides a SOAP web service with several methods:</p>
+<p>The final sheet connects to a C# web service called "AlgoServer". This service implements various complex data structures and sorting algorithms: insertion sort, merge sort, heap sort, quick sort, randomized quick sort, counting sort, chained hash map, binary search tree, red-black tree, B-tree. It provides a SOAP web service with several methods:</p>
 
 <ul>
 <li>It provides a method called "TimeSort" which takes a sorting method, an array to be sorted, and a number of iterations to repeat the sorting on the original array. Returned is not only the sorted list, but also the time taken to perform the iterations. The spreadsheet provides dropdowns to select a number of different algorithms, and fields to choose a size of randomized list to create and the number of iterations to perform, and then displays the comparative time that algorithm's iterations took on the randomized list.

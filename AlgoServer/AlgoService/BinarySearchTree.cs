@@ -27,6 +27,11 @@ namespace AlgoService
 
         private Node root;
 
+        public BinarySearchTree()
+        {
+            root = null;
+        }
+
         public List<Node> InorderTreeWalkRoot()
         {
             List<Node> keys = new List<Node>();

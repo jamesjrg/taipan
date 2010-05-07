@@ -8,42 +8,107 @@ namespace AlgoService
 {
     class BTree
     {
-        private FileStream fs;
-        private string filename;
-        private const int BRANCH_FACTOR = 8;
+        private string filenamePrefix;
 
-        BTree(int id, bool truncate)
+        private const int MIN_DEGREE = 4;
+        private const int MIN_KEYS = MIN_DEGREE - 1;
+        private const int MAX_KEYS = 2 * MIN_DEGREE - 1;
+        private const int MAX_CHILDREN = 2 * MIN_DEGREE;
+
+        private Node root;
+
+        public class Node
         {
-            filename = "btree" + id;
+            public Node()
+            {
+                keys = new int[MAX_KEYS];
+                children = new Node[MAX_CHILDREN];
+            }
+
+            public int count;
+            public int[] keys;
+            public Node[] children;
+            public bool leaf;
+        }
+
+        public class NodeIndexPair
+        {
+            public NodeIndexPair(Node node, int index)
+            {
+                this.node = node;
+                this.index = index;
+            }
+
+            public Node node;
+            public int index;
+        }
+
+        public BTree(int id, bool truncate)
+        {
+            filenamePrefix = "btree" + id + "-";
             
             if (truncate)
-                CreateFile();
-
-            fs = File.Open("btree", FileMode.Open, FileAccess.ReadWrite);
-        }
-
-        private void CreateFile()
-        {
-            if (File.Exists(filename))
-                File.Delete(filename);
-
-            File.Create(filename);
-        }
-
-        private void ReadFile()
-        {
-            byte[] b = new byte[1024];
-            UTF8Encoding temp = new UTF8Encoding(true);
-            while (fs.Read(b,0,b.Length) > 0)
             {
-                Console.WriteLine(temp.GetString(b));
+                DirectoryInfo dir = new DirectoryInfo(".");
+                FileInfo[] myfiles = dir.GetFiles(filenamePrefix + "*");
+                foreach (FileInfo f in myfiles)
+                    f.Delete();
+            }
+
+            root = null;
+        }
+
+        public NodeIndexPair SearchRoot(int k)
+        {
+            //empty tree?
+            if (root == null)
+                return null;
+
+            return Search(root, k);
+        }
+
+        public NodeIndexPair Search(Node x, int k)
+        {
+            int i = 0;
+            while (i != x.count && k > x.keys[i])
+                i++;
+
+            if (i != x.count && k == x.keys[i])
+                return new NodeIndexPair(x, i);
+            else if (x.leaf)
+                return null;
+            else
+            {
+                Node child = DiskReadNode(x, i);
+                return Search(x.children[i], k);
             }
         }
 
-        private void WriteFile()
+        private Node DiskReadNode(Node parent, int index)
         {
-            byte[] info = new UTF8Encoding(true).GetBytes("monkeys");
-            fs.Write(info, 0, info.Length);
+            //ClassToSerialize c = new ClassToSerialize();
+            //File f = new File("temp.dat");
+            //Stream s = f.Open(FileMode.Open);
+            //BinaryFormatter b = new BinaryFormatter();
+            //c = (ClassToSerialize)b.Deserialize(s);
+            //Console.WriteLine(c.name);
+
+            return new Node();
+        }
+
+        private void DiskWriteNode()
+        {
+            //if (File.Exists(path))
+            //    File.Delete(path);
+
+            //File.Create(path);
+
+            //ClassToSerialize c = new ClassToSerialize();
+            //File f = new File("temp.dat");
+            //Stream s = f.Open(FileMode.Create);
+            //BinaryFormatter b = new BinaryFormatter();
+            //b.Serialize(s, c);
+            //s.Close();
         }
     }
 }
