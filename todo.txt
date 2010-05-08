@@ -6,7 +6,7 @@
 
 * read parts of algorithms book chapters 2,3,4,5,6,7, then 10,11,12,13, then 18
 * do all basic of algorithms bit
-- est 6 days full time
+- est 5 days full time
 
 * doc a bit better
 - remove works in progress bit from index.htm
@@ -23,11 +23,13 @@ needs writing now:
 - finish trader MoveAccepted, buyconfirmed, SurplusForecast, shortageforecast, DecideSales
 - trader decidesales: needs to take into account distance * fuel price to each port, also commod price at each port, also exchange rate at each port
 - finish shippingcompany moveconfirmed
-- finish implementing rb trees, b-trees
-- Btree: if (root == -1) is that right?
+- finish implementing b-tree
+- btree unfinished functions: constructor, insert
+- btree constructor: first node contains info on nnodes etc, not a real node - affects both r and w cases
 
 needs testing now:
-- more unit testing
+- unit testing of data structures
+- unit testing of other stuff
 - test GetPortDistancesLookup
 - test shippingcompany DecideArrivals
 - test Bank EnactBuy, ShipDeparted

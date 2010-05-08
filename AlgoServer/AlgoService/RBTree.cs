@@ -5,7 +5,7 @@ using System.Text;
 
 namespace AlgoService
 {
-    class RBTree
+    public class RBTree
     {
         public enum Color
         {
@@ -43,6 +43,50 @@ namespace AlgoService
         {
             nil = new Node();
             root = nil;
+        }
+
+        //iterative method as opposed to recursive
+        //I have made it always start from root
+        public Node Search(int k)
+        {
+            Node x = root;
+
+            while (x != nil && k != x.key)
+            {
+                if (k < x.key)
+                    x = x.left;
+                else
+                    x = x.right;
+            }
+            return x;
+        }
+
+        public Node Successor(Node x)
+        {
+            if (x.right != nil)
+                return Minimum(x.right);
+
+            Node y = x.parent;
+            while (y != nil && x == y.right)
+            {
+                x = y;
+                y = y.parent;
+            }
+            return y;
+        }
+
+        public Node Predecessor(Node x)
+        {
+            if (x.left != nil)
+                return Maximum(x.left);
+
+            Node y = x.parent;
+            while (y != nil && x == y.left)
+            {
+                x = y;
+                y = y.parent;
+            }
+            return y;
         }
 
         public void LeftRotate(Node x)
@@ -85,32 +129,34 @@ namespace AlgoService
             y.parent = x;
         }
 
-        public void Insert(Node z)
+        public void Insert(int key)
         {
+            Node newNode = new Node(key);
+
             Node x = root;
             Node y = nil;
 
             while (x != nil)
             {
                 y = x;
-                if (z.key < x.key)
+                if (newNode.key < x.key)
                     x = x.left;
                 else
                     x = x.right;
             }
 
-            z.parent = y;
+            newNode.parent = y;
             if (y.parent == nil)
-                root = z;
-            else if (z.key < y.key)
-                y.left = z;
+                root = newNode;
+            else if (newNode.key < y.key)
+                y.left = newNode;
             else
-                y.right = z;
+                y.right = newNode;
 
-            z.left = nil;
-            z.right = nil;
+            newNode.left = nil;
+            newNode.right = nil;
 
-            InsertFixup(z);
+            InsertFixup(newNode);
         }
 
         public void InsertFixup(Node z)
@@ -195,7 +241,7 @@ namespace AlgoService
             }
             else
             {
-                y = TreeMinimum(z.right);
+                y = Minimum(z.right);
                 yOrigColor = y.color;
                 x = y.right;
 
@@ -218,14 +264,14 @@ namespace AlgoService
                 DeleteFixup(x);
         }
 
-        public Node TreeMinimum(Node x)
+        public Node Minimum(Node x)
         {
             while (x.left != nil)
                 x = x.left;
             return x;
         }
 
-        public Node TreeMaximum(Node x)
+        public Node Maximum(Node x)
         {
             while (x.right != nil)
                 x = x.right;
@@ -239,15 +285,65 @@ namespace AlgoService
                 if (x == x.parent.left)
                 {
                     Node w = x.parent.right;
-
-
-
-                    //XXX
+                    if (w.color == Color.Red)
+                    {
+                        w.color = Color.Black;
+                        x.parent.color = Color.Red;
+                        LeftRotate(x.parent);
+                        w = x.parent.right;
+                    }
+                    if (w.left.color == Color.Black && w.right.color == Color.Black)
+                    {
+                        w.color = Color.Red;
+                        x = x.parent;
+                    }
+                    else
+                    {
+                        if (w.right.color == Color.Black)
+                        {
+                            w.left.color = Color.Black;
+                            w.color = Color.Red;
+                            RightRotate(w);
+                            w = x.parent.right;
+                        }
+                        w.color = x.parent.color;
+                        x.parent.color = Color.Black;
+                        w.right.color = Color.Black;
+                        LeftRotate(x.parent);
+                        x = root;
+                    }
                 }
                 //exactly the same as above but with "right" and "left" exchanged
                 else
                 {
-                    //XXX
+                    Node w = x.parent.left;
+                    if (w.color == Color.Red)
+                    {
+                        w.color = Color.Black;
+                        x.parent.color = Color.Red;
+                        RightRotate(x.parent);
+                        w = x.parent.left;
+                    }
+                    if (w.right.color == Color.Black && w.left.color == Color.Black)
+                    {
+                        w.color = Color.Red;
+                        x = x.parent;
+                    }
+                    else
+                    {
+                        if (w.left.color == Color.Black)
+                        {
+                            w.right.color = Color.Black;
+                            w.color = Color.Red;
+                            LeftRotate(w);
+                            w = x.parent.left;
+                        }
+                        w.color = x.parent.color;
+                        x.parent.color = Color.Black;
+                        w.left.color = Color.Black;
+                        RightRotate(x.parent);
+                        x = root;
+                    }
                 }
             }
 

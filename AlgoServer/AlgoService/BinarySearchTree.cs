@@ -5,7 +5,7 @@ using System.Text;
 
 namespace AlgoService
 {
-    class BinarySearchTree
+    public class BinarySearchTree
     {
         public class Node
         {
@@ -53,7 +53,7 @@ namespace AlgoService
 
         //iterative method as opposed to recursive
         //I have made it always start from root
-        public Node TreeSearch(int k)
+        public Node Search(int k)
         {
             Node x = root;
 
@@ -67,24 +67,24 @@ namespace AlgoService
             return x;
         }
 
-        public Node TreeMinimum(Node x)
+        public Node Minimum(Node x)
         {
             while (x.left != null)
                 x = x.left;
             return x;
         }
 
-        public Node TreeMaximum(Node x)
+        public Node Maximum(Node x)
         {
             while (x.right != null)
                 x = x.right;
             return x;
         }
 
-        public Node TreeSuccessor(Node x)
+        public Node Successor(Node x)
         {
             if (x.right != null)
-                return TreeMinimum(x.right);
+                return Minimum(x.right);
 
             Node y = x.parent;
             while (y != null && x == y.right)
@@ -95,10 +95,10 @@ namespace AlgoService
             return y;
         }
 
-        public Node TreePredecessor(Node x)
+        public Node Predecessor(Node x)
         {
             if (x.left != null)
-                return TreeMaximum(x.left);
+                return Maximum(x.left);
 
             Node y = x.parent;            
             while (y != null && x == y.left)
@@ -109,7 +109,7 @@ namespace AlgoService
             return y;
         }
 
-        public void TreeInsert(int key)
+        public void Insert(int key)
         {
             Node newNode = new Node(key);
 
@@ -148,7 +148,7 @@ namespace AlgoService
                 v.parent = u.parent;
         }
 
-        public void TreeDelete(Node z)
+        public void Delete(Node z)
         {
             if (z.left == null)
                 Transplant(z, z.right);
@@ -156,7 +156,7 @@ namespace AlgoService
                 Transplant(z, z.left);
             else
             {
-                Node y = TreeMinimum(z.right);
+                Node y = Minimum(z.right);
                 if (y.parent != z)
                 {
                     Transplant(y, y.right);

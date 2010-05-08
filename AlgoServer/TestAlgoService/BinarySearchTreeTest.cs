@@ -7,7 +7,7 @@ namespace TestAlgoService
     [TestClass()]
     public class BinarySearchTreeTest
     {
-        private static List<AssertData> assertData = new List<AssertData>();
+        private static List<TreeAssertData> assertData = new List<TreeAssertData>();
 
         private TestContext testContextInstance;
         public TestContext TestContext
@@ -52,102 +52,56 @@ namespace TestAlgoService
         //
         #endregion
 
-        private class AssertData
-        {
-            public AssertData(int[] input)
-            {
-                this.input = input;
-            }
-
-            public BinarySearchTree BuildTree()
-            {
-                BinarySearchTree tree = new BinarySearchTree();
-
-                foreach (var key in input)
-                    tree.TreeInsert(key);
-
-                return tree;
-            }
-
-            public int[] input;
-            public List<KeyValuePair<int, int>> predecessorTests = new List<KeyValuePair<int, int>>();
-            public List<KeyValuePair<int, int>> successorTests = new List<KeyValuePair<int, int>>();
-        }
-
         [ClassInitialize()]
         public static void MyClassInitialize(TestContext testContext)
         {
-            int[] input;
+            assertData = Util.CreateTreeAssertData();
+        }
 
-            //empty
-            assertData.Add(new AssertData(new int[0]));
+        public BinarySearchTree BuildTree(TreeAssertData data)
+        {
+            BinarySearchTree tree = new BinarySearchTree();
 
-            //single entry
-            assertData.Add(new AssertData(new int[1] { 1 }));
+            foreach (var key in data.input)
+                tree.Insert(key);
 
-            //some test sequences
-            input = new int[] { 1, 2, 3, 4, 5 };
-            assertData.Add(new AssertData(input));
-            
-            input = new int[] { 5, 4, 3, 2, 1 };
-            assertData.Add(new AssertData(input));
-
-            input = new int[] { 1, 3, 2, 4, 5 };
-            assertData.Add(new AssertData(input));
-
-            foreach (var data in assertData)
-            {
-                data.predecessorTests.Add(new KeyValuePair<int,int>(5, 4));
-                data.predecessorTests.Add(new KeyValuePair<int,int>(4, 3));
-                data.predecessorTests.Add(new KeyValuePair<int,int>(3, 2));
-                data.predecessorTests.Add(new KeyValuePair<int,int>(2, 1));
-                data.predecessorTests.Add(new KeyValuePair<int,int>(1, -1));
-
-                data.successorTests.Add(new KeyValuePair<int, int>(1, 2));
-                data.successorTests.Add(new KeyValuePair<int, int>(2, 3));
-                data.successorTests.Add(new KeyValuePair<int, int>(3, 4));
-                data.successorTests.Add(new KeyValuePair<int, int>(4, 5));
-                data.successorTests.Add(new KeyValuePair<int, int>(5, -1));
-            }
+            return tree;
         }
 
         [TestMethod()]
-        public void TreePredecessorTest()
+        public void PredecessorTest()
         {
             foreach (var data in assertData)
             {
-                BinarySearchTree target = new BinarySearchTree();
-
-                foreach (var entry in data.input)
-                    target.TreeInsert(entry);
+                BinarySearchTree target = BuildTree(data);
 
                 foreach (var pair in data.predecessorTests)
                 {
-                    //BinarySearchTree.Node actual = target.TreePredecessor(x);
+                    //BinarySearchTree.Node actual = target.Predecessor(x);
                 }                
             }
         }
 
         [TestMethod()]
-        public void TreeSuccessorTest()
+        public void SuccessorTest()
         {
             BinarySearchTree target = new BinarySearchTree(); // TODO: Initialize to an appropriate value
             BinarySearchTree.Node x = null; // TODO: Initialize to an appropriate value
             BinarySearchTree.Node expected = null; // TODO: Initialize to an appropriate value
             BinarySearchTree.Node actual;
-            actual = target.TreeSuccessor(x);
+            actual = target.Successor(x);
             Assert.AreEqual(expected, actual);
             Assert.Inconclusive("Verify the correctness of this test method.");
         }
 
         [TestMethod()]
-        public void TreeSearchTest()
+        public void SearchTest()
         {
             BinarySearchTree target = new BinarySearchTree(); // TODO: Initialize to an appropriate value
             int k = 0; // TODO: Initialize to an appropriate value
             BinarySearchTree.Node expected = null; // TODO: Initialize to an appropriate value
             BinarySearchTree.Node actual;
-            actual = target.TreeSearch(k);
+            actual = target.Search(k);
             Assert.AreEqual(expected, actual);
             Assert.Inconclusive("Verify the correctness of this test method.");
         }
@@ -159,7 +113,7 @@ namespace TestAlgoService
             BinarySearchTree.Node x = null; // TODO: Initialize to an appropriate value
             BinarySearchTree.Node expected = null; // TODO: Initialize to an appropriate value
             BinarySearchTree.Node actual;
-            actual = target.TreeMinimum(x);
+            actual = target.Minimum(x);
             Assert.AreEqual(expected, actual);
             Assert.Inconclusive("Verify the correctness of this test method.");
         }
@@ -171,7 +125,7 @@ namespace TestAlgoService
             BinarySearchTree.Node x = null; // TODO: Initialize to an appropriate value
             BinarySearchTree.Node expected = null; // TODO: Initialize to an appropriate value
             BinarySearchTree.Node actual;
-            actual = target.TreeMaximum(x);
+            actual = target.Maximum(x);
             Assert.AreEqual(expected, actual);
             Assert.Inconclusive("Verify the correctness of this test method.");
         }
@@ -181,30 +135,17 @@ namespace TestAlgoService
         {
             BinarySearchTree target = new BinarySearchTree(); // TODO: Initialize to an appropriate value
             int key = 0; // TODO: Initialize to an appropriate value
-            target.TreeInsert(key);
+            target.Insert(key);
             Assert.Inconclusive("A method that does not return a value cannot be verified.");
         }
 
         [TestMethod()]
-        public void TreeDeleteTest()
+        public void DeleteTest()
         {
             BinarySearchTree target = new BinarySearchTree(); // TODO: Initialize to an appropriate value
             int key = 0;
-            BinarySearchTree.Node delNode = target.TreeSearch(key);
-            target.TreeDelete(delNode);
-            Assert.Inconclusive("Verify the correctness of this test method.");
-        }
-
-        [TestMethod()]
-        public void TransplantTest()
-        {
-            BinarySearchTree target = new BinarySearchTree(); // TODO: Initialize to an appropriate value
-            int key1 = 0;
-            int key2 = 0;
-            BinarySearchTree.Node tNode1 = target.TreeSearch(key1);
-            BinarySearchTree.Node tNode2 = target.TreeSearch(key2);
-            target.Transplant(tNode1, tNode2);
-
+            BinarySearchTree.Node delNode = target.Search(key);
+            target.Delete(delNode);
             Assert.Inconclusive("Verify the correctness of this test method.");
         }
 

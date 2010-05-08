@@ -9,8 +9,12 @@ namespace AlgoService
 {
     /// <summary>
     /// A B-Tree. Very much unsafe code, lots of pointers and byte-level file manipulation.
+    /// Notes:
+    /// a) root node is stored at end of disk file, not beginning
+    /// b) Btree root and Node children "pointers" are actually int pseudo pointers for disk seeking
+    /// c) First node on disk isn't a real node, instead it stores btree metadata - root location etc
     /// </summary>
-    unsafe class BTree
+    unsafe public class BTree
     {
         private string filename;
         private FileStream fs;
@@ -20,10 +24,10 @@ namespace AlgoService
         private const int MAX_KEYS = 2 * MIN_DEGREE - 1;
         private const int MAX_CHILDREN = 2 * MIN_DEGREE;
 
-        private readonly int NODE_SIZE;
+        private const int NIL_POINTER = -1;
 
-        //pseudo pointer, i.e. we seek disk to find nodes rather than storing them in memory
-        private int root;
+        private readonly int NODE_SIZE;
+        private int Root;
 
         Node currentNode;
 
@@ -32,7 +36,6 @@ namespace AlgoService
         {
             public int count;
             public fixed int keys[MAX_KEYS];
-            //pseudo pointer, i.e. we seek disk to find nodes rather than storing them in memory
             public fixed int children[MAX_CHILDREN];
             public bool leaf;
         }
@@ -62,23 +65,44 @@ namespace AlgoService
                     File.Delete(filename);
                 fs = File.Open(filename, FileMode.Open, FileAccess.ReadWrite);
 
-                //XXX root = something;
+                Root = NIL_POINTER;
             }
             else
             {
                 fs = File.Open(filename, FileMode.Open, FileAccess.ReadWrite);
 
-                //XXX root = something
+                //Root = something
             }
+        }
+
+        public void Insert(int k)
+        {
+            //empty tree?
+            if (Root == NIL_POINTER)
+            {
+                //xxx
+                //leaf = true
+            }
+            else
+            {
+                //xxx
+                //read root node
+                if (currentNode.count == MAX_KEYS)
+                {
+                    //leaf = false
+                }
+            }
+
+            //InsertNonFull();
         }
 
         public NodeIndexPair SearchRoot(int k)
         {
             //empty tree?
-            if (root == -1)
+            if (Root == NIL_POINTER)
                 return null;
 
-            DiskReadNode(root);
+            DiskReadNode(Root);
             return Search(k);
         }
 
