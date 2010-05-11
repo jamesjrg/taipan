@@ -46,3 +46,6 @@ MagicDraw UML/*.bak
 
 web/images/
 
+Resolver/.project
+Resolver/.pydevproject
+
