@@ -1,1 +1,11 @@
-[NonSerialized]
+for marshalling:
+
+[StructLayout(LayoutKind.Sequential, Pack=1)]
+struct Message
+{
+    public int id;
+    [MarshalAs (UnmanagedType.ByValTStr, SizeConst=50)] 
+    public string text;
+}
+
+

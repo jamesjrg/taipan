@@ -14,7 +14,7 @@ namespace AlgoService
     /// b) Btree root and Node children "pointers" are actually int pseudo pointers for disk seeking
     /// c) First node on disk isn't a real node, instead it stores btree metadata - root location etc
     /// </summary>
-    unsafe public class BTree
+    unsafe public class BTree: IDisposable
     {
         private string filename;
         private FileStream fs;
@@ -28,8 +28,11 @@ namespace AlgoService
 
         private readonly int NODE_SIZE;
         private int Root;
+        private int NumNodes;
 
-        Node currentNode;
+        private bool isDisposed = false;
+
+        Node CurrentNode;
 
         //a struct with fixed length arrays so it is easy to serialize
         public struct Node
@@ -66,13 +69,43 @@ namespace AlgoService
                 fs = File.Open(filename, FileMode.Open, FileAccess.ReadWrite);
 
                 Root = NIL_POINTER;
+                NumNodes = 0;
             }
             else
             {
+                //read file
                 fs = File.Open(filename, FileMode.Open, FileAccess.ReadWrite);
-
-                //Root = something
+                //read in special node zero data
+                DiskReadNode(0);
+                NumNodes = CurrentNode.children[0];
+                Root = CurrentNode.children[1];
             }
+        }
+
+        public ~BTree()
+        {
+            Dispose(false);
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!isDisposed)
+            {
+                if (disposing)
+                {}//no managed objects
+                
+                //write data to special node 0
+                CurrentNode.children[0] = NumNodes;
+                CurrentNode.children[1] = Root;
+                DiskWriteNode();
+            }
+            isDisposed = true;
         }
 
         public void Insert(int k)
@@ -85,15 +118,93 @@ namespace AlgoService
             }
             else
             {
-                //xxx
-                //read root node
-                if (currentNode.count == MAX_KEYS)
-                {
-                    //leaf = false
+                //full root? If so, create a new root node
+                DiskReadNode(Root);
+                if (CurrentNode.count == MAX_KEYS)
+                {         
+                    //XXX should be able to do this without creating an extra node object
+                    Node s = new Node();
+                    s.leaf = false;
+                    s.count = 0;
+                    s.children[0] = Root;
+                    NumNodes++;
+                    Root = NumNodes;
+
+                    //write old root node to disk, new root node is now CurrentNode
+                    DiskWriteNode();
+
+                    CurrentNode = s;
+                    
+                    SplitNode();
+                    //XXX assuming current node is still s for insert nonfull?
                 }
             }
+            InsertNonFull(k);
+        }
 
-            //InsertNonFull();
+        private void InsertNonFull(int k)
+        {
+            int i = CurrentNode.count;
+            if (CurrentNode.leaf)
+            {
+                while (i >= 0 && k < CurrentNode.keys[i])
+                {
+                    CurrentNode.keys[i + 1] = CurrentNode.keys[i];
+                    i--;
+                }
+                CurrentNode.keys[i + 1] = k;
+                CurrentNode.count++;
+                DiskWriteNode();
+            }
+            else
+            {
+                while (i >= 0 && k < CurrentNode.keys[i])
+                    i--;
+
+                i = i + 1;
+                DiskReadNode(CurrentNode.children[i]);
+                if (CurrentNode.count == MAX_KEYS)
+                {
+                    SplitNode();
+                    //XXX
+                    //reread our orig node into memory?
+                    //if (k > parentnode.keys[i])
+                    //i = i + 1;
+                    //XXX assuming current node is still s for insert nonfull?
+                }
+                InsertNonFull(k);
+            } 
+        }
+
+        //split CurrentNode, not a child of that node as in Cormen
+        private void SplitNode()
+        {
+            Node newRight = new Node();
+            newRight.leaf = CurrentNode.leaf;
+            newRight.count = MIN_KEYS;
+
+            for (int j = 0; j != MIN_KEYS; ++j)
+                newRight.keys[j] = CurrentNode.keys[j];
+            if (!CurrentNode.leaf)
+            {
+                for (int j = 0; j != MIN_DEGREE; ++j)
+                    newRight.children[j] = CurrentNode.children[j + MIN_DEGREE];
+            }
+            CurrentNode.count = MIN_KEYS;
+
+            //XXX need to push up into parent node
+            //for (j = parent...
+            //  parent.children...
+            //parent.children...
+            //for (j = parent...
+            //  parent.keys...
+            //parent.keys...
+            //x.count =
+
+            //XXX
+            //write currentnode
+            //write newright
+            //write parent
         }
 
         public NodeIndexPair SearchRoot(int k)
@@ -109,14 +220,14 @@ namespace AlgoService
         public NodeIndexPair Search(int k)
         {
             int i = 0;
-            fixed (int* ptr = currentNode.keys)
+            fixed (int* ptr = CurrentNode.keys)
             {
-                while (i != currentNode.count && k > ptr[i])
+                while (i != CurrentNode.count && k > ptr[i])
                     i++;
 
-                if (i != currentNode.count && k == ptr[i])
-                    return new NodeIndexPair(currentNode, i);
-                else if (currentNode.leaf)
+                if (i != CurrentNode.count && k == ptr[i])
+                    return new NodeIndexPair(CurrentNode, i);
+                else if (CurrentNode.leaf)
                     return null;
                 else
                 {
@@ -126,18 +237,39 @@ namespace AlgoService
             }
         }
 
-        private void DiskReadNode(int index)
+        public void Delete(int k)
         {
-            //byte[] b = new byte[1024];
-            //UTF8Encoding temp = new UTF8Encoding(true);
-            //while (fs.Read(b, 0, b.Length) > 0)
-            //{
-            //    Console.WriteLine(temp.GetString(b));
-            //}
-
-            currentNode = new Node();
+            //walk down tree from root searching for k
+            //before recursively calling delete on any child of root, check that child has at least min keys + 1. if not, give it one of current nodes keys. if currentnode is root and this leaves root with 0 keys, then delete root and replace it with its first child
+            
+            //on reaching k:
+            //if given node is a leaf
+                //can now delete key
+            //if given node is an internal node
+                //if child that precedes key has at least t keys, then recursively delete predecessor of k, and move that predecessor to k's place
+                //else if child that succeeds key has at least t keys, try the same with successor-containing node
+                //else merge succeeding node into preceding node, along with k (freeing succeeding node from disk), then recursively delete k from new merged child
         }
 
+        private void DiskReadNode(int index)
+        {
+            byte[] arr = new byte[NODE_SIZE];
+            fs.Seek(index * NODE_SIZE, SeekOrigin.Begin);
+            fs.Read(arr, 0, NODE_SIZE);
+
+            GCHandle pinnedArr = GCHandle.Alloc(arr, GCHandleType.Pinned);
+            CurrentNode = (Node)Marshal.PtrToStructure(
+                pinnedArr.AddrOfPinnedObject(),
+                typeof(Node));
+            pinnedArr.Free();
+
+            //for testing?
+            //UTF8Encoding temp = new UTF8Encoding(true);
+            //while (fs.Read(b, 0, b.Length) > 0)
+            //    Console.WriteLine(temp.GetString(b));
+        }
+
+        //write CurrentNode to disk file
         private void DiskWriteNode()
         {
             //I'm assuming just sizeof(Node) is fine, I mean come on
@@ -145,11 +277,12 @@ namespace AlgoService
 
             byte[] arr = new byte[NODE_SIZE];
             IntPtr ptr = Marshal.AllocHGlobal(NODE_SIZE);
-            Marshal.StructureToPtr(currentNode, ptr, true);
+            Marshal.StructureToPtr(CurrentNode, ptr, true);
             Marshal.Copy(ptr, arr, 0, NODE_SIZE);
             Marshal.FreeHGlobal(ptr);
 
-            //fs.Write(info, 0, info.Length);
+            fs.Seek(NumNodes * NODE_SIZE, SeekOrigin.Begin);
+            fs.Write(arr, 0, NODE_SIZE);
         }
     }
 }
