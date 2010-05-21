@@ -10,7 +10,7 @@ namespace AlgoService
     /// <summary>
     /// A B-Tree. Very much unsafe code, lots of pointers and byte-level file manipulation.
     /// Notes:
-    /// a) root node is stored at end of disk file, not beginning
+    /// a) root node isn't necessarily at any particular index - gets shifted right when root node needs to be split
     /// b) Btree root and Node children "pointers" are actually int pseudo pointers for disk seeking
     /// c) First node on disk isn't a real node, instead it stores btree metadata - root location etc
     /// </summary>
@@ -33,6 +33,7 @@ namespace AlgoService
         private bool isDisposed = false;
 
         Node CurrentNode;
+        private int CurrentNodeIndex;
 
         //a struct with fixed length arrays so it is easy to serialize
         public struct Node
@@ -103,7 +104,7 @@ namespace AlgoService
                 //write data to special node 0
                 CurrentNode.children[0] = NumNodes;
                 CurrentNode.children[1] = Root;
-                DiskWriteNode();
+                DiskWriteNode(CurrentNode, 0);
             }
             isDisposed = true;
         }
@@ -122,7 +123,7 @@ namespace AlgoService
                 DiskReadNode(Root);
                 if (CurrentNode.count == MAX_KEYS)
                 {         
-                    //XXX should be able to do this without creating an extra node object
+                    //XXX maybe should be able to do this without creating an extra node object
                     Node s = new Node();
                     s.leaf = false;
                     s.count = 0;
@@ -131,7 +132,7 @@ namespace AlgoService
                     Root = NumNodes;
 
                     //write old root node to disk, new root node is now CurrentNode
-                    DiskWriteNode();
+                    DiskWriteNode(CurrentNode, CurrentNodeIndex);
 
                     CurrentNode = s;
                     
@@ -154,7 +155,7 @@ namespace AlgoService
                 }
                 CurrentNode.keys[i + 1] = k;
                 CurrentNode.count++;
-                DiskWriteNode();
+                DiskWriteNode(CurrentNode, CurrentNodeIndex);
             }
             else
             {
@@ -192,7 +193,15 @@ namespace AlgoService
             }
             CurrentNode.count = MIN_KEYS;
 
+            //write current node (left child)
+            DiskWriteNode(CurrentNode, CurrentNodeIndex);
+
+            //write new right node
+            NumNodes++;
+            DiskWriteNode(newRight, NumNodes);
+
             //XXX need to push up into parent node
+            //XXX read in parent node
             //for (j = parent...
             //  parent.children...
             //parent.children...
@@ -201,10 +210,9 @@ namespace AlgoService
             //parent.keys...
             //x.count =
 
-            //XXX
-            //write currentnode
-            //write newright
-            //write parent
+            //write parent node
+            DiskWriteNode(
+            //xxx need to put currentnode back to where it was originally?
         }
 
         public NodeIndexPair SearchRoot(int k)
@@ -262,6 +270,7 @@ namespace AlgoService
                 pinnedArr.AddrOfPinnedObject(),
                 typeof(Node));
             pinnedArr.Free();
+            CurrentNodeIndex = index;
 
             //for testing?
             //UTF8Encoding temp = new UTF8Encoding(true);
@@ -270,18 +279,18 @@ namespace AlgoService
         }
 
         //write CurrentNode to disk file
-        private void DiskWriteNode()
+        private void DiskWriteNode(Node theNode, int index)
         {
             //I'm assuming just sizeof(Node) is fine, I mean come on
             //int len = Marshal.SizeOf(obj);
 
             byte[] arr = new byte[NODE_SIZE];
             IntPtr ptr = Marshal.AllocHGlobal(NODE_SIZE);
-            Marshal.StructureToPtr(CurrentNode, ptr, true);
+            Marshal.StructureToPtr(theNode, ptr, true);
             Marshal.Copy(ptr, arr, 0, NODE_SIZE);
             Marshal.FreeHGlobal(ptr);
 
-            fs.Seek(NumNodes * NODE_SIZE, SeekOrigin.Begin);
+            fs.Seek(index * NODE_SIZE, SeekOrigin.Begin);
             fs.Write(arr, 0, NODE_SIZE);
         }
     }

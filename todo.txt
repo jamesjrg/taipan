@@ -17,13 +17,11 @@ git change log:
 
 nowish:
 needs writing now:
+- BTree needs serious work
 - finish Bank EnactFuture, shiparrived, futuresettlements
 - finish trader MoveAccepted, buyconfirmed, SurplusForecast, shortageforecast, DecideSales
 - trader decidesales: needs to take into account distance * fuel price to each port, also commod price at each port, also exchange rate at each port
 - finish shippingcompany moveconfirmed
-- finish implementing b-tree
-- btree unfinished functions: constructor, insert
-- btree constructor: first node contains info on nnodes etc, not a real node - affects both r and w cases
 
 needs testing now:
 - unit testing of data structures
@@ -80,7 +78,8 @@ Also make sure names match up UML <-> sql and vice versa
 
 short description:
 
-A C# .NET, SQL Server and Python project written to improve my knowledge of various aspects of computer science and software engineering. The back end code is written in C#, whilst most of the front end - utilising the IronPython spreadsheet Resolver One - is written in IronPython. The system makes fairly extensive use of concurrency and multithreading (there are a large number of heterogeneous, multithreaded C# processes, most interacting via TCP sockets, one acting as a SOAP web service), SQL (most of the underlying state of the system is stored in a MS SQL Server instance) and algorithmics (e.g. implementations of B-Trees, hash tables, numerous sorting algorithms, and Geometric Brownian Motion). It also makes use of Microsoft Solver Foundation (a mathematical modelling framework). The project is described by a series of UML diagrams, and partly covered by unit tests. The source code is available on GitHub.
+A C# .NET, SQL Server and Python project written to improve my knowledge of various aspects of computer science and software engineering. The back end code is written in C#, whilst most of the front end - utilising the IronPython spreadsheet Resolver One - is written in IronPython. The system features a large number of heterogeneous, multithreaded C# processes, most interacting via TCP sockets, one acting as a SOAP web service. It also makes extensive use of SQL (most of the underlying state of the system is stored in a MS SQL Server instance) and algorithmics (e.g. implementations of B-Trees, hash tables, numerous sorting algorithms, and Geometric Brownian Motion). It also makes use of Microsoft Solver Foundation (a mathematical modelling framework). The project is described by a series of UML diagrams, and partly covered by unit tests. The source code is available on GitHub.
+
 
 
 long description:
