@@ -17,7 +17,7 @@ git change log:
 
 nowish:
 needs writing now:
-- BTree needs serious work
+- BTree needs serious work. in particular, splitchildnode needs to work with both parent node and child node - maybe passed as arguments, or whatever
 - finish Bank EnactFuture, shiparrived, futuresettlements
 - finish trader MoveAccepted, buyconfirmed, SurplusForecast, shortageforecast, DecideSales
 - trader decidesales: needs to take into account distance * fuel price to each port, also commod price at each port, also exchange rate at each port
