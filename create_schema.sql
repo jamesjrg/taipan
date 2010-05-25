@@ -181,6 +181,18 @@ CREATE TABLE dbo.FuturesContract
 	)  ON [PRIMARY]
 GO
 
+CREATE NONCLUSTERED INDEX IX_FutureSetTime ON dbo.[FuturesContract] 
+(
+	SettlementTime
+) ON [PRIMARY]
+GO
+
+CREATE NONCLUSTERED INDEX IX_FutureAlreadySet ON dbo.[FuturesContract] 
+(
+	ActualSetTime
+) ON [PRIMARY]
+GO
+
 CREATE TABLE dbo.CommodityTransaction
 	(
 	ID int NOT NULL IDENTITY (1, 1) PRIMARY KEY CLUSTERED,
@@ -316,7 +328,7 @@ ALTER TABLE dbo.CommodityTransport ADD
 	(CommodityTransactionID) REFERENCES dbo.CommodityTransaction (ID);
 GO
     
--- ARG if this were another database these could be triggers with FOR EACH ROW
+-- arg if this were another database these could be triggers with FOR EACH ROW
 CREATE PROCEDURE procStockUpdate 
    @CompanyID int, 
    @PriceDate datetime,

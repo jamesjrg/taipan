@@ -63,7 +63,7 @@ div.wrapper {font: 100% Sans-serif; background-color: #D2DEFF; width: 94%; paddi
 
 <p>The rest of the schema is made of tables which represent various aspects of the modelled system - countries, ports, futures contracts, commodities, etc.</p>
 
-<p>I have made some use of various intermediate SQL features. The locations of the ports are stored using SQL Server's spatial geography  data type, this is used in various places to calculate distances between ports. I have also written several user defined functions and cursors to aid the SQL queries carried out by both the C# processes and the spreadsheet user frontend.</p>
+<p>I have made substantial use of stored procedures, and some use of user defined functions and cursors. I have also made some use of SQL Server's spatial geography data type for storing the locations of the ports and for calculating the distances between them.</p>
 
 <p>I have given some basic thought to security and permissions - there are seperate read-only and read-write logins, and processes only use the read-write login where necessary - but complex permissions, views and security schemas would seem rather too contrived for a project being developed and run by a single person.</p>
 

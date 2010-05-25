@@ -32,10 +32,10 @@ namespace TaiPan.Bank
 
         private class ConfirmInfo
         {
-            public ConfirmInfo(int traderID, int portID, int commodID, int quantity, int transactionID)
+            public ConfirmInfo(int traderID, int portID, int commodID, int quantity, int transactionID, decimal localPrice)
             {
                 this.traderID = traderID;
-                this.msg = new BankConfirmMsg(portID, commodID, quantity, transactionID);
+                this.msg = new BankConfirmMsg(portID, commodID, quantity, transactionID, localPrice);
             }
 
             public BankConfirmMsg msg;
@@ -158,6 +158,43 @@ namespace TaiPan.Bank
 
         private void FutureSettlements()
         {
+            //find settled futures, and add to list which will be messaged to traders
+            SqlDataReader reader = dbConn.ExecuteQuery(@"SELECT ID, TraderID, CommodityID, PortID, LocalPrice,                Quantity FROM FuturesContract WHERE ActualSetTime is null AND SettlementTime < Now()");
+            while (reader.Read())
+            {
+                int futureID = reader.GetInt32(0);
+                int traderID = reader.GetInt32(1);
+                int commodID = reader.GetInt32(2);
+                int portID = reader.GetInt32(3);
+                decimal localPrice = reader.GetDecimal(4);
+                int quantity = reader.GetInt32(5);
+
+                settledFutures.Add(new ConfirmInfo(traderID, portID, commodID, quantity, futureID, localPrice));
+            }
+            reader.Close();
+
+            if (settledFutures.Count > 0)
+            {
+                //update CommodityTransaction
+                
+                StringBuilder futureIDs = new StringBuilder();
+                foreach (var future in settledFutures)
+                    futureIDs.Append(future.msg.transactionID + ",");
+                //remove trailing comma
+                futureIDs.Remove(futureIDs.Length - 1, 1);
+                
+                dbConn.ExecuteNonQuery(String.Format(@"UPDATE FuturesContract set ActualSetTime = Now() where ID in ({0})", futureIDs.ToString()));            
+
+                //debit trader's account
+                foreach (var future in settledFutures)
+                {   
+                    List<SqlParameter> pars = new List<SqlParameter>();
+                    pars.Add(new SqlParameter("@CompanyID", future.traderID));
+                    pars.Add(new SqlParameter("@PortID", future.msg.portID));
+                    pars.Add(new SqlParameter("@Amount", future.msg.localPrice * future.msg.quantity));
+                    dbConn.StoredProc("procSubtractBalance", pars);
+                }
+            }
         }
 
         private void UpdateCurrency(CurrencyMsg msg)
@@ -217,11 +254,6 @@ namespace TaiPan.Bank
 
         private void EnactFuture(int traderID, FutureMsg msg)
         {
-            //first, debit trader's account
-            //XXX
-            //update Company set balance = balance - 
-            //quantity, PortCommodityPrice, Currency, etc
-
             dbConn.ExecuteNonQuery(String.Format(@"INSERT INTO dbo.FuturesContract
            (TraderID, CommodityID, PortID, LocalPrice, Quantity, PurchaseTime, SettlementTime)
      VALUES
@@ -241,7 +273,6 @@ namespace TaiPan.Bank
             pars.Add(new SqlParameter("@CompanyID", traderID));
             pars.Add(new SqlParameter("@PortID", msg.portID));
             pars.Add(new SqlParameter("@Amount", amount));
-
             dbConn.StoredProc("procSubtractBalance", pars);
 
             //next, create CommodityTransaction
@@ -254,7 +285,7 @@ namespace TaiPan.Bank
 ", traderID, msg.commodID, msg.portID, msg.quantity, amount, DateTime.Now));
 
             //last, add msg to confirmedBuys
-            confirmedBuys.Add(new ConfirmInfo(traderID, msg.portID, msg.commodID, msg.quantity, transID));
+            confirmedBuys.Add(new ConfirmInfo(traderID, msg.portID, msg.commodID, msg.quantity, transID, amount));
         }
 
         private void ShipDeparted(int companyID, MovingMsg msg)

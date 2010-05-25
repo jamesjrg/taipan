@@ -1,14 +1,11 @@
-* finish all main points of network code and process logic
+* finish all main points of network code and process logic, and write some tests
 - est 3 days FT
 
 * finish all main points of spreadsheet summary sheets
 - est 2 days week full time
 
 * finish all data structures + write unit tests for them
-- est 5 days full time
-
-* doc a bit better
-- est 1 day FT
+- est 3 days full time
 
 - ideas from "ideas removed" file - infinite
 
@@ -17,18 +14,19 @@ git change log:
 
 nowish:
 needs writing now:
-- BTree needs serious work. in particular, splitchildnode needs to work with both parent node and child node - maybe passed as arguments, or whatever
-- finish Bank EnactFuture, shiparrived, futuresettlements
+- BTree still needs fair amount of work
+- finish Bank shiparrived
 - finish trader MoveAccepted, buyconfirmed, SurplusForecast, shortageforecast, DecideSales
 - trader decidesales: needs to take into account distance * fuel price to each port, also commod price at each port, also exchange rate at each port
 - finish shippingcompany moveconfirmed
+- search for xxx
 
 needs testing now:
 - unit testing of data structures
 - unit testing of other stuff
 - test GetPortDistancesLookup
 - test shippingcompany DecideArrivals
-- test Bank EnactBuy, ShipDeparted
+- test Bank EnactBuy, ShipDeparted, FutureSettlements, EnactFuture
 - tweak fuelcost, FreighterSpeed
 
 ////

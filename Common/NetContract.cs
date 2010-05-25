@@ -193,18 +193,20 @@ namespace TaiPan.Common.NetContract
     public class BankConfirmMsg
     {
         public BankConfirmMsg() { }
-        public BankConfirmMsg(int portID, int commodID, int quantity, int transactionID)
+        public BankConfirmMsg(int portID, int commodID, int quantity, int transactionID, decimal localPrice)
         {
             this.portID = portID;
             this.commodID = commodID;
             this.quantity = quantity;
             this.transactionID = transactionID;
+            this.localPrice = localPrice;
         }
 
         public int portID;
         public int commodID;
         public int quantity;
         public int transactionID;
+        public decimal localPrice;
     }
 
     public class NetContract
