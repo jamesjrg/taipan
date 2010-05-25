@@ -198,7 +198,7 @@ CREATE TABLE dbo.CommodityTransaction
 	ID int NOT NULL IDENTITY (1, 1) PRIMARY KEY CLUSTERED,
     TraderID int NOT NULL,
     CommodityID int NOT NULL,
-    PortID int NOT NULL,
+    BuyPortID int NOT NULL,
     FuturesContractID int default null,
     Quantity int NOT NULL,
     PurchasePrice Money NOT NULL,    
@@ -304,13 +304,13 @@ ALTER TABLE dbo.FuturesContract ADD
 GO
 
 ALTER TABLE dbo.CommodityTransaction ADD
-	CONSTRAINT fkWareCommodTrader FOREIGN KEY
+	CONSTRAINT fkTransactionTrader FOREIGN KEY
 	(TraderID) REFERENCES dbo.Trader (CompanyID),
-    CONSTRAINT fkWareCommodCommod FOREIGN KEY
+    CONSTRAINT fkTransactionCommod FOREIGN KEY
 	(CommodityID) REFERENCES dbo.Commodity (ID),
-    CONSTRAINT fkWareCommodPort FOREIGN KEY
-	(PortID) REFERENCES dbo.Port (ID),
-    CONSTRAINT fkWareCommodFutures FOREIGN KEY
+    CONSTRAINT fkTransactionPort FOREIGN KEY
+	(BuyPortID) REFERENCES dbo.Port (ID),
+    CONSTRAINT fkTransactionFuture FOREIGN KEY
 	(FuturesContractID) REFERENCES dbo.FuturesContract (ID);
 GO
 
@@ -328,7 +328,8 @@ ALTER TABLE dbo.CommodityTransport ADD
 	(CommodityTransactionID) REFERENCES dbo.CommodityTransaction (ID);
 GO
     
--- arg if this were another database these could be triggers with FOR EACH ROW
+-- pseudo-triggers to keep historical value tables and current values in sync
+-- if this were another database these could be triggers with FOR EACH ROW
 CREATE PROCEDURE procStockUpdate 
    @CompanyID int, 
    @PriceDate datetime,
@@ -372,15 +373,15 @@ BEGIN
 END
 GO
 
-CREATE PROCEDURE procAddBalance
+--functions to add/subtract balances from accounts of companies
+CREATE PROCEDURE procAddBalanceUSD
    @CompanyID int, 
-   @PortID int, 
    @Amount Money
 AS 
 BEGIN
 	update Company SET Balance =
 	Balance +
-	(SELECT dbo.funcGetUSDValue(@Amount, @PortID) /
+	@Amount /
 		(select USDValue from Currency
 			join Country on Country.CurrencyID = Currency.ID
 			join Company on Company.CountryID = Country.ID
@@ -390,21 +391,70 @@ BEGIN
 END
 GO
 
-CREATE PROCEDURE procSubtractBalance
+CREATE PROCEDURE procSubtractBalanceUSD
    @CompanyID int, 
-   @PortID int, 
    @Amount Money
 AS 
 BEGIN
 	update Company SET Balance =
 	Balance -
-	(SELECT dbo.funcGetUSDValue(@Amount, @PortID) /
+	@Amount /
 		(select USDValue from Currency
 			join Country on Country.CurrencyID = Currency.ID
 			join Company on Company.CountryID = Country.ID
 			where Company.ID = @CompanyID)
 	)
 	WHERE ID = @CompanyID
+END
+GO
+
+CREATE PROCEDURE procAddBalance
+   @CompanyID int, 
+   @PortID int, 
+   @Amount Money
+AS 
+BEGIN
+    procAddBalanceUSD(@CompanyID, (SELECT dbo.funcGetUSDValue(@Amount, @PortID)))
+END
+GO
+
+CREATE PROCEDURE procSubtractBalance
+   @CompanyID int, 
+   @PortID int, 
+   @Amount Money
+AS 
+BEGIN
+	procSubtractBalanceUSD(@CompanyID, (SELECT dbo.funcGetUSDValue(@Amount, @PortID)))
+END
+GO
+
+-- financial transactions
+CREATE PROCEDURE procShipArrived 
+   @CommodityTransactionID int, 
+   @ArrivalTime datetime, 
+   @ShippingCompanyCharge Money
+   @FuelCost Money
+AS
+update CommodityTransport SET ArrivalTime = @ArrivalTime WHERE CommodityTransactionID = @CommodityTransactionID;
+--money taken from trader and given to shipping company
+xxx traderID and shippingCompanyID
+procSubtractBalanceUSD(traderID, @ShippingCompanyCharge);
+procAddBalanceUSD(shippingcompanyID, @ShippingCompanyCharge);
+--money taken from shipping company for fuel
+xxx shippingcompid
+procSubtractBalanceUSD(shippingcompanyID, @FuelCost);
+BEGIN
+END
+GO
+
+CREATE PROCEDURE procCommoditySale
+xxx args
+AS
+update CommodityTransaction set saletime = Now(), saleprice=xxx, SalePortID=xxx
+--money to trader
+xxx
+procAddBalance(traderID, portid, totallocalprice)
+BEGIN
 END
 GO
 

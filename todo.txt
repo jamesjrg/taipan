@@ -14,12 +14,15 @@ git change log:
 
 nowish:
 needs writing now:
-- BTree still needs fair amount of work
+- finish procShipArrived and procCommodSale in create_schema
 - finish Bank shiparrived
+- BTree still needs fair amount of work
 - finish trader MoveAccepted, buyconfirmed, SurplusForecast, shortageforecast, DecideSales
 - trader decidesales: needs to take into account distance * fuel price to each port, also commod price at each port, also exchange rate at each port
+- trader decidesales needs to account for possibility that best sale location may be the place where goods are currently warehoused. if so, don't need to contract a shipping company, just sell directly - and bank needs to be able to cope with this
 - finish shippingcompany moveconfirmed
-- search for xxx
+- finish all the spreadsheet sheets filled from database queries (ideally inter process logic needs a bit more work first). Prices are converted from local currency to historical USD value
+- search for xxx using grep
 
 needs testing now:
 - unit testing of data structures
@@ -35,11 +38,6 @@ Process logic and networking:
 - in server, clients should get removed from clients list if they are disconnected
 - net_msg_todo.txt
 
-///
-
-Then a load of database query sheets
- - Prices are converted from local currency to historical USD value
-
 ////
 
 testing:
@@ -51,7 +49,7 @@ testing:
 - test: fandandgw should keep track of its last tick time, if current tick time is the same time, skip
 - test that targeted messages are sent only to the correct server/client, and have exact steps to reproduce the test (inc fandgw to trader surplus and shortage)
 
-still need to unit test the following data structures:
+still need to finish unit tests for the following data structures:
 - hash table
 - binary search tree, rb tree, b-tree
 - counting sort
@@ -77,7 +75,6 @@ Also make sure names match up UML <-> sql and vice versa
 short description:
 
 A C# .NET, SQL Server and Python project written to improve my knowledge of various aspects of computer science and software engineering. The back end code is written in C#, whilst most of the front end - utilising the IronPython spreadsheet Resolver One - is written in IronPython. The system features a large number of heterogeneous, multithreaded C# processes, most interacting via TCP sockets, one acting as a SOAP web service. It also makes extensive use of SQL (most of the underlying state of the system is stored in a MS SQL Server instance) and algorithmics (e.g. implementations of B-Trees, hash tables, numerous sorting algorithms, and Geometric Brownian Motion). It also makes use of Microsoft Solver Foundation (a mathematical modelling framework). The project is described by a series of UML diagrams, and partly covered by unit tests. The source code is available on GitHub.
-
 
 
 long description:

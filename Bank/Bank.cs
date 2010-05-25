@@ -295,25 +295,22 @@ namespace TaiPan.Bank
 
         private void ShipArrived(int companyID, MovingMsg msg)
         {
-            dbConn.ExecuteNonQuery(String.Format(@"update CommodityTransport SET ArrivalTime = {0} WHERE CommodityTransactionID = {1}", msg.time, msg.transactionID));
-
-            //int departPort = dbConn.ExecuteScalar(select PortID from CommodityTransaction
+            //xxx
             //int distance = portDistances[]
-            //int fuelCost = fuel price * distance
             //int shippingCompanyCharge = fuelCost * shippingCompanyProfitMargin
+            //int fuelCost = fuel price * distance
 
-            //first, pay from trader to shipping company
-            //update Company set balance = balance -
-            //update Company set balance = balance +
-            
-            //next, shipping company debiting for fuel cost
-            //update Company set balance = balance -
+            //xxx
+            List<SqlParameter> pars = new List<SqlParameter>();
+            pars.Add(new SqlParameter("@CommodityTransactionID", msg.transactionID));
+            pars.Add(new SqlParameter("@ArrivalTime", msg.time));
+            pars.Add(new SqlParameter("@ShippingCompanyCharge", shippingCompanyCharge));
+            pars.Add(new SqlParameter("@FuelCost", fuelCost));
+            dbConn.StoredProc("procShipArrived", pars);
 
-            //lastly, credit money to trader for sale of item
-            //select LocalPrice * fxrate * quantity
-            //update Company set balance = balance +
-            
-            //"update CommodityTransaction set saletime = {0}, saleprice={1}, SalePortID={2}", DateTime.Now, price, msg.portID
+            //xxx
+            pars = new List<SqlParameter>();
+            dbConn.StoredProc("procCommoditySale", pars);
         }
     }
 }
