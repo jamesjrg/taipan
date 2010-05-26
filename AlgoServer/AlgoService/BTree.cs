@@ -119,6 +119,13 @@ namespace AlgoService
             isDisposed = true;
         }
 
+        /// <summary>
+        /// For testing
+        /// </summary>
+        public string Dump()
+        {
+        }
+
         public void Insert(int k)
         {
             //empty tree?
@@ -150,7 +157,7 @@ namespace AlgoService
                     }
                     
                     //splitting first child of new root, i.e. the old root
-                    SplitChildNode(ref RootNode, RootIndex, ref oldRoot, oldRootIndex);
+                    SplitChildNode(ref RootNode, RootIndex, ref oldRoot, oldRootIndex, 0);
                 }
             }
             InsertNonFull(ref RootNode, RootIndex, k);
@@ -188,7 +195,7 @@ namespace AlgoService
                         Node child = DiskReadNode(childIndex);
                         if (child.count == MAX_KEYS)
                         {
-                            SplitChildNode(ref node, nodeIndex, ref child, childIndex);
+                            SplitChildNode(ref node, nodeIndex, ref child, childIndex, i);
                             if (k > ptr[i])
                                 i++;
                         }
@@ -199,35 +206,53 @@ namespace AlgoService
             } 
         }
 
-        private void SplitChildNode(ref Node parent, int parentIndex, ref Node child, int childIndex)
+        private void SplitChildNode(ref Node parent, int parentIndex, ref Node child, int childIndex, int whichChild)
         {
             Node newRight = new Node();
             newRight.leaf = child.leaf;
             newRight.count = MIN_KEYS;
 
-            for (int j = 0; j != MIN_KEYS; ++j)
-                newRight.keys[j] = child.keys[j];
+            fixed (int* childKeys = child.keys)
+            {
+                for (int j = 0; j != MIN_KEYS; ++j)
+                    newRight.keys[j] = childKeys[j];
+            }
             if (!child.leaf)
             {
-                for (int j = 0; j != MIN_DEGREE; ++j)
-                    newRight.children[j] = child.children[j + MIN_DEGREE];
+                fixed (int* childChildren = child.children)
+                {
+                    for (int j = 0; j != MIN_DEGREE; ++j)
+                        newRight.children[j] = childChildren[j + MIN_DEGREE];
+                }
             }
             child.count = MIN_KEYS;
 
-            //XXX push up into parent node
-            //for (j = parent...
-            //  parent.children...
-            //parent.children...
-            //for (j = parent...
-            //  parent.keys...
-            //parent.keys...
-            //x.count =
+            NumNodes++;
+            //NumNodes now has the index of newRight
+
+            //push up into parent node
+            fixed (int* parentChildren = parent.children)
+            {
+                for (int j = parent.count; j != whichChild; --j)
+                    parentChildren[j + 1] = parentChildren[j];
+                //NumNodes is newRight pseudo-pointer
+                parentChildren[whichChild + 1] = NumNodes;
+            }
+
+            fixed (int* parentKeys = parent.keys)
+            {
+                for (int j = parent.count - 1; j != whichChild - 1; --j)
+                    parentKeys[j + 1] = parentKeys[j];
+                fixed (int* childKeys = child.keys)
+                    parentKeys[whichChild] = childKeys[MIN_DEGREE];
+            }
+
+            parent.count += 1;
 
             //write left child
             DiskWriteNode(ref child, childIndex);
 
             //write new right node
-            NumNodes++;
             DiskWriteNode(ref newRight, NumNodes);
 
             //write parent node

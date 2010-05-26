@@ -21,6 +21,7 @@ namespace TaiPan.Common
         protected readonly int MAIN_LOOP_TICK;
 
         protected readonly decimal FUEL_COST;
+        protected readonly decimal SHIPPING_COMPANY_RATE;
         protected readonly int FREIGHTER_SPEED;
         
         public EconomicPlayer()
@@ -44,6 +45,7 @@ namespace TaiPan.Common
             TickVolatility = Convert.ToDecimal(AppSettings["TickVolatility"]);
             MoveContractAdvertiseTime = Convert.ToInt32(AppSettings["MoveContractAdvertiseTime"]);
             FUEL_COST = Convert.ToDecimal(AppSettings["FuelCost"]);
+            SHIPPING_COMPANY_RATE = Convert.ToDecimal(AppSettings["ShippingCompanyRate"]);
             FREIGHTER_SPEED = Convert.ToInt32(AppSettings["FreighterSpeed"]);
 
             ServersSection serversSection = config.GetSection("servers") as ServersSection;

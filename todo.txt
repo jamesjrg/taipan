@@ -11,12 +11,11 @@
 
 ////
 git change log:
+- some more sql logic, also a bit more btree
 
 nowish:
 needs writing now:
-- finish procShipArrived and procCommodSale in create_schema
-- finish Bank shiparrived
-- BTree still needs fair amount of work
+- BTree: dump method, unit tests, and delete method
 - finish trader MoveAccepted, buyconfirmed, SurplusForecast, shortageforecast, DecideSales
 - trader decidesales: needs to take into account distance * fuel price to each port, also commod price at each port, also exchange rate at each port
 - trader decidesales needs to account for possibility that best sale location may be the place where goods are currently warehoused. if so, don't need to contract a shipping company, just sell directly - and bank needs to be able to cope with this
@@ -25,11 +24,12 @@ needs writing now:
 - search for xxx using grep
 
 needs testing now:
+- sql procShipArrived, procCommoditySale
 - unit testing of data structures
 - unit testing of other stuff
 - test GetPortDistancesLookup
 - test shippingcompany DecideArrivals
-- test Bank EnactBuy, ShipDeparted, FutureSettlements, EnactFuture
+- test Bank EnactBuy, ShipDeparted, FutureSettlements, EnactFuture, shiparrived
 - tweak fuelcost, FreighterSpeed
 
 ////
@@ -41,6 +41,12 @@ Process logic and networking:
 ////
 
 testing:
+
+BTree test strategy:
+- create a dump method that gives current state of btree as a string, then have assertData method that includes before and after string representations of btree for diff operations with diff values, as well as obviously making sure search method returns correct values, and if a key is deleted then searching for it returns null.
+
+
+
 - write tests for multihead queue and syncqueue
 - unittest only bank can write to db
 - make processes do right thing when other processes go down, and have automated tests for all possibilities if differing orders of collapse.

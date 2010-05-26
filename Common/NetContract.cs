@@ -178,14 +178,16 @@ namespace TaiPan.Common.NetContract
     public class MovingMsg
     {
         public MovingMsg() { }
-        public MovingMsg(int portID, int transactionID, DateTime time)
+        public MovingMsg(int departPortID, int destPortID, int transactionID, DateTime time)
         {
-            this.portID = portID;
+            this.departPortID = departPortID;
+            this.destPortID = destPortID;
             this.transactionID = transactionID;
             this.time = time;
         }
 
-        public int portID;
+        public int departPortID;
+        public int destPortID;
         public int transactionID;
         public DateTime time;
     }

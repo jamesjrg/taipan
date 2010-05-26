@@ -50,6 +50,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BinarySearchTreeTest.cs" />
+    <Compile Include="BTreeTest.cs" />
     <Compile Include="HashTableTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RBTreeTest.cs" />

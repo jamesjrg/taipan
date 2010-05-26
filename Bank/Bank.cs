@@ -159,7 +159,7 @@ namespace TaiPan.Bank
         private void FutureSettlements()
         {
             //find settled futures, and add to list which will be messaged to traders
-            SqlDataReader reader = dbConn.ExecuteQuery(@"SELECT ID, TraderID, CommodityID, PortID, LocalPrice,                Quantity FROM FuturesContract WHERE ActualSetTime is null AND SettlementTime < Now()");
+            SqlDataReader reader = dbConn.ExecuteQuery(@"SELECT ID, TraderID, CommodityID, PortID, LocalPrice,                Quantity FROM FuturesContract WHERE ActualSetTime is null AND SettlementTime < GETDATE()");
             while (reader.Read())
             {
                 int futureID = reader.GetInt32(0);
@@ -182,8 +182,8 @@ namespace TaiPan.Bank
                     futureIDs.Append(future.msg.transactionID + ",");
                 //remove trailing comma
                 futureIDs.Remove(futureIDs.Length - 1, 1);
-                
-                dbConn.ExecuteNonQuery(String.Format(@"UPDATE FuturesContract set ActualSetTime = Now() where ID in ({0})", futureIDs.ToString()));            
+
+                dbConn.ExecuteNonQuery(String.Format(@"UPDATE FuturesContract set ActualSetTime = GETDATE() where ID in ({0})", futureIDs.ToString()));            
 
                 //debit trader's account
                 foreach (var future in settledFutures)
@@ -295,14 +295,15 @@ namespace TaiPan.Bank
 
         private void ShipArrived(int companyID, MovingMsg msg)
         {
-            //xxx
-            //int distance = portDistances[]
-            //int shippingCompanyCharge = fuelCost * shippingCompanyProfitMargin
-            //int fuelCost = fuel price * distance
+            //calculate fuel charge paid by shipping company and rate charged by shipping company to trader
+            int distance = portDistances[msg.departPortID + "," + msg.destPortID];
+            decimal fuelCost = FUEL_COST * distance;
+            decimal shippingCompanyCharge = fuelCost * SHIPPING_COMPANY_RATE;
 
             //xxx
             List<SqlParameter> pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@CommodityTransactionID", msg.transactionID));
+            pars.Add(new SqlParameter("@ShippingCompanyID", companyID));
             pars.Add(new SqlParameter("@ArrivalTime", msg.time));
             pars.Add(new SqlParameter("@ShippingCompanyCharge", shippingCompanyCharge));
             pars.Add(new SqlParameter("@FuelCost", fuelCost));
@@ -310,6 +311,8 @@ namespace TaiPan.Bank
 
             //xxx
             pars = new List<SqlParameter>();
+            pars.Add(new SqlParameter("@CommodityTransactionID", msg.transactionID));
+            pars.Add(new SqlParameter("@SalePortID", msg.destPortID));
             dbConn.StoredProc("procCommoditySale", pars);
         }
     }

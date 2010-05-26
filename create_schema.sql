@@ -386,7 +386,6 @@ BEGIN
 			join Country on Country.CurrencyID = Currency.ID
 			join Company on Company.CountryID = Country.ID
 			where Company.ID = @CompanyID)
-	)
 	WHERE ID = @CompanyID
 END
 GO
@@ -403,7 +402,6 @@ BEGIN
 			join Country on Country.CurrencyID = Currency.ID
 			join Company on Company.CountryID = Country.ID
 			where Company.ID = @CompanyID)
-	)
 	WHERE ID = @CompanyID
 END
 GO
@@ -414,7 +412,8 @@ CREATE PROCEDURE procAddBalance
    @Amount Money
 AS 
 BEGIN
-    procAddBalanceUSD(@CompanyID, (SELECT dbo.funcGetUSDValue(@Amount, @PortID)))
+    set @Amount  = (dbo.funcGetUSDValue(@Amount, @PortID))
+    EXEC procAddBalanceUSD @CompanyID, @Amount
 END
 GO
 
@@ -424,37 +423,47 @@ CREATE PROCEDURE procSubtractBalance
    @Amount Money
 AS 
 BEGIN
-	procSubtractBalanceUSD(@CompanyID, (SELECT dbo.funcGetUSDValue(@Amount, @PortID)))
+    set @Amount  = (dbo.funcGetUSDValue(@Amount, @PortID))
+	EXEC procSubtractBalanceUSD @CompanyID, @Amount
 END
 GO
 
 -- financial transactions
 CREATE PROCEDURE procShipArrived 
-   @CommodityTransactionID int, 
+   @CommodityTransactionID int,
+   @ShippingCompanyID int,
    @ArrivalTime datetime, 
-   @ShippingCompanyCharge Money
+   @ShippingCompanyCharge Money,
    @FuelCost Money
 AS
-update CommodityTransport SET ArrivalTime = @ArrivalTime WHERE CommodityTransactionID = @CommodityTransactionID;
---money taken from trader and given to shipping company
-xxx traderID and shippingCompanyID
-procSubtractBalanceUSD(traderID, @ShippingCompanyCharge);
-procAddBalanceUSD(shippingcompanyID, @ShippingCompanyCharge);
---money taken from shipping company for fuel
-xxx shippingcompid
-procSubtractBalanceUSD(shippingcompanyID, @FuelCost);
 BEGIN
+declare @TraderID int
+set @TraderID  = (select TraderID from CommodityTransaction where ID = @CommodityTransactionID)
+
+update CommodityTransport SET ArrivalTime = @ArrivalTime WHERE CommodityTransactionID = @CommodityTransactionID;
+
+--money taken from trader and given to shipping company
+EXEC procSubtractBalanceUSD @TraderID, @ShippingCompanyCharge;
+EXEC procAddBalanceUSD @ShippingCompanyID, @ShippingCompanyCharge;
+
+--money taken from shipping company for fuel
+EXEC procSubtractBalanceUSD @ShippingCompanyID, @FuelCost;
 END
 GO
 
 CREATE PROCEDURE procCommoditySale
-xxx args
+@CommodityTransactionID int,
+@SalePortID int
 AS
-update CommodityTransaction set saletime = Now(), saleprice=xxx, SalePortID=xxx
---money to trader
-xxx
-procAddBalance(traderID, portid, totallocalprice)
 BEGIN
+declare @TotalLocalPrice int
+set @TotalLocalPrice = 
+(SELECT pcp.LocalPrice * transact.Quantity from CommodityTransaction transact join PortCommodityPrice pcp on transact.CommodityID = pcp.CommodityID where transact.ID = @CommodityTransactionID and pcp.PortID = @SalePortID)
+
+--update commoditytransaction table
+update CommodityTransaction set SaleTime = GETDATE(), SalePrice=@TotalLocalPrice, SalePortID=@SalePortID WHERE ID = @CommodityTransactionID;
+--money to trader
+EXEC procAddBalance traderID, @SalePortID, @TotalLocalPrice;
 END
 GO
 

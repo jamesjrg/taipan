@@ -28,13 +28,15 @@ namespace TaiPan.ShippingCompany
 
         private class ShipInProgress
         {
-            public ShipInProgress(int destID, int transactionID, DateTime plannedArrivalTime)
+            public ShipInProgress(int departureID, int destID, int transactionID, DateTime plannedArrivalTime)
             {
+                this.departureID = departureID;
                 this.destID = destID;
                 this.transactionID = transactionID;
                 this.plannedArrivalTime = plannedArrivalTime;
             }
 
+            public int departureID;
             public int destID;
             public int transactionID;
             public DateTime plannedArrivalTime;
@@ -117,7 +119,7 @@ namespace TaiPan.ShippingCompany
                 if (ship.plannedArrivalTime <= DateTime.Now)
                 {
                     //sending departure portID, though never actually needed
-                    arrivals.Add(new MovingMsg(ship.destID, ship.transactionID, DateTime.Now));
+                    arrivals.Add(new MovingMsg(ship.departureID, ship.destID, ship.transactionID, DateTime.Now));
                     shipsInProgress.Remove(ship);
                 }
             }
@@ -134,8 +136,8 @@ namespace TaiPan.ShippingCompany
             int time = distance / FREIGHTER_SPEED;
             DateTime plannedArrivalTime = DateTime.Now.AddSeconds(5);
 
-            departures.Add(new MovingMsg(msg.departureID, msg.transactionID, DateTime.Now));
-            shipsInProgress.Add(new ShipInProgress(msg.destID, msg.transactionID, plannedArrivalTime));
+            departures.Add(new MovingMsg(msg.departureID, msg.destID, msg.transactionID, DateTime.Now));
+            shipsInProgress.Add(new ShipInProgress(msg.departureID, msg.destID, msg.transactionID, plannedArrivalTime));
         }
     }
 }
