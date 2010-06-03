@@ -11,7 +11,6 @@
 
 ////
 git change log:
-- some more sql logic, also a bit more btree
 
 nowish:
 needs writing now:
@@ -80,14 +79,6 @@ Also make sure names match up UML <-> sql and vice versa
 
 short description:
 
-A C# .NET, SQL Server and Python project written to improve my knowledge of various aspects of computer science and software engineering. The back end code is written in C#, whilst most of the front end - utilising the IronPython spreadsheet Resolver One - is written in IronPython. The system features a large number of heterogeneous, multithreaded C# processes, most interacting via TCP sockets, one acting as a SOAP web service. It also makes extensive use of SQL (most of the underlying state of the system is stored in a MS SQL Server instance) and algorithmics (e.g. implementations of B-Trees, hash tables, numerous sorting algorithms, and Geometric Brownian Motion). It also makes use of Microsoft Solver Foundation (a mathematical modelling framework). The project is described by a series of UML diagrams, and partly covered by unit tests. The source code is available on GitHub.
+A C# .NET, SQL Server and Python project written to improve my knowledge of various aspects of computer science and software engineering. The back end code is written in C#, whilst most of the front end - utilising the IronPython spreadsheet Resolver One - is written in IronPython. The system features a large number of heterogeneous, multithreaded C# processes, most interacting via TCP sockets, one acting as a SOAP web service. It makes extensive use of SQL (most of the underlying state of the system is stored in a MS SQL Server instance) and algorithmics (e.g. implementations of B-Trees, hash tables, numerous sorting algorithms, and Geometric Brownian Motion). It also makes use of Microsoft Solver Foundation (a mathematical modelling framework). The project is described by a series of UML diagrams, and partly covered by unit tests.
 
-
-long description:
-
-•	A C# .NET, SQL Server and Python project written to improve my knowledge of various aspects of computer science and software engineering. A large number of heterogeneous, multithreaded C# processes interact with each other via TCP sockets. Much of the underlying state of the system is stored in a MS SQL Server instance.
-
-The system includes implementations of various data structures (e.g. B-Trees, hash tables), numerous sorting algorithms, and algorithms for simulating stochastic processes. A user interface to the system is provided in the form of an IronPython-based spreadsheet that a) makes numerous queries on both the database and on a C# SOAP web service b) loads a C# WPF assembly to produce interactive graphs of the summary data and c) utilises a mathematical optimization framework to solve a linear programming problem, using data from the rest of the system.
-
-The project is described by a series of UML diagrams, and partly covered by unit tests. The source code is available on GitHub. Around 300 hours work so far.
 
