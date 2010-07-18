@@ -4,7 +4,7 @@ def main():
     total = 0.0
     with open("time.txt") as f:
         for line in f:
-            print line.strip()
+            print line
             try:
                 time = float(line.split(":")[1].strip())
                 print "%.2f hours\n" % time

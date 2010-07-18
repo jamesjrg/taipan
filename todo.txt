@@ -2,9 +2,9 @@
 - est 3 days FT
 
 * finish all main points of spreadsheet summary sheets
-- est 2 days week full time
+- est 2 days full time
 
-* finish all data structures + write unit tests for them
+* finish all btree methods, and finish unit tests for all data structures
 - est 3 days full time
 
 - ideas from "ideas removed" file - infinite
@@ -18,8 +18,8 @@ needs writing now:
 - finish trader MoveAccepted, buyconfirmed, SurplusForecast, shortageforecast, DecideSales
 - trader decidesales: needs to take into account distance * fuel price to each port, also commod price at each port, also exchange rate at each port
 - trader decidesales needs to account for possibility that best sale location may be the place where goods are currently warehoused. if so, don't need to contract a shipping company, just sell directly - and bank needs to be able to cope with this
-- finish shippingcompany moveconfirmed
 - finish all the spreadsheet sheets filled from database queries (ideally inter process logic needs a bit more work first). Prices are converted from local currency to historical USD value
+- tweak freighter speed in config
 - search for xxx using grep
 
 needs testing now:

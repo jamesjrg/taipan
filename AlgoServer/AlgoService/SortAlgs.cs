@@ -243,12 +243,6 @@ namespace AlgoService
         public static void CountingSort(int[] data, int maxPossible)
         {
             int[] tmp = new int[data.Length];
-            CountingSort(data, tmp, maxPossible);
-            data = tmp;
-        }
-
-        public static void CountingSort(int[] data, int[] tmp, int maxPossible)
-        {
             int[] counts = new int[maxPossible];
 
             //actually unnecessary in C# because everything gets 0 initialized anyway
@@ -268,6 +262,8 @@ namespace AlgoService
                 tmp[counts[data[i]]] = data[i];
                 counts[data[i]] -= 1;
             }
+
+            data = tmp;
         }
     }
 }

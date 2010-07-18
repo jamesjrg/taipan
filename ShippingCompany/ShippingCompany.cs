@@ -134,7 +134,7 @@ namespace TaiPan.ShippingCompany
         {
             int distance = portDistances[msg.departureID + "," + msg.destID];
             int time = distance / FREIGHTER_SPEED;
-            DateTime plannedArrivalTime = DateTime.Now.AddSeconds(5);
+            DateTime plannedArrivalTime = DateTime.Now.AddSeconds(time);
 
             departures.Add(new MovingMsg(msg.departureID, msg.destID, msg.transactionID, DateTime.Now));
             shipsInProgress.Add(new ShipInProgress(msg.departureID, msg.destID, msg.transactionID, plannedArrivalTime));
