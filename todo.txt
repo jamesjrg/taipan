@@ -1,11 +1,14 @@
-* finish all main points of network code and process logic, and write some tests
+* finish network code and process logic, and write some integration tests
 - est 3 days FT
 
-* finish all main points of spreadsheet summary sheets
-- est 2 days full time
+* finish spreadsheet summary sheets
+- est 1.5 days FT
 
 * finish all btree methods, and finish unit tests for all data structures
-- est 3 days full time
+- est 3 days FT
+
+* finish SOAP methods for data structure manipulation
+- est 1.5 days FT
 
 - ideas from "ideas removed" file - infinite
 
@@ -19,17 +22,15 @@ needs writing now:
 - trader decidesales: needs to take into account distance * fuel price to each port, also commod price at each port, also exchange rate at each port
 - trader decidesales needs to account for possibility that best sale location may be the place where goods are currently warehoused. if so, don't need to contract a shipping company, just sell directly - and bank needs to be able to cope with this
 - finish all the spreadsheet sheets filled from database queries (ideally inter process logic needs a bit more work first). Prices are converted from local currency to historical USD value
-- tweak freighter speed in config
+- tweak freighter speed in config, also fuelcost
+- mention integration tests in doc
 - search for xxx using grep
 
-needs testing now:
+needs ad-hoc testing now:
 - sql procShipArrived, procCommoditySale
-- unit testing of data structures
-- unit testing of other stuff
 - test GetPortDistancesLookup
 - test shippingcompany DecideArrivals
 - test Bank EnactBuy, ShipDeparted, FutureSettlements, EnactFuture, shiparrived
-- tweak fuelcost, FreighterSpeed
 
 ////
 
@@ -39,25 +40,22 @@ Process logic and networking:
 
 ////
 
-testing:
+automated testing still todo:
 
 BTree test strategy:
 - create a dump method that gives current state of btree as a string, then have assertData method that includes before and after string representations of btree for diff operations with diff values, as well as obviously making sure search method returns correct values, and if a key is deleted then searching for it returns null.
 
-
-
-- write tests for multihead queue and syncqueue
+Other unit tests:
+- finish unit testing all data structures -still not properly tested are hash table, binary search tree, rb tree, b-tree
+- counting sort not yet unit tested (Can't remember why not)
+- unittest multihead queue and sync queue
 - unittest only bank can write to db
+- test: fandandgw should keep track of its last tick time, if current tick time is the same time, skip
+
+Integration tests:
 - make processes do right thing when other processes go down, and have automated tests for all possibilities if differing orders of collapse.
 - some sort of test that does create db, then start all processes, then run 10 seconds, then bunch of sql queries, then check data is sane
-- unittest multiheadqueue
-- test: fandandgw should keep track of its last tick time, if current tick time is the same time, skip
 - test that targeted messages are sent only to the correct server/client, and have exact steps to reproduce the test (inc fandgw to trader surplus and shortage)
-
-still need to finish unit tests for the following data structures:
-- hash table
-- binary search tree, rb tree, b-tree
-- counting sort
 
 ////
 
@@ -68,6 +66,8 @@ algorithms/data structures stuff:
 ///
 
 doc:
+
+notes:
 
 The name is a nod to book Tai Pan, that is the general point is that there are several large trading houses which ferry various goods very long distances, though actually here the trading houses have been split into two distinct entities, the "Shipping companies" who do the actual transporting of goods, and the "traders" who predict surpluses and shortages in the market and buy and sell goods accordingly.
 
