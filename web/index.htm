@@ -7,7 +7,24 @@
 
 <style type="text/css">
 body {font: 100% Sans-serif; background-color: #FFFFFF;}
-div.wrapper {font: 100% Sans-serif; background-color: #D2DEFF; width: 94%; padding:20px; margin: 40px auto 40px auto;}
+
+div.wrapper {
+font: 100% Sans-serif;
+background-color: #D2DEFF;
+width: 80%;
+padding:20px;
+margin: 40px auto 40px auto;
+
+-webkit-border-radius: 20px;
+-moz-border-radius: 20px;
+border-radius: 20px;
+}
+
+img {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
 </style>
 
 </head>
@@ -19,7 +36,7 @@ div.wrapper {font: 100% Sans-serif; background-color: #D2DEFF; width: 94%; paddi
 
 <h3>Introduction</h3>
 
-<p>"Tai-Pan" is a C# .NET, SQL Server and Python project written to improve my knowledge of various aspects of computer science and software engineering. The back end code is written in C#, whilst most of the front end - utilising the IronPython spreadsheet Resolver One - is written in IronPython. The system features a large number of heterogeneous, multithreaded C# processes, most interacting via TCP sockets, one acting as a SOAP web service. It makes extensive use of SQL (most of the underlying state of the system is stored in a MS SQL Server instance) and algorithmics (e.g. implementations of B-Trees, hash tables, numerous sorting algorithms, and Geometric Brownian Motion). It also makes use of Microsoft Solver Foundation (a mathematical modelling framework). The project is described by a series of UML diagrams, and partly covered by unit tests.</p>
+<p>"Tai-Pan" is a C# .NET, SQL Server and Python project written to improve my knowledge of various aspects of computer science and software engineering. The system is mostly written in C#, except for the front end, which is written in IronPython for the Resolver One spreadsheet program. The system features a large number of heterogeneous, multithreaded processes, most interacting via TCP sockets, one acting as a SOAP web service. It makes extensive use of SQL (most of the underlying state of the system is stored in a MS SQL Server instance). As an exercise I have implemented various data structures and algorithms, though most are not required by the underlying system - e.g. B-Trees, hash tables, numerous sorting algorithms, and Geometric Brownian Motion. The front end also makes use of Microsoft Solver Foundation (a mathematical modelling framework).</p>
 
 <p>This web page provides an outline of the project, divided into the following sections:</p>
 <ul>
@@ -31,8 +48,9 @@ div.wrapper {font: 100% Sans-serif; background-color: #D2DEFF; width: 94%; paddi
 </ul>
 </p>
 
-<p>&nbsp;</p>
+</div>
 
+<div class="wrapper">
 <h3 id="heng">Software Engineering</h3>
 
 <p><img src="images/Deployment.png"/></p>
@@ -43,12 +61,12 @@ div.wrapper {font: 100% Sans-serif; background-color: #D2DEFF; width: 94%; paddi
 
 <p>The system makes use of various design patterns both within each process and in the system as a whole. Patterns seen in system as a whole include the n-tier division of data, logic and view (the SQL Server instance, C# processes, and IronPython spreadsheet), and the use of the Bank as a mediator to the database (no other process has write access, leaving the Bank process to manage the stored state of the system).</p>
 
-<p>I used various standard software engineering techniques in the design and construction of the system. Near the beginning of the design process I created several UML diagrams describing various aspects of the system. I have written unit tests against sections of the code to make the system more reliable. As with all projects I have worked on since 2004 (commercial and non-commercial), the source is under version control (in this case git). See the <a href="#hlinks">links section</a> for a link to browse the repository.</p>
+<p>Near the beginning of the design process I created several UML diagrams describing various aspects of the system (as can be seen on this webpage). I have written unit tests against sections of the code to make the system more reliable. As with all projects I have worked on since 2004 (commercial and non-commercial), the source is under version control (in this case git). See the <a href="#hlinks">links section</a> for a link to browse the repository.</p>
 
-<p>There are some things I could have done but didn't due to lack of time. I could have put more focus on unit testing - either by working via test driven development, or at least by having a far high coverage of unit tests. However, most of the system logic is concurrent, spread across multiple processes, and often also stochastic, and hence not suited to unit testing at all. Meanwhile the user interface is sufficiently simple that unit testing isn't really necessary. The multi-process, concurrent aspects of the system which cannot be unit tested would ideally instead be stress tested with a series of automated scripts, but I have not currently built such a test system.</p>
+<p>There are some things I could have done but didn't due to lack of time. I could have put more focus on unit testing - either by working via test driven development, or at least by having a far high coverage of unit tests. However, most of the system logic is concurrent, spread across multiple processes, and often also stochastic, and hence not suited to unit testing at all. Ideally therefore there should be some sort of integration testing system in place, but I did not have time to implement this.</p>
+</div>
 
-<p>&nbsp;</p>
-
+<div class="wrapper">
 <h3 id="hsql">Relational databases</h3>
 
 <p><img src="images/DB Schema.png"/></p>
@@ -69,9 +87,9 @@ div.wrapper {font: 100% Sans-serif; background-color: #D2DEFF; width: 94%; paddi
 
 <p>I have given some slight thought to indexes and efficiency, but I have not yet put any effort into index tuning, execution plan analysis analysis, etc.</p>
 </p>
+</div>
 
-<p>&nbsp;</p>
-
+<div class="wrapper">
 <h3 id="hconcurrency">Concurrency and distributed systems</h3>
 
 <p>Most of the processes communicate via relatively low-level TCP sockets, though rather than writing my own application-level protocol I am for the most part simply using C#'s XML serialization and deserialization facilities to turn data into strings suitable for writing to a network stream. Some TCP connections consist of one server communicating with multiple peers, whilst others are simply peer-to-peer.</p>
@@ -89,9 +107,9 @@ div.wrapper {font: 100% Sans-serif; background-color: #D2DEFF; width: 94%; paddi
 <p>If a trader receives a message indicating a predicted future shortage of a commodity at a port, a similar flow of actions results as for a predicted surplus:</p>
 
 <p><img src="images/SequenceShortage.png"/></p>
+</div>
 
-<p>&nbsp;</p>
-
+<div class="wrapper">
 <h3 id="hmath">Mathematics and algorithmics</h3>
 
 <p>A user interface to the system is provided in the form of an IronPython-based spreadsheet using a spreadsheet program called "Resolver One", billed as a "programable spreadsheet" or as a "mash-up of a spreadsheet and an IDE". Rather than allowing macros to be run against the spreadsheet in a limited fashion (as with Excel), in Resolver One the entire sheet is an IronPython script that you are free to modify. It is extremely flexible - you can load external .NET or Python libraries and write code utilising them to manipulate the cells in the workbook, and you can also add clickable buttons and drop downs to cells for user interaction.</p>
@@ -125,15 +143,15 @@ div.wrapper {font: 100% Sans-serif; background-color: #D2DEFF; width: 94%; paddi
 </ul>
 
 <p><img src="images/sorting.png"/></p>
+</div>
 
-<p>&nbsp;</p>
-
+<div class="wrapper">
 <h3 id="hlinks">Links (including source code)</h3>
 
 <p>The repository for the project is at <a href="http://github.com/jamesjrg/taipan">http://github.com/jamesjrg/taipan</a>.</p>
 
 <p>A database of all the projects I have ever worked on is available at <a href="http://www.jameswritesstuff.co.uk/sde/">http://www.jameswritesstuff.co.uk/sde/</a>.</p>
-
 </div>
+
 </body>
 </html>

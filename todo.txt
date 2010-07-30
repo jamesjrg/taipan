@@ -23,7 +23,6 @@ needs writing now:
 - trader decidesales needs to account for possibility that best sale location may be the place where goods are currently warehoused. if so, don't need to contract a shipping company, just sell directly - and bank needs to be able to cope with this
 - finish all the spreadsheet sheets filled from database queries (ideally inter process logic needs a bit more work first). Prices are converted from local currency to historical USD value
 - tweak freighter speed in config, also fuelcost
-- mention integration tests in doc
 - search for xxx using grep
 
 needs ad-hoc testing now:
@@ -79,6 +78,4 @@ Also make sure names match up UML <-> sql and vice versa
 
 short description:
 
-A C# .NET, SQL Server and Python project written to improve my knowledge of various aspects of computer science and software engineering. The back end code is written in C#, whilst most of the front end - utilising the IronPython spreadsheet Resolver One - is written in IronPython. The system features a large number of heterogeneous, multithreaded C# processes, most interacting via TCP sockets, one acting as a SOAP web service. It makes extensive use of SQL (most of the underlying state of the system is stored in a MS SQL Server instance) and algorithmics (e.g. implementations of B-Trees, hash tables, numerous sorting algorithms, and Geometric Brownian Motion). It also makes use of Microsoft Solver Foundation (a mathematical modelling framework). The project is described by a series of UML diagrams, and partly covered by unit tests.
-
-
+see index.htm
