@@ -154,13 +154,18 @@ namespace TaiPan.Trader
 
         private void DecideSales()
         {
+            //XXX needs to take into account distance * fuel price to each port, also commod price at each port, also exchange rate at each port
+
+            //XXX needs to account for possibility that best sale location may be the place where goods are currently warehoused. if so, don't need to contract a shipping company, just sell directly - and bank needs to be able to cope with this
+
             //warehousedGoods
             //moveContracts.Add(new MoveContractMsg(msg.portID, destID, msg.transactionID));
         }
 
+        //just add to warehousedGoods and leave for DecideSales to deal with
         private void BuyConfirmed(BankConfirmMsg msg)
         {
-            //warehousedGoods
+            warehousedGoods.Add(new WarehousedGood(msg.transactionID, msg.portID, msg.commodID, DateTime.Now));
         }
 
         //just add to warehousedGoods and leave for DecideSales to deal with
@@ -171,19 +176,25 @@ namespace TaiPan.Trader
 
         private void MoveAccepted(int companyID, MoveContractMsg msg)
         {
-            //XXX search unconfirmedContracts to check it hasn't already beeen accepted
-            moveConfirms.Add(new MoveConfirmInfo(msg, companyID));
-            //XXX remove from unconfirmedContracts
+            //if contract hasn't yet been taken, send confirmation and remove from list of untaken contracts
+            int unconfirmedIndex = unconfirmedContracts.FindIndex(
+                element => element.transactionID == msg.transactionID);
+
+            if (unconfirmedIndex != -1)
+            {
+                moveConfirms.Add(new MoveConfirmInfo(msg, companyID));
+                unconfirmedContracts.RemoveAt(unconfirmedIndex);
+            }
         }
 
         private void SurplusForecast(ForecastMsg msg)
         {
-            futureRequests.Add(new FutureMsg(msg.portID, msg.commodID, 1, msg.time));
+            futureRequests.Add(new FutureMsg(msg.portID, msg.commodID, msg.quantity, msg.time));
         }
 
         private void ShortageForecast(ForecastMsg msg)
         {
-            //buy
+            buyRequests.Add(new BuyMsg(msg.portID, msg.commodID, msg.quantity));
         }        
     }
 }

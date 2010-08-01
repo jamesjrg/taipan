@@ -26,7 +26,8 @@ medium things:
 - add graphing to spreadsheets calls on algoservice
 - actually use the algservice data structure methods somewhere
 - balance should actually be taken into account both for what transactions are allowed and what transactions actors take - currently it is totally ignored, and people are totally unaffected if they go into debt
-- script to stress test concurrent aspects
+- proper scripts for integration testing
+- stress testing, performance analysis, optimization
 - on one of the resolver sheets have some distance between points/distance travelled by freighters info, and maybe make it use sql spatial data functions to do calculation
 - add indexes, constraints, stored procedures, data types etc to db uml diagram
 - there should be multiple random walks for each sequence on the WPF graphs, not just one
