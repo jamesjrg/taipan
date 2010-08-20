@@ -19,9 +19,11 @@ nowish:
 needs writing now:
 - BTree: dump method, unit tests, and delete method
 - finish trader DecideSales
+- change Trader DecideSales to account for possibility that best sale location may be the place where goods are currently warehoused. if so, don't need to contract a shipping company, just sell directly - and bank needs to be able to cope with this
 - finish all the spreadsheet sheets filled from database queries (ideally finish DecideSales first). Prices are converted from local currency to historical USD value
 - tweak freighter speed in config, also fuelcost
 - search for xxx using igrep
+- change uml diagram to show trader needs read access to db
 
 needs ad-hoc testing now:
 - sql procShipArrived, procCommoditySale

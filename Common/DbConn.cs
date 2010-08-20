@@ -61,7 +61,7 @@ namespace TaiPan.Common
             if (readOnly)
                 connName = "taipan-r";
 
-            Console.WriteLine("Reading config file");
+            Console.WriteLine("Reading config file for database connection");
             ExeConfigurationFileMap fileMap = new ExeConfigurationFileMap();
             fileMap.ExeConfigFilename = Util.configFile;
             System.Configuration.Configuration config = ConfigurationManager.OpenMappedExeConfiguration(fileMap, ConfigurationUserLevel.None);

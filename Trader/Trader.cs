@@ -4,6 +4,7 @@ using System.Threading;
 
 using TaiPan.Common;
 using TaiPan.Common.NetContract;
+using System.Data.SqlClient;
 
 namespace TaiPan.Trader
 {
@@ -14,10 +15,14 @@ namespace TaiPan.Trader
     {
         private int myID;
 
+        private DbConn dbConn;
+
         private Server shippingServer;
 
         private Client bankClient;
         private Client fateClient;
+
+        private Dictionary<string, int> portDistances;
 
         private List<FutureMsg> futureRequests = new List<FutureMsg>();
         private List<BuyMsg> buyRequests = new List<BuyMsg>();
@@ -71,10 +76,12 @@ namespace TaiPan.Trader
 
             var conf = ServerConfigs["Trader-Shipping"];
             conf.port = conf.port + (myID - 1);
+
+            DbConn dbConn = new DbConn();
+            portDistances = GetPortDistancesLookup(dbConn);
+
             shippingServer = new Server(conf, AppSettings, false);
-
             bankClient = new Client(ServerConfigs["Bank-Trader"], AppSettings, myID, false);
-
             fateClient = new Client(ServerConfigs["FateAndGuesswork-Trader"], AppSettings, myID, true);
         }
 
@@ -154,12 +161,47 @@ namespace TaiPan.Trader
 
         private void DecideSales()
         {
-            //XXX needs to take into account distance * fuel price to each port, also commod price at each port, also exchange rate at each port
+            foreach (var good in warehousedGoods)
+            {                
+                //XXX List(tuple(portid, currency exchange rate, good price)
+                List<xxx> salePorts = new List<xxx>();
 
-            //XXX needs to account for possibility that best sale location may be the place where goods are currently warehoused. if so, don't need to contract a shipping company, just sell directly - and bank needs to be able to cope with this
+                SqlDataReader reader = dbConn.ExecuteQuery(String.Format(
+                    @"select pcp.PortId, pcp.LocalPrice, Currency.USDValue from PortCommodityPrice pcp
+                    join Port p on pcp.PortID = p.ID
+                    join Country on p.CountryID = Country.ID
+                    join Currency on Country.CurrencyID = Currency.ID
+                    where CommodityId = {0}", good.commodityID));
 
-            //warehousedGoods
-            //moveContracts.Add(new MoveContractMsg(msg.portID, destID, msg.transactionID));
+                while (reader.Read())
+                {
+                    //XXX this copy and pasted, not correct vars
+                    int portID = reader.GetInt32(0);
+                    decimal localPrice = reader.GetDecimal (1);
+                    decimal USDValue = reader.GetDecimal(2);
+                    tmpList.Add(new xxx(portID, localPrice, USDValue));
+                }
+                reader.Close();
+            
+                int bestPort = 0;
+                decimal bestProfit = 0;
+
+                foreach (var port in salePorts)
+                {
+                    decimal profit = (quantity * port.localPrice * correct_exchangeRate)
+                        - (SHIPPING_COMPANY_RATE * portDistances[good.portID + "," + port.portID]);
+
+                    if (profit > bestProfit) 
+                    {
+                        bestPort = port;
+                        bestProfit = profit;
+                    }
+                }
+
+                moveContracts.Add(new MoveContractMsg(good.portID, bestPort, good.transactionID));               
+            }
+
+            warehousedGoods.Clear();
         }
 
         //just add to warehousedGoods and leave for DecideSales to deal with
@@ -176,14 +218,15 @@ namespace TaiPan.Trader
 
         private void MoveAccepted(int companyID, MoveContractMsg msg)
         {
-            //if contract hasn't yet been taken, send confirmation and remove from list of untaken contracts
+            /*if contract hasn't yet been taken, send confirmation and remove from list of untaken contracts and from warehoused goods */
+
             int unconfirmedIndex = unconfirmedContracts.FindIndex(
                 element => element.transactionID == msg.transactionID);
 
             if (unconfirmedIndex != -1)
             {
                 moveConfirms.Add(new MoveConfirmInfo(msg, companyID));
-                unconfirmedContracts.RemoveAt(unconfirmedIndex);
+                unconfirmedContracts.RemoveAt(unconfirmedIndex);                
             }
         }
 

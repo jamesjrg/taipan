@@ -9,6 +9,7 @@ things I could really do with reading about even if I don't write more code:
 
 small things:
 - refactor OutgoingDequeueAll to not require clients give an unused clientID, same with IncomingEnqueue
+- should probably stop all financial transactions taking place in US dollars as an intermediary currency, this is rather inaccurate. would require changing much of db schema, db functions, and trader trading logic
 - UML class diagram (hopefully this can just be exported from Visual Studio? Or otherwise imported from C# code to MagicDraw)
 - export class documentation from XML doc strings
 - on resolver summary sheets, add stats on total distances travelled by freighters
