@@ -175,16 +175,14 @@ namespace TaiPan.Bank
 
             if (settledFutures.Count > 0)
             {
-                //update CommodityTransaction
-                
                 StringBuilder futureIDs = new StringBuilder();
                 foreach (var future in settledFutures)
                     futureIDs.Append(future.msg.transactionID + ",");
                 //remove trailing comma
                 futureIDs.Remove(futureIDs.Length - 1, 1);
 
-                dbConn.ExecuteNonQuery(String.Format(@"UPDATE FuturesContract set ActualSetTime = GETDATE() where ID in ({0})", futureIDs.ToString()));            
-
+                dbConn.ExecuteNonQuery(String.Format(@"UPDATE FuturesContract set ActualSetTime = GETDATE() where ID in ({0})", futureIDs.ToString()));
+                
                 //debit trader's account
                 foreach (var future in settledFutures)
                 {   
@@ -300,7 +298,6 @@ namespace TaiPan.Bank
             decimal fuelCost = FUEL_COST * distance;
             decimal shippingCompanyCharge = fuelCost * SHIPPING_COMPANY_RATE;
 
-            //xxx
             List<SqlParameter> pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@CommodityTransactionID", msg.transactionID));
             pars.Add(new SqlParameter("@ShippingCompanyID", companyID));
@@ -309,7 +306,6 @@ namespace TaiPan.Bank
             pars.Add(new SqlParameter("@FuelCost", fuelCost));
             dbConn.StoredProc("procShipArrived", pars);
 
-            //xxx
             pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@CommodityTransactionID", msg.transactionID));
             pars.Add(new SqlParameter("@SalePortID", msg.destPortID));

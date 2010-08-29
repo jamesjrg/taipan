@@ -2,7 +2,7 @@
 - est 1.5 days FT
 
 * finish spreadsheet summary sheets
-- est 1 days FT
+- est 1.5 days FT
 
 * finish all btree methods, and finish unit tests for all data structures
 - est 2 days FT
@@ -23,7 +23,6 @@ needs writing now:
 - finish all the spreadsheet sheets filled from database queries (ideally finish DecideSales first). Prices are converted from local currency to historical USD value
 - tweak freighter speed in config, also fuelcost
 - search for xxx using igrep
-- change uml diagram to show trader needs read access to db
 
 needs ad-hoc testing now:
 - sql procShipArrived, procCommoditySale

@@ -199,13 +199,13 @@ CREATE TABLE dbo.CommodityTransaction
     TraderID int NOT NULL,
     CommodityID int NOT NULL,
     BuyPortID int NOT NULL,
-    FuturesContractID int default null,
+    FuturesContractID int DEFAULT NULL,
     Quantity int NOT NULL,
     PurchasePrice Money NOT NULL,    
     PurchaseTime datetime NOT NULL,
-    SaleTime datetime default null,
-    SalePrice Money default null,
-    SalePortID int default null,
+    SaleTime datetime DEFAULT NULL,
+    SalePrice Money DEFAULT NULL,
+    SalePortID int DEFAULT NULL,
 	)  ON [PRIMARY]
 GO
 
