@@ -82,10 +82,10 @@ CREATE TABLE dbo.Company
 	(
 	ID int IDENTITY (1, 1) PRIMARY KEY,
 	Name nvarchar(50) NOT NULL,
-	CompanyTypeID int references CompanyType(ID) not null,
+	CompanyTypeID INT REFERENCES CompanyType(ID) NOT NULL,
 	Balance Money NOT NULL DEFAULT 0,
-    CountryID int NOT NULL
-    constraint alternate_pk unique (ID,CompanyTypeID)
+    CountryID INT NOT NULL
+    CONSTRAINT alternate_pk UNIQUE (ID,CompanyTypeID)
 	)  ON [PRIMARY]
 GO
 
@@ -484,7 +484,7 @@ RETURNS Money
 AS
 BEGIN
 declare @USDValue Money, @ConvertedPrice Money
-set @USDValue = (select TOP 1 USDValue from HistoricalCurrencyPrice join Country on Country.CurrencyID = HistoricalCurrencyPrice.ID  join Port on Port.CountryID = Country.ID where port.id = @PortID and HistoricalCurrencyPrice.ValueDate < @TheDate order by ValueDate DESC)
+set @USDValue = (select TOP 1 USDValue from HistoricalCurrencyPrice join Country on Country.CurrencyID = HistoricalCurrencyPrice.ID join Port on Port.CountryID = Country.ID where port.id = @PortID and HistoricalCurrencyPrice.ValueDate < @TheDate order by ValueDate DESC)
 set @ConvertedPrice = (select @LocalPrice * @USDValue)
 return @ConvertedPrice
 END

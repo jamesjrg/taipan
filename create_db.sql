@@ -2,7 +2,7 @@ PRINT '';
 PRINT '*** Dropping Database';
 GO
 
-IF EXISTS (SELECT [name] FROM [master].[sys].[databases] WHERE [name] = N'TaiPan')
+IF DB_ID('TaiPan') NOT NULL
     DROP DATABASE [TaiPan];
 
 -- If the database has any other open connections close the network connection.
