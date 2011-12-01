@@ -281,34 +281,12 @@ INSERT INTO dbo.Trader
            (5)
 GO
 
--- PortCommodityPrice: fun with cursors
-DECLARE Port_Cursor CURSOR LOCAL FOR
-SELECT ID FROM Port ORDER BY ID ASC
-
-DECLARE Commodity_Cursor CURSOR LOCAL SCROLL FOR
-SELECT ID FROM Commodity ORDER BY ID ASC
-
-DECLARE @port_id int, @commodity_id int
-
-OPEN Port_Cursor;
-OPEN Commodity_Cursor;
-
-FETCH NEXT FROM Port_Cursor INTO @port_id;
-WHILE @@FETCH_STATUS = 0
-    BEGIN
-        FETCH FIRST FROM Commodity_Cursor INTO @commodity_id;
-            WHILE @@FETCH_STATUS = 0
-                BEGIN
-                    DECLARE @made_up_price int
-                    SET @made_up_price = 80 + (RAND() * 40)
-                    SET @made_up_price = (1 / dbo.funcGetUSDValue(1, @port_id)) * @made_up_price
-                    INSERT INTO PortCommodityPrice (PortID, CommodityID, LocalPrice) VALUES (@port_id, @commodity_id, @made_up_price)
-                    FETCH NEXT FROM Commodity_Cursor INTO @commodity_id;
-                END;
-        FETCH NEXT FROM Port_Cursor INTO @port_id;
-   END;
+-- PortCommodityPrice - random values, but keep approximately on same scale, after taking into account USD exchange rate
+INSERT INTO PortCommodityPrice(PortID, CommodityID, LocalPrice)
+	SELECT P.ID, C.ID, 
+	(1 / dbo.funcGetUSDValue(1, P.ID)) * (80 + (RAND() * 40))
+	FROM Port P CROSS JOIN Commodity C
 GO
     
 COMMIT
 GO
-
