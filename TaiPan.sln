@@ -1,6 +1,12 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Studio 2008
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{6AE50A42-CD0C-4A8F-A328-C05179D30446}"
+	ProjectSection(SolutionItems) = preProject
+		LocalTestRun.testrunconfig = LocalTestRun.testrunconfig
+		TaiPan.vsmdi = TaiPan.vsmdi
+	EndProjectSection
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bank", "Bank\Bank.csproj", "{0805EE52-A229-4287-96F3-B01004AE8BBD}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csproj", "{0B2A1CDE-4E0E-4EDB-BF48-D17BE26697E8}"
@@ -14,12 +20,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FateAndGuesswork", "FateAndGuesswork\FateAndGuesswork.csproj", "{9C719F76-0868-4C68-891B-23FCE35C7CB9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestTaiPan", "TestTaiPan\TestTaiPan.csproj", "{EBB493EF-5F29-4F3D-843C-2843B5D43D6A}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{6AE50A42-CD0C-4A8F-A328-C05179D30446}"
-	ProjectSection(SolutionItems) = preProject
-		LocalTestRun.testrunconfig = LocalTestRun.testrunconfig
-		TaiPan.vsmdi = TaiPan.vsmdi
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StatsLib", "StatsLib\StatsLib.csproj", "{433D5C3E-C961-4857-8919-F10ED51BD375}"
 EndProject

@@ -31,7 +31,7 @@ namespace TaiPan.FXServer
 
             Console.WriteLine("Reading currencies from db");
             List<CurrencyMsgItem> tmpList = new List<CurrencyMsgItem>();
-            SqlDataReader reader = dbConn.ExecuteQuery("SELECT ID, ShortName, USDValue FROM Currency ORDER BY ID ASC");
+            SqlDataReader reader = dbConn.ExecuteQuery(new SqlCommand("SELECT ID, ShortName, USDValue FROM Currency ORDER BY ID ASC"));
             while (reader.Read()) {
                 int id = reader.GetInt32(0);
                 string shortName = reader.GetString(1);

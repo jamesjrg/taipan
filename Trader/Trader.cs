@@ -162,7 +162,7 @@ namespace TaiPan.Trader
         private void DecideSales()
         {
             foreach (var good in warehousedGoods)
-            {                
+            {        
                 //XXX List(tuple(portid, currency exchange rate, good price)
                 List<xxx> salePorts = new List<xxx>();
 

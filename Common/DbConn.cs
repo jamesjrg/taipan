@@ -11,7 +11,7 @@ namespace TaiPan.Common
 {
     public class DbConn
     {
-        private SqlConnection conn;
+        SqlConnection _conn;
 
         public DbConn()
         {
@@ -28,30 +28,43 @@ namespace TaiPan.Common
             Close();
         }
 
-        public SqlDataReader ExecuteQuery(string query)
+        public SqlDataReader ExecuteQuery(SqlCommand cmd)
         {
-            SqlCommand cmd = new SqlCommand(query, conn);
+            cmd.Connection = _conn;
             return cmd.ExecuteReader();
         }
 
-        public void ExecuteNonQuery(string stmt)
+        public SqlDataReader ExecuteQuery(string query)
         {
-            SqlCommand cmd = new SqlCommand(stmt, conn);
+            return ExecuteQuery(new SqlCommand(query));
+        }
+
+        public void ExecuteNonQuery(SqlCommand cmd)
+        {
+            cmd.Connection = _conn;
             cmd.ExecuteNonQuery();
+        }
+
+        public void ExecuteNonQuery(string query)
+        {
+            ExecuteNonQuery(new SqlCommand(query));
+        }
+
+        public object ExecuteScalar(SqlCommand cmd)
+        {
+            cmd.Connection = _conn;
+            return cmd.ExecuteScalar();
         }
 
         public object ExecuteScalar(string query)
         {
-            SqlCommand cmd = new SqlCommand(query, conn);
-            return cmd.ExecuteScalar();
+            return ExecuteScalar(new SqlCommand(query));
         }
 
-        public void StoredProc(string stmt, List<SqlParameter> parameters)
+        public void StoredProc(SqlCommand cmd)
         {
-            SqlCommand cmd = new SqlCommand(stmt, conn);
+            cmd.Connection = _conn;
             cmd.CommandType = CommandType.StoredProcedure;
-            foreach (var par in parameters)
-                cmd.Parameters.Add(par);
             cmd.ExecuteNonQuery();
         }
 
@@ -70,15 +83,15 @@ namespace TaiPan.Common
                 throw new ApplicationException("Couldn't find connection string \"" + connName + "\" in config file " + Util.configFile);
 
             Console.WriteLine("Connecting to database with " + connName);
-            conn = new SqlConnection(settings.ConnectionString);
-            conn.Open();
+            _conn = new SqlConnection(settings.ConnectionString);
+            _conn.Open();
             Console.WriteLine("Connected to database");
         }
 
         public void Close()
         {
-            if (conn.State != System.Data.ConnectionState.Closed)
-                conn.Close();
+            if (_conn.State != System.Data.ConnectionState.Closed)
+                _conn.Close();
         }        
     }
 }
