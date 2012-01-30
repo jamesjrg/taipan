@@ -79,7 +79,7 @@ namespace TaiPan.Trader
             var conf = ServerConfigs["Trader-Shipping"];
             conf.port = conf.port + (myID - 1);
 
-            DbConn dbConn = new DbConn();
+            dbConn = new DbConn();
             portDistances = GetPortDistancesLookup(dbConn);
 
             shippingServer = new Server(conf, AppSettings, false);
@@ -190,6 +190,10 @@ where CommodityId = @CID");
 
                 foreach (var port in salePorts)
                 {
+                    //XXX currently selling to the port good is being stored at is not possible
+                    if (good.portID == port.Item1)
+                        continue;
+
                     decimal profit = (good.quantity * port.Item2 * port.Item3)
                         - SHIPPING_COMPANY_RATE *
                         portDistances[good.portID + "," + port.Item1];

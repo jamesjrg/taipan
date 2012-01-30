@@ -9,6 +9,7 @@ using System.Threading;
 using TaiPan.Common;
 using TaiPan.Common.NetContract;
 using System.Transactions;
+using System.Data;
 
 namespace TaiPan.Bank
 {
@@ -181,9 +182,8 @@ namespace TaiPan.Bank
                 //remove trailing comma
                 futureIDs.Remove(futureIDs.Length - 1, 1);
 
-                SqlCommand cmd = new SqlCommand("UPDATE FuturesContract set ActualSetTime = GETDATE() where ID in (@ids)");
-                cmd.Parameters.AddWithValue("@ids", futureIDs.ToString());
-                dbConn.ExecuteNonQuery(cmd);
+                //XXX should do this without string interpolation, though in .NET there is no simple method
+                dbConn.ExecuteNonQuery(String.Format("UPDATE FuturesContract set ActualSetTime = GETDATE() where ID in ({0})", futureIDs.ToString()));
                 
                 //debit trader's account
                 foreach (var future in settledFutures)
@@ -257,10 +257,11 @@ INSERT INTO dbo.FuturesContract
 VALUES
 (@TraderID, @CommodID, @PortID,
 (select LocalPrice from PortCommodityPrice where PortID = @PortID and CommodityID = @commodID),
-@Quantity, GETDATE(), '@Time')");
+@Quantity, GETDATE(), @Time)");
             cmd.Parameters.AddWithValue("@TraderID", traderID);
             cmd.Parameters.AddWithValue("@CommodID", msg.commodID);
             cmd.Parameters.AddWithValue("@PortID", msg.portID);
+            cmd.Parameters.AddWithValue("@Quantity", msg.quantity);
             cmd.Parameters.AddWithValue("@Time", msg.time);
             dbConn.ExecuteNonQuery(cmd);
         }
@@ -283,7 +284,7 @@ VALUES
             //next, create CommodityTransaction
             SqlCommand insertCmd = new SqlCommand(
 @"insert into CommodityTransaction
-(TraderID, CommodityID, PortID, Quantity, PurchasePrice, PurchaseTime)
+(TraderID, CommodityID, BuyPortID, Quantity, PurchasePrice, PurchaseTime)
 VALUES (@traderID, @commodID, @portID, @quantity, @amount, GETDATE());
 SELECT ID FROM CommodityTransaction WHERE ID = @@IDENTITY");
             insertCmd.Parameters.AddWithValue("@traderID", traderID);

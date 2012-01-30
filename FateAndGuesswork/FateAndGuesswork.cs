@@ -112,7 +112,7 @@ namespace TaiPan.FateAndGuesswork
             }
             reader.Close();
 
-            nCommodities = (int)dbConn.ExecuteScalar("select count * from Commodity");
+            nCommodities = (int)dbConn.ExecuteScalar("select count (*) from Commodity");
 
             commodityMsg.items = new CommodityMsgItem[commodityInfos.Count];
             for (int i = 0; i != commodityInfos.Count; ++i )
@@ -131,7 +131,7 @@ namespace TaiPan.FateAndGuesswork
             stocks.items = tmpList.ToArray();
             reader.Close();
 
-            nPorts = (int)dbConn.ExecuteScalar("select count * from Port");
+            nPorts = (int)dbConn.ExecuteScalar("select count (*) from Port");
             
             //close db conn
             dbConn.Dispose();

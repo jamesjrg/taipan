@@ -5,6 +5,7 @@ using System.Text;
 
 using System.Configuration;
 using System.Collections.Specialized;
+using System.Data.SqlClient;
 
 namespace TaiPan.Common
 {
@@ -59,31 +60,32 @@ namespace TaiPan.Common
         //no dispose here or in derived classes because when this class is no longer needed, the whole program is ending
 
         public Dictionary<string, int> GetPortDistancesLookup(DbConn dbConn)
-        {   
-            Dictionary<string, int> ret = new Dictionary<string, int>();
-            int nPorts = (int)dbConn.ExecuteScalar("select count * from Port");
+        {
+            var ret = new Dictionary<string, int>();
+            int nPorts = (int)dbConn.ExecuteScalar("select count (*) from Port");
 
             List<int> ports = new List<int>();
             for (int i = 1; i != nPorts + 1; ++i)
                 ports.Add(i);
 
-            foreach (var port in ports)
+            foreach (int port in ports)
             {
                 var otherPorts = new List<int>(ports);
                 otherPorts.Remove(port);
+                string otherPortsStr = String.Join(",", otherPorts);
 
-                string otherPortsStr = "";
-                foreach (var otherPort in otherPorts)
-                    otherPortsStr += "%d, ";
-                otherPortsStr = otherPortsStr.Substring(0, otherPortsStr.Length - 2);
-
-                var reader = dbConn.ExecuteQuery(String.Format(@"select p.ID, o.ID, p.Location.STDistance(o.Location) from Port p, Port o where p.ID = {0} and o.Name in ({1})", port, otherPortsStr));
+                //XXX should do this without string interpolation, though in .NET there is no simple method
+                var cmd = new SqlCommand(String.Format(
+@"select p.ID, o.ID, p.Location.STDistance(o.Location)
+from Port p, Port o where p.ID = @PortID and o.ID in ({0})", otherPortsStr));
+                cmd.Parameters.AddWithValue("@PortID", port);
+                var reader = dbConn.ExecuteQuery(cmd);
                 while (reader.Read())
                 {
                     int pid = reader.GetInt32(0);
                     int oid = reader.GetInt32(1);
-                    int distance = reader.GetInt32(2);
-                    ret[pid + "," + oid] = distance;
+                    double distance = reader.GetDouble(2);
+                    ret[pid + "," + oid] = (int)distance;
                 }
                 reader.Close();
             }
