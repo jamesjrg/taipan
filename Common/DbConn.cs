@@ -13,6 +13,9 @@ namespace TaiPan.Common
     {
         SqlConnection _conn;
 
+        //set to true by unit test code, makes it use seperate test database
+        static public bool testDB = false;
+
         public DbConn()
         {
             Init(true);
@@ -73,6 +76,8 @@ namespace TaiPan.Common
             string connName = "taipan-rw";
             if (readOnly)
                 connName = "taipan-r";
+            if (_testDB)
+                connName += "-test";
 
             Console.WriteLine("Reading config file for database connection");
             ExeConfigurationFileMap fileMap = new ExeConfigurationFileMap();
@@ -92,6 +97,12 @@ namespace TaiPan.Common
         {
             if (_conn.State != System.Data.ConnectionState.Closed)
                 _conn.Close();
-        }        
+        }
+
+        //for unit tests
+        public SqlConnection UnderlyingConnection()
+        {
+            return _conn;
+        }
     }
 }
