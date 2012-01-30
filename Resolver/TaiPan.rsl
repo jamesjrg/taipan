@@ -1,7 +1,7 @@
 <!--
 This spreadsheet is in the Public Domain.
 -->
-<document currentResultWorksheet="Shipping" verticalSplitterRatio="0.63046875" horizontalSplitterRatio="0.991724137931" splitterOrientation="Vertical" suspendRecalculations="True" license="Public Domain" copyrightOwner="James Gregory" resolverVersion="1.9" resolverBuild="5108" documentVersion="13">
+<document currentResultWorksheet="Commodity Prices" verticalSplitterRatio="0.63046875" horizontalSplitterRatio="0.991724137931" splitterOrientation="Vertical" suspendRecalculations="True" license="Public Domain" copyrightOwner="James Gregory" resolverVersion="1.9" resolverBuild="5108" documentVersion="13">
     <foldState license="True" imports="True" worksheetCreation="True" preConstantsUserCode="False" constants="True" preFormulaeUserCode="False" generated="False" postFormulaeUserCode="False"/>
     <traitDefaults>
 
@@ -14,7 +14,8 @@ execfile(dir + '/' + 'shared.py')
 execfile(dir + '/' + 'GBMPreConstants.py')
 execfile(dir + '/' + 'summaryPreConstants.py')
 execfile(dir + '/' + 'algsPreConstants.py')
-execfile(dir + '/' + 'TFPPreConstants.py')
+#XXX don't have MS Solver installed right now
+#execfile(dir + '/' + 'TFPPreConstants.py')
 
 ]]></preConstantsUserCode>
     <preFormulaeUserCode><![CDATA[
@@ -44,9 +45,9 @@ execfile(dir + '/' + 'TFPPreConstants.py')
             <virtualGridSize width="50" height="88" />
         </viewState>
         <viewState worksheet="Commodity Prices">
-            <currentCell col="6" row="28" />
+            <currentCell col="7" row="13" />
             <scrollPos col="1" row="1" />
-            <virtualGridSize width="49" height="69" />
+            <virtualGridSize width="23" height="49" />
         </viewState>
         <viewState worksheet="Trader summary">
             <currentCell col="1" row="10" />
@@ -71,8 +72,8 @@ execfile(dir + '/' + 'TFPPreConstants.py')
         </viewState>
         <viewState worksheet="Shipping">
             <currentCell col="1" row="3" />
-            <scrollPos col="1" row="1" />
-            <virtualGridSize width="24" height="45" />
+            <scrollPos col="1" row="4" />
+            <virtualGridSize width="24" height="52" />
         </viewState>
     </viewStates>
     <worksheetOrder>
