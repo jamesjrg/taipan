@@ -46,18 +46,20 @@ namespace TaiPan.Trader
 
         private class WarehousedGood
         {
-            public WarehousedGood(int transactionID, int portID, int commodityID, DateTime saletime)
+            public WarehousedGood(int transactionID, int portID, int commodityID, int quantity, DateTime saleTime)
             {
                 this.transactionID = transactionID;
                 this.portID = portID;
                 this.commodityID = commodityID;
+                this.quantity = quantity;
                 this.saleTime = saleTime;
             }
 
             public int transactionID;
             public int portID;
             public int commodityID;
-            public DateTime saleTime;            
+            public int quantity;
+            public DateTime saleTime;           
         }
 
         public Trader(string[] args)
@@ -162,24 +164,24 @@ namespace TaiPan.Trader
         private void DecideSales()
         {
             foreach (var good in warehousedGoods)
-            {        
-                //XXX List(tuple(portid, currency exchange rate, good price)
-                List<xxx> salePorts = new List<xxx>();
+            {   
+                var salePorts = new List<Tuple<int, decimal, decimal>>();
 
-                SqlDataReader reader = dbConn.ExecuteQuery(String.Format(
-                    @"select pcp.PortId, pcp.LocalPrice, Currency.USDValue from PortCommodityPrice pcp
-                    join Port p on pcp.PortID = p.ID
-                    join Country on p.CountryID = Country.ID
-                    join Currency on Country.CurrencyID = Currency.ID
-                    where CommodityId = {0}", good.commodityID));
+                SqlCommand cmd = new SqlCommand(
+@"select pcp.PortId, pcp.LocalPrice, Currency.USDValue from PortCommodityPrice pcp
+join Port p on pcp.PortID = p.ID
+join Country on p.CountryID = Country.ID
+join Currency on Country.CurrencyID = Currency.ID
+where CommodityId = @CID");
+                cmd.Parameters.AddWithValue("@CID", good.commodityID);
+                SqlDataReader reader = dbConn.ExecuteQuery(cmd);
 
                 while (reader.Read())
                 {
-                    //XXX this copy and pasted, not correct vars
                     int portID = reader.GetInt32(0);
                     decimal localPrice = reader.GetDecimal (1);
                     decimal USDValue = reader.GetDecimal(2);
-                    tmpList.Add(new xxx(portID, localPrice, USDValue));
+                    salePorts.Add(new Tuple<int, decimal, decimal>(portID, localPrice, USDValue));
                 }
                 reader.Close();
             
@@ -188,12 +190,13 @@ namespace TaiPan.Trader
 
                 foreach (var port in salePorts)
                 {
-                    decimal profit = (quantity * port.localPrice * correct_exchangeRate)
-                        - (SHIPPING_COMPANY_RATE * portDistances[good.portID + "," + port.portID]);
+                    decimal profit = (good.quantity * port.Item2 * port.Item3)
+                        - SHIPPING_COMPANY_RATE *
+                        portDistances[good.portID + "," + port.Item1];
 
                     if (profit > bestProfit) 
                     {
-                        bestPort = port;
+                        bestPort = port.Item1;
                         bestProfit = profit;
                     }
                 }
@@ -207,13 +210,13 @@ namespace TaiPan.Trader
         //just add to warehousedGoods and leave for DecideSales to deal with
         private void BuyConfirmed(BankConfirmMsg msg)
         {
-            warehousedGoods.Add(new WarehousedGood(msg.transactionID, msg.portID, msg.commodID, DateTime.Now));
+            warehousedGoods.Add(new WarehousedGood(msg.transactionID, msg.portID, msg.commodID, msg.quantity, DateTime.Now));
         }
 
         //just add to warehousedGoods and leave for DecideSales to deal with
         private void FutureSettled(BankConfirmMsg msg)
         {
-            warehousedGoods.Add(new WarehousedGood(msg.transactionID, msg.portID, msg.commodID, DateTime.Now));
+            warehousedGoods.Add(new WarehousedGood(msg.transactionID, msg.portID, msg.commodID, msg.quantity, DateTime.Now));
         }
 
         private void MoveAccepted(int companyID, MoveContractMsg msg)

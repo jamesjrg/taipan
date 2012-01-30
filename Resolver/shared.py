@@ -1,4 +1,6 @@
-﻿from util import *
+﻿import os
+
+from util import *
 
 from System.Xml import XmlReader, XmlNodeType
 
@@ -21,7 +23,8 @@ sortingSheet = workbook['Sorting Algorithms']
 portNames = []
 
 class Settings:
-    xmlConfigFile = '../Common/Common.config'
+    dirname = os.path.dirname(__file__)
+    xmlConfigFile = dirname + '/../Common/Common.config'
     
     #these settings are read in from the XML config file shared with C#
     config = {}
@@ -49,7 +52,7 @@ def readConfig():
                 
             if 'key' in attribs:
                 key = attribs['key']
-                if key == 'TickVolatility':
+                if attribs['value'].find(".") != -1:
                     Settings.config[key] = float(attribs['value'])
                 else:
                     Settings.config[key] = int(attribs['value'])

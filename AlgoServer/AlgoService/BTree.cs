@@ -124,6 +124,8 @@ namespace AlgoService
         /// </summary>
         public string Dump()
         {
+            //XXX
+            return "";
         }
 
         public void Insert(int k)

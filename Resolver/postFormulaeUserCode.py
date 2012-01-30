@@ -39,8 +39,9 @@ for name in simpleSummaryNames + complexSummaryNames:
     summaryButtons.append(button)
     
 #TDP sheet
-solveTFPButton = makeButton("Solve", solveTFP)
-TFPSheet.B9 = solveTFPButton
+#xxx MS Solver not installed right now
+#solveTFPButton = makeButton("Solve", solveTFP)
+#TFPSheet.B9 = solveTFPButton
 
 #Algs sheet
 runSortButton = makeButton("Run iterations", runSort)

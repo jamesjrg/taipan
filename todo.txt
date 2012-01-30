@@ -17,13 +17,14 @@ git change log:
 
 nowish:
 needs writing now:
-- BTree: dump method, unit tests, and delete method
+- make resolver update buttons work again
 - finish trader DecideSales
+- switch resolver python code to use sql paramaters
+- BTree: dump method, unit tests, and delete method
 - change Trader DecideSales to account for possibility that best sale location may be the place where goods are currently warehoused. if so, don't need to contract a shipping company, just sell directly - and bank needs to be able to cope with this
 - finish all the spreadsheet sheets filled from database queries (ideally finish DecideSales first). Prices are converted from local currency to historical USD value
 - tweak freighter speed in config, also fuelcost
 - search for xxx using igrep
-- taipan projects have been retargeted to .NET 4.0, algo projects and TFPCS still on 3.5, wpfchart on 3.0
 
 needs ad-hoc testing now:
 - sql procShipArrived, procCommoditySale
