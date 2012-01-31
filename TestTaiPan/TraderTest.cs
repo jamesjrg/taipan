@@ -6,21 +6,21 @@ using TaiPan.Common.NetContract;
 using System.Collections.Generic;
 using TaiPan.Common;
 using System.IO;
-using Microsoft.SqlServer.Management.Smo;
+using Smo = Microsoft.SqlServer.Management.Smo;
 using Microsoft.SqlServer.Management.Common;
+using System.Data.SqlClient;
 
 namespace TestTaiPan
 {
-    
-    
-    /// <summary>
-    ///This is a test class for TraderTest and is intended
-    ///to contain all TraderTest Unit Tests
-    ///</summary>
     [TestClass()]
+    [DeploymentItem("Common.config")]
+    [DeploymentItem("create_schema.sql")]
+    [DeploymentItem("insert_data.sql")]
     public class TraderTest
     {
-
+        static DbConn _conn;
+        static Dictionary<string,int> commodIDs = new Dictionary<string,int>();
+        static Dictionary<string,int> portIDs = new Dictionary<string,int>();
 
         private TestContext testContextInstance;
 
@@ -74,30 +74,68 @@ namespace TestTaiPan
         public static void MyClassInitialize(TestContext testContext)
         {
             DbConn.testDB = true;
-            var conn = new DbConn(false);
-            //xxx
+            _conn = new DbConn(false);
 
-            FileInfo file = new FileInfo(@"xxxx path to create_schema.sql.sql");
-            using (StreamReader sr = file.OpenText())
+            //reset database
+            RunSQLScript("create_schema.sql");
+            RunSQLScript("insert_data.sql");
+
+            //set up some fixed values for PortCommodityPrice:
+
+            //first set value to 0 everywhere
+            _conn.ExecuteNonQuery("update PortCommodityPrice set LocalPrice = 0");
+
+            //now some chosen values
+            var values = new List<Tuple<int, int, int>>();
+            values.Add(new Tuple<int, int, int>(10, portIDs["Felixstowe"], commodIDs["Citrus fruit"]));
+            values.Add(new Tuple<int, int, int>(3, portIDs["Felixstowe"], commodIDs["Iron ore"]));
+            values.Add(new Tuple<int, int, int>(7, portIDs["Bahía Blanca"], commodIDs["Citrus fruit"]));
+            values.Add(new Tuple<int, int, int>(5, portIDs["Bahía Blanca"], commodIDs["Iron ore"]));
+            values.Add(new Tuple<int, int, int>(3, portIDs["Sydney"], commodIDs["Citrus fruit"]));
+            values.Add(new Tuple<int, int, int>(4, portIDs["Sydney"], commodIDs["Iron ore"]));
+
+            SqlCommand cmd = new SqlCommand("update PortCommodityPrice set LocalPrice = @LPrice where PortID = @PID and CommodityID = @CID");
+            foreach (var val in values)
             {
-                string script = file.OpenText().ReadToEnd();
-                Server server = new Server(new ServerConnection(conn.UnderlyingConnection()));
-                server.ConnectionContext.ExecuteNonQuery(script);
+                cmd.Parameters.Clear();
+                cmd.Parameters.AddWithValue("LPrice", val.Item1);
+                cmd.Parameters.AddWithValue("PID", val.Item2);
+                cmd.Parameters.AddWithValue("CID", val.Item3);
+                _conn.ExecuteNonQuery(cmd);
+            }
+
+            //save some ids for reuse in tests
+
+            SqlCommand portIDCmd = new SqlCommand("select ID from Port where Name = @PName");
+            string[] portNames = {"Felixstowe",  "Bahía Blanca", "Sydney"};
+            foreach (var name in portNames)
+            {
+                portIDCmd.Parameters.Clear();
+                portIDCmd.Parameters.AddWithValue("PName", name);
+                int id = (int)_conn.ExecuteScalar(portIDCmd);
+                portIDs.Add(name, id);
+            }
+
+            SqlCommand commodIDCmd = new SqlCommand("select ID from Commodity where Name = @CName");
+            string[] commodNames = {"Citrus fruit",  "Iron ore"};
+            foreach (var name in commodNames)
+            {
+                commodIDCmd.Parameters.Clear();
+                commodIDCmd.Parameters.AddWithValue("CName", name);
+                int id = (int)_conn.ExecuteScalar(commodIDCmd);
+                commodIDs.Add(name, id);
             }
         }
 
-        [TestInitialize()]
-        public void MyTestInitialize()
+        private static void RunSQLScript(string fname)
         {
-            //xxx
-            sqlcmd -U taipan-rw -P fakepass -d TaiPan -S (local) -i insert_data.sql
-        }
-        
-        [TestCleanup()]
-        public void MyTestCleanup()
-        {
-            //xxx
-            truncate all database tables
+            FileInfo file = new FileInfo(fname);
+            using (StreamReader sr = file.OpenText())
+            {
+                string script = file.OpenText().ReadToEnd();
+                Smo.Server server = new Smo.Server(new ServerConnection(_conn.UnderlyingConnection()));
+                server.ConnectionContext.ExecuteNonQuery(script);
+            }
         }
 
         [TestMethod()]
@@ -106,15 +144,14 @@ namespace TestTaiPan
         {
             var args = new string[] {"1"};
             Trader_Accessor target = new Trader_Accessor(args);
-            //XXX
-            target.warehousedGoods.Add(new Trader_Accessor.WarehousedGood(transactionID, portID, commodityID, quantity, saleTime);
+            target.warehousedGoods.Add(new Trader_Accessor.WarehousedGood(1, portIDs["Felixstowe"], commodIDs["Citrus fruit"], 10, DateTime.Now));
+            target.warehousedGoods.Add(new Trader_Accessor.WarehousedGood(2, portIDs["Felixstowe"], commodIDs["Iron ore"], 10, DateTime.Now));
             target.DecideSales();
 
-            //XXX
             var expected = new List<MoveContractMsg>();
-            expected.Add(new MoveContractMsg(departureID, destID, transactionID);
+            expected.Add(new MoveContractMsg(portIDs["Felixstowe"], portIDs["Sydney"], 1));
+            expected.Add(new MoveContractMsg(portIDs["Felixstowe"], portIDs["Sydney"], 2));
             Assert.IsTrue(target.moveContracts.SequenceEqual(expected));
-            Assert.Inconclusive("TODO");
         }
     }
 }

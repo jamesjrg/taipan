@@ -18,7 +18,6 @@ git change log:
 nowish:
 needs writing now:
 - unit test Trader DecideSales:
-- check location of/how to add references to using Microsoft.SqlServer.Management.Smo; using Microsoft.SqlServer.Management.Common;
 at beginnining of tests, change connection string to test database, and run lines in create_schema for TaiPantest
 between each test, clear database data and the run lines in insert_data for TaiPanTest
 set up trader with a given list of 2 warehousedGoods
