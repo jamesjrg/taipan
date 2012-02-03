@@ -36,8 +36,8 @@ namespace TaiPan.FateAndGuesswork
         const int MAX_QUANTITY = 500;
 
         //in ticks
-        const int MIN_FORECAST_OFFSET_IN_TICKS = 5;
-        const int MAX_FORECAST_OFFSET_IN_TICKS = 10;
+        const int MIN_FORECAST_OFFSET_IN_TICKS = 2;
+        const int MAX_FORECAST_OFFSET_IN_TICKS = 5;
 
         //in seconds
         readonly int MIN_FORECAST_OFFSET;

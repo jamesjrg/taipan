@@ -139,7 +139,7 @@ front end stuff removed for the time being:
 ////
 
 .NET stuff removed for time being:
-- make use of LINQ
+- make use of LINQ for db queries
 
 ///
 

@@ -131,7 +131,6 @@ def setFXNames():
     fxSheet.Cells.I3.DropdownItems = fxNames
     
 def updateFX():
-    #xxx do this without string interpolation, though a real pain with .NET
     idsAndCodes = queryDb("select ID, ShortName from Currency where Name in (@Name1, @Name2, @Name3)",
     {"Name1": fxSheet.I1, "Name2": fxSheet.I2, "Name3": fxSheet.I3})
     fxSheet.B1 = idsAndCodes[1,0]
