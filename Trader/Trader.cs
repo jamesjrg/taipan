@@ -62,29 +62,22 @@ namespace TaiPan.Trader
             public DateTime saleTime;           
         }
 
-        public Trader(string[] args)
+        public Trader(string[] args, bool testing = false)
         {
             myID = SetID("Trader", args);
-
-            int nShipping;
-            try
-            {
-                nShipping = Int32.Parse(args[1]);
-            }
-            catch (Exception)
-            {
-                throw new ApplicationException("Requires 2 command line arguments: first is id, second is number of shipping companies");
-            }
-
-            var conf = ServerConfigs["Trader-Shipping"];
-            conf.port = conf.port + (myID - 1);
 
             dbConn = new DbConn();
             portDistances = GetPortDistancesLookup(dbConn);
 
-            shippingServer = new Server(conf, AppSettings, false);
-            bankClient = new Client(ServerConfigs["Bank-Trader"], AppSettings, myID, false);
-            fateClient = new Client(ServerConfigs["FateAndGuesswork-Trader"], AppSettings, myID, true);
+            var conf = ServerConfigs["Trader-Shipping"];
+            conf.port = conf.port + (myID - 1);
+
+            if (!testing)
+            {
+                shippingServer = new Server(conf, AppSettings, false);
+                bankClient = new Client(ServerConfigs["Bank-Trader"], AppSettings, myID, false);
+                fateClient = new Client(ServerConfigs["FateAndGuesswork-Trader"], AppSettings, myID, true);
+            }
         }
 
         protected override bool Run()

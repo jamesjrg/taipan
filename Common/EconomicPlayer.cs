@@ -24,7 +24,7 @@ namespace TaiPan.Common
         protected readonly decimal FUEL_COST;
         protected readonly decimal SHIPPING_COMPANY_RATE;
         protected readonly int FREIGHTER_SPEED;
-        
+
         public EconomicPlayer()
         {
             Console.WriteLine("Reading server connection settings from config file");
@@ -132,7 +132,6 @@ from Port p, Port o where p.ID = @PortID and o.ID in ({0})", otherPortsStr));
         protected int SetID(string title, string[] args)
         {
             int myID;
-
             try
             {
                 myID = Int32.Parse(args[0]);
@@ -142,7 +141,7 @@ from Port p, Port o where p.ID = @PortID and o.ID in ({0})", otherPortsStr));
                 throw new ApplicationException("ID must be given as command line argument");
             }
 
-            Console.Title = title + " (ID: " + myID + ")";
+            Util.SetConsoleTitle(title + " (ID: " + myID + ")");
 
             return myID;
         }        

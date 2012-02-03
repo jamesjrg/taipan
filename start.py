@@ -38,14 +38,14 @@ def startInNewConsole(process, dir):
 
 print 'starting requested processes'
 if nBank:
-    startInNewConsole('Bank.exe %d %d' % (nTraders, nShipping), bankDir)
+    startInNewConsole('Bank.exe', bankDir)
 if nFate:    
     startInNewConsole('FateAndGuesswork.exe', fateDir)
 if nFX:
     startInNewConsole('FXServer.exe', fxDir)
 
 for i in range(startTraderId, startTraderId + nTraders):
-    startInNewConsole('Trader.exe %d %d' % (i, nShipping), traderDir)
+    startInNewConsole('Trader.exe %d' % i, traderDir)
     
 for i in range(startShippingId, startShippingId + nShipping):
     startInNewConsole('ShippingCompany.exe %d %d' % (i, nTraders), shippingDir)

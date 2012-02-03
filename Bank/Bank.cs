@@ -45,18 +45,7 @@ namespace TaiPan.Bank
 
         public Bank(string[] args)
         {
-            Console.Title = "Bank";
-
-            int nTraders, nShipping;
-            try
-            {
-                nTraders = Int32.Parse(args[0]);
-                nShipping = Int32.Parse(args[1]);
-            }
-            catch (Exception)
-            {
-                throw new ApplicationException("Requires 2 command line arguments: first is number of traders, second is number of shipping companies");
-            }
+            Util.SetConsoleTitle("Bank");
 
             dbConn = new DbConn(false);
 

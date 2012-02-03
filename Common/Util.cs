@@ -52,5 +52,17 @@ namespace TaiPan.Common
             if (client != null && client.Connected)
                 client.Close();
         }
+
+        public static void SetConsoleTitle(string title)
+        {
+            //will fail if in a unit test
+            try
+            {
+                Console.Title = title;
+            }
+            catch (Exception e)
+            {
+            }
+        }
     }
 }

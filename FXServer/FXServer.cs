@@ -23,9 +23,9 @@ namespace TaiPan.FXServer
         private StatsLib.StatsLib stats = new StatsLib.StatsLib();
         private Random random = new Random();
 
-        public FXServer(string[] args)
+        public FXServer(string[] args)    
         {
-            Console.Title = "FXServer";
+            Util.SetConsoleTitle("FXServer");
 
             DbConn dbConn = new DbConn();
 

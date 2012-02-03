@@ -1,14 +1,17 @@
-﻿using TaiPan.Trader;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Linq;
-using TaiPan.Common.NetContract;
 using System.Collections.Generic;
-using TaiPan.Common;
 using System.IO;
+
 using Smo = Microsoft.SqlServer.Management.Smo;
 using Microsoft.SqlServer.Management.Common;
 using System.Data.SqlClient;
+using TeamAgile.ApplicationBlocks.Interception.UnitTestExtensions;
+
+using TaiPan.Trader;
+using TaiPan.Common.NetContract;
+using TaiPan.Common;
 
 namespace TestTaiPan
 {
@@ -71,7 +74,7 @@ namespace TestTaiPan
         #endregion
 
         [ClassInitialize()]
-        public static void MyClassInitialize(TestContext testContext)
+        public static void TestClassInitialize(TestContext testContext)
         {
             DbConn.testDB = true;
             _conn = new DbConn(false);
@@ -79,6 +82,9 @@ namespace TestTaiPan
             //reset database
             RunSQLScript("create_schema.sql");
             RunSQLScript("insert_data.sql");
+
+            //save some ids in a dictionary for more readable tests
+            SaveTestingIDs();
 
             //set up some fixed values for PortCommodityPrice:
 
@@ -102,12 +108,13 @@ namespace TestTaiPan
                 cmd.Parameters.AddWithValue("PID", val.Item2);
                 cmd.Parameters.AddWithValue("CID", val.Item3);
                 _conn.ExecuteNonQuery(cmd);
-            }
+            }            
+        }
 
-            //save some ids for reuse in tests
-
+        static void SaveTestingIDs()
+        {
             SqlCommand portIDCmd = new SqlCommand("select ID from Port where Name = @PName");
-            string[] portNames = {"Felixstowe",  "Bahía Blanca", "Sydney"};
+            string[] portNames = { "Felixstowe", "Bahía Blanca", "Sydney" };
             foreach (var name in portNames)
             {
                 portIDCmd.Parameters.Clear();
@@ -117,7 +124,7 @@ namespace TestTaiPan
             }
 
             SqlCommand commodIDCmd = new SqlCommand("select ID from Commodity where Name = @CName");
-            string[] commodNames = {"Citrus fruit",  "Iron ore"};
+            string[] commodNames = { "Citrus fruit", "Iron ore" };
             foreach (var name in commodNames)
             {
                 commodIDCmd.Parameters.Clear();
@@ -139,11 +146,13 @@ namespace TestTaiPan
         }
 
         [TestMethod()]
+        [DataRollBack]
         [DeploymentItem("Trader.exe")]
         public void DecideSalesTest()
         {
-            var args = new string[] {"1"};
-            Trader_Accessor target = new Trader_Accessor(args);
+            var args = new string[] { "1" };
+            Trader_Accessor target = new Trader_Accessor(args, true);
+
             target.warehousedGoods.Add(new Trader_Accessor.WarehousedGood(1, portIDs["Felixstowe"], commodIDs["Citrus fruit"], 10, DateTime.Now));
             target.warehousedGoods.Add(new Trader_Accessor.WarehousedGood(2, portIDs["Felixstowe"], commodIDs["Iron ore"], 10, DateTime.Now));
             target.DecideSales();

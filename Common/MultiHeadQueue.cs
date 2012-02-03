@@ -116,7 +116,7 @@ namespace TaiPan.Common
         public List<string> DequeueAll(int myID)
         {
             if (subscribers[myID].count == -1)
-                throw new TaiPanException("Worker thread with id " + myID + " has become to out of sync with data queue");
+                throw new TaiPanException("Worker thread with id " + myID + " has become too out of sync with data queue");
 
             List<string> values;
 

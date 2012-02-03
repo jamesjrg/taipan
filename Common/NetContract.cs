@@ -234,8 +234,7 @@ namespace TaiPan.Common.NetContract
             }
             catch (SerializationException e)
             {
-                Console.WriteLine("Failed to serialize. Reason: " + e.Message);
-                throw;
+                throw new Exception("Failed to serialize. Reason: " + e.Message);
             }
             finally
             {
@@ -306,8 +305,7 @@ namespace TaiPan.Common.NetContract
             }
             catch (SerializationException e)
             {
-                Console.WriteLine("Failed to deserialize. Reason: " + e.Message);
-                throw;
+                throw new Exception("Failed to deserialize. Reason: " + e.Message);
             }
             finally
             {
