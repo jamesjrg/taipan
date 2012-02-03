@@ -16,10 +16,11 @@
 git change log:
 
 nowish:
+- get SHIPPING_COMPANY_RATE from config file for unit test, or set?
 - make unit test of DecideSales work properly
 - check rollback attribute is working correctly
 
-- unit test Trader DecideSales:
+- unit test TraderLogic DecideSales:
 set up trader with a given list of 2 warehousedGoods
 manually work out what best place to sell each of two goods is
 check moveContracts has exactly what one would expect after function is run

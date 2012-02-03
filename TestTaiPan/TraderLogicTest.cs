@@ -1,8 +1,8 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using System.Linq;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 using Smo = Microsoft.SqlServer.Management.Smo;
 using Microsoft.SqlServer.Management.Common;
@@ -10,20 +10,20 @@ using System.Data.SqlClient;
 using TeamAgile.ApplicationBlocks.Interception.UnitTestExtensions;
 
 using TaiPan.Trader;
-using TaiPan.Common.NetContract;
 using TaiPan.Common;
+using TaiPan.Common.NetContract;
 
 namespace TestTaiPan
-{
+{   
     [TestClass()]
     [DeploymentItem("Common.config")]
     [DeploymentItem("create_schema.sql")]
     [DeploymentItem("insert_data.sql")]
-    public class TraderTest
+    public class TraderLogicTest
     {
         static DbConn _conn;
-        static Dictionary<string,int> commodIDs = new Dictionary<string,int>();
-        static Dictionary<string,int> portIDs = new Dictionary<string,int>();
+        static Dictionary<string, int> commodIDs = new Dictionary<string, int>();
+        static Dictionary<string, int> portIDs = new Dictionary<string, int>();
 
         private TestContext testContextInstance;
 
@@ -108,7 +108,7 @@ namespace TestTaiPan
                 cmd.Parameters.AddWithValue("PID", val.Item2);
                 cmd.Parameters.AddWithValue("CID", val.Item3);
                 _conn.ExecuteNonQuery(cmd);
-            }            
+            }
         }
 
         static void SaveTestingIDs()
@@ -147,20 +147,22 @@ namespace TestTaiPan
 
         [TestMethod()]
         [DataRollBack]
-        [DeploymentItem("Trader.exe")]
         public void DecideSalesTest()
         {
-            var args = new string[] { "1" };
-            Trader_Accessor target = new Trader_Accessor(args, true);
+            //XXX get from config file?
+            Decimal SHIPPING_COMPANY_RATE = new Decimal();
+            TraderLogic target = new TraderLogic(SHIPPING_COMPANY_RATE);
+            List<MoveContractMsg> moveContracts = new List<MoveContractMsg>();
+            target.DecideSales(moveContracts);
 
-            target.warehousedGoods.Add(new Trader_Accessor.WarehousedGood(1, portIDs["Felixstowe"], commodIDs["Citrus fruit"], 10, DateTime.Now));
-            target.warehousedGoods.Add(new Trader_Accessor.WarehousedGood(2, portIDs["Felixstowe"], commodIDs["Iron ore"], 10, DateTime.Now));
+            target.AddGood(1, portIDs["Felixstowe"], commodIDs["Citrus fruit"], 10);
+            target.AddGood(2, portIDs["Felixstowe"], commodIDs["Iron ore"], 10);
             target.DecideSales();
 
             var expected = new List<MoveContractMsg>();
             expected.Add(new MoveContractMsg(portIDs["Felixstowe"], portIDs["Sydney"], 1));
             expected.Add(new MoveContractMsg(portIDs["Felixstowe"], portIDs["Sydney"], 2));
-            Assert.IsTrue(target.moveContracts.SequenceEqual(expected));
+            Assert.IsTrue(moveContracts.SequenceEqual(expected));
         }
     }
 }
