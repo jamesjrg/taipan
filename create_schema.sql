@@ -202,7 +202,7 @@ CREATE TABLE dbo.CommodityTransaction
     FuturesContractID int DEFAULT NULL,
     Quantity int NOT NULL,
     PurchasePrice Money NOT NULL,    
-    PurchaseTime datetime NOT NULL,
+    PurchaseTime datetime DEFAULT GETDATE() NOT NULL,
     SaleTime datetime DEFAULT NULL,
     SalePrice Money DEFAULT NULL,
     SalePortID int DEFAULT NULL,
@@ -462,18 +462,20 @@ CREATE PROCEDURE procCommoditySale
 @SalePortID int
 AS
 BEGIN
-declare @TotalLocalPrice int
+declare @TraderID int
+declare @TotalLocalPrice Money
+set @TraderID = (select TraderID from CommodityTransaction where CommodityTransaction.ID = @CommodityTransactionID)
 set @TotalLocalPrice = 
 (SELECT pcp.LocalPrice * transact.Quantity from CommodityTransaction transact join PortCommodityPrice pcp on transact.CommodityID = pcp.CommodityID where transact.ID = @CommodityTransactionID and pcp.PortID = @SalePortID)
 
 --update commoditytransaction table
 update CommodityTransaction set SaleTime = GETDATE(), SalePrice=@TotalLocalPrice, SalePortID=@SalePortID WHERE ID = @CommodityTransactionID;
 --money to trader
-EXEC procAddBalance traderID, @SalePortID, @TotalLocalPrice;
+EXEC procAddBalance @TraderID, @SalePortID, @TotalLocalPrice;
 END
 GO
 
-CREATE PROCEDURE localSale
+CREATE PROCEDURE procLocalSale
 @CommodityTransactionID int
 AS
 BEGIN

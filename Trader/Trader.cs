@@ -158,7 +158,9 @@ namespace TaiPan.Trader
             if (unconfirmedIndex != -1)
             {
                 moveConfirms.Add(new MoveConfirmInfo(msg, companyID));
-                unconfirmedContracts.RemoveAt(unconfirmedIndex);                
+                unconfirmedContracts.RemoveAt(unconfirmedIndex);
+
+                Console.WriteLine(msg.transactionID);
             }
         }
 

@@ -18,7 +18,7 @@ nTraders = 2
 nShipping = 2
 
 startTraderId = 1
-startShippingId = 5
+startShippingId = 6
 
 if len (sys.argv) == 1:
     pass

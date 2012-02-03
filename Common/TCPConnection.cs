@@ -94,6 +94,7 @@ namespace TaiPan.Common
                 catch (ObjectDisposedException e)
                 {
                     Console.WriteLine("Server closed connection");
+                    break;
                 }
             }
         }

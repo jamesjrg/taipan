@@ -104,9 +104,11 @@ namespace TaiPan.ShippingCompany
 
             foreach (var departure in departures)
                 bankClient.Send(NetContract.Serialize(NetMsgType.Departure, departure));
+            departures.Clear();
             
             foreach (var arrival in arrivals)
                 bankClient.Send(NetContract.Serialize(NetMsgType.Arrival, arrival));
+            arrivals.Clear();
             
             return true;
         }

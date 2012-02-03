@@ -56,8 +56,7 @@ namespace TaiPan.Common
         public object ExecuteScalar(SqlCommand cmd)
         {
             cmd.Connection = _conn;
-            var x = cmd.ExecuteScalar();
-            return x;
+            return cmd.ExecuteScalar();
         }
 
         public object ExecuteScalar(string query)
@@ -70,6 +69,14 @@ namespace TaiPan.Common
             cmd.Connection = _conn;
             cmd.CommandType = CommandType.StoredProcedure;
             cmd.ExecuteNonQuery();
+        }
+
+        public DataSet FilledDataSet(string query)
+        {
+            var adaptor = new SqlDataAdapter(query, _conn);
+            var dataSet = new DataSet();
+            adaptor.Fill(dataSet);
+            return dataSet;
         }
 
         private void Init(bool readOnly)
