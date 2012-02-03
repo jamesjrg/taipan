@@ -57,13 +57,16 @@ def readConfig():
                 else:
                     Settings.config[key] = int(attribs['value'])
             elif 'name' in attribs and attribs['name'] == 'taipan-r':
-                Settings.connectString = 'Driver={SQL Server};' + attribs['connectionString'].replace(' ', '')
+                Settings.connectString = attribs['connectionString']
 
 #db functions
-def queryDb(query):
+def queryDb(query, params = {}):
     print 'DB query: %s' % query
-    connection = OdbcConnection(Settings.connectString)
-    adaptor = OdbcDataAdapter(query, connection)
+    connection = SqlClient.SqlConnection(Settings.connectString)
+    cmd = SqlClient.SqlCommand(query, connection)
+    for key, val in params.iteritems():
+        cmd.Parameters.AddWithValue(key, val)
+    adaptor = SqlClient.SqlDataAdapter(cmd)
     dataSet = DataSet()
     connection.Open()
     adaptor.Fill(dataSet)    

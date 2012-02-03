@@ -16,22 +16,16 @@
 git change log:
 
 nowish:
-- get SHIPPING_COMPANY_RATE from config file for unit test, or set?
 - make unit test of DecideSales work properly
-- check rollback attribute is working correctly
-
-- unit test TraderLogic DecideSales:
-set up trader with a given list of 2 warehousedGoods
 manually work out what best place to sell each of two goods is
 check moveContracts has exactly what one would expect after function is run
 
 - change Trader DecideSales to account for possibility that best sale location may be the place where goods are currently warehoused. if so, don't need to contract a shipping company, just sell directly - and bank needs to be able to cope with this
 - write a whole bunch of unit tests for functions in main TaiPan project
-- switch resolver python code to use sql parameters
 - BTree: dump method, unit tests, and delete method
-- finish all the spreadsheet sheets filled from database queries (ideally finish DecideSales first). Prices are converted from local currency to historical USD value
+- finish all the spreadsheet sheets filled from database queries (though finish DecideSales first). Prices are converted from local currency to historical USD value
 - tweak freighter speed in config, also fuelcost
-- make sql "in" queries work without using string interpolation
+- make sql "in" queries with variable length arg list work without using string interpolation, in C# and in tfppreconstants.py
 - search for xxx using igrep
 
 needs ad-hoc testing now:

@@ -1,40 +1,40 @@
 ﻿def futuresUpdate():
     data = queryDb("""select * from
     
-    (SELECT TOP %d
+    (SELECT TOP (@Limit)
     Commodity.Name as CommodName, f.Quantity, f.PurchaseTime, f.ActualSetTime,
     bp.Name as BPName, dbo.funcGetUSDValueAtDate(f.LocalPrice, f.PortID, f.ActualSetTime) as BPrice,
-    transaction.SaleTime, sp.Name as SPName,
-    dbo.funcGetUSDValueAtDate(transaction.SalePrice, transaction.SalePortID, transaction.SaleTime) as SPrice,
+    ctrans.SaleTime, sp.Name as SPName,
+    dbo.funcGetUSDValueAtDate(ctrans.SalePrice, ctrans.SalePortID, ctrans.SaleTime) as SPrice,
     tcomp.Name as TradName, scomp.Name as ShipName
     
     from Commodity
     join FuturesContract as f on f.CommodityID = Commodity.ID
     join Port as bp on bp.ID = f.PortID
-    join CommodityTransaction as transaction on transaction.FuturesContractID = f.ID
-    join Port as sp on sp.ID = transaction.SalePortID
+    join CommodityTransaction as ctrans on ctrans.FuturesContractID = f.ID
+    join Port as sp on sp.ID = ctrans.SalePortID
     join Trader on Trader.CompanyID = f.TraderID
     join Company tcomp on tcomp.ID = Trader.CompanyID
-    join CommodityTransport on CommodityTransport.CommodityTransactionID = transaction.ID
+    join CommodityTransport on CommodityTransport.CommodityTransactionID = ctrans.ID
     join ShippingCompany on ShippingCompany.CompanyID = CommodityTransport.ShippingCompanyID
     join Company scomp on scomp.ID = ShippingCompany.CompanyID
     
-    order by f.PurchaseTime DESC) as foo order by PurchaseTime ASC""" % (Settings.nTopUpdate))
+    order by f.PurchaseTime DESC) as foo order by PurchaseTime ASC""", {"Limit": Settings.nTopUpdate})
     
 def purchasesUpdate():
     # data = queryDb("""select * from
 
     # (SELECT TOP %d
-    # Commodity.Name as CommodName, transaction.Quantity, transaction.PurchaseTime, bp.Name as BPName, dbo.funcGetUSDValueAtDate(x.BuyPrice), x.TimeSold, sp.Name as SPName, x.profitloss, tcomp.Name as TradName, scomp.Name as ShipName
+    # Commodity.Name as CommodName, ctrans.Quantity, ctrans.PurchaseTime, bp.Name as BPName, dbo.funcGetUSDValueAtDate(x.BuyPrice), x.TimeSold, sp.Name as SPName, x.profitloss, tcomp.Name as TradName, scomp.Name as ShipName
     
     # from Commodity
-    # join CommodityTransaction as transaction on transaction.CommodityID = Commodity.ID
+    # join CommodityTransaction as ctrans on ctrans.CommodityID = Commodity.ID
     # join CommodityTransport as transport
     # join Company as tcomp
     # join Company as scomp
     
-    # some joining on transaction.BuyPortID
-    # some joining on transaction.SalePortID
+    # some joining on ctrans.BuyPortID
+    # some joining on ctrans.SalePortID
     # some joining on transport.ShippingCompanyID
     
     # order by ct.PurchaseTime DESC) as foo order by PurchaseTime ASC""" % (Settings.nTopUpdate))
@@ -45,16 +45,16 @@ def shippingUpdate():
     # data = queryDb("""select * from
 
     # (SELECT TOP %d
-    # Commodity.Name as CommodName, transaction.Quantity, x.startport, x.endport, transport.DepartureTime, transport.ArrivalTime, x.shippingcomp, x.tradername
+    # Commodity.Name as CommodName, ctrans.Quantity, x.startport, x.endport, transport.DepartureTime, transport.ArrivalTime, x.shippingcomp, x.tradername
     
     # from Commodity
-    # join CommodityTransaction as transaction on transaction.CommodityID = Commodity.ID
+    # join CommodityTransaction as ctrans on ctrans.CommodityID = Commodity.ID
     # join CommodityTransport as transport
     # join Company as tcomp
     # join Company as scomp
     
-    # some joining on transaction.BuyPortID
-    # some joining on transaction.SalePortID
+    # some joining on ctrans.BuyPortID
+    # some joining on ctrans.SalePortID
     # some joining on transport.ShippingCompanyID
     
     # order by transport.DepartureTime DESC) as foo order by DepartureTime ASC""" % (Settings.nTopUpdate))

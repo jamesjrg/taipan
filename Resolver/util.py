@@ -2,8 +2,7 @@
 import clr
 import os
 
-from System.Data import DataSet
-from System.Data.Odbc import OdbcConnection, OdbcDataAdapter
+from System.Data import *
 from System import Array
 
 #assembly loading

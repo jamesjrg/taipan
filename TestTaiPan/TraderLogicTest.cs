@@ -7,11 +7,12 @@ using System.Linq;
 using Smo = Microsoft.SqlServer.Management.Smo;
 using Microsoft.SqlServer.Management.Common;
 using System.Data.SqlClient;
-using TeamAgile.ApplicationBlocks.Interception.UnitTestExtensions;
 
 using TaiPan.Trader;
 using TaiPan.Common;
 using TaiPan.Common.NetContract;
+using System.Collections;
+using System.Reflection;
 
 namespace TestTaiPan
 {   
@@ -145,12 +146,37 @@ namespace TestTaiPan
             }
         }
 
+        private string ListToStr<T>(List<T> seq)
+        {
+            return string.Join(", ", seq.Select(
+                x =>
+                {
+                    Type myType = x.GetType();
+                    var fieldInfo = myType.GetFields();
+
+                    string str = "[";
+                    foreach (var field in fieldInfo)
+                    {
+                        str += field.GetValue(x).ToString() + ";";
+                    }
+
+                    return str + "]";
+                }));
+        }
+
+        private void AssertSeqEqual<T>(List<T> seq1, List<T> seq2)
+        {
+            //Visual Studio doesn't like multiline error messages, bah
+            if (!seq1.SequenceEqual(seq2))
+                throw new AssertFailedException("Sequences not equal: " + ListToStr(seq1) + " and " + ListToStr(seq2));
+            return;
+        }
+
         [TestMethod()]
-        [DataRollBack]
         public void DecideSalesTest()
         {
             //XXX get from config file?
-            Decimal SHIPPING_COMPANY_RATE = new Decimal();
+            Decimal SHIPPING_COMPANY_RATE = 0.01M;
             TraderLogic target = new TraderLogic(SHIPPING_COMPANY_RATE);
             List<MoveContractMsg> moveContracts = new List<MoveContractMsg>();            
             target.AddGood(1, portIDs["Felixstowe"], commodIDs["Citrus fruit"], 10);
@@ -162,7 +188,7 @@ namespace TestTaiPan
             expected.Add(new MoveContractMsg(portIDs["Felixstowe"], portIDs["Sydney"], 1));
             expected.Add(new MoveContractMsg(portIDs["Felixstowe"], portIDs["Sydney"], 2));
 
-            Assert.IsTrue(moveContracts.SequenceEqual(expected));
+            AssertSeqEqual(moveContracts, expected);
         }
     }
 }

@@ -63,18 +63,22 @@ def updateCommodityPrices():
     commoditySheet.C1 = commoditySheet.I3
     commoditySheet.D1 = commoditySheet.I4
     
-    commodityID = queryDb("select ID from Commodity where Name= '%s'" % commoditySheet.I1)[0,0]
-    ids = queryDb("select ID from Port where Name in ('%s', '%s', '%s') order by name ASC" % (commoditySheet.I2, commoditySheet.I3, commoditySheet.I4))
+    commodityID = queryDb("select ID from Commodity where Name= @CommodName",
+    {"CommodName": commoditySheet.I1})[0,0]
+    ids = queryDb("select ID from Port where Name in (@Name1, @Name2, @Name3) order by name ASC",
+    {"Name1": commoditySheet.I2, "Name2": commoditySheet.I3, "Name3": commoditySheet.I4})
     portIDs[0] = ids[0, 0]
     portIDs[1] = ids[0, 1]
     portIDs[2] = ids[0, 2]
     
     #first query includes dates
-    data = queryDb("select ValueDate, Value from (select top %d ValueDate, dbo.funcGetUSDValueAtDate(LocalPrice, %d, ValueDate) as Value from HistoricalPortCommodityPrice where PortID = %d and CommodityID = %d order by ValueDate DESC) as foo order by ValueDate ASC" % (Settings.nTopUpdate, portIDs[0], portIDs[0], commodityID))    
+    data = queryDb("select ValueDate, Value from (select top (@Limit) ValueDate, dbo.funcGetUSDValueAtDate(LocalPrice, @PortID, ValueDate) as Value from HistoricalPortCommodityPrice where PortID = PortID and CommodityID = @CommodID order by ValueDate DESC) as foo order by ValueDate ASC",
+    {"Limit": Settings.nTopUpdate, "PortID": portIDs[0], "CommodID": commodityID})    
     commoditySheet.FillRange(data, 1, 2, 2, Settings.nTopUpdate + 1)
     
     for i in range(1, 3):        
-        data = queryDb("select Value from (select top %d ValueDate, dbo.funcGetUSDValue(LocalPrice, %d) as Value from HistoricalPortCommodityPrice where PortID = %d and CommodityID = %d order by ValueDate DESC) as foo order by ValueDate ASC" % (Settings.nTopUpdate, portIDs[i], portIDs[i], commodityID))
+        data = queryDb("select Value from (select (@Limit) ValueDate, dbo.funcGetUSDValue(LocalPrice, @PID) as Value from HistoricalPortCommodityPrice where PortID = @PID and CommodityID = @CID order by ValueDate DESC) as foo order by ValueDate ASC",
+        {"Limit": Settings.nTopUpdate, "PID": portIDs[i], "CID": commodityID})
         commoditySheet.FillRange(data, i + 2, 2, i + 2, Settings.nTopUpdate + 1)
     
 def commodForecast():
@@ -127,7 +131,9 @@ def setFXNames():
     fxSheet.Cells.I3.DropdownItems = fxNames
     
 def updateFX():
-    idsAndCodes = queryDb("select ID, ShortName from Currency where Name in ('%s', '%s', '%s')" % (fxSheet.I1, fxSheet.I2, fxSheet.I3))
+    #xxx do this without string interpolation, though a real pain with .NET
+    idsAndCodes = queryDb("select ID, ShortName from Currency where Name in (@Name1, @Name2, @Name3)",
+    {"Name1": fxSheet.I1, "Name2": fxSheet.I2, "Name3": fxSheet.I3})
     fxSheet.B1 = idsAndCodes[1,0]
     fxSheet.C1 = idsAndCodes[1,1]
     fxSheet.D1 = idsAndCodes[1,2]
@@ -142,11 +148,13 @@ def updateFX():
             break
     
     #first query includes dates
-    data = queryDb("select * from (select top %d ValueDate, USDValue from HistoricalCurrencyPrice where CurrencyID = %d order by ValueDate DESC) as foo order by ValueDate ASC" % (Settings.nTopUpdate, currencyIds[0]))
+    data = queryDb("select * from (select top (@Limit) ValueDate, USDValue from HistoricalCurrencyPrice where CurrencyID = @ID order by ValueDate DESC) as foo order by ValueDate ASC",
+    {"Limit": Settings.nTopUpdate, "ID": currencyIds[0]})
     fxSheet.FillRange(data, 1, 2, 2, Settings.nTopUpdate + 1)
     
     for i in range(1, 3):        
-        data = queryDb("select USDValue from (select top %d ValueDate, USDValue from HistoricalCurrencyPrice where CurrencyID = %d order by ValueDate DESC) as foo order by ValueDate ASC" % (Settings.nTopUpdate, currencyIds[i]))
+        data = queryDb("select USDValue from (select top (@Limit) ValueDate, USDValue from HistoricalCurrencyPrice where CurrencyID = @ID order by ValueDate DESC) as foo order by ValueDate ASC",
+        {"Limit": Settings.nTopUpdate, "ID": currencyIds[i]})
         fxSheet.FillRange(data, i + 2, 2, i + 2, Settings.nTopUpdate + 1)
  
 def fxForecast():

@@ -45,9 +45,9 @@ execfile(dir + '/' + 'algsPreConstants.py')
             <virtualGridSize width="50" height="88" />
         </viewState>
         <viewState worksheet="Commodity Prices">
-            <currentCell col="7" row="13" />
+            <currentCell col="1" row="1" />
             <scrollPos col="1" row="1" />
-            <virtualGridSize width="23" height="49" />
+            <virtualGridSize width="23" height="50" />
         </viewState>
         <viewState worksheet="Trader summary">
             <currentCell col="1" row="10" />
@@ -58,7 +58,7 @@ execfile(dir + '/' + 'algsPreConstants.py')
         <viewState worksheet="Futures">
             <currentCell col="8" row="2" />
             <scrollPos col="1" row="1" />
-            <virtualGridSize width="50" height="88" />
+            <virtualGridSize width="25" height="50" />
         </viewState>
         <viewState worksheet="Sorting Algorithms">
             <currentCell col="4" row="11" />
@@ -68,7 +68,7 @@ execfile(dir + '/' + 'algsPreConstants.py')
         <viewState worksheet="FX Rates">
             <currentCell col="8" row="14" />
             <scrollPos col="1" row="1" />
-            <virtualGridSize width="47" height="88" />
+            <virtualGridSize width="22" height="50" />
         </viewState>
         <viewState worksheet="Shipping">
             <currentCell col="1" row="3" />

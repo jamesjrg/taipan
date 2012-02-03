@@ -121,13 +121,14 @@ def getPortArcs():
     
     arcs = []
     
-    for p in portsList:
+    for pName in portsList:
         otherPorts = portsList[:]
-        otherPorts.remove(p)
+        otherPorts.remove(pName)
         otherPorts = ", ".join(otherPorts)        
+        #xxx do this without string interpolation, though a pain with .NET
         data = queryDb(
         """select p.Name, o.Name, p.Location.STDistance(o.Location) from Port p, Port o
-where p.Name = %s and o.Name in (%s)""" % (p, otherPorts))
+where p.Name = %s and o.Name in (%s)""" % otherPorts, {"Name": pName})
               
         #So [0, x] is p.Name, etc
         for i in range(data.GetLength(1)):
