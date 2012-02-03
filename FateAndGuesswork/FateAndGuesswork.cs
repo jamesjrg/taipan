@@ -73,6 +73,12 @@ namespace TaiPan.FateAndGuesswork
             public int shortageProb;
         }
 
+        private enum PriceJumpType
+        {
+            Surplus = 0,
+            Shortage = 1
+        }
+
         private class PriceJump
         {
             public PriceJump(string traderId, PriceJumpType type, string port, string commod, int quantity, DateTime when)

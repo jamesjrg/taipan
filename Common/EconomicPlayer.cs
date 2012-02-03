@@ -29,7 +29,7 @@ namespace TaiPan.Common
         {
             Console.WriteLine("Reading server connection settings from config file");
             ExeConfigurationFileMap fileMap = new ExeConfigurationFileMap();
-            fileMap.ExeConfigFilename = Util.configFile;
+            fileMap.ExeConfigFilename = Shared.configFile;
             System.Configuration.Configuration config = ConfigurationManager.OpenMappedExeConfiguration(fileMap, ConfigurationUserLevel.None);
             
             //this line worked for a while, and then stopped working? This config API totally sucks, I've wasted ludicrous amounts of time fighting it
@@ -51,7 +51,7 @@ namespace TaiPan.Common
 
             ServersSection serversSection = config.GetSection("servers") as ServersSection;
             if (serversSection == null)
-                throw new ApplicationException("Couldn't find server connection settings in config file " + Util.configFile);
+                throw new ApplicationException("Couldn't find server connection settings in config file " + Shared.configFile);
             ServersCollection servers = serversSection.Servers;
             foreach (ServerElement server in servers)
                 ServerConfigs.Add(server.Name, new ServerConfig(server.Name, server.Address, server.Port));

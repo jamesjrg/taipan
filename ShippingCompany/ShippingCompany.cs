@@ -58,7 +58,7 @@ namespace TaiPan.ShippingCompany
             }
 
             DbConn dbConn = new DbConn();
-            portDistances = Util.GetPortDistancesLookup(dbConn);
+            portDistances = Shared.GetPortDistancesLookup(dbConn);
             dbConn.Dispose();
 
             bankClient = new Client(ServerConfigs["Bank-Shipping"], AppSettings, myID, false);

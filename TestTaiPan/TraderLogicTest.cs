@@ -152,16 +152,16 @@ namespace TestTaiPan
             //XXX get from config file?
             Decimal SHIPPING_COMPANY_RATE = new Decimal();
             TraderLogic target = new TraderLogic(SHIPPING_COMPANY_RATE);
-            List<MoveContractMsg> moveContracts = new List<MoveContractMsg>();
-            target.DecideSales(moveContracts);
-
+            List<MoveContractMsg> moveContracts = new List<MoveContractMsg>();            
             target.AddGood(1, portIDs["Felixstowe"], commodIDs["Citrus fruit"], 10);
             target.AddGood(2, portIDs["Felixstowe"], commodIDs["Iron ore"], 10);
-            target.DecideSales();
+
+            target.DecideSales(moveContracts);
 
             var expected = new List<MoveContractMsg>();
             expected.Add(new MoveContractMsg(portIDs["Felixstowe"], portIDs["Sydney"], 1));
             expected.Add(new MoveContractMsg(portIDs["Felixstowe"], portIDs["Sydney"], 2));
+
             Assert.IsTrue(moveContracts.SequenceEqual(expected));
         }
     }

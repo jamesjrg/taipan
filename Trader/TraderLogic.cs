@@ -39,7 +39,7 @@ namespace TaiPan.Trader
         {
             dbConn = new DbConn();
             this.SHIPPING_COMPANY_RATE = SHIPPING_COMPANY_RATE;
-            portDistances = Util.GetPortDistancesLookup(dbConn);
+            portDistances = Shared.GetPortDistancesLookup(dbConn);
         }
 
         public void DecideSales(List<MoveContractMsg> moveContracts)

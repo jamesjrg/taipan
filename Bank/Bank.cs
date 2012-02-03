@@ -55,7 +55,7 @@ namespace TaiPan.Bank
             dbConn.ExecuteNonQuery("delete from CommodityTransaction");
             dbConn.ExecuteNonQuery("delete from FuturesContract;");
 
-            portDistances = Util.GetPortDistancesLookup(dbConn);
+            portDistances = Shared.GetPortDistancesLookup(dbConn);
 
             traderServer = new Server(ServerConfigs["Bank-Trader"], AppSettings, false);
             shippingServer = new Server(ServerConfigs["Bank-Shipping"], AppSettings, false);
