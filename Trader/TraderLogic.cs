@@ -30,7 +30,6 @@ namespace TaiPan.Trader
         }
 
         private DbConn dbConn;
-        private Dictionary<string, int> portDistances;
         private List<WarehousedGood> warehousedGoods = new List<WarehousedGood>();
 
         private decimal SHIPPING_COMPANY_RATE;
@@ -39,10 +38,9 @@ namespace TaiPan.Trader
         {
             dbConn = new DbConn();
             this.SHIPPING_COMPANY_RATE = SHIPPING_COMPANY_RATE;
-            portDistances = Shared.GetPortDistancesLookup(dbConn);
         }
 
-        public void DecideSales(List<MoveContractMsg> moveContracts)
+        public void DecideSales(List<MoveContractMsg> moveContracts, List<LocalSaleMsg> localSales)
         {
             foreach (var good in warehousedGoods)
             {
@@ -69,15 +67,25 @@ where CommodityId = @CID");
                 int bestPort = 0;
                 decimal bestProfit = 0;
 
+                SqlCommand shippingRateCmd = new SqlCommand("select dbo.funcShippingCost(@Port1, @Port2, @ShippingRate, @Quantity)");
+
                 foreach (var port in salePorts)
                 {
-                    //XXX currently selling to the port good is being stored at is not possible
-                    if (good.portID == port.Item1)
-                        continue;
+                    decimal shippingCost;
 
-                    decimal profit = (good.quantity * port.Item2 * port.Item3)
-                        - SHIPPING_COMPANY_RATE *
-                        portDistances[good.portID + "," + port.Item1];
+                    if (good.portID == port.Item1)
+                        shippingCost = 0;
+                    else
+                    {
+                        shippingRateCmd.Parameters.Clear();
+                        shippingRateCmd.Parameters.AddWithValue("@Port1", good.portID);
+                        shippingRateCmd.Parameters.AddWithValue("@Port2", port.Item1);
+                        shippingRateCmd.Parameters.AddWithValue("@ShippingRate", SHIPPING_COMPANY_RATE);
+                        shippingRateCmd.Parameters.AddWithValue("@Quantity", good.quantity);
+                        shippingCost = (decimal)dbConn.ExecuteScalar(shippingRateCmd);
+                    }
+
+                    decimal profit = (good.quantity * port.Item2 * port.Item3) - shippingCost;
 
                     if (profit > bestProfit)
                     {
@@ -86,7 +94,10 @@ where CommodityId = @CID");
                     }
                 }
 
-                moveContracts.Add(new MoveContractMsg(good.portID, bestPort, good.transactionID));
+                if (good.portID == bestPort)
+                    localSales.Add(new LocalSaleMsg(good.transactionID));
+                else
+                    moveContracts.Add(new MoveContractMsg(good.portID, bestPort, good.transactionID));
             }
 
             warehousedGoods.Clear();

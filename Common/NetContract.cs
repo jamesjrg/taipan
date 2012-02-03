@@ -7,6 +7,7 @@ using System.Xml.Serialization;
 
 namespace TaiPan.Common.NetContract
 {
+    //manually specify the numbers to ease debugging of net messages
     public enum NetMsgType
     {
         //FXServer
@@ -18,19 +19,20 @@ namespace TaiPan.Common.NetContract
         Shortage = 4,
 
         //Trader
-        Buy = 5,
-        Future = 6,
-        AdvertiseMove = 7,
-        ConfirmMove = 8,
+        Buy = 10,
+        LocalSale = 11,
+        Future = 12,
+        AdvertiseMove = 13,
+        ConfirmMove = 14,
 
         //Shipping Company
-        Departure = 9,
-        Arrival = 10,
-        AcceptMove = 11,
+        Departure = 20,
+        Arrival = 21,
+        AcceptMove = 22,
 
         //Bank
-        BuyConfirm = 12,
-        FutureSettle = 13,
+        BuyConfirm = 30,
+        FutureSettle = 31,
 
     }
 
@@ -141,6 +143,17 @@ namespace TaiPan.Common.NetContract
         public int portID;
         public int commodID;
         public int quantity;
+    }
+
+    public class LocalSaleMsg
+    {
+        public LocalSaleMsg() { }
+        public LocalSaleMsg(int transactionID)
+        {
+            this.transactionID = transactionID;
+        }
+
+        public int transactionID;
     }
 
     public class FutureMsg
@@ -270,6 +283,8 @@ namespace TaiPan.Common.NetContract
                 //trader
                 case NetMsgType.Buy:
                     return typeof(BuyMsg);
+                case NetMsgType.LocalSale:
+                    return typeof(LocalSaleMsg);
                 case NetMsgType.Future:
                     return typeof(FutureMsg);
                 case NetMsgType.AdvertiseMove:

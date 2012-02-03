@@ -16,16 +16,11 @@
 git change log:
 
 nowish:
-- make unit test of DecideSales work properly
-manually work out what best place to sell each of two goods is
-check moveContracts has exactly what one would expect after function is run
-
-- change Trader DecideSales to account for possibility that best sale location may be the place where goods are currently warehoused. if so, don't need to contract a shipping company, just sell directly - and bank needs to be able to cope with this
-- write a whole bunch of unit tests for functions in main TaiPan project
 - BTree: dump method, unit tests, and delete method
 - finish all the spreadsheet sheets filled from database queries (though finish DecideSales first). Prices are converted from local currency to historical USD value
-- tweak freighter speed in config, also fuelcost
+- tweak freighter speed in config
 - make sql "in" queries with variable length arg list work without using string interpolation, in C# and in tfppreconstants.py
+- integration/unit test various main EconomicPlayer classes, inc Bank using [rollback]
 - search for xxx using igrep
 
 needs ad-hoc testing now:

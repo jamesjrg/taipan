@@ -56,7 +56,8 @@ namespace TaiPan.Common
         public object ExecuteScalar(SqlCommand cmd)
         {
             cmd.Connection = _conn;
-            return cmd.ExecuteScalar();
+            var x = cmd.ExecuteScalar();
+            return x;
         }
 
         public object ExecuteScalar(string query)

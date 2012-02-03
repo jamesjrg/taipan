@@ -433,18 +433,24 @@ CREATE PROCEDURE procShipArrived
    @CommodityTransactionID int,
    @ShippingCompanyID int,
    @ArrivalTime datetime, 
-   @ShippingCompanyCharge Money,
-   @FuelCost Money
+   @DepartPort int, 
+   @ArrivalPort int, 
+   @ShippingCompanyRate Money,
+   @FuelRate Money
 AS
 BEGIN
-declare @TraderID int
+declare @TraderID int, @Quantity int, @ShippingCost Money, @FuelCost Money
+--xxx assign in one step?
 set @TraderID  = (select TraderID from CommodityTransaction where ID = @CommodityTransactionID)
+set @Quantity  = (select Quantity from CommodityTransaction where ID = @CommodityTransactionID)
+set @ShippingCost = dbo.funcShippingCost(@DepartPort, @ArrivalPort, @ShippingCompanyRate, @Quantity)
+set @FuelCost = @ShippingCost * @FuelRate
 
 update CommodityTransport SET ArrivalTime = @ArrivalTime WHERE CommodityTransactionID = @CommodityTransactionID;
 
 --money taken from trader and given to shipping company
-EXEC procSubtractBalanceUSD @TraderID, @ShippingCompanyCharge;
-EXEC procAddBalanceUSD @ShippingCompanyID, @ShippingCompanyCharge;
+EXEC procSubtractBalanceUSD @TraderID, @ShippingCost;
+EXEC procAddBalanceUSD @ShippingCompanyID, @ShippingCost;
 
 --money taken from shipping company for fuel
 EXEC procSubtractBalanceUSD @ShippingCompanyID, @FuelCost;
@@ -467,6 +473,18 @@ EXEC procAddBalance traderID, @SalePortID, @TotalLocalPrice;
 END
 GO
 
+CREATE PROCEDURE localSale
+@CommodityTransactionID int
+AS
+BEGIN
+declare @SalePortID int
+set @SalePortID = (select BuyPortID from CommodityTransaction where CommodityTransaction.ID = @CommodityTransactionID)
+EXEC procCommoditySale @CommodityTransactionID, @SalePortID;
+END
+GO
+
+--functions
+
 -- currency conversion
 CREATE FUNCTION funcGetUSDValue (@LocalPrice Money, @PortID int)
 RETURNS Money
@@ -487,6 +505,21 @@ declare @USDValue Money, @ConvertedPrice Money
 set @USDValue = (select TOP 1 USDValue from HistoricalCurrencyPrice join Country on Country.CurrencyID = HistoricalCurrencyPrice.ID join Port on Port.CountryID = Country.ID where port.id = @PortID and HistoricalCurrencyPrice.ValueDate < @TheDate order by ValueDate DESC)
 set @ConvertedPrice = (select @LocalPrice * @USDValue)
 return @ConvertedPrice
+END
+GO
+
+-- other functions
+CREATE FUNCTION funcShippingCost(@Port1 int, @Port2 int, @ShippingRate Money, @Quantity int)
+RETURNS Money
+AS
+BEGIN
+declare @Distance int
+set @Distance  =
+(select p.Location.STDistance(o.Location)
+from Port p, Port o
+where p.ID = @Port1 and o.ID = @Port2)
+-- /1000 because shipping rate is per kilometer
+return @Distance * @ShippingRate * @Quantity / 1000
 END
 GO
 

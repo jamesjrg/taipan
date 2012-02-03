@@ -22,13 +22,12 @@ namespace TaiPan.Common
             foreach (int port in ports)
             {
                 var otherPorts = new List<int>(ports);
-                otherPorts.Remove(port);
                 string otherPortsStr = String.Join(",", otherPorts);
 
-                //XXX should do this without string interpolation, though in .NET there is no simple method
-                var cmd = new SqlCommand(String.Format(
+                var cmd = new SqlCommand(
 @"select p.ID, o.ID, p.Location.STDistance(o.Location)
-from Port p, Port o where p.ID = @PortID and o.ID in ({0})", otherPortsStr));
+from Port p, Port o
+where p.ID = @PortID");
                 cmd.Parameters.AddWithValue("@PortID", port);
                 var reader = dbConn.ExecuteQuery(cmd);
                 while (reader.Read())

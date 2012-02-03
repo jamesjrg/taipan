@@ -27,6 +27,8 @@ namespace TaiPan.Trader
         private List<MoveContractMsg> unconfirmedContracts = new List<MoveContractMsg>();
         private List<MoveConfirmInfo> moveConfirms = new List<MoveConfirmInfo>();
 
+        private List<LocalSaleMsg> localSales = new List<LocalSaleMsg>();
+
         private class MoveConfirmInfo
         {
             public MoveConfirmInfo(MoveContractMsg msg, int targetCompany)
@@ -106,7 +108,7 @@ namespace TaiPan.Trader
                 }
             }
 
-            logic.DecideSales(moveContracts);
+            logic.DecideSales(moveContracts, localSales);
 
             foreach (var msg in futureRequests)
                 bankClient.Send(NetContract.Serialize(NetMsgType.Future, msg));
@@ -126,6 +128,10 @@ namespace TaiPan.Trader
             foreach (var info in moveConfirms)
                 shippingServer.Send(NetContract.Serialize(NetMsgType.ConfirmMove, info.msg));
             moveConfirms.Clear();
+
+            foreach (var msg in localSales)
+                bankClient.Send(NetContract.Serialize(NetMsgType.LocalSale, msg));
+            localSales.Clear();
 
             return true; 
         }

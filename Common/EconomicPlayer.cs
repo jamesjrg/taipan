@@ -21,7 +21,7 @@ namespace TaiPan.Common
         protected readonly int MoveContractAdvertiseTime;
         protected readonly int MAIN_LOOP_TICK;
 
-        protected readonly decimal FUEL_COST;
+        protected readonly decimal FUEL_RATE;
         protected readonly decimal SHIPPING_COMPANY_RATE;
         protected readonly int FREIGHTER_SPEED;
 
@@ -45,7 +45,7 @@ namespace TaiPan.Common
             CurrencyAccuracy = "F" + Convert.ToInt32(AppSettings["CurrencyAccuracy"]);
             TickVolatility = Convert.ToDecimal(AppSettings["TickVolatility"]);
             MoveContractAdvertiseTime = Convert.ToInt32(AppSettings["MoveContractAdvertiseTime"]);
-            FUEL_COST = Convert.ToDecimal(AppSettings["FuelCost"]);
+            FUEL_RATE = Convert.ToDecimal(AppSettings["FuelRate"]);
             SHIPPING_COMPANY_RATE = Convert.ToDecimal(AppSettings["ShippingCompanyRate"]);
             FREIGHTER_SPEED = Convert.ToInt32(AppSettings["FreighterSpeed"]);
 

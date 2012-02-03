@@ -93,12 +93,13 @@ namespace TestTaiPan
             _conn.ExecuteNonQuery("update PortCommodityPrice set LocalPrice = 0");
 
             //now some chosen values
+            //note price is in local money, and Argentian peso is $0.25562, GBP is $1.5321, AUD is $0.9277
             var values = new List<Tuple<int, int, int>>();
             values.Add(new Tuple<int, int, int>(10, portIDs["Felixstowe"], commodIDs["Citrus fruit"]));
-            values.Add(new Tuple<int, int, int>(3, portIDs["Felixstowe"], commodIDs["Iron ore"]));
-            values.Add(new Tuple<int, int, int>(7, portIDs["Bahía Blanca"], commodIDs["Citrus fruit"]));
-            values.Add(new Tuple<int, int, int>(5, portIDs["Bahía Blanca"], commodIDs["Iron ore"]));
-            values.Add(new Tuple<int, int, int>(3, portIDs["Sydney"], commodIDs["Citrus fruit"]));
+            values.Add(new Tuple<int, int, int>(4, portIDs["Felixstowe"], commodIDs["Iron ore"]));
+            values.Add(new Tuple<int, int, int>(28, portIDs["Bahía Blanca"], commodIDs["Citrus fruit"]));
+            values.Add(new Tuple<int, int, int>(25, portIDs["Bahía Blanca"], commodIDs["Iron ore"]));
+            values.Add(new Tuple<int, int, int>(10, portIDs["Sydney"], commodIDs["Citrus fruit"]));
             values.Add(new Tuple<int, int, int>(4, portIDs["Sydney"], commodIDs["Iron ore"]));
 
             SqlCommand cmd = new SqlCommand("update PortCommodityPrice set LocalPrice = @LPrice where PortID = @PID and CommodityID = @CID");
@@ -146,6 +147,7 @@ namespace TestTaiPan
             }
         }
 
+        //xxx not sure if all the reflective generics in the following methods are considered good form in the .NET world or not
         private string ListToStr<T>(List<T> seq)
         {
             return string.Join(", ", seq.Select(
@@ -164,10 +166,33 @@ namespace TestTaiPan
                 }));
         }
 
+        class GenericObjectComparer<T> : EqualityComparer<T>
+        {
+            public override bool Equals(T x, T y)
+            {
+                Type myType = x.GetType();
+                var fieldInfo = myType.GetFields();
+
+                foreach (var field in fieldInfo)
+                {
+                    if (!field.GetValue(x).Equals(field.GetValue(y)))
+                        return false;
+                }
+
+                return true;
+            }
+
+            //xxx meh why I am forced to implement this
+            public override int GetHashCode(T x)
+            {
+                throw new Exception("not implemented");
+            }
+        }
+        
         private void AssertSeqEqual<T>(List<T> seq1, List<T> seq2)
         {
             //Visual Studio doesn't like multiline error messages, bah
-            if (!seq1.SequenceEqual(seq2))
+            if (!seq1.SequenceEqual(seq2, new GenericObjectComparer<T>()))
                 throw new AssertFailedException("Sequences not equal: " + ListToStr(seq1) + " and " + ListToStr(seq2));
             return;
         }
@@ -175,20 +200,23 @@ namespace TestTaiPan
         [TestMethod()]
         public void DecideSalesTest()
         {
-            //XXX get from config file?
-            Decimal SHIPPING_COMPANY_RATE = 0.01M;
+            Decimal SHIPPING_COMPANY_RATE = 0.0001M;
             TraderLogic target = new TraderLogic(SHIPPING_COMPANY_RATE);
-            List<MoveContractMsg> moveContracts = new List<MoveContractMsg>();            
-            target.AddGood(1, portIDs["Felixstowe"], commodIDs["Citrus fruit"], 10);
-            target.AddGood(2, portIDs["Felixstowe"], commodIDs["Iron ore"], 10);
+            target.AddGood(1, portIDs["Sydney"], commodIDs["Iron ore"], 10);
+            target.AddGood(2, portIDs["Felixstowe"], commodIDs["Citrus fruit"], 10);
 
-            target.DecideSales(moveContracts);
+            var moveContracts = new List<MoveContractMsg>();
+            var localSales = new List<LocalSaleMsg>();
+            
+            target.DecideSales(moveContracts, localSales);
 
-            var expected = new List<MoveContractMsg>();
-            expected.Add(new MoveContractMsg(portIDs["Felixstowe"], portIDs["Sydney"], 1));
-            expected.Add(new MoveContractMsg(portIDs["Felixstowe"], portIDs["Sydney"], 2));
+            var expectedMoves = new List<MoveContractMsg>();
+            var expectedLocalSales = new List<LocalSaleMsg>();
+            expectedMoves.Add(new MoveContractMsg(portIDs["Sydney"], portIDs["Bahía Blanca"], 1));
+            expectedLocalSales.Add(new LocalSaleMsg(2));
 
-            AssertSeqEqual(moveContracts, expected);
+            AssertSeqEqual(moveContracts, expectedMoves);
+            AssertSeqEqual(localSales, expectedLocalSales);
         }
     }
 }

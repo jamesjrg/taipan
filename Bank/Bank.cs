@@ -107,6 +107,9 @@ namespace TaiPan.Bank
                         case NetMsgType.Buy:
                             EnactBuy(client.id, (BuyMsg)msg.data);
                             break;
+                        case NetMsgType.LocalSale:
+                            EnactLocalSale((LocalSaleMsg)msg.data);
+                            break;
                         case NetMsgType.Future:
                             EnactFuture(client.id, (FutureMsg)msg.data);
                             break;
@@ -288,6 +291,13 @@ SELECT ID FROM CommodityTransaction WHERE ID = @@IDENTITY");
             confirmedBuys.Add(new ConfirmInfo(traderID, msg.portID, msg.commodID, msg.quantity, transID, amount));
         }
 
+        private void EnactLocalSale(LocalSaleMsg msg)
+        {
+            var saleCmd = new SqlCommand("procLocalSale");
+            saleCmd.Parameters.AddWithValue("@CommodityTransactionID", msg.transactionID);
+            dbConn.StoredProc(saleCmd);
+        }
+
         private void ShipDeparted(int companyID, MovingMsg msg)
         {
             var cmd = new SqlCommand("insert into CommodityTransport (ShippingCompanyID, CommodityTransactionID, DepartureTime) VALUES (@CompanyID, @TransactionID, @Time)");
@@ -299,17 +309,14 @@ SELECT ID FROM CommodityTransaction WHERE ID = @@IDENTITY");
 
         private void ShipArrived(int companyID, MovingMsg msg)
         {
-            //calculate fuel charge paid by shipping company and rate charged by shipping company to trader
-            int distance = portDistances[msg.departPortID + "," + msg.destPortID];
-            decimal fuelCost = FUEL_COST * distance;
-            decimal shippingCompanyCharge = fuelCost * SHIPPING_COMPANY_RATE;
-
             var shipArrivedCmd = new SqlCommand("procShipArrived");
             shipArrivedCmd.Parameters.AddWithValue("@CommodityTransactionID", msg.transactionID);
             shipArrivedCmd.Parameters.AddWithValue("@ShippingCompanyID", companyID);
             shipArrivedCmd.Parameters.AddWithValue("@ArrivalTime", msg.time);
-            shipArrivedCmd.Parameters.AddWithValue("@ShippingCompanyCharge", shippingCompanyCharge);
-            shipArrivedCmd.Parameters.AddWithValue("@FuelCost", fuelCost);
+            shipArrivedCmd.Parameters.AddWithValue("@DepartPort", msg.departPortID);
+            shipArrivedCmd.Parameters.AddWithValue("@ArrivalPort", msg.destPortID);
+            shipArrivedCmd.Parameters.AddWithValue("@ShippingCompanyRate", SHIPPING_COMPANY_RATE);
+            shipArrivedCmd.Parameters.AddWithValue("@FuelRate", FUEL_RATE);
             dbConn.StoredProc(shipArrivedCmd);
 
             var saleCmd = new SqlCommand("procCommoditySale");
