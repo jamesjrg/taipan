@@ -77,7 +77,7 @@ def updateCommodityPrices():
     commoditySheet.FillRange(data, 1, 2, 2, Settings.nTopUpdate + 1)
     
     for i in range(1, 3):        
-        data = queryDb("select Value from (select (@Limit) ValueDate, dbo.funcGetUSDValue(LocalPrice, @PID) as Value from HistoricalPortCommodityPrice where PortID = @PID and CommodityID = @CID order by ValueDate DESC) as foo order by ValueDate ASC",
+        data = queryDb("select Value from (select top (@Limit) ValueDate, dbo.funcGetUSDValue(LocalPrice, @PID) as Value from HistoricalPortCommodityPrice where PortID = @PID and CommodityID = @CID order by ValueDate DESC) as foo order by ValueDate ASC",
         {"Limit": Settings.nTopUpdate, "PID": portIDs[i], "CID": commodityID})
         commoditySheet.FillRange(data, i + 2, 2, i + 2, Settings.nTopUpdate + 1)
     

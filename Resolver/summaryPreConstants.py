@@ -1,14 +1,19 @@
 ﻿def futuresUpdate():
-    data = queryDb("""select * from
+    data = queryDb("""select 
+    CommodName, Quantity, PurchaseTime, ActualSetTime, BPName, HistUSDBuyPrice, SaleTime, SPName, HistUSDSalePrice,
+    HistUSDSalePrice - HistUSDBuyPrice as Profit,
+    TradName, ShipName
+    
+    FROM    
     
     (SELECT TOP (@Limit)
     Commodity.Name as CommodName, f.Quantity, f.PurchaseTime, f.ActualSetTime,
-    bp.Name as BPName, dbo.funcGetUSDValueAtDate(f.LocalPrice, f.PortID, f.ActualSetTime) as BPrice,
+    bp.Name as BPName, dbo.funcGetUSDValueAtDate(f.LocalPrice, f.PortID, f.ActualSetTime) as HistUSDBuyPrice,
     ctrans.SaleTime, sp.Name as SPName,
-    dbo.funcGetUSDValueAtDate(ctrans.SalePrice, ctrans.SalePortID, ctrans.SaleTime) as SPrice,
+    dbo.funcGetUSDValueAtDate(ctrans.SalePrice, ctrans.SalePortID, ctrans.SaleTime) as HistUSDSalePrice,
     tcomp.Name as TradName, scomp.Name as ShipName
     
-    from Commodity
+    FROM Commodity
     join FuturesContract as f on f.CommodityID = Commodity.ID
     join Port as bp on bp.ID = f.PortID
     join CommodityTransaction as ctrans on ctrans.FuturesContractID = f.ID
@@ -21,24 +26,34 @@
     
     order by f.PurchaseTime DESC) as foo order by PurchaseTime ASC""", {"Limit": Settings.nTopUpdate})
     
+    futuresSheet.FillRange(data, 1, 4, 12, Settings.nTopUpdate + 1)
+    
 def purchasesUpdate():
-    # data = queryDb("""select * from
-
-    # (SELECT TOP %d
-    # Commodity.Name as CommodName, ctrans.Quantity, ctrans.PurchaseTime, bp.Name as BPName, dbo.funcGetUSDValueAtDate(x.BuyPrice), x.TimeSold, sp.Name as SPName, x.profitloss, tcomp.Name as TradName, scomp.Name as ShipName
+    data = queryDb("""select
+    CommodName, Quantity, PurchaseTime, BPName, HistUSDBuyPrice, SaleTime, SPName, HistUSDSalePrice,
+    HistUSDSalePrice - HistUSDBuyPrice as Profit,
+    TradName, ShipName
     
-    # from Commodity
-    # join CommodityTransaction as ctrans on ctrans.CommodityID = Commodity.ID
-    # join CommodityTransport as transport
-    # join Company as tcomp
-    # join Company as scomp
+    FROM
     
-    # some joining on ctrans.BuyPortID
-    # some joining on ctrans.SalePortID
-    # some joining on transport.ShippingCompanyID
+    (SELECT TOP (@Limit)
+    Commodity.Name as CommodName, ctrans.Quantity, ctrans.PurchaseTime, bp.Name as BPName,
+    dbo.funcGetUSDValueAtDate(ctrans.PurchasePrice, ctrans.BuyPortID, ctrans.PurchaseTime) as HistUSDBuyPrice,
+    ctrans.SaleTime, sp.Name as SPName,
+    dbo.funcGetUSDValueAtDate(ctrans.SalePrice, ctrans.SalePortID, ctrans.SaleTime) as HistUSDSalePrice,
+    tcomp.Name as TradName, scomp.Name as ShipName
     
-    # order by ct.PurchaseTime DESC) as foo order by PurchaseTime ASC""" % (Settings.nTopUpdate))
-    data = queryDb("SELECT TOP 10 Name FROM Country ORDER BY Name DESC")
+    FROM Commodity
+    join CommodityTransaction as ctrans on ctrans.CommodityID = Commodity.ID
+    join CommodityTransport as transport on transport.CommodityTransactionID = ctrans.ID
+    join Company as tcomp on tcomp.ID = ctrans.TraderID
+    join Company as scomp on scomp.ID = transport.ShippingCompanyID
+    join Port bp on bp.ID = ctrans.BuyPortID
+    join Port sp on sp.ID = ctrans.SalePortID
+    
+    order by ctrans.PurchaseTime DESC) as foo order by PurchaseTime ASC""", {"Limit": Settings.nTopUpdate})
+    
+    purchasesSheet.FillRange(data, 1, 4, 12, Settings.nTopUpdate + 1)
     
     
 def shippingUpdate():

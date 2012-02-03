@@ -38,7 +38,7 @@ for name in simpleSummaryNames + complexSummaryNames:
         globals()['%sSheet' % name].A2 = button
     summaryButtons.append(button)
     
-#TDP sheet
+#TFP sheet
 #xxx MS Solver not installed right now
 #solveTFPButton = makeButton("Solve", solveTFP)
 #TFPSheet.B9 = solveTFPButton

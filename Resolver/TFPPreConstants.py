@@ -125,7 +125,7 @@ def getPortArcs():
         data = queryDb(
 """select p.Name, o.Name, p.Location.STDistance(o.Location)
 from Port p, Port o
-where p.Name = %s and p.ID != o.ID""", {"Name": pName})
+where p.Name = @Name and p.ID != o.ID""", {"Name": pName})
               
         #So [0, x] is p.Name, etc
         for i in range(data.GetLength(1)):
