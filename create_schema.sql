@@ -373,37 +373,35 @@ BEGIN
 END
 GO
 
---functions to add/subtract balances from accounts of companies
+-- procedures to add/subtract balances from accounts of companies
 CREATE PROCEDURE procAddBalanceUSD
    @CompanyID int, 
    @Amount Money
-AS 
-BEGIN
-	update Company SET Balance =
-	Balance +
-	@Amount /
-		(select USDValue from Currency
-			join Country on Country.CurrencyID = Currency.ID
-			join Company on Company.CountryID = Country.ID
-			where Company.ID = @CompanyID)
-	WHERE ID = @CompanyID
-END
+AS
+SET NOCOUNT ON
+update Company SET Balance =
+Balance +
+@Amount /
+    (select USDValue from Currency
+        join Country on Country.CurrencyID = Currency.ID
+        join Company on Company.CountryID = Country.ID
+        where Company.ID = @CompanyID)
+WHERE ID = @CompanyID
 GO
 
 CREATE PROCEDURE procSubtractBalanceUSD
    @CompanyID int, 
    @Amount Money
 AS 
-BEGIN
-	update Company SET Balance =
-	Balance -
-	@Amount /
-		(select USDValue from Currency
-			join Country on Country.CurrencyID = Currency.ID
-			join Company on Company.CountryID = Country.ID
-			where Company.ID = @CompanyID)
-	WHERE ID = @CompanyID
-END
+SET NOCOUNT ON
+update Company SET Balance =
+Balance -
+@Amount /
+    (select USDValue from Currency
+        join Country on Country.CurrencyID = Currency.ID
+        join Company on Company.CountryID = Country.ID
+        where Company.ID = @CompanyID)
+WHERE ID = @CompanyID
 GO
 
 CREATE PROCEDURE procAddBalance
@@ -411,24 +409,37 @@ CREATE PROCEDURE procAddBalance
    @PortID int, 
    @Amount Money
 AS 
-BEGIN
-    set @Amount  = (dbo.funcGetUSDValue(@Amount, @PortID))
-    EXEC procAddBalanceUSD @CompanyID, @Amount
-END
+SET NOCOUNT ON
+SET @Amount  = (dbo.funcGetUSDValue(@Amount, @PortID))
+EXEC procAddBalanceUSD @CompanyID, @Amount
 GO
 
 CREATE PROCEDURE procSubtractBalance
    @CompanyID int, 
    @PortID int, 
    @Amount Money
-AS 
-BEGIN
-    set @Amount  = (dbo.funcGetUSDValue(@Amount, @PortID))
-	EXEC procSubtractBalanceUSD @CompanyID, @Amount
-END
+AS
+SET NOCOUNT ON
+SET @Amount  = (dbo.funcGetUSDValue(@Amount, @PortID))
+EXEC procSubtractBalanceUSD @CompanyID, @Amount
 GO
 
--- financial transactions
+-- procedures containing logic for events in system
+CREATE PROCEDURE procShipDeparted
+   @CommodityTransactionID int,
+   @ShippingCompanyID int,
+   @DepartTime datetime,
+   @DestPort int
+AS
+SET NOCOUNT ON
+SET XACT_ABORT ON
+BEGIN TRAN
+    INSERT INTO CommodityTransport (ShippingCompanyID, CommodityTransactionID, DepartureTime)
+    VALUES (@ShippingCompanyID, @CommodityTransactionID, @DepartTime)
+    UPDATE CommodityTransaction SET SalePortID=@DestPort WHERE ID = @CommodityTransactionID;
+COMMIT TRAN
+GO
+
 CREATE PROCEDURE procShipArrived 
    @CommodityTransactionID int,
    @ShippingCompanyID int,
@@ -438,51 +449,54 @@ CREATE PROCEDURE procShipArrived
    @ShippingCompanyRate Money,
    @FuelRate Money
 AS
-BEGIN
-declare @TraderID int, @Quantity int, @ShippingCost Money, @FuelCost Money
---xxx assign in one step?
-set @TraderID  = (select TraderID from CommodityTransaction where ID = @CommodityTransactionID)
-set @Quantity  = (select Quantity from CommodityTransaction where ID = @CommodityTransactionID)
-set @ShippingCost = dbo.funcShippingCost(@DepartPort, @ArrivalPort, @ShippingCompanyRate, @Quantity)
-set @FuelCost = @ShippingCost * @FuelRate
+SET NOCOUNT ON
+SET XACT_ABORT ON
+BEGIN TRAN
+    declare @TraderID int, @Quantity int, @ShippingCost Money, @FuelCost Money
+    --xxx assign in one step?
+    set @TraderID  = (select TraderID from CommodityTransaction where ID = @CommodityTransactionID)
+    set @Quantity  = (select Quantity from CommodityTransaction where ID = @CommodityTransactionID)
+    set @ShippingCost = dbo.funcShippingCost(@DepartPort, @ArrivalPort, @ShippingCompanyRate, @Quantity)
+    set @FuelCost = @ShippingCost * @FuelRate
 
-update CommodityTransport SET ArrivalTime = @ArrivalTime WHERE CommodityTransactionID = @CommodityTransactionID;
+    update CommodityTransport SET ArrivalTime = @ArrivalTime WHERE CommodityTransactionID = @CommodityTransactionID;
 
---money taken from trader and given to shipping company
-EXEC procSubtractBalanceUSD @TraderID, @ShippingCost;
-EXEC procAddBalanceUSD @ShippingCompanyID, @ShippingCost;
+    --money taken from trader and given to shipping company
+    EXEC procSubtractBalanceUSD @TraderID, @ShippingCost;
+    EXEC procAddBalanceUSD @ShippingCompanyID, @ShippingCost;
 
---money taken from shipping company for fuel
-EXEC procSubtractBalanceUSD @ShippingCompanyID, @FuelCost;
-END
+    --money taken from shipping company for fuel
+    EXEC procSubtractBalanceUSD @ShippingCompanyID, @FuelCost;
+COMMIT TRAN
 GO
 
 CREATE PROCEDURE procCommoditySale
 @CommodityTransactionID int,
 @SalePortID int
 AS
-BEGIN
-declare @TraderID int
-declare @TotalLocalPrice Money
-set @TraderID = (select TraderID from CommodityTransaction where CommodityTransaction.ID = @CommodityTransactionID)
-set @TotalLocalPrice = 
-(SELECT pcp.LocalPrice * transact.Quantity from CommodityTransaction transact join PortCommodityPrice pcp on transact.CommodityID = pcp.CommodityID where transact.ID = @CommodityTransactionID and pcp.PortID = @SalePortID)
+SET NOCOUNT ON
+SET XACT_ABORT ON
+BEGIN TRAN
+    declare @TraderID int
+    declare @TotalLocalPrice Money
+    set @TraderID = (select TraderID from CommodityTransaction where CommodityTransaction.ID = @CommodityTransactionID)
+    set @TotalLocalPrice = 
+    (SELECT pcp.LocalPrice * transact.Quantity from CommodityTransaction transact join PortCommodityPrice pcp on transact.CommodityID = pcp.CommodityID where transact.ID = @CommodityTransactionID and pcp.PortID = @SalePortID)
 
---update commoditytransaction table
-update CommodityTransaction set SaleTime = GETDATE(), SalePrice=@TotalLocalPrice, SalePortID=@SalePortID WHERE ID = @CommodityTransactionID;
---money to trader
-EXEC procAddBalance @TraderID, @SalePortID, @TotalLocalPrice;
-END
+    --update commoditytransaction table
+    update CommodityTransaction set SaleTime = GETDATE(), SalePrice=@TotalLocalPrice, SalePortID=@SalePortID WHERE ID = @CommodityTransactionID;
+    --money to trader
+    EXEC procAddBalance @TraderID, @SalePortID, @TotalLocalPrice;
+COMMIT TRAN
 GO
 
 CREATE PROCEDURE procLocalSale
 @CommodityTransactionID int
 AS
-BEGIN
+SET NOCOUNT ON
 declare @SalePortID int
 set @SalePortID = (select BuyPortID from CommodityTransaction where CommodityTransaction.ID = @CommodityTransactionID)
 EXEC procCommoditySale @CommodityTransactionID, @SalePortID;
-END
 GO
 
 --functions

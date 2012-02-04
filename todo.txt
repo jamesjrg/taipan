@@ -16,10 +16,8 @@
 git change log:
 
 nowish:
-- BTree: dump method, unit tests, and delete method
-- currently I think the destination port of in progress ships in only stored in process memory, not anywhere in db? which means one of the summary sheets cannot work in its current form
 - finish all the spreadsheet sheets filled from database queries. Prices are converted from local currency to historical USD value
-- make sql "in" queries with variable length arg list work without using string interpolation (I think now only an issue in one place)
+- BTree: dump method, unit tests, and delete method
 - integration/unit test various main EconomicPlayer classes, inc Bank using [rollback]
 - analyse performance and tune
 - search for xxx using igrep
@@ -27,6 +25,8 @@ nowish:
 ////
 
 Process logic and networking:
+- currently predictions of f&gw have no relation to what actually happens, maybe they should?
+- if a shortage is predicted, it might be wise to buy from a nearby port, not the actual port depending on difference in price and transportation cost
 - in server, clients should get removed from clients list if they are disconnected
 - net_msg_todo.txt
 

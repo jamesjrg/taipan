@@ -192,16 +192,13 @@ SELECT ID FROM CommodityTransaction WHERE ID = @@IDENTITY");
                 settledFutures.Add(new ConfirmInfo(traderID, portID, commodID, quantity, transID, localPrice));
             }
 
-            if (settledFutures.Count > 0)
+            //could do this update using an IN clause, but IN clauses do not get on very well with parameters in SQL Server, forcing you to use a workaround of some description
+            var settleCmd = new SqlCommand("UPDATE FuturesContract set ActualSetTime = GETDATE() where ID = @FID");
+            settleCmd.Parameters.Add("FID", SqlDbType.Int);
+            foreach (var future in settledFutures)
             {
-                StringBuilder futureIDs = new StringBuilder();
-                foreach (var future in settledFutures)
-                    futureIDs.Append(future.msg.transactionID + ",");
-                //remove trailing comma
-                futureIDs.Remove(futureIDs.Length - 1, 1);
-
-                //XXX should do this without string interpolation, though in .NET there is no simple method
-                dbConn.ExecuteNonQuery(String.Format("UPDATE FuturesContract set ActualSetTime = GETDATE() where ID in ({0})", futureIDs.ToString()));
+                settleCmd.Parameters["FID"].Value = future.msg.transactionID;
+                dbConn.ExecuteNonQuery(settleCmd);
             }
         }
 
@@ -316,11 +313,12 @@ SELECT ID FROM CommodityTransaction WHERE ID = @@IDENTITY");
 
         private void ShipDeparted(int companyID, MovingMsg msg)
         {
-            var cmd = new SqlCommand("insert into CommodityTransport (ShippingCompanyID, CommodityTransactionID, DepartureTime) VALUES (@CompanyID, @TransactionID, @Time)");
-            cmd.Parameters.AddWithValue("@CompanyID", companyID);
-            cmd.Parameters.AddWithValue("@TransactionID", msg.transactionID);
-            cmd.Parameters.AddWithValue("@Time", msg.time);
-            dbConn.ExecuteNonQuery(cmd);
+            var shipDepartedCmd = new SqlCommand("procShipDeparted");
+            shipDepartedCmd.Parameters.AddWithValue("@CompanyID", companyID);
+            shipDepartedCmd.Parameters.AddWithValue("@TransactionID", msg.transactionID);
+            shipDepartedCmd.Parameters.AddWithValue("@DepartTime", msg.time);
+            shipDepartedCmd.Parameters.AddWithValue("@DestPort", msg.destPortID);
+            dbConn.ExecuteNonQuery(shipDepartedCmd);
         }
 
         private void ShipArrived(int companyID, MovingMsg msg)

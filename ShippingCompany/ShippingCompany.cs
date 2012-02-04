@@ -120,7 +120,6 @@ namespace TaiPan.ShippingCompany
             {
                 if (ship.plannedArrivalTime <= DateTime.Now)
                 {
-                    //sending departure portID, though never actually needed
                     arrivals.Add(new MovingMsg(ship.departureID, ship.destID, ship.transactionID, DateTime.Now));
                     shipsInProgress.Remove(ship);
                 }
