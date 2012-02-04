@@ -21,15 +21,11 @@ namespace TaiPan.Common
         protected readonly int MoveContractAdvertiseTime;
         protected readonly int MAIN_LOOP_TICK;
 
-        protected readonly decimal FUEL_RATE;
-        protected readonly decimal SHIPPING_COMPANY_RATE;
-        protected readonly int FREIGHTER_SPEED;
-
         public EconomicPlayer()
         {
             Console.WriteLine("Reading server connection settings from config file");
             ExeConfigurationFileMap fileMap = new ExeConfigurationFileMap();
-            fileMap.ExeConfigFilename = Shared.configFile;
+            fileMap.ExeConfigFilename = Globals.CONFIG_FILE;
             System.Configuration.Configuration config = ConfigurationManager.OpenMappedExeConfiguration(fileMap, ConfigurationUserLevel.None);
             
             //this line worked for a while, and then stopped working? This config API totally sucks, I've wasted ludicrous amounts of time fighting it
@@ -45,13 +41,14 @@ namespace TaiPan.Common
             CurrencyAccuracy = "F" + Convert.ToInt32(AppSettings["CurrencyAccuracy"]);
             TickVolatility = Convert.ToDecimal(AppSettings["TickVolatility"]);
             MoveContractAdvertiseTime = Convert.ToInt32(AppSettings["MoveContractAdvertiseTime"]);
-            FUEL_RATE = Convert.ToDecimal(AppSettings["FuelRate"]);
-            SHIPPING_COMPANY_RATE = Convert.ToDecimal(AppSettings["ShippingCompanyRate"]);
-            FREIGHTER_SPEED = Convert.ToInt32(AppSettings["FreighterSpeed"]);
+
+            Globals.FUEL_RATE = Convert.ToDecimal(AppSettings["FuelRate"]);
+            Globals.SHIPPING_COMPANY_RATE = Convert.ToDecimal(AppSettings["ShippingCompanyRate"]);
+            Globals.FREIGHTER_SPEED = Convert.ToInt32(AppSettings["FreighterSpeed"]);
 
             ServersSection serversSection = config.GetSection("servers") as ServersSection;
             if (serversSection == null)
-                throw new ApplicationException("Couldn't find server connection settings in config file " + Shared.configFile);
+                throw new ApplicationException("Couldn't find server connection settings in config file " + Globals.CONFIG_FILE);
             ServersCollection servers = serversSection.Servers;
             foreach (ServerElement server in servers)
                 ServerConfigs.Add(server.Name, new ServerConfig(server.Name, server.Address, server.Port));

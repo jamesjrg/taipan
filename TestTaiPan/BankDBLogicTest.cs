@@ -1,17 +1,18 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using TaiPan.Bank;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Data.SqlClient;
-
-using TaiPan.Trader;
-using TaiPan.Common;
 using TaiPan.Common.NetContract;
 
 namespace TestTaiPan
-{   
+{
+    
+    
+    /// <summary>
+    ///This is a test class for BankDBLogicTest and is intended
+    ///to contain all BankDBLogicTest Unit Tests
+    ///</summary>
     [TestClass()]
-    public class TraderLogicTest : TestTaiPanBase
+    public class BankDBLogicTest: TestTaiPanBase
     {
         private TestContext testContextInstance;
 
@@ -64,28 +65,23 @@ namespace TestTaiPan
         [ClassInitialize()]
         public static void TestClassInitialize(TestContext testContext)
         {
-            SetupForTests();   
+            SetupForTests();
         }
 
         [TestMethod()]
-        public void DecideSalesTest()
+        public void ShipDepartedTest()
         {
-            TraderLogic target = new TraderLogic();
-            target.AddGood(1, portIDs["Sydney"], commodIDs["Iron ore"], 10);
-            target.AddGood(2, portIDs["Felixstowe"], commodIDs["Citrus fruit"], 10);
+            BankDBLogic target = new BankDBLogic();
+            //target.ShipDeparted(6, new MovingMsg(departPortID, destPortID, transactionID, time);
+            Assert.Inconclusive("A method that does not return a value cannot be verified.");
+        }
 
-            var moveContracts = new List<MoveContractMsg>();
-            var localSales = new List<LocalSaleMsg>();
-            
-            target.DecideSales(moveContracts, localSales);
-
-            var expectedMoves = new List<MoveContractMsg>();
-            var expectedLocalSales = new List<LocalSaleMsg>();
-            expectedMoves.Add(new MoveContractMsg(portIDs["Sydney"], portIDs["Bahía Blanca"], 1));
-            expectedLocalSales.Add(new LocalSaleMsg(2));
-
-            AssertSeqEqual(moveContracts, expectedMoves);
-            AssertSeqEqual(localSales, expectedLocalSales);
+        [TestMethod()]
+        public void ShipArrivedTest()
+        {
+            BankDBLogic target = new BankDBLogic();
+            //target.ShipArrived(companyID, msg);
+            Assert.Inconclusive("A method that does not return a value cannot be verified.");
         }
     }
 }

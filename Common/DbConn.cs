@@ -89,11 +89,11 @@ namespace TaiPan.Common
 
             Console.WriteLine("Reading config file for database connection");
             ExeConfigurationFileMap fileMap = new ExeConfigurationFileMap();
-            fileMap.ExeConfigFilename = Shared.configFile;
+            fileMap.ExeConfigFilename = Globals.CONFIG_FILE;
             System.Configuration.Configuration config = ConfigurationManager.OpenMappedExeConfiguration(fileMap, ConfigurationUserLevel.None);
             ConnectionStringSettings settings = config.ConnectionStrings.ConnectionStrings[connName];
             if (settings == null)
-                throw new ApplicationException("Couldn't find connection string \"" + connName + "\" in config file " + Shared.configFile);
+                throw new ApplicationException("Couldn't find connection string \"" + connName + "\" in config file " + Globals.CONFIG_FILE);
 
             Console.WriteLine("Connecting to database with " + connName);
             _conn = new SqlConnection(settings.ConnectionString);

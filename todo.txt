@@ -18,7 +18,9 @@ git change log:
 nowish:
 - finish all the spreadsheet sheets filled from database queries. Prices are converted from local currency to historical USD value
 - BTree: dump method, unit tests, and delete method
+- what is currencyaccuraacy setting in config there for?
 - integration/unit test various main EconomicPlayer classes, inc Bank using [rollback]
+- the vars in Globals.cs which are set from config file ought to do something to stop them being changed except on init. readonly doesn't work with static.
 - analyse performance and tune
 - search for xxx using igrep
 

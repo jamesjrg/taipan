@@ -45,7 +45,7 @@ namespace TaiPan.Trader
         {
             myID = SetID("Trader", args);
 
-            logic = new TraderLogic(SHIPPING_COMPANY_RATE);
+            logic = new TraderLogic();
 
             var conf = ServerConfigs["Trader-Shipping"];
             conf.port = conf.port + (myID - 1);

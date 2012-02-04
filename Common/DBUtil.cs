@@ -6,10 +6,8 @@ using System.Data.SqlClient;
 
 namespace TaiPan.Common
 {
-    public class Shared
+    public class DBUtil
     {
-        public const string configFile = "Common.config";
-
         public static Dictionary<string, int> GetPortDistancesLookup(DbConn dbConn)
         {
             var ret = new Dictionary<string, int>();

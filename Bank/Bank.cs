@@ -3,13 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-using System.Data.SqlClient;
 using System.Threading;
 
 using TaiPan.Common;
 using TaiPan.Common.NetContract;
-using System.Transactions;
-using System.Data;
 
 namespace TaiPan.Bank
 {
@@ -18,20 +15,7 @@ namespace TaiPan.Bank
     /// </summary>
     class Bank : TaiPan.Common.EconomicPlayer
     {
-        private DbConn dbConn;
-
-        private Server traderServer;
-        private Server shippingServer;
-
-        private Client fxClient;
-        private Client fateClient;
-
-        private List<ConfirmInfo> confirmedBuys = new List<ConfirmInfo>();
-        private List<ConfirmInfo> settledFutures = new List<ConfirmInfo>();
-
-        private Dictionary<string, int> portDistances;
-
-        private class ConfirmInfo
+        public class ConfirmInfo
         {
             public ConfirmInfo(int traderID, int portID, int commodID, int quantity, int transactionID, decimal localPrice)
             {
@@ -43,19 +27,22 @@ namespace TaiPan.Bank
             public int traderID;
         }
 
+        private BankDBLogic dbLogic;
+
+        private Server traderServer;
+        private Server shippingServer;
+
+        private Client fxClient;
+        private Client fateClient;
+
+        private List<ConfirmInfo> confirmedBuys = new List<ConfirmInfo>();
+        private List<ConfirmInfo> settledFutures = new List<ConfirmInfo>();
+
         public Bank(string[] args)
         {
             Util.SetConsoleTitle("Bank");
 
-            dbConn = new DbConn(false);
-
-            //truncate some of the tables in the database which don't make sense if not cleared between
-            //runs
-            dbConn.ExecuteNonQuery("delete from CommodityTransport");
-            dbConn.ExecuteNonQuery("delete from CommodityTransaction");
-            dbConn.ExecuteNonQuery("delete from FuturesContract;");
-
-            portDistances = Shared.GetPortDistancesLookup(dbConn);
+            dbLogic = new BankDBLogic();
 
             traderServer = new Server(ServerConfigs["Bank-Trader"], AppSettings, false);
             shippingServer = new Server(ServerConfigs["Bank-Shipping"], AppSettings, false);
@@ -66,7 +53,7 @@ namespace TaiPan.Bank
 
         protected override bool Run()
         {
-            FutureSettlements();
+            dbLogic.FutureSettlements(settledFutures);
 
             List<DeserializedMsg> fxIncoming = fxClient.IncomingDeserializeAll();
             foreach (var msg in fxIncoming)
@@ -74,7 +61,7 @@ namespace TaiPan.Bank
                 switch (msg.type)
                 {
                     case NetMsgType.Currency:
-                        UpdateCurrency((CurrencyMsg)(msg.data));
+                        dbLogic.UpdateCurrency((CurrencyMsg)(msg.data));
                         break;                    
                     default:
                         throw new ApplicationException("fxClient received wrong type of net message");
@@ -87,10 +74,10 @@ namespace TaiPan.Bank
                 switch (msg.type)
                 {
                     case NetMsgType.Commodity:
-                        UpdateCommodity((CommodityMsg)(msg.data));
+                        dbLogic.UpdateCommodity((CommodityMsg)(msg.data));
                         break;
                     case NetMsgType.Stock:
-                        UpdateStock((StockMsg)(msg.data));
+                        dbLogic.UpdateStock((StockMsg)(msg.data));
                         break;
                     default:
                         throw new ApplicationException("fateIncoming received wrong type of net message");
@@ -105,13 +92,13 @@ namespace TaiPan.Bank
                     switch (msg.type)
                     {
                         case NetMsgType.Buy:
-                            EnactBuy(client.id, (BuyMsg)msg.data);
+                            dbLogic.EnactBuy(client.id, (BuyMsg)msg.data, confirmedBuys);
                             break;
                         case NetMsgType.LocalSale:
-                            EnactLocalSale((LocalSaleMsg)msg.data);
+                            dbLogic.EnactLocalSale((LocalSaleMsg)msg.data);
                             break;
                         case NetMsgType.Future:
-                            EnactFuture(client.id, (FutureMsg)msg.data);
+                            dbLogic.EnactFuture(client.id, (FutureMsg)msg.data);
                             break;
                         default:
                             throw new ApplicationException("traderServer received wrong type of net message");
@@ -127,10 +114,10 @@ namespace TaiPan.Bank
                     switch (msg.type)
                     {
                         case NetMsgType.Departure:
-                            ShipDeparted(client.id, (MovingMsg)msg.data);
+                            dbLogic.ShipDeparted(client.id, (MovingMsg)msg.data);
                             break;
                         case NetMsgType.Arrival:
-                            ShipArrived(client.id, (MovingMsg)msg.data);
+                            dbLogic.ShipArrived(client.id, (MovingMsg)msg.data);
                             break;
                         default:
                             throw new ApplicationException("traderServer received wrong type of net message");
@@ -147,196 +134,6 @@ namespace TaiPan.Bank
             settledFutures.Clear();
 
             return true;
-        }
-
-        private void FutureSettlements()
-        {
-            //find settled futures, insert new records into CommodityTransaction, and make a list of messages to be sent to traders
-            //use a data set to store data and then loop through it, can't interleave reads and writes whilst a reader is open
-            var dataSet = dbConn.FilledDataSet(
-@"SELECT ID, TraderID, CommodityID, PortID, LocalPrice, Quantity
-FROM FuturesContract
-WHERE ActualSetTime is null AND SettlementTime < GETDATE()");
-
-            foreach (DataRow row in dataSet.Tables[0].Rows)
-            {
-                int futureID = row.Field<int>("ID");
-                int traderID = row.Field<int>("TraderID");
-                int commodID = row.Field<int>("CommodityID");
-                int portID = row.Field<int>("PortID");
-                decimal localPrice = row.Field<decimal>("LocalPrice");
-                int quantity = row.Field<int>("Quantity");
-                decimal amount = localPrice * quantity;
-
-                SqlCommand insertCmd = new SqlCommand(
-@"insert into CommodityTransaction
-(TraderID, CommodityID, BuyPortID, FuturesContractID, Quantity, PurchasePrice)
-VALUES (@traderID, @commodID, @portID, @futuresID, @quantity, @price);
-SELECT ID FROM CommodityTransaction WHERE ID = @@IDENTITY");
-                insertCmd.Parameters.AddWithValue("@traderID", traderID);
-                insertCmd.Parameters.AddWithValue("@commodID", commodID);
-                insertCmd.Parameters.AddWithValue("@portID", portID);
-                insertCmd.Parameters.AddWithValue("@futuresID", futureID);
-                insertCmd.Parameters.AddWithValue("@quantity", quantity);
-                insertCmd.Parameters.AddWithValue("@price", amount);
-
-                int transID = (int)dbConn.ExecuteScalar(insertCmd);
-
-                //debit trader's account
-                SqlCommand debitCmd = new SqlCommand("procSubtractBalance");
-                debitCmd.Parameters.AddWithValue("@CompanyID", traderID);
-                debitCmd.Parameters.AddWithValue("@PortID", portID);
-                debitCmd.Parameters.AddWithValue("@Amount", amount);
-                dbConn.StoredProc(debitCmd);
-
-                settledFutures.Add(new ConfirmInfo(traderID, portID, commodID, quantity, transID, localPrice));
-            }
-
-            //could do this update using an IN clause, but IN clauses do not get on very well with parameters in SQL Server, forcing you to use a workaround of some description
-            var settleCmd = new SqlCommand("UPDATE FuturesContract set ActualSetTime = GETDATE() where ID = @FID");
-            settleCmd.Parameters.Add("FID", SqlDbType.Int);
-            foreach (var future in settledFutures)
-            {
-                settleCmd.Parameters["FID"].Value = future.msg.transactionID;
-                dbConn.ExecuteNonQuery(settleCmd);
-            }
-        }
-
-        private void UpdateCurrency(CurrencyMsg msg)
-        {
-            using (TransactionScope scope = new TransactionScope(TransactionScopeOption
-.Required))
-            {
-                foreach (var item in msg.items)
-                {
-                    var cmd = new SqlCommand("procCurrencyUpdate");
-                    cmd.Parameters.AddWithValue("@CurrencyID", item.id);
-                    cmd.Parameters.AddWithValue("@ValueDate", msg.time);
-                    cmd.Parameters.AddWithValue("@USDValue", item.USDValue);
-                    dbConn.StoredProc(cmd);
-                }
-                scope.Complete();
-            }
-        }
-
-        private void UpdateCommodity(CommodityMsg msg)
-        {
-            using (TransactionScope scope = new TransactionScope(TransactionScopeOption
-.Required))
-            {
-                foreach (var item in msg.items)
-                {
-                    var cmd = new SqlCommand("procPortComodUpdate");
-                    cmd.Parameters.AddWithValue("@PortID", item.portID);
-                    cmd.Parameters.AddWithValue("@CommodityID", item.commodID);
-                    cmd.Parameters.AddWithValue("@ValueDate", msg.time);
-                    cmd.Parameters.AddWithValue("@LocalPrice", item.localPrice);
-                    dbConn.StoredProc(cmd);
-                }
-                scope.Complete();
-            }
-        }
-
-        private void UpdateStock(StockMsg msg)
-        {
-            using (TransactionScope scope = new TransactionScope(TransactionScopeOption
-.Required))
-            {
-                foreach (var item in msg.items)
-                {
-                    SqlCommand cmd = new SqlCommand("procStockUpdate");
-                    cmd.Parameters.AddWithValue("@CompanyID", item.companyID);
-                    cmd.Parameters.AddWithValue("@PriceDate", msg.time);
-                    cmd.Parameters.AddWithValue("@USDStockPrice", item.price);
-                    dbConn.StoredProc(cmd);
-                }
-                scope.Complete();
-            }
-        }
-
-        private void EnactFuture(int traderID, FutureMsg msg)
-        {
-            var cmd = new SqlCommand(@"
-INSERT INTO dbo.FuturesContract
-(TraderID, CommodityID, PortID, LocalPrice, Quantity, PurchaseTime, SettlementTime)
-VALUES
-(@TraderID, @CommodID, @PortID,
-(select LocalPrice from PortCommodityPrice where PortID = @PortID and CommodityID = @commodID),
-@Quantity, GETDATE(), @Time)");
-            cmd.Parameters.AddWithValue("@TraderID", traderID);
-            cmd.Parameters.AddWithValue("@CommodID", msg.commodID);
-            cmd.Parameters.AddWithValue("@PortID", msg.portID);
-            cmd.Parameters.AddWithValue("@Quantity", msg.quantity);
-            cmd.Parameters.AddWithValue("@Time", msg.time);
-            dbConn.ExecuteNonQuery(cmd);
-        }
-
-        private void EnactBuy(int traderID, BuyMsg msg)
-        {
-            //first, debit trader's account
-            SqlCommand amountCmd = new SqlCommand("select (LocalPrice * @quantity) from PortCommodityPrice where PortID = @portID and CommodityID = @commodID;");
-            amountCmd.Parameters.AddWithValue("@quantity", msg.quantity);
-            amountCmd.Parameters.AddWithValue("@portID", msg.portID);
-            amountCmd.Parameters.AddWithValue("@commodID", msg.commodID);
-            decimal amount = (decimal)dbConn.ExecuteScalar(amountCmd);
-
-            SqlCommand subtractCmd = new SqlCommand("procSubtractBalance");
-            subtractCmd.Parameters.AddWithValue("@CompanyID", traderID);
-            subtractCmd.Parameters.AddWithValue("@PortID", msg.portID);
-            subtractCmd.Parameters.AddWithValue("@Amount", amount);
-            dbConn.StoredProc(subtractCmd);
-
-            //next, create CommodityTransaction
-            SqlCommand insertCmd = new SqlCommand(
-@"insert into CommodityTransaction
-(TraderID, CommodityID, BuyPortID, Quantity, PurchasePrice)
-VALUES (@traderID, @commodID, @portID, @quantity, @amount);
-SELECT ID FROM CommodityTransaction WHERE ID = @@IDENTITY");
-            insertCmd.Parameters.AddWithValue("@traderID", traderID);
-            insertCmd.Parameters.AddWithValue("@commodID", msg.commodID);
-            insertCmd.Parameters.AddWithValue("@portID", msg.portID);
-            insertCmd.Parameters.AddWithValue("@quantity", msg.quantity);
-            insertCmd.Parameters.AddWithValue("@amount", amount);
-
-            int transID = (int)dbConn.ExecuteScalar(insertCmd);
-
-            //last, add msg to confirmedBuys
-            confirmedBuys.Add(new ConfirmInfo(traderID, msg.portID, msg.commodID, msg.quantity, transID, amount));
-        }
-
-        private void EnactLocalSale(LocalSaleMsg msg)
-        {
-            var saleCmd = new SqlCommand("procLocalSale");
-            saleCmd.Parameters.AddWithValue("@CommodityTransactionID", msg.transactionID);
-            dbConn.StoredProc(saleCmd);
-        }
-
-        private void ShipDeparted(int companyID, MovingMsg msg)
-        {
-            var shipDepartedCmd = new SqlCommand("procShipDeparted");
-            shipDepartedCmd.Parameters.AddWithValue("@CompanyID", companyID);
-            shipDepartedCmd.Parameters.AddWithValue("@TransactionID", msg.transactionID);
-            shipDepartedCmd.Parameters.AddWithValue("@DepartTime", msg.time);
-            shipDepartedCmd.Parameters.AddWithValue("@DestPort", msg.destPortID);
-            dbConn.ExecuteNonQuery(shipDepartedCmd);
-        }
-
-        private void ShipArrived(int companyID, MovingMsg msg)
-        {
-            var shipArrivedCmd = new SqlCommand("procShipArrived");
-            shipArrivedCmd.Parameters.AddWithValue("@CommodityTransactionID", msg.transactionID);
-            shipArrivedCmd.Parameters.AddWithValue("@ShippingCompanyID", companyID);
-            shipArrivedCmd.Parameters.AddWithValue("@ArrivalTime", msg.time);
-            shipArrivedCmd.Parameters.AddWithValue("@DepartPort", msg.departPortID);
-            shipArrivedCmd.Parameters.AddWithValue("@ArrivalPort", msg.destPortID);
-            shipArrivedCmd.Parameters.AddWithValue("@ShippingCompanyRate", SHIPPING_COMPANY_RATE);
-            shipArrivedCmd.Parameters.AddWithValue("@FuelRate", FUEL_RATE);
-            dbConn.StoredProc(shipArrivedCmd);
-
-            var saleCmd = new SqlCommand("procCommoditySale");
-            saleCmd.Parameters.AddWithValue("@CommodityTransactionID", msg.transactionID);
-            saleCmd.Parameters.AddWithValue("@SalePortID", msg.destPortID);
-            dbConn.StoredProc(saleCmd);
-        }
+        }           
     }
 }

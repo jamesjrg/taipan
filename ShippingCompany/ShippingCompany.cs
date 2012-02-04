@@ -58,7 +58,7 @@ namespace TaiPan.ShippingCompany
             }
 
             DbConn dbConn = new DbConn();
-            portDistances = Shared.GetPortDistancesLookup(dbConn);
+            portDistances = DBUtil.GetPortDistancesLookup(dbConn);
             dbConn.Dispose();
 
             bankClient = new Client(ServerConfigs["Bank-Shipping"], AppSettings, myID, false);
@@ -134,7 +134,7 @@ namespace TaiPan.ShippingCompany
         private void MoveConfirmed(int traderPort, MoveContractMsg msg)
         {
             int distance = portDistances[msg.departureID + "," + msg.destID];
-            int time = distance / FREIGHTER_SPEED;
+            int time = distance / Globals.FREIGHTER_SPEED;
             DateTime plannedArrivalTime = DateTime.Now.AddSeconds(time);
 
             departures.Add(new MovingMsg(msg.departureID, msg.destID, msg.transactionID, DateTime.Now));

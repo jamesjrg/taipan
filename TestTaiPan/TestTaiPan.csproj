@@ -61,6 +61,7 @@
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Transactions" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq">
@@ -71,13 +72,19 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BankDBLogicTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TraderLogicTest.cs" />
+    <Compile Include="TestTaiPanBase.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="AuthoringTests.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Bank\Bank.csproj">
+      <Project>{0805EE52-A229-4287-96F3-B01004AE8BBD}</Project>
+      <Name>Bank</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Common\Common.csproj">
       <Project>{0B2A1CDE-4E0E-4EDB-BF48-D17BE26697E8}</Project>
       <Name>Common</Name>

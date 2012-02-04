@@ -56,6 +56,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Client.cs" />
+    <Compile Include="Globals.cs" />
     <Compile Include="MultiHeadQueue.cs" />
     <Compile Include="NetContract.cs" />
     <Compile Include="ServerConfig.cs" />
@@ -63,7 +64,7 @@
     <Compile Include="DbConn.cs" />
     <Compile Include="EconomicPlayer.cs" />
     <Compile Include="Server.cs" />
-    <Compile Include="Shared.cs" />
+    <Compile Include="DBUtil.cs" />
     <Compile Include="SyncQueue.cs" />
     <Compile Include="TaiPanException.cs" />
     <Compile Include="TCPConnection.cs" />

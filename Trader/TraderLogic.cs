@@ -32,12 +32,9 @@ namespace TaiPan.Trader
         private DbConn dbConn;
         private List<WarehousedGood> warehousedGoods = new List<WarehousedGood>();
 
-        private decimal SHIPPING_COMPANY_RATE;
-
-        public TraderLogic(decimal SHIPPING_COMPANY_RATE)
+        public TraderLogic()
         {
             dbConn = new DbConn();
-            this.SHIPPING_COMPANY_RATE = SHIPPING_COMPANY_RATE;
         }
 
         public void DecideSales(List<MoveContractMsg> moveContracts, List<LocalSaleMsg> localSales)
@@ -80,7 +77,7 @@ where CommodityId = @CID");
                         shippingRateCmd.Parameters.Clear();
                         shippingRateCmd.Parameters.AddWithValue("@Port1", good.portID);
                         shippingRateCmd.Parameters.AddWithValue("@Port2", port.Item1);
-                        shippingRateCmd.Parameters.AddWithValue("@ShippingRate", SHIPPING_COMPANY_RATE);
+                        shippingRateCmd.Parameters.AddWithValue("@ShippingRate", Globals.SHIPPING_COMPANY_RATE);
                         shippingRateCmd.Parameters.AddWithValue("@Quantity", good.quantity);
                         shippingCost = (decimal)dbConn.ExecuteScalar(shippingRateCmd);
                     }
