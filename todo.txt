@@ -18,7 +18,8 @@ git change log:
 
 nowish:
 - futures still seem to sometimes end up with a planned settlement time earlier than the purchase time - up to 7 seconds earlier
-- finish all the spreadsheet sheets filled from database queries. Prices are converted from local currency to historical USD value
+- countrysummary sheet needs testing, and also finishing
+- trader and shipping co summary sheets need doing
 - seems to be a fair lag between a commodity being bought and it being loaded on a ship for sale, is this a performance issue or just a result of the size of the various tick waits defined? try to reduce this time gap.
 - banklogic tests use rollback attrib - make sure the attrib works
 - BTree: dump method, unit tests, and delete method

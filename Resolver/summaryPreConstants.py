@@ -136,24 +136,52 @@ FROM Currency join Country ON Currency.ID = Country.CurrencyID WHERE Country.ID 
     countrySumSheet.D2 = data[1, 0]
     
     #sellport equates to an import, buyport to an export, unless there are both the same, in which case it is a domestic transaction
-    
-    #xxx needs work - it needs to create counts of 0 where none are relevant, not an empty result set
-    data = queryDb("""
+
+    sharedQueryStart = """
 with Periods as (
 select top 3 DATEADD(second, ROW_NUMBER() OVER (ORDER BY N) * (-10), GETDATE()) as PeriodStart from Nums
 )
-select COUNT (*)
+select PeriodStart, COUNT (SaleTime)
 from
-CommodityTransaction ctrans
-join Periods
-on ctrans.SaleTime > PeriodStart AND ctrans.SaleTime < DATEADD(second, 10, PeriodStart)
-join Port p on p.ID = ctrans.SalePortID AND p.CountryID = @CID
-WHERE
-ctrans.SalePortID = ctrans.BuyPortID
-GROUP BY (DATEDIFF(second, '20120101', PeriodStart) / 10)""")
-    shippingSheet.FillRange(data, 2, 5, 2, 5 + 3)
-    
+Periods
+left join CommodityTransaction ctrans
+on ctrans.SaleTime > PeriodStart
+AND ctrans.SaleTime < DATEADD(second, 10, PeriodStart) 
+"""
 
+    sharedQueryGroupBy = " GROUP BY PeriodStart, (DATEDIFF(second, '20120101', PeriodStart) / 10)"
+    
+    importsQuery = sharedQueryStart + """
+AND ctrans.SalePortID != ctrans.BuyPortID
+left join Port p on p.CountryID = @CID AND p.ID = ctrans.SalePortID
+ """ + sharedQueryGroupBy
+    
+    data = queryDb(importsQuery, {"CID": countryID})
+    countrySumSheet.B5 = data[1, 0]
+    countrySumSheet.C5 = data[1, 1]
+    countrySumSheet.D5 = data[1, 2]
+    
+    exportsQuery = sharedQueryStart + """
+AND ctrans.SalePortID != ctrans.BuyPortID
+left join Port p on p.CountryID = @CID AND p.ID = ctrans.BuyPortID
+ """ + sharedQueryGroupBy
+    
+    data = queryDb(exportsQuery, {"CID": countryID})
+    countrySumSheet.B6 = data[1, 0]
+    countrySumSheet.C6 = data[1, 1]
+    countrySumSheet.D6 = data[1, 2]
+
+    domesticQuery = sharedQueryStart + """
+AND ctrans.SalePortID = ctrans.BuyPortID
+left join Port p on p.CountryID = @CID AND p.ID = ctrans.SalePortID
+""" + sharedQueryGroupBy
+    
+    data = queryDb(domesticQuery, {"CID": countryID})
+    countrySumSheet.B7 = data[1, 0]
+    countrySumSheet.C7 = data[1, 1]
+    countrySumSheet.D7 = data[1, 2]
+    
+#set contents of drop down boxes
 setTraderNames()
 setShippingNames()
 setCountryNames()
