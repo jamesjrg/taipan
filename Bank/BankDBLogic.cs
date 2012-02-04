@@ -168,11 +168,11 @@ VALUES
         public void ShipDeparted(int companyID, MovingMsg msg)
         {
             var shipDepartedCmd = new SqlCommand("procShipDeparted");
-            shipDepartedCmd.Parameters.AddWithValue("@CompanyID", companyID);
             shipDepartedCmd.Parameters.AddWithValue("@CommodityTransactionID", msg.transactionID);
+            shipDepartedCmd.Parameters.AddWithValue("@ShippingCompanyID", companyID);
             shipDepartedCmd.Parameters.AddWithValue("@DepartTime", msg.time);
             shipDepartedCmd.Parameters.AddWithValue("@DestPort", msg.destPortID);
-            dbConn.ExecuteNonQuery(shipDepartedCmd);
+            dbConn.StoredProc(shipDepartedCmd);
         }
 
         public void ShipArrived(int companyID, MovingMsg msg)

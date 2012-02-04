@@ -16,11 +16,12 @@
 git change log:
 
 nowish:
+- bug: each advertised movecontract is being taken by all the shippingcompanies at the same time, not just one
 - finish all the spreadsheet sheets filled from database queries. Prices are converted from local currency to historical USD value
-- banklogic tests should use rollback attrib, and make sure the attrib works
+- seems to be a fair lag between a commodity being bought and it being loaded on a ship for sale, is this a performance issue or just a result of the size of the various tick waits defined? try to reduce this time gap.
+- banklogic tests use rollback attrib - make sure the attrib works
 - BTree: dump method, unit tests, and delete method
 - what is currencyaccuraacy setting in config there for?
-- integration/unit test various main EconomicPlayer classes, inc Bank using [rollback]
 - the vars in Globals.cs which are set from config file ought to do something to stop them being changed except on init. readonly doesn't work with static.
 - analyse performance and tune
 - search for xxx using igrep
@@ -41,16 +42,18 @@ BTree test strategy:
 - create a dump method that gives current state of btree as a string, then have assertData method that includes before and after string representations of btree for diff operations with diff values, as well as obviously making sure search method returns correct values, and if a key is deleted then searching for it returns null.
 
 Other unit tests:
-- finish unit testing all data structures -still not properly tested are hash table, binary search tree, rb tree, b-tree
+- finish unit testing all data structures - still not properly tested are hash table, binary search tree, rb tree, b-tree
 - counting sort not yet unit tested (Can't remember why not)
 - unittest multihead queue and sync queue
 - unittest only bank can write to db
 - test: fandandgw should keep track of its last tick time, if current tick time is the same time, skip
 
 Integration tests:
+- integration/unit test various main EconomicPlayer classes, inc Bank using [rollback]
 - make processes do right thing when other processes go down, and have automated tests for all possibilities if differing orders of collapse.
-- some sort of test that does create db, then start all processes, then run 10 seconds, then bunch of sql queries, then check data is sane
+- some sort of test that does create db, then start all processes, then run 20 seconds, then bunch of sql queries, then check data is sane
 - test that targeted messages are sent only to the correct server/client, and have exact steps to reproduce the test (inc fandgw to trader surplus and shortage)
+- some test that ensures multiple shipping companies are not taking the same move contract
 
 ////
 
