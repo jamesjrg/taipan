@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
+using System.Linq;
 
 using TaiPan.Common;
 using TaiPan.Common.NetContract;
@@ -86,6 +87,13 @@ namespace TaiPan.Trader
                     case NetMsgType.Shortage:
                         ShortageForecast((ForecastMsg)(msg.data));
                         break;
+#if DEBUG
+                    case NetMsgType.DebugTimer:
+                        DebugTimerMsg debugMsg = (DebugTimerMsg)msg.data;
+                        debugMsg.times = debugMsg.times.Concat(new DateTime[] { DateTime.Now }).ToArray();
+                        bankClient.Send(NetContract.Serialize(NetMsgType.DebugTimer, debugMsg));
+                        break;
+#endif
                     default:
                         throw new ApplicationException("fateClient received wrong type of net message");
                 }

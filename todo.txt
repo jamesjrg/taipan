@@ -15,9 +15,11 @@
 ////
 git change log:
 
-
 nowish:
-- futures still seem to sometimes end up with a planned settlement time earlier than the purchase time - up to 7 seconds earlier
+- about 1/4 of future requests are refused by bank for not being sufficently far into future. FAGW has min forecast distance of 5 seconds, and bank insists on leeway of 1 seconds, which means 1/4 of the time it is taking at least 4 seconds (and often more) for a msg to go from fandgw -> trader -> bank.
+
+Yet actually you would think normal max would be 100ms FAGW server thread delay, 100ms Trader client thread delay, 200ms trader main loop delay, 100ms trader client thread delay, 100ms bank server thread delay, 200ms bank main loop delay = 0.8 seconds, and that is a worst case scenario, assuming the overhead of actually running the code is insignificant as compared to sleep time.
+
 - countrysummary sheet needs testing, and also finishing
 - trader and shipping co summary sheets need doing
 - seems to be a fair lag between a commodity being bought and it being loaded on a ship for sale, is this a performance issue or just a result of the size of the various tick waits defined? try to reduce this time gap.

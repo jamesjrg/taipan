@@ -34,6 +34,8 @@ namespace TaiPan.Common.NetContract
         BuyConfirm = 30,
         FutureSettle = 31,
 
+        //Shared
+        DebugTimer = 40
     }
 
     public class DeserializedMsg
@@ -224,6 +226,12 @@ namespace TaiPan.Common.NetContract
         public decimal localPrice;
     }
 
+    public class DebugTimerMsg
+    {
+        public DebugTimerMsg() { }
+        public DateTime[] times;
+    }
+
     public class NetContract
     {
         public static void Deserialize(string str, out NetMsgType type, out object data)
@@ -265,7 +273,6 @@ namespace TaiPan.Common.NetContract
 
         private static Type GetClassFromNetMsgType(NetMsgType type)
         {
-            //XXX this could maybe be a dict, but then couldn't be static
             switch (type)
             {
                 //FXServer
@@ -302,6 +309,11 @@ namespace TaiPan.Common.NetContract
                 case NetMsgType.BuyConfirm:
                 case NetMsgType.FutureSettle:
                     return typeof(BankConfirmMsg);
+
+                //shared
+                case NetMsgType.DebugTimer:
+                    return typeof(DebugTimerMsg);
+
                 default:
                     throw new TaiPanException("GetClassFromNetMsgType received unknown type");
             }

@@ -14,6 +14,8 @@ namespace TaiPan.Bank
     {
         private DbConn dbConn;
 
+        private const int ENACT_FUTURE_LEEWAY = 1;
+
         public BankDBLogic()
         {
             dbConn = new DbConn(false);
@@ -121,6 +123,12 @@ WHERE ActualSetTime is null AND SettlementTime < GETDATE()");
 
         public void EnactFuture(int traderID, FutureMsg msg)
         {
+            if (msg.time < DateTime.Now.AddSeconds(ENACT_FUTURE_LEEWAY))
+            {
+                Console.WriteLine("Ignoring futures request that is not sufficiently far into future");
+                return;
+            }
+
             var cmd = new SqlCommand(@"
 INSERT INTO dbo.FuturesContract
 (TraderID, CommodityID, PortID, LocalPrice, Quantity, PurchaseTime, SettlementTime)

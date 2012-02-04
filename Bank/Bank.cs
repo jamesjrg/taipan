@@ -100,6 +100,13 @@ namespace TaiPan.Bank
                         case NetMsgType.Future:
                             dbLogic.EnactFuture(client.id, (FutureMsg)msg.data);
                             break;
+#if DEBUG
+                        case NetMsgType.DebugTimer:
+                            DebugTimerMsg debugMsg = (DebugTimerMsg)msg.data;
+                            debugMsg.times = debugMsg.times.Concat(new DateTime[] { DateTime.Now }).ToArray();
+                            Console.WriteLine(String.Join(",", debugMsg.times));
+                            break;
+#endif
                         default:
                             throw new ApplicationException("traderServer received wrong type of net message");
                     }

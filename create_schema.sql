@@ -67,11 +67,15 @@ BEGIN TRANSACTION
 GO
 
 -- util table
+CREATE TABLE dbo.Nums(N INT NOT NULL PRIMARY KEY);
+GO
+
+INSERT INTO dbo.Nums
 SELECT TOP (1000)
 ROW_NUMBER() OVER (ORDER BY (SELECT 1)) AS N
-INTO Nums
 FROM Master.sys.All_Columns ac1
 CROSS JOIN Master.sys.ALL_Columns ac2;
+GO
 
 -- categories
 
