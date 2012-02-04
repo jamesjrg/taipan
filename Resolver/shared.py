@@ -59,13 +59,17 @@ def readConfig():
             elif 'name' in attribs and attribs['name'] == 'taipan-r':
                 Settings.connectString = attribs['connectionString']
 
-#db functions
-def queryDb(query, params = {}):
+def getConnAndCmd(query, params):
     print 'DB query: %s' % query
     connection = SqlClient.SqlConnection(Settings.connectString)
     cmd = SqlClient.SqlCommand(query, connection)
     for key, val in params.iteritems():
         cmd.Parameters.AddWithValue(key, val)
+    return connection, cmd
+    
+#db functions
+def queryDb(query, params = {}):
+    connection, cmd = getConnAndCmd(query, params)
     adaptor = SqlClient.SqlDataAdapter(cmd)
     dataSet = DataSet()
     connection.Open()
@@ -77,6 +81,14 @@ def queryDb(query, params = {}):
             for colIndex, val in enumerate([item for item in row.ItemArray]):
                 ret[colIndex, rowIndex] = val
         return ret
+        
+def getDbScalar(query, params = {}):
+    connection, cmd = getConnAndCmd(query, params)
+    connection.Open()
+    cmd.Connection = connection
+    ret = cmd.ExecuteScalar()
+    connection.Close()
+    return ret
                 
 def getPortNames():
     global portNames

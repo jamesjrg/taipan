@@ -1,5 +1,5 @@
 * finish spreadsheet summary sheets
-- est 0.5 days FT
+- est 1 days FT
 
 * finish all btree methods, and finish unit tests for all data structures
 - est 2 days FT
@@ -17,6 +17,7 @@ git change log:
 
 nowish:
 - BTree: dump method, unit tests, and delete method
+- currently I think the destination port of in progress ships in only stored in process memory, not anywhere in db? which means one of the summary sheets cannot work in its current form
 - finish all the spreadsheet sheets filled from database queries. Prices are converted from local currency to historical USD value
 - make sql "in" queries with variable length arg list work without using string interpolation (I think now only an issue in one place)
 - integration/unit test various main EconomicPlayer classes, inc Bank using [rollback]

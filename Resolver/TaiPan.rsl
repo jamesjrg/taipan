@@ -1,7 +1,7 @@
 <!--
 This spreadsheet is in the Public Domain.
 -->
-<document currentResultWorksheet="Commodity Prices" verticalSplitterRatio="0.63046875" horizontalSplitterRatio="0.991724137931" splitterOrientation="Vertical" suspendRecalculations="True" license="Public Domain" copyrightOwner="James Gregory" resolverVersion="1.9" resolverBuild="5108" documentVersion="13">
+<document currentResultWorksheet="Trader summary" verticalSplitterRatio="0.63046875" horizontalSplitterRatio="0.991724137931" splitterOrientation="Vertical" suspendRecalculations="True" license="Public Domain" copyrightOwner="James Gregory" resolverVersion="1.9" resolverBuild="5108" documentVersion="13">
     <foldState license="True" imports="True" worksheetCreation="True" preConstantsUserCode="False" constants="True" preFormulaeUserCode="False" generated="False" postFormulaeUserCode="False"/>
     <traitDefaults>
 
@@ -28,32 +28,32 @@ execfile(dir + '/' + 'algsPreConstants.py')
             <virtualGridSize width="51" height="88" />
         </viewState>
         <viewState worksheet="Country summary">
-            <currentCell col="1" row="5" />
-            <selection left="1" top="5" right="1" bottom="9" />
+            <currentCell col="2" row="4" />
+            <selection left="2" top="4" right="4" bottom="4" />
             <scrollPos col="1" row="1" />
-            <virtualGridSize width="47" height="88" />
+            <virtualGridSize width="20" height="41" />
         </viewState>
         <viewState worksheet="Purchases">
             <currentCell col="5" row="30" />
             <scrollPos col="1" row="1" />
-            <virtualGridSize width="51" height="88" />
+            <virtualGridSize width="25" height="63" />
         </viewState>
         <viewState worksheet="Shipping summary">
-            <currentCell col="1" row="5" />
-            <selection left="1" top="5" right="1" bottom="11" />
+            <currentCell col="4" row="4" />
+            <selection left="2" top="4" right="4" bottom="4" />
             <scrollPos col="1" row="1" />
-            <virtualGridSize width="50" height="88" />
+            <virtualGridSize width="20" height="41" />
         </viewState>
         <viewState worksheet="Commodity Prices">
-            <currentCell col="1" row="1" />
+            <currentCell col="7" row="2" />
             <scrollPos col="1" row="1" />
-            <virtualGridSize width="23" height="50" />
+            <virtualGridSize width="23" height="63" />
         </viewState>
         <viewState worksheet="Trader summary">
-            <currentCell col="1" row="10" />
-            <selection left="1" top="5" right="1" bottom="10" />
+            <currentCell col="2" row="4" />
+            <selection left="2" top="4" right="4" bottom="4" />
             <scrollPos col="1" row="1" />
-            <virtualGridSize width="50" height="88" />
+            <virtualGridSize width="20" height="41" />
         </viewState>
         <viewState worksheet="Futures">
             <currentCell col="8" row="2" />
@@ -68,12 +68,12 @@ execfile(dir + '/' + 'algsPreConstants.py')
         <viewState worksheet="FX Rates">
             <currentCell col="8" row="14" />
             <scrollPos col="1" row="1" />
-            <virtualGridSize width="22" height="50" />
+            <virtualGridSize width="22" height="63" />
         </viewState>
         <viewState worksheet="Shipping">
             <currentCell col="1" row="3" />
-            <scrollPos col="1" row="4" />
-            <virtualGridSize width="24" height="52" />
+            <scrollPos col="1" row="1" />
+            <virtualGridSize width="24" height="63" />
         </viewState>
     </viewStates>
     <worksheetOrder>
@@ -542,6 +542,9 @@ execfile(dir + '/' + 'algsPreConstants.py')
         </trait>
         <trait name="ColWidth">
             <traitentry col="1" row="0" value="146" />
+            <traitentry col="2" row="0" value="151" />
+            <traitentry col="3" row="0" value="148" />
+            <traitentry col="4" row="0" value="117" />
             <traitentry col="5" row="2" value="109" />
         </trait>
         <trait name="Alignment">
@@ -590,11 +593,11 @@ execfile(dir + '/' + 'algsPreConstants.py')
         </trait>
         <trait name="DecimalPlaces">
         </trait>
-        <cell name="E4" value="Date range" type="general">
-        </cell>
         <cell name="A1" value="Company:" type="general">
         </cell>
         <cell name="A11" value="Balance at end of period" type="general">
+        </cell>
+        <cell name="B1" value="Bluecorp" type="general">
         </cell>
         <cell name="E2" value="Balance:" type="general">
         </cell>
@@ -602,7 +605,7 @@ execfile(dir + '/' + 'algsPreConstants.py')
         </cell>
         <cell name="A5" value="Number of voyages" type="general">
         </cell>
-        <cell name="C4" value="Date range" type="general">
+        <cell name="C4" value="-20 seconds -&gt; 10 seconds" type="general">
         </cell>
         <cell name="E1" value="Currency:" type="general">
         </cell>
@@ -612,11 +615,11 @@ execfile(dir + '/' + 'algsPreConstants.py')
         </cell>
         <cell name="A9" value="Av quantity per voyage" type="general">
         </cell>
-        <cell name="B4" value="Date range" type="general">
+        <cell name="B4" value="-30 seconds -&gt; -20 seconds" type="general">
         </cell>
         <cell name="C2" value="Stock price:" type="general">
         </cell>
-        <cell name="D4" value="Date range" type="general">
+        <cell name="D4" value="Most recent 10 seconds" type="general">
         </cell>
         <cell name="A7" value="Min quantity per voyage" type="general">
         </cell>
@@ -635,10 +638,11 @@ execfile(dir + '/' + 'algsPreConstants.py')
         <trait name="ColWidth">
             <traitentry col="1" row="0" value="161" />
             <traitentry col="2" row="0" value="130" />
+            <traitentry col="2" row="4" value="151" />
             <traitentry col="3" row="0" value="148" />
             <traitentry col="3" row="2" value="161" />
-            <traitentry col="3" row="4" value="115" />
-            <traitentry col="4" row="0" value="111" />
+            <traitentry col="4" row="0" value="127" />
+            <traitentry col="4" row="4" value="117" />
         </trait>
         <trait name="Alignment">
         </trait>
@@ -688,21 +692,23 @@ execfile(dir + '/' + 'algsPreConstants.py')
         </trait>
         <cell name="A1" value="Country:" type="general">
         </cell>
+        <cell name="B1" value="Argentina" type="general">
+        </cell>
         <cell name="A6" value="Number of exports" type="general">
         </cell>
         <cell name="A5" value="Number of imports" type="general">
         </cell>
-        <cell name="C4" value="Date range" type="general">
+        <cell name="C4" value="-20 seconds -&gt; 10 seconds" type="general">
         </cell>
         <cell name="C1" value="Currency:" type="general">
         </cell>
         <cell name="A9" value="Average currency value (USD)" type="general">
         </cell>
-        <cell name="B4" value="Date range" type="general">
+        <cell name="B4" value="-30 seconds -&gt; -20 seconds" type="general">
         </cell>
         <cell name="C2" value="Number of ports:" type="general">
         </cell>
-        <cell name="D4" value="Date range" type="general">
+        <cell name="D4" value="Most recent 10 seconds" type="general">
         </cell>
         <cell name="A7" value="Total import value (USD)" type="general">
         </cell>
@@ -802,7 +808,13 @@ execfile(dir + '/' + 'algsPreConstants.py')
         </trait>
         <trait name="ColWidth">
             <traitentry col="1" row="0" value="142" />
-            <traitentry col="3" row="2" value="109" />
+            <traitentry col="2" row="0" value="149" />
+            <traitentry col="2" row="4" value="151" />
+            <traitentry col="3" row="0" value="134" />
+            <traitentry col="3" row="4" value="148" />
+            <traitentry col="4" row="0" value="122" />
+            <traitentry col="4" row="4" value="117" />
+            <traitentry col="5" row="0" value="72" />
         </trait>
         <trait name="Alignment">
         </trait>
@@ -850,15 +862,13 @@ execfile(dir + '/' + 'algsPreConstants.py')
         </trait>
         <trait name="DecimalPlaces">
         </trait>
-        <cell name="E4" value="Date range" type="general">
-        </cell>
         <cell name="A1" value="Company:" type="general">
         </cell>
         <cell name="A6" value="Number of futures settled" type="general">
         </cell>
         <cell name="A5" value="Number of futures bought" type="general">
         </cell>
-        <cell name="C4" value="Date range" type="general">
+        <cell name="C4" value="-20 seconds -&gt; 10 seconds" type="general">
         </cell>
         <cell name="E1" value="Currency:" type="general">
         </cell>
@@ -868,11 +878,11 @@ execfile(dir + '/' + 'algsPreConstants.py')
         </cell>
         <cell name="A9" value="Profit/Loss" type="general">
         </cell>
-        <cell name="B4" value="Date range" type="general">
+        <cell name="B4" value="-30 seconds -&gt; -20 seconds" type="general">
         </cell>
         <cell name="C2" value="Balance:" type="general">
         </cell>
-        <cell name="D4" value="Date range" type="general">
+        <cell name="D4" value="Most recent 10 seconds" type="general">
         </cell>
         <cell name="A7" value="Number of purchases" type="general">
         </cell>
