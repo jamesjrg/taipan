@@ -20,6 +20,9 @@ namespace TaiPan.Common
         protected readonly decimal TickVolatility;
         protected readonly int MoveContractAdvertiseTime;
         protected readonly int MAIN_LOOP_TICK;
+        protected readonly int FATE_AND_GW_TICK;
+
+        protected int myTick;
 
         public EconomicPlayer()
         {
@@ -38,6 +41,7 @@ namespace TaiPan.Common
             if (AppSettings.Count == 0)
                 throw new ApplicationException("Flagrant error attempting to read appSettings from config file");
             MAIN_LOOP_TICK = Convert.ToInt32(AppSettings["MainLoopTick"]);
+            FATE_AND_GW_TICK = Convert.ToInt32(AppSettings["FateAndGWTick"]);
             CurrencyAccuracy = "F" + Convert.ToInt32(AppSettings["CurrencyAccuracy"]);
             TickVolatility = Convert.ToDecimal(AppSettings["TickVolatility"]);
             MoveContractAdvertiseTime = Convert.ToInt32(AppSettings["MoveContractAdvertiseTime"]);
@@ -52,6 +56,8 @@ namespace TaiPan.Common
             ServersCollection servers = serversSection.Servers;
             foreach (ServerElement server in servers)
                 ServerConfigs.Add(server.Name, new ServerConfig(server.Name, server.Address, server.Port));
+
+            myTick = MAIN_LOOP_TICK;
         }
 
         //no dispose here or in derived classes because when this class is no longer needed, the whole program is ending
@@ -83,7 +89,7 @@ namespace TaiPan.Common
             Console.WriteLine("Running");
             while (Run() == true)
             {
-                System.Threading.Thread.Sleep(MAIN_LOOP_TICK);
+                System.Threading.Thread.Sleep(myTick);
             }
 
             Console.WriteLine("Shutdown");

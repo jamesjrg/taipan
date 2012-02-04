@@ -26,16 +26,20 @@ namespace TaiPan.Bank
         }
 
         //only public so it can be used as utility by testing code
-        public int InsertCommodityTransaction(int traderID, int commodID, int portID, int quantity, decimal amount)
+        public int InsertCommodityTransaction(int traderID, int commodID, int portID, int quantity, decimal amount, int futuresID = 0)
         {
             SqlCommand insertCmd = new SqlCommand(
 @"insert into CommodityTransaction
-(TraderID, CommodityID, BuyPortID, Quantity, PurchasePrice)
-VALUES (@traderID, @commodID, @portID, @quantity, @amount);
+(TraderID, CommodityID, BuyPortID, FuturesContractID, Quantity, PurchasePrice)
+VALUES (@traderID, @commodID, @portID, @futuresID, @quantity, @amount);
 SELECT ID FROM CommodityTransaction WHERE ID = @@IDENTITY");
             insertCmd.Parameters.AddWithValue("@traderID", traderID);
             insertCmd.Parameters.AddWithValue("@commodID", commodID);
             insertCmd.Parameters.AddWithValue("@portID", portID);
+            if (futuresID == 0)
+                insertCmd.Parameters.AddWithValue("@futuresID", DBNull.Value);
+            else
+                insertCmd.Parameters.AddWithValue("@futuresID", futuresID);
             insertCmd.Parameters.AddWithValue("@quantity", quantity);
             insertCmd.Parameters.AddWithValue("@amount", amount);
 
@@ -61,7 +65,7 @@ WHERE ActualSetTime is null AND SettlementTime < GETDATE()");
                 int quantity = row.Field<int>("Quantity");
                 decimal amount = localPrice * quantity;
 
-                int transID = InsertCommodityTransaction(traderID, commodID, portID, quantity, amount);
+                int transID = InsertCommodityTransaction(traderID, commodID, portID, quantity, amount, futureID);
 
                 //debit trader's account
                 SqlCommand debitCmd = new SqlCommand("procSubtractBalance");
@@ -71,14 +75,9 @@ WHERE ActualSetTime is null AND SettlementTime < GETDATE()");
                 dbConn.StoredProc(debitCmd);
 
                 settledFutures.Add(new Bank.ConfirmInfo(traderID, portID, commodID, quantity, transID, localPrice));
-            }
 
-            //could do this update using an IN clause, but IN clauses do not get on very well with parameters in SQL Server, forcing you to use a workaround of some description
-            var settleCmd = new SqlCommand("UPDATE FuturesContract set ActualSetTime = GETDATE() where ID = @FID");
-            settleCmd.Parameters.Add("FID", SqlDbType.Int);
-            foreach (var future in settledFutures)
-            {
-                settleCmd.Parameters["FID"].Value = future.msg.transactionID;
+                var settleCmd = new SqlCommand("UPDATE FuturesContract set ActualSetTime = GETDATE() where ID = @FID");
+                settleCmd.Parameters.AddWithValue("FID", futureID);
                 dbConn.ExecuteNonQuery(settleCmd);
             }
         }

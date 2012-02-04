@@ -29,6 +29,8 @@ namespace TaiPan.Trader
 
         private List<LocalSaleMsg> localSales = new List<LocalSaleMsg>();
 
+        private const int SURPLUS_LEEWAY = 2;
+
         private class MoveConfirmInfo
         {
             public MoveConfirmInfo(MoveContractMsg msg, int targetCompany)
@@ -38,10 +40,10 @@ namespace TaiPan.Trader
             }
 
             public MoveContractMsg msg;
-            int targetCompany;
+            public int targetCompany;
         }
 
-        public Trader(string[] args, bool testing = false)
+        public Trader(string[] args)
         {
             myID = SetID("Trader", args);
 
@@ -50,12 +52,9 @@ namespace TaiPan.Trader
             var conf = ServerConfigs["Trader-Shipping"];
             conf.port = conf.port + (myID - 1);
 
-            if (!testing)
-            {
-                shippingServer = new Server(conf, AppSettings, false);
-                bankClient = new Client(ServerConfigs["Bank-Trader"], AppSettings, myID, false);
-                fateClient = new Client(ServerConfigs["FateAndGuesswork-Trader"], AppSettings, myID, true);
-            }
+            shippingServer = new Server(conf, AppSettings, false);
+            bankClient = new Client(ServerConfigs["Bank-Trader"], AppSettings, myID, false);
+            fateClient = new Client(ServerConfigs["FateAndGuesswork-Trader"], AppSettings, myID, true);
         }
 
         protected override bool Run()
@@ -126,7 +125,7 @@ namespace TaiPan.Trader
             moveContracts.Clear();
 
             foreach (var info in moveConfirms)
-                shippingServer.Send(NetContract.Serialize(NetMsgType.ConfirmMove, info.msg));
+                shippingServer.Send(NetContract.Serialize(NetMsgType.ConfirmMove, info.msg), info.targetCompany);
             moveConfirms.Clear();
 
             foreach (var msg in localSales)
@@ -159,19 +158,23 @@ namespace TaiPan.Trader
             {
                 moveConfirms.Add(new MoveConfirmInfo(msg, companyID));
                 unconfirmedContracts.RemoveAt(unconfirmedIndex);
-
-                Console.WriteLine(msg.transactionID);
             }
         }
 
         private void SurplusForecast(ForecastMsg msg)
         {
-            futureRequests.Add(new FutureMsg(msg.portID, msg.commodID, msg.quantity, msg.time));
+            if (msg.time < DateTime.Now.AddSeconds(SURPLUS_LEEWAY))
+                Console.WriteLine("Ignoring out of date surplus forecast");
+            else
+                futureRequests.Add(new FutureMsg(msg.portID, msg.commodID, msg.quantity, msg.time));
         }
 
         private void ShortageForecast(ForecastMsg msg)
         {
-            buyRequests.Add(new BuyMsg(msg.portID, msg.commodID, msg.quantity));
+            if (msg.time < DateTime.Now.AddSeconds(SURPLUS_LEEWAY))
+                Console.WriteLine("Ignoring out of date surplus forecast");
+            else
+                buyRequests.Add(new BuyMsg(msg.portID, msg.commodID, msg.quantity));
         }        
     }
 }

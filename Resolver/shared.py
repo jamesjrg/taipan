@@ -62,7 +62,13 @@ def readConfig():
 def getConnAndCmd(query, params):
     print 'DB query: %s' % query
     connection = SqlClient.SqlConnection(Settings.connectString)
-    cmd = SqlClient.SqlCommand(query, connection)
+    
+    if isinstance(query, SqlClient.SqlCommand):
+        cmd = query
+        cmd.Connection = connection
+    else:
+        cmd = SqlClient.SqlCommand(query, connection)
+        
     for key, val in params.iteritems():
         cmd.Parameters.AddWithValue(key, val)
     return connection, cmd

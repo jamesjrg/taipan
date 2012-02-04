@@ -7,9 +7,7 @@ using TeamAgile.ApplicationBlocks.Interception.UnitTestExtensions;
 using TaiPan.Common.NetContract;
 
 namespace TestTaiPan
-{
-    
-    
+{   
     /// <summary>
     ///This is a test class for BankDBLogicTest and is intended
     ///to contain all BankDBLogicTest Unit Tests

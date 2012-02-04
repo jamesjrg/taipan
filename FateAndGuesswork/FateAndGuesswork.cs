@@ -35,13 +35,9 @@ namespace TaiPan.FateAndGuesswork
         const int MIN_QUANTITY = 100;
         const int MAX_QUANTITY = 500;
 
-        //in ticks
-        const int MIN_FORECAST_OFFSET_IN_TICKS = 2;
-        const int MAX_FORECAST_OFFSET_IN_TICKS = 5;
-
         //in seconds
-        readonly int MIN_FORECAST_OFFSET;
-        readonly int MAX_FORECAST_OFFSET;
+        const int MIN_FORECAST_OFFSET = 5;
+        const int MAX_FORECAST_OFFSET = 6;
 
         private class ForecastInfo
         {
@@ -142,11 +138,10 @@ namespace TaiPan.FateAndGuesswork
             //close db conn
             dbConn.Dispose();
 
-            MIN_FORECAST_OFFSET = MIN_FORECAST_OFFSET_IN_TICKS * MAIN_LOOP_TICK;
-            MAX_FORECAST_OFFSET = MAX_FORECAST_OFFSET_IN_TICKS * MAIN_LOOP_TICK;
-
             bankServer = new TaiPan.Common.Server(ServerConfigs["FateAndGuesswork-Bank"], AppSettings, true);
             traderServer = new TaiPan.Common.Server(ServerConfigs["FateAndGuesswork-Trader"], AppSettings, true);
+
+            myTick = FATE_AND_GW_TICK;
         }
 
         protected override bool Run()
@@ -212,7 +207,7 @@ namespace TaiPan.FateAndGuesswork
             int quantity = random.Next(MIN_QUANTITY, MAX_QUANTITY);
             
             int offset = random.Next(MIN_FORECAST_OFFSET, MAX_FORECAST_OFFSET + 1);
-            DateTime time = DateTime.Now.AddMilliseconds(offset);
+            DateTime time = DateTime.Now.AddSeconds(offset);
 
             if (random.Next(0, 2) == 0)
                 shortages.Add(new ForecastInfo(targetTrader, portID, commodID, quantity, time));

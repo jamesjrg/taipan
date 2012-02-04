@@ -1,7 +1,7 @@
 <!--
 This spreadsheet is in the Public Domain.
 -->
-<document currentResultWorksheet="Trader summary" verticalSplitterRatio="0.63046875" horizontalSplitterRatio="0.991724137931" splitterOrientation="Vertical" suspendRecalculations="True" license="Public Domain" copyrightOwner="James Gregory" resolverVersion="1.9" resolverBuild="5108" documentVersion="13">
+<document currentResultWorksheet="Shipping" verticalSplitterRatio="0.63046875" horizontalSplitterRatio="0.991724137931" splitterOrientation="Vertical" suspendRecalculations="True" license="Public Domain" copyrightOwner="James Gregory" resolverVersion="1.9" resolverBuild="5108" documentVersion="13">
     <foldState license="True" imports="True" worksheetCreation="True" preConstantsUserCode="False" constants="True" preFormulaeUserCode="False" generated="False" postFormulaeUserCode="False"/>
     <traitDefaults>
 
@@ -28,8 +28,7 @@ execfile(dir + '/' + 'algsPreConstants.py')
             <virtualGridSize width="51" height="88" />
         </viewState>
         <viewState worksheet="Country summary">
-            <currentCell col="2" row="4" />
-            <selection left="2" top="4" right="4" bottom="4" />
+            <currentCell col="1" row="5" />
             <scrollPos col="1" row="1" />
             <virtualGridSize width="20" height="41" />
         </viewState>
@@ -42,7 +41,7 @@ execfile(dir + '/' + 'algsPreConstants.py')
             <currentCell col="4" row="4" />
             <selection left="2" top="4" right="4" bottom="4" />
             <scrollPos col="1" row="1" />
-            <virtualGridSize width="20" height="41" />
+            <virtualGridSize width="20" height="63" />
         </viewState>
         <viewState worksheet="Commodity Prices">
             <currentCell col="7" row="2" />
@@ -53,7 +52,7 @@ execfile(dir + '/' + 'algsPreConstants.py')
             <currentCell col="2" row="4" />
             <selection left="2" top="4" right="4" bottom="4" />
             <scrollPos col="1" row="1" />
-            <virtualGridSize width="20" height="41" />
+            <virtualGridSize width="20" height="63" />
         </viewState>
         <viewState worksheet="Futures">
             <currentCell col="8" row="2" />
@@ -71,9 +70,9 @@ execfile(dir + '/' + 'algsPreConstants.py')
             <virtualGridSize width="22" height="63" />
         </viewState>
         <viewState worksheet="Shipping">
-            <currentCell col="1" row="3" />
+            <currentCell col="8" row="4" />
             <scrollPos col="1" row="1" />
-            <virtualGridSize width="24" height="63" />
+            <virtualGridSize width="24" height="41" />
         </viewState>
     </viewStates>
     <worksheetOrder>
@@ -636,7 +635,7 @@ execfile(dir + '/' + 'algsPreConstants.py')
         <trait name="Unit">
         </trait>
         <trait name="ColWidth">
-            <traitentry col="1" row="0" value="161" />
+            <traitentry col="1" row="0" value="201" />
             <traitentry col="2" row="0" value="130" />
             <traitentry col="2" row="4" value="151" />
             <traitentry col="3" row="0" value="148" />
@@ -694,25 +693,29 @@ execfile(dir + '/' + 'algsPreConstants.py')
         </cell>
         <cell name="B1" value="Argentina" type="general">
         </cell>
+        <cell name="A11" value="Total domestic transaction value (USD)" type="general">
+        </cell>
         <cell name="A6" value="Number of exports" type="general">
         </cell>
         <cell name="A5" value="Number of imports" type="general">
         </cell>
         <cell name="C4" value="-20 seconds -&gt; 10 seconds" type="general">
         </cell>
+        <cell name="A10" value="Total export value (USD)" type="general">
+        </cell>
         <cell name="C1" value="Currency:" type="general">
         </cell>
-        <cell name="A9" value="Average currency value (USD)" type="general">
+        <cell name="A9" value="Total import value (USD)" type="general">
         </cell>
         <cell name="B4" value="-30 seconds -&gt; -20 seconds" type="general">
         </cell>
         <cell name="C2" value="Number of ports:" type="general">
         </cell>
+        <cell name="A13" value="Average currency value (USD)" type="general">
+        </cell>
         <cell name="D4" value="Most recent 10 seconds" type="general">
         </cell>
-        <cell name="A7" value="Total import value (USD)" type="general">
-        </cell>
-        <cell name="A8" value="Total export value (USD)" type="general">
+        <cell name="A7" value="Number of domestic transactions" type="general">
         </cell>
     </worksheet>
     <worksheet name="Sorting Algorithms" value="" showGrid="True" showBounds="False" headerWidth="-1" headerHeight="-1">

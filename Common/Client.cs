@@ -74,7 +74,7 @@ namespace TaiPan.Common
 
         private TcpClient AttemptTCPConnect(Common.ServerConfig config)
         {
-            int attempts = 5;
+            int attempts = 20;
             for (int i = 0; i != attempts; ++i)
             {
                 if (i == 0)
