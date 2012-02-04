@@ -137,15 +137,21 @@ FROM Currency join Country ON Currency.ID = Country.CurrencyID WHERE Country.ID 
     
     #sellport equates to an import, buyport to an export, unless there are both the same, in which case it is a domestic transaction
     
-    #xxx should probably do this using a CTE to create the date periods, and then join the CTE to the ctrans table
-    cmd = SqlClient.SqlCommand("""
-SELECT COUNT (*) FROM CommodityTransaction ctrans
-join Port p on p.ID =  ctrans.SalePortID AND p.CountryID = @CID
+    #xxx needs work - it needs to create counts of 0 where none are relevant, not an empty result set
+    data = queryDb("""
+with Periods as (
+select top 3 DATEADD(second, ROW_NUMBER() OVER (ORDER BY N) * (-10), GETDATE()) as PeriodStart from Nums
+)
+select COUNT (*)
+from
+CommodityTransaction ctrans
+join Periods
+on ctrans.SaleTime > PeriodStart AND ctrans.SaleTime < DATEADD(second, 10, PeriodStart)
+join Port p on p.ID = ctrans.SalePortID AND p.CountryID = @CID
 WHERE
-ctrans.SalePortID = ctrans.BuyPortID AND ctrans.SaleTime > DATEADD(second, -10, @PeriodEnd) AND ctrans.SaleTime < @PeriodEnd""")
-
-    result = getDbScalar(cmd, {"CID": countryID, "PeriodEnd": DateTime.Now})
-    countrySumSheet.D7 = data[0, 0]
+ctrans.SalePortID = ctrans.BuyPortID
+GROUP BY (DATEDIFF(second, '20120101', PeriodStart) / 10)""")
+    shippingSheet.FillRange(data, 2, 5, 2, 5 + 3)
     
 
 setTraderNames()
