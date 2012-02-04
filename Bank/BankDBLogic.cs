@@ -25,6 +25,23 @@ namespace TaiPan.Bank
             dbConn.ExecuteNonQuery("delete from FuturesContract;");
         }
 
+        //only public so it can be used as utility by testing code
+        public int InsertCommodityTransaction(int traderID, int commodID, int portID, int quantity, decimal amount)
+        {
+            SqlCommand insertCmd = new SqlCommand(
+@"insert into CommodityTransaction
+(TraderID, CommodityID, BuyPortID, Quantity, PurchasePrice)
+VALUES (@traderID, @commodID, @portID, @quantity, @amount);
+SELECT ID FROM CommodityTransaction WHERE ID = @@IDENTITY");
+            insertCmd.Parameters.AddWithValue("@traderID", traderID);
+            insertCmd.Parameters.AddWithValue("@commodID", commodID);
+            insertCmd.Parameters.AddWithValue("@portID", portID);
+            insertCmd.Parameters.AddWithValue("@quantity", quantity);
+            insertCmd.Parameters.AddWithValue("@amount", amount);
+
+            return (int)dbConn.ExecuteScalar(insertCmd);
+        }
+
         public void FutureSettlements(List<Bank.ConfirmInfo> settledFutures)
         {
             //find settled futures, insert new records into CommodityTransaction, and make a list of messages to be sent to traders
@@ -44,19 +61,7 @@ WHERE ActualSetTime is null AND SettlementTime < GETDATE()");
                 int quantity = row.Field<int>("Quantity");
                 decimal amount = localPrice * quantity;
 
-                SqlCommand insertCmd = new SqlCommand(
-@"insert into CommodityTransaction
-(TraderID, CommodityID, BuyPortID, FuturesContractID, Quantity, PurchasePrice)
-VALUES (@traderID, @commodID, @portID, @futuresID, @quantity, @price);
-SELECT ID FROM CommodityTransaction WHERE ID = @@IDENTITY");
-                insertCmd.Parameters.AddWithValue("@traderID", traderID);
-                insertCmd.Parameters.AddWithValue("@commodID", commodID);
-                insertCmd.Parameters.AddWithValue("@portID", portID);
-                insertCmd.Parameters.AddWithValue("@futuresID", futureID);
-                insertCmd.Parameters.AddWithValue("@quantity", quantity);
-                insertCmd.Parameters.AddWithValue("@price", amount);
-
-                int transID = (int)dbConn.ExecuteScalar(insertCmd);
+                int transID = InsertCommodityTransaction(traderID, commodID, portID, quantity, amount);
 
                 //debit trader's account
                 SqlCommand debitCmd = new SqlCommand("procSubtractBalance");
@@ -147,19 +152,7 @@ VALUES
             subtractCmd.Parameters.AddWithValue("@Amount", amount);
             dbConn.StoredProc(subtractCmd);
 
-            //next, create CommodityTransaction
-            SqlCommand insertCmd = new SqlCommand(
-@"insert into CommodityTransaction
-(TraderID, CommodityID, BuyPortID, Quantity, PurchasePrice)
-VALUES (@traderID, @commodID, @portID, @quantity, @amount);
-SELECT ID FROM CommodityTransaction WHERE ID = @@IDENTITY");
-            insertCmd.Parameters.AddWithValue("@traderID", traderID);
-            insertCmd.Parameters.AddWithValue("@commodID", msg.commodID);
-            insertCmd.Parameters.AddWithValue("@portID", msg.portID);
-            insertCmd.Parameters.AddWithValue("@quantity", msg.quantity);
-            insertCmd.Parameters.AddWithValue("@amount", amount);
-
-            int transID = (int)dbConn.ExecuteScalar(insertCmd);
+            int transID = InsertCommodityTransaction(traderID, msg.commodID, msg.portID, msg.quantity, amount);
 
             //last, add msg to confirmedBuys
             confirmedBuys.Add(new Bank.ConfirmInfo(traderID, msg.portID, msg.commodID, msg.quantity, transID, amount));

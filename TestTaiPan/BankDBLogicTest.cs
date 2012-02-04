@@ -1,6 +1,9 @@
 ﻿using TaiPan.Bank;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+
+using TeamAgile.ApplicationBlocks.Interception.UnitTestExtensions;
+
 using TaiPan.Common.NetContract;
 
 namespace TestTaiPan
@@ -69,14 +72,32 @@ namespace TestTaiPan
         }
 
         [TestMethod()]
+        [DataRollBack]
         public void ShipDepartedTest()
         {
             BankDBLogic target = new BankDBLogic();
-            //target.ShipDeparted(6, new MovingMsg(departPortID, destPortID, transactionID, time);
+
+            int traderID = 1;
+            int commodID = 5;
+            int shippingCoID = 6;
+            int departPortID = 2;
+            int destPortID = 3;
+            int quantity = 10;
+            decimal amount = 10;
+            DateTime time = DateTime.Now;
+
+            int transID = target.InsertCommodityTransaction(traderID, commodID, departPortID, quantity, amount);
+            target.ShipDeparted(shippingCoID, new MovingMsg(departPortID, destPortID, transID, time));
+            conn.FilledDataSet("SELECT ShippingCompanyID, CommodityTransactionID, DepartureTime FROM CommodityTransport");
+            //xxx assert length/contents
+            conn.FilledDataSet("SELECT ShippingCompanyID, CommodityTransactionID, DepartureTime FROM CommodityTransport");
+            //xxx assert length/contents
+
             Assert.Inconclusive("A method that does not return a value cannot be verified.");
         }
 
         [TestMethod()]
+        [DataRollBack]
         public void ShipArrivedTest()
         {
             BankDBLogic target = new BankDBLogic();

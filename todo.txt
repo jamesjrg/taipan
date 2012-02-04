@@ -17,6 +17,7 @@ git change log:
 
 nowish:
 - finish all the spreadsheet sheets filled from database queries. Prices are converted from local currency to historical USD value
+- banklogic tests should use rollback attrib, and make sure the attrib works
 - BTree: dump method, unit tests, and delete method
 - what is currencyaccuraacy setting in config there for?
 - integration/unit test various main EconomicPlayer classes, inc Bank using [rollback]
