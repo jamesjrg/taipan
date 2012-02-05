@@ -16,9 +16,8 @@
 git change log:
 
 nowish:
-- btree: write disk method doesn't work properly. In particular, Marshal.StructureToPtr(node, ptr, false); gives wrong data (checked by immediately ptrtostructing the ptr)
-- btree: check code for splitting of root node is definitely right
-- BTree: delete method, unit tests
+- BTree: delete method, more unit tests
+- TestAlgoService tests still make a WCF web service start, can this be prevented?
 - countrysummary sheet needs testing, and also finishing
 - trader and shipping co summary sheets need doing
 - banklogic tests use rollback attrib - make sure the attrib works
@@ -39,9 +38,6 @@ Process logic and networking:
 ////
 
 automated testing still todo:
-
-BTree test strategy:
-- create a dump method that gives current state of btree as a string, then have assertData method that includes before and after string representations of btree for diff operations with diff values, as well as obviously making sure search method returns correct values, and if a key is deleted then searching for it returns null.
 
 Other unit tests:
 - finish unit testing all data structures - still not properly tested are hash table, binary search tree, rb tree, b-tree

@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace AlgoService
+namespace AlgoLib
 {
     /// <summary>
     /// An implementation of a HashTable. Uses chaining to deal with hash collisions.
     /// </summary>
-    class HashTable : DataStructure
+    public class HashTable : DataStructure
     {
         private struct Element
         {

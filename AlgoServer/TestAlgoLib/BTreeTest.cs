@@ -1,5 +1,7 @@
-﻿using AlgoService;
+﻿using AlgoLib;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
+
 namespace TestAlgoService
 {
     [TestClass()]
@@ -64,7 +66,7 @@ namespace TestAlgoService
             target.Insert(key);
             target.Dispose();
             target = new BTree(id, false);
-            Assert.AreEqual("N:I:0:3", target.Search(key).ToString());
+            Assert.AreEqual("I:0:K:3", target.Search(key).ToString());
 
             //ensure truncation works
             target = new BTree(id, true);
@@ -92,16 +94,16 @@ namespace TestAlgoService
 
             //simple
             target.Insert(firstKey);
-            Assert.AreEqual("N:I:0:1;  ", target.Search(firstKey).ToString());
+            Assert.AreEqual("I:0:K:1;", target.Search(firstKey).ToString());
 
             //max keys in a single node
             for (int i = 1; i != BTree.MAX_KEYS; ++i)
                 target.Insert(i + 1);
-            Assert.AreEqual("N:I:0:1,2,3,4,5,6,7;  ", target.Dump());
+            Assert.AreEqual("I:0:K:1,2,3,4,5,6,7;", target.Dump());
 
             //and one more
             target.Insert(BTree.MAX_KEYS + 1);
-            Assert.AreEqual("N:I:0:1;  N:I:1:2,3,4,5,6,7,8;", target.Dump());
+            Assert.AreEqual("I:0:K:1,2,3;  I:1:K:4;  I:2:K:5,6,7,8;", target.Dump());
         }
 
         [TestMethod()]
@@ -116,6 +118,18 @@ namespace TestAlgoService
             actual = target.Search(k);
             Assert.AreEqual(expected, actual);
             Assert.Inconclusive("Verify the correctness of this test method.");
+        }
+
+        /// <summary>
+        ///A test for BTree Constructor
+        ///</summary>
+        [TestMethod()]
+        public void BTreeConstructorTest1()
+        {
+            int id = 0; // TODO: Initialize to an appropriate value
+            bool newOrTruncate = false; // TODO: Initialize to an appropriate value
+            BTree target = new BTree(id, newOrTruncate);
+            Assert.Inconclusive("TODO: Implement code to verify target");
         }
     }
 }

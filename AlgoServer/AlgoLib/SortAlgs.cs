@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace AlgoService
+namespace AlgoLib
 {
-    class SortAlgs
+    public class SortAlgs
     {
         //Insertion sort
         public static void InsertionSort(int[] data)

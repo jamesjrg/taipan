@@ -5,20 +5,19 @@ using System.Text;
 using System.IO;
 using System.Runtime.InteropServices;
 
-namespace AlgoService
+namespace AlgoLib
 {
     /// <summary>
-    /// A B-Tree. Very much unsafe code, lots of pointers and byte-level file manipulation.
+    /// A B-Tree
     /// Notes:
     /// a) root node isn't necessarily at any particular index - gets shifted to second-to-last position when root node needs to be split
     /// b) Btree root and Node children "pointers" are actually int pseudo pointers for disk seeking
     /// c) First node on disk isn't a real node, instead it stores btree metadata - root location etc
-    /// d) For reading/writing nodes directly from/to file the Node class is a value-type struct
-    /// with a fixed length array, but this makes for ridiculously messy code, with lots of fixed () {} blocks and manually specifying parameters as pass by reference. This is partly an exercise in learning better C#, so I guess so be it, but I'm not convinced C# handles this sort of thing very well
+    /// d) For reading/writing nodes directly from/to file the Node class is a value-type struct, though this means you have to do some manual faffing with passing things specifically by reference etc
     /// e) key cannot be "0", as that is currently used to mean "empty" (though this could easily be changed)
     /// 
     /// </summary>
-    unsafe public class BTree: IDisposable
+    public class BTree: IDisposable
     {
         private string filename;
         private FileStream fs;
@@ -39,31 +38,47 @@ namespace AlgoService
 
         private bool isDisposed = false;
 
-        //a struct with fixed length arrays so it is easy to serialize
+        //a struct that can be serialized
         [StructLayout(LayoutKind.Sequential)]
         public struct Node
         {
             public int count;
-            public fixed int keys[MAX_KEYS];
-            public fixed int children[MAX_CHILDREN];
             public bool leaf;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_KEYS)]
+            public int[] keys;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_CHILDREN)]
+            public int[] children;
+
+            //Don't use the default constructor! User-defined parameterless constructors aren't allowed for value types by C#, for some reason
+            public static Node NewNode()
+            {
+                var newNode = new Node();
+                newNode.keys = new int[MAX_KEYS];
+                newNode.children = new int[MAX_CHILDREN];
+                return newNode;
+            }
+
+            public Node Clone()
+            {
+                var newNode = NewNode();
+                newNode.count = count;
+                newNode.leaf = leaf;
+                keys.CopyTo(newNode.keys, 0);
+                children.CopyTo(newNode.children, 0);
+
+                return newNode;
+            }
 
             public void AppendToStrB(StringBuilder builder, int index)
             {
-                builder.Append("N:");
                 builder.Append("I:" + index + ":");
-                int i = 0;
-                fixed (int* ptr = this.keys)
-                {
-                    while (i != this.count)
-                    {
-                        if (ptr[i] != 0)
-                            builder.Append(ptr[i] + ",");
-                        i++;
-                    }
-                }
+                builder.Append("K:");
+
+                for (int i = 0; i != this.count; i++)
+                    builder.Append(keys[i] + ",");
+
                 builder.Remove(builder.Length - 1, 1);
-                builder.Append(";  ");
+                builder.Append(";");
             }
         }
 
@@ -87,11 +102,11 @@ namespace AlgoService
             public int index;
         }
 
-        unsafe public BTree(int id, bool newOrTruncate)
+        public BTree(int id, bool newOrTruncate)
         {
             filename = "btree" + id;
 
-            NODE_SIZE = sizeof(Node);
+            NODE_SIZE = Marshal.SizeOf(RootNode);
 
             if (newOrTruncate)
             {
@@ -133,11 +148,9 @@ namespace AlgoService
                 {}//no managed objects
                 
                 //write data to special node 0, use the root node as a temp var
-                fixed (int* ptr = RootNode.children)
-                {
-                    ptr[0] = LastNodeIndex;
-                    ptr[1] = RootIndex;
-                }
+                RootNode.children[0] = LastNodeIndex;
+                RootNode.children[1] = RootIndex;
+
                 DiskWriteNode(ref RootNode, 0);
 
                 fs.Close();
@@ -157,7 +170,9 @@ namespace AlgoService
             {
                 Node node = DiskReadNode(i);
                 node.AppendToStrB(builder, i);
+                builder.Append("  ");
             }
+            builder.Remove(builder.Length - 2, 2);
             
             return builder.ToString();
         }
@@ -167,7 +182,7 @@ namespace AlgoService
             //empty tree?
             if (RootIndex == NIL_POINTER)
             {
-                RootNode = new Node();
+                RootNode = Node.NewNode();
                 RootIndex = 0;
                 LastNodeIndex = 0;
                 RootNode.leaf = true;
@@ -182,17 +197,14 @@ namespace AlgoService
                 {         
                     //old root node
                     int oldRootIndex = RootIndex;
-                    Node oldRoot = RootNode;
+                    Node oldRoot = RootNode.Clone();
 
                     //new root node
                     LastNodeIndex++;
                     RootIndex = LastNodeIndex;
                     RootNode.leaf = false;
                     RootNode.count = 0;
-                    fixed (int* ptr = RootNode.children)
-                    {
-                        ptr[0] = oldRootIndex;
-                    }
+                    RootNode.children[0] = oldRootIndex;
                     
                     //splitting first child of new root, i.e. the old root
                     SplitChildNode(ref RootNode, RootIndex, ref oldRoot, oldRootIndex, 0);
@@ -204,64 +216,51 @@ namespace AlgoService
         private void InsertNonFull(ref Node node, int nodeIndex, int k)
         {
             int i = node.count - 1;
+
             if (node.leaf)
             {
-                fixed (int* ptr = node.keys)
+                while (i >= 0 && k < node.keys[i])
                 {
-                    while (i >= 0 && k < ptr[i])
-                    {
-                        ptr[i + 1] = ptr[i];
-                        i--;
-                    }
-                    ptr[i + 1] = k;
+                    node.keys[i + 1] = node.keys[i];
+                    i--;
                 }
+                node.keys[i + 1] = k;
                 node.count++;
                 DiskWriteNode(ref node, nodeIndex);
             }
             else
-            {
-                fixed (int* ptr = node.keys)
+            {                
+                while (i >= 0 && k < node.keys[i])
+                    i--;
+
+                i = i + 1;
+                int childIndex = node.children[i];
+
+                Node child = DiskReadNode(childIndex);
+                if (child.count == MAX_KEYS)
                 {
-                    while (i >= 0 && k < ptr[i])
-                        i--;
+                    SplitChildNode(ref node, nodeIndex, ref child, childIndex, i);
+                    if (k > node.keys[i])
+                        i++;
+                }
 
-                    i = i + 1;
-                    fixed (int* childrenPtr = node.children)
-                    {
-                        int childIndex = childrenPtr[i];
-
-                        Node child = DiskReadNode(childIndex);
-                        if (child.count == MAX_KEYS)
-                        {
-                            SplitChildNode(ref node, nodeIndex, ref child, childIndex, i);
-                            if (k > ptr[i])
-                                i++;
-                        }
-
-                        InsertNonFull(ref child, childIndex, k);
-                    }                    
-                }                
+                InsertNonFull(ref child, childIndex, k);
             } 
         }
 
         private void SplitChildNode(ref Node parent, int parentIndex, ref Node child, int childIndex, int whichChild)
         {
-            Node newRight = new Node();
+            Node newRight = Node.NewNode();
             newRight.leaf = child.leaf;
             newRight.count = MIN_KEYS;
 
-            fixed (int* childKeys = child.keys)
-            {
-                for (int j = 0; j != MIN_KEYS; ++j)
-                    newRight.keys[j] = childKeys[j];
-            }
+            for (int j = 0; j != MIN_KEYS; ++j)
+                newRight.keys[j] = child.keys[j + MIN_DEGREE];
+
             if (!child.leaf)
             {
-                fixed (int* childChildren = child.children)
-                {
                     for (int j = 0; j != MIN_DEGREE; ++j)
-                        newRight.children[j] = childChildren[j + MIN_DEGREE];
-                }
+                        newRight.children[j] = child.children[j + MIN_DEGREE];
             }
             child.count = MIN_KEYS;
 
@@ -269,21 +268,15 @@ namespace AlgoService
             //LastNodeIndex now has the index of newRight
 
             //push up into parent node
-            fixed (int* parentChildren = parent.children)
-            {
-                for (int j = parent.count; j != whichChild; --j)
-                    parentChildren[j + 1] = parentChildren[j];
-                //LastNodeIndex is newRight pseudo-pointer
-                parentChildren[whichChild + 1] = LastNodeIndex;
-            }
-
-            fixed (int* parentKeys = parent.keys)
-            {
-                for (int j = parent.count - 1; j != whichChild - 1; --j)
-                    parentKeys[j + 1] = parentKeys[j];
-                fixed (int* childKeys = child.keys)
-                    parentKeys[whichChild] = childKeys[MIN_DEGREE];
-            }
+            for (int j = parent.count; j != whichChild; --j)
+                parent.children[j + 1] = parent.children[j];
+            //LastNodeIndex is newRight pseudo-pointer
+            parent.children[whichChild + 1] = LastNodeIndex;
+            
+            for (int j = parent.count - 1; j != whichChild - 1; --j)
+                parent.keys[j + 1] = parent.keys[j];
+            //xxx this line seriously screws up?
+            parent.keys[whichChild] = child.keys[MIN_DEGREE - 1];
 
             parent.count += 1;
 
@@ -309,20 +302,17 @@ namespace AlgoService
         private NodeIndexPair Search(ref Node node, int k)
         {
             int i = 0;
-            fixed (int* ptr = node.keys)
-            {
-                while (i != node.count && k > ptr[i])
-                    i++;
+            while (i != node.count && k > node.keys[i])
+                i++;
 
-                if (i != node.count && k == ptr[i])
-                    return new NodeIndexPair(node, i);
-                else if (node.leaf)
-                    return null;
-                else
-                {
-                    Node child = DiskReadNode(i);
-                    return Search(ref child, k);
-                }
+            if (i != node.count && k == node.keys[i])
+                return new NodeIndexPair(node, i);
+            else if (node.leaf)
+                return null;
+            else
+            {
+                Node child = DiskReadNode(i);
+                return Search(ref child, k);
             }
         }
 
@@ -353,7 +343,7 @@ namespace AlgoService
         private Node DiskReadNode(int index)
         {
             byte[] arr = new byte[NODE_SIZE];
-            Node node = new Node();
+            Node node = Node.NewNode();
 
             fs.Seek(index * NODE_SIZE, SeekOrigin.Begin);
             fs.Read(arr, 0, NODE_SIZE);
@@ -372,18 +362,12 @@ namespace AlgoService
             //    Console.WriteLine(temp.GetString(b));
         }
 
-        //write CurrentNode to disk file
         private void DiskWriteNode(ref Node node, int index)
         {
-            //I'm assuming just sizeof(Node) is fine, I mean come on
-            //int len = Marshal.SizeOf(node);
-
             byte[] arr = new byte[NODE_SIZE];
             IntPtr ptr = Marshal.AllocHGlobal(NODE_SIZE);
             Marshal.StructureToPtr(node, ptr, false);
             Marshal.Copy(ptr, arr, 0, NODE_SIZE);
-            //xxx
-            Node anotherP = (Node)Marshal.PtrToStructure(ptr, typeof(Node));
             Marshal.FreeHGlobal(ptr);
 
             fs.Seek(index * NODE_SIZE, SeekOrigin.Begin);

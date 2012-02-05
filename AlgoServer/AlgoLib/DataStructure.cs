@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace AlgoService
+namespace AlgoLib
 {
-    interface DataStructure
+    public interface DataStructure
     {
         void Insert(int key, int val);
         void Delete(int key);

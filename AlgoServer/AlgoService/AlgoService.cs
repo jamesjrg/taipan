@@ -7,6 +7,8 @@ using System.Text;
 
 using System.Diagnostics;
 
+using AlgoLib;
+
 namespace AlgoService
 {
     public class AlgoService : IAlgoService

@@ -23,8 +23,8 @@ AlgoServer/AlgoServer/bin/
 AlgoServer/AlgoServer/obj/
 AlgoServer/AlgoService/bin/
 AlgoServer/AlgoService/obj/
-AlgoServer/TestAlgoService/bin/
-AlgoServer/TestAlgoService/obj/
+AlgoServer/TestAlgoLib/bin/
+AlgoServer/TestAlgoLib/obj/
 AlgoServer/TestResults/
 
 Resolver/AlgoServiceProxy.cs
