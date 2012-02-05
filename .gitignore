@@ -19,6 +19,8 @@ TestTaiPan/bin/
 TestTaiPan/obj/
 
 AlgoServer/AlgoServer.suo
+AlgoServer/AlgoLib/bin/
+AlgoServer/AlgoLib/obj/
 AlgoServer/AlgoServer/bin/
 AlgoServer/AlgoServer/obj/
 AlgoServer/AlgoService/bin/
