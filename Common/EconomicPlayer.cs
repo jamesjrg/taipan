@@ -87,10 +87,19 @@ namespace TaiPan.Common
         private void ActualGo()
         {
             Console.WriteLine("Running");
+            //while (Run() == true)
+            //    System.Threading.Thread.Sleep(myTick);
+
+            //for quick profiling
+#if true
+            int start = Environment.TickCount;
             while (Run() == true)
             {
+                Console.WriteLine(Environment.TickCount - start);               
                 System.Threading.Thread.Sleep(myTick);
+                start = Environment.TickCount;
             }
+#endif
 
             Console.WriteLine("Shutdown");
             //could add shutdown code here, but as everything is managed code or resources under the control of System classes, rely on everything to clear up after itself when program ends. This isn't C++.

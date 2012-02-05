@@ -87,15 +87,16 @@ namespace TaiPan.Trader
                     case NetMsgType.Shortage:
                         ShortageForecast((ForecastMsg)(msg.data));
                         break;
-#if DEBUG
+#if true
                     case NetMsgType.DebugTimer:
                         DebugTimerMsg debugMsg = (DebugTimerMsg)msg.data;
-                        debugMsg.times = debugMsg.times.Concat(new DateTime[] { DateTime.Now }).ToArray();
+                        debugMsg.times = debugMsg.times.Concat(new int[] { Environment.TickCount }).ToArray();
                         bankClient.Send(NetContract.Serialize(NetMsgType.DebugTimer, debugMsg));
                         break;
 #endif
+
                     default:
-                        throw new ApplicationException("fateClient received wrong type of net message");
+                        throw new ApplicationException("fateClient received wrong type of net message: " + msg.type);
                 }
             }
 

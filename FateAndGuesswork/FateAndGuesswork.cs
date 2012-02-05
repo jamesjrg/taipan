@@ -167,12 +167,13 @@ namespace TaiPan.FateAndGuesswork
                 traderServer.Send(NetContract.Serialize(NetMsgType.Surplus, info.msg), info.traderID);
             surpluses.Clear();
 
-#if DEBUG
+            //for debug timing/profiling
+#if true
             var clientIDs = traderServer.GetClientIDs();
             if (clientIDs.Count > 0)
             {
                 var debugMsg = new DebugTimerMsg();
-                debugMsg.times = new DateTime[] {DateTime.Now};
+                debugMsg.times = new int[] { Environment.TickCount };
                 traderServer.Send(NetContract.Serialize(NetMsgType.DebugTimer, debugMsg), clientIDs[0]);
             }
 #endif

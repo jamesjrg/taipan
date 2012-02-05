@@ -229,7 +229,7 @@ namespace TaiPan.Common.NetContract
     public class DebugTimerMsg
     {
         public DebugTimerMsg() { }
-        public DateTime[] times;
+        public int[] times;
     }
 
     public class NetContract

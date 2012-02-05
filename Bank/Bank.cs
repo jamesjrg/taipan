@@ -64,7 +64,7 @@ namespace TaiPan.Bank
                         dbLogic.UpdateCurrency((CurrencyMsg)(msg.data));
                         break;                    
                     default:
-                        throw new ApplicationException("fxClient received wrong type of net message");
+                        throw new ApplicationException("fxClient received wrong type of net message: " + msg.type);
                 }
             }
 
@@ -80,7 +80,7 @@ namespace TaiPan.Bank
                         dbLogic.UpdateStock((StockMsg)(msg.data));
                         break;
                     default:
-                        throw new ApplicationException("fateIncoming received wrong type of net message");
+                        throw new ApplicationException("fateIncoming received wrong type of net message: " + msg.type);
                 }
             }
 
@@ -100,15 +100,22 @@ namespace TaiPan.Bank
                         case NetMsgType.Future:
                             dbLogic.EnactFuture(client.id, (FutureMsg)msg.data);
                             break;
-#if DEBUG
+#if true
                         case NetMsgType.DebugTimer:
                             DebugTimerMsg debugMsg = (DebugTimerMsg)msg.data;
-                            debugMsg.times = debugMsg.times.Concat(new DateTime[] { DateTime.Now }).ToArray();
-                            Console.WriteLine(String.Join(",", debugMsg.times));
+                            debugMsg.times = debugMsg.times.Concat(new int[] { Environment.TickCount }).ToArray();
+                            Console.WriteLine(String.Join(", ",
+                                debugMsg.times.Select((x, i) => {
+                                    if (i == 0)
+                                        return 0;
+                                    else
+                                        return x - debugMsg.times[i-1];
+                                })));
                             break;
 #endif
+
                         default:
-                            throw new ApplicationException("traderServer received wrong type of net message");
+                            throw new ApplicationException("traderServer received wrong type of net message: " + msg.type);
                     }
                 }
             }
@@ -127,7 +134,7 @@ namespace TaiPan.Bank
                             dbLogic.ShipArrived(client.id, (MovingMsg)msg.data);
                             break;
                         default:
-                            throw new ApplicationException("traderServer received wrong type of net message");
+                            throw new ApplicationException("traderServer received wrong type of net message: " + msg.type);
                     }
                 }
             }

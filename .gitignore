@@ -51,4 +51,7 @@ web/images/
 Resolver/.project
 Resolver/.pydevproject
 
+# for visual studio profile runs
+*.vsp
+
 tmp.diff

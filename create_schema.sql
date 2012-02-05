@@ -339,15 +339,29 @@ ALTER TABLE dbo.CommodityTransport ADD
 	(CommodityTransactionID) REFERENCES dbo.CommodityTransaction (ID);
 GO
     
--- pseudo-triggers to keep historical value tables and current values in sync
--- if this were another database these could be triggers with FOR EACH ROW
+-- these procedures all endeavour to keep historical value tables and current values in sync
+-- could alternately use triggers
+
+-- wrote a trigger version as an exercise, but unused
+/*CREATE TRIGGER HistStockPriceTrg
+ON HistoricalStockPrice
+AFTER INSERT
+AS
+update ShippingCompany set USDStockPrice = i.USDStockPrice
+from ShippingCompany sc join inserted i on sc.CompanyID = i.CompanyID;
+GO*/
+
 CREATE PROCEDURE procStockUpdate 
    @CompanyID int, 
    @PriceDate datetime,
    @USDStockPrice Money
-AS 
+AS
+SET NOCOUNT ON
+SET XACT_ABORT ON
+BEGIN TRAN
 insert into HistoricalStockPrice (CompanyID, PriceDate, USDStockPrice) VALUES (@CompanyID, @PriceDate, @USDStockPrice);
 update ShippingCompany set USDStockPrice = @USDStockPrice where CompanyID = @CompanyID;
+COMMIT TRAN
 GO
 
 CREATE PROCEDURE procBalanceUpdate 
@@ -355,10 +369,12 @@ CREATE PROCEDURE procBalanceUpdate
    @BalanceDate datetime,
    @Balance Money
 AS 
-BEGIN
+SET NOCOUNT ON
+SET XACT_ABORT ON
+BEGIN TRAN
 insert into HistoricalBalance (CompanyID, BalanceDate, Balance) VALUES (@CompanyID, @BalanceDate, @Balance);
 update Company set Balance = @Balance where ID = @CompanyID;
-END
+COMMIT TRAN
 GO
 
 CREATE PROCEDURE procCurrencyUpdate 
@@ -366,10 +382,12 @@ CREATE PROCEDURE procCurrencyUpdate
    @ValueDate datetime,
    @USDValue Money
 AS
-BEGIN
+SET NOCOUNT ON
+SET XACT_ABORT ON
+BEGIN TRAN
 insert into HistoricalCurrencyPrice (CurrencyID, ValueDate, USDValue) VALUES (@CurrencyID, @ValueDate, @USDValue);
 update Currency set USDValue = @USDValue where ID = @CurrencyID;
-END
+COMMIT TRAN
 GO
 
 CREATE PROCEDURE procPortComodUpdate
@@ -378,10 +396,12 @@ CREATE PROCEDURE procPortComodUpdate
    @ValueDate datetime,
    @LocalPrice Money
 AS 
-BEGIN
-    insert into HistoricalPortCommodityPrice (PortID, CommodityID, ValueDate, LocalPrice) VALUES (@PortID, @CommodityID, @ValueDate, @LocalPrice);
-    update PortCommodityPrice set LocalPrice = @LocalPrice where PortID = @PortID and CommodityID = @CommodityID;
-END
+SET NOCOUNT ON
+SET XACT_ABORT ON
+BEGIN TRAN
+insert into HistoricalPortCommodityPrice (PortID, CommodityID, ValueDate, LocalPrice) VALUES (@PortID, @CommodityID, @ValueDate, @LocalPrice);
+update PortCommodityPrice set LocalPrice = @LocalPrice where PortID = @PortID and CommodityID = @CommodityID;
+COMMIT TRAN
 GO
 
 -- procedures to add/subtract balances from accounts of companies
