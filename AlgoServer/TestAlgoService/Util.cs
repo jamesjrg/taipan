@@ -44,14 +44,10 @@ namespace TestAlgoService
             foreach (var data in assertData)
             {
                 data.predecessorTests.Add(new KeyValuePair<int, int>(5, 4));
-                data.predecessorTests.Add(new KeyValuePair<int, int>(4, 3));
-                data.predecessorTests.Add(new KeyValuePair<int, int>(3, 2));
                 data.predecessorTests.Add(new KeyValuePair<int, int>(2, 1));
                 data.predecessorTests.Add(new KeyValuePair<int, int>(1, -1));
 
                 data.successorTests.Add(new KeyValuePair<int, int>(1, 2));
-                data.successorTests.Add(new KeyValuePair<int, int>(2, 3));
-                data.successorTests.Add(new KeyValuePair<int, int>(3, 4));
                 data.successorTests.Add(new KeyValuePair<int, int>(4, 5));
                 data.successorTests.Add(new KeyValuePair<int, int>(5, -1));
             }

@@ -14,23 +14,17 @@
 
 ////
 git change log:
-- add VS profiling sessions
-- add some more timing code for profiling
-- did some profiling both via VS and via timing code, and as a result decided to comment out some more commodities in insert_data. debug bank loop time down from about 3 seconds to 0.5 seconds.
-- accidentally forgot to add NOCOUNT and transactions to some of the stored procedures
-- write a trigger version of a stored procedure as an exercise, but commented out, no reason to change to using triggers
 
 nowish:
-
+- btree: write disk method doesn't work properly. In particular, Marshal.StructureToPtr(node, ptr, false); gives wrong data (checked by immediately ptrtostructing the ptr)
+- btree: check code for splitting of root node is definitely right
+- BTree: delete method, unit tests
 - countrysummary sheet needs testing, and also finishing
 - trader and shipping co summary sheets need doing
 - banklogic tests use rollback attrib - make sure the attrib works
 - still some future requests are refused by bank for not being sufficently far into future. do some more profiling to find out why. it takes a second or two for a message to go from fandgw to trader, and another second or two to get to bank, a total of a about 3 sec from send to console print, when it should be more like 1-2 sec total. trader main loop is never more than about 0.5s, usually much less, bank main loop averages about 0.5s, plus maybe 0.5 sec of the various loops in diff threads and processes sleeping as not all in sync. maybe code run by network threads is slow?
 - seems to be a fair lag between a commodity being bought and it being loaded on a ship for sale, is this a performance issue or just a result of the size of the various tick waits defined? try to reduce this time gap.
-- BTree: dump method, unit tests, and delete method
-- what is currencyaccuraacy setting in config there for?
-- the vars in Globals.cs which are set from config file ought to do something to stop them being changed except on init. readonly doesn't work with static.
-- make insertion of futurescontract a stored proc, that errors if settlement time is in the past. then banklogic should catch this exception and print msg in console. plus need a test for this.
+- the vars in Globals.cs which are set from config file maybe ought to do something to stop them being changed except on init. readonly doesn't work with static.
 - analyse performance and tune
 - search for xxx using igrep
 

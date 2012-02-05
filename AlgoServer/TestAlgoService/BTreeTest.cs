@@ -56,10 +56,19 @@ namespace TestAlgoService
         [TestMethod()]
         public void BTreeConstructorTest()
         {
-            int id = 0; // TODO: Initialize to an appropriate value
-            bool truncate = false; // TODO: Initialize to an appropriate value
-            BTree target = new BTree(id, truncate);
-            Assert.Inconclusive("TODO: Implement code to verify target");
+            //check it can be closed and reopened again
+            int id = 1;
+            int key = 2;
+
+            BTree target = new BTree(id, true);
+            target.Insert(key);
+            target.Dispose();
+            target = new BTree(id, false);
+            Assert.AreEqual("N:I:0:3", target.Search(key).ToString());
+
+            //ensure truncation works
+            target = new BTree(id, true);
+            Assert.AreEqual(null, target.Search(key));
         }
 
         [TestMethod()]
@@ -76,12 +85,23 @@ namespace TestAlgoService
         [TestMethod()]
         public void InsertTest()
         {
-            int id = 0; // TODO: Initialize to an appropriate value
-            bool truncate = false; // TODO: Initialize to an appropriate value
-            BTree target = new BTree(id, truncate); // TODO: Initialize to an appropriate value
-            int k = 0; // TODO: Initialize to an appropriate value
-            target.Insert(k);
-            Assert.Inconclusive("A method that does not return a value cannot be verified.");
+            int id = 1;
+            int firstKey = 1;
+
+            BTree target = new BTree(id, true);
+
+            //simple
+            target.Insert(firstKey);
+            Assert.AreEqual("N:I:0:1;  ", target.Search(firstKey).ToString());
+
+            //max keys in a single node
+            for (int i = 1; i != BTree.MAX_KEYS; ++i)
+                target.Insert(i + 1);
+            Assert.AreEqual("N:I:0:1,2,3,4,5,6,7;  ", target.Dump());
+
+            //and one more
+            target.Insert(BTree.MAX_KEYS + 1);
+            Assert.AreEqual("N:I:0:1;  N:I:1:2,3,4,5,6,7,8;", target.Dump());
         }
 
         [TestMethod()]
