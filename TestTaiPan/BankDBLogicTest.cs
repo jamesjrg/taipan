@@ -2,18 +2,12 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 
-using TeamAgile.ApplicationBlocks.Interception.UnitTestExtensions;
-
 using TaiPan.Common.NetContract;
 
 namespace TestTaiPan
 {   
-    /// <summary>
-    ///This is a test class for BankDBLogicTest and is intended
-    ///to contain all BankDBLogicTest Unit Tests
-    ///</summary>
     [TestClass()]
-    public class BankDBLogicTest: TestTaiPanBase
+    public class BankDBLogicTest : TestTaiPanBase
     {
         private TestContext testContextInstance;
 
@@ -70,7 +64,6 @@ namespace TestTaiPan
         }
 
         [TestMethod()]
-        [DataRollBack]
         public void ShipDepartedTest()
         {
             BankDBLogic target = new BankDBLogic();
@@ -86,16 +79,21 @@ namespace TestTaiPan
 
             int transID = target.InsertCommodityTransaction(traderID, commodID, departPortID, quantity, amount);
             target.ShipDeparted(shippingCoID, new MovingMsg(departPortID, destPortID, transID, time));
-            conn.FilledDataSet("SELECT ShippingCompanyID, CommodityTransactionID, DepartureTime FROM CommodityTransport");
-            //xxx assert length/contents
-            conn.FilledDataSet("SELECT ShippingCompanyID, CommodityTransactionID, DepartureTime FROM CommodityTransport");
-            //xxx assert length/contents
 
-            Assert.Inconclusive("A method that does not return a value cannot be verified.");
+            //check CommodityTransport
+            var dataset = conn.FilledDataSet("SELECT ShippingCompanyID, CommodityTransactionID, DepartureTime FROM CommodityTransport");
+            object[] expectedRow = { 6, transID, time };
+            Assert.AreEqual(1, dataset.Tables[0].Rows.Count);
+            AssertSeqEqual(expectedRow, dataset.Tables[0].Rows[0].ItemArray);
+
+            //xxx check CommodityTransaction updated
+            dataset = conn.FilledDataSet("SELECT ID, SalePortID FROM CommodityTransaction");
+            object[] expectedTransportRow = { transID, destPortID };
+            Assert.AreEqual(1, dataset.Tables[0].Rows.Count);
+            AssertSeqEqual(expectedTransportRow, dataset.Tables[0].Rows[0].ItemArray);
         }
 
         [TestMethod()]
-        [DataRollBack]
         public void ShipArrivedTest()
         {
             BankDBLogic target = new BankDBLogic();

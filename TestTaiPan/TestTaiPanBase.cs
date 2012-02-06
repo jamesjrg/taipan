@@ -106,7 +106,7 @@ namespace TestTaiPan
         }
 
         //xxx not sure if all the reflective generics in the following methods are considered good form in the .NET world or not
-        private string ListToStr<T>(List<T> seq)
+        private string ListToStr<T>(IEnumerable<T> seq)
         {
             return string.Join(", ", seq.Select(
                 x =>
@@ -147,7 +147,7 @@ namespace TestTaiPan
             }
         }
 
-        protected void AssertSeqEqual<T>(List<T> seq1, List<T> seq2)
+        protected void AssertSeqEqual<T>(IEnumerable<T> seq1, IEnumerable<T> seq2)
         {
             //Visual Studio doesn't like multiline error messages, bah
             if (!seq1.SequenceEqual(seq2, new GenericObjectComparer<T>()))

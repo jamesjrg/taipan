@@ -67,9 +67,6 @@
     <Reference Include="System.Xml.Linq">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
-    <Reference Include="TeamAgile.UnitTestExtensions">
-      <HintPath>..\xtunit\TeamAgile.UnitTestExtensions.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BankDBLogicTest.cs" />
