@@ -74,10 +74,15 @@ namespace AlgoLib
                 builder.Append("I:" + index + ":");
                 builder.Append("K:");
 
-                for (int i = 0; i != this.count; i++)
-                    builder.Append(keys[i] + ",");
-
-                builder.Remove(builder.Length - 1, 1);
+                if (count == NIL_POINTER)
+                    builder.Append("deleted");
+                else
+                {
+                    for (int i = 0; i != this.count; i++)
+                        builder.Append(keys[i] + ",");
+                    builder.Remove(builder.Length - 1, 1);
+                }
+                
                 builder.Append(";");
             }
         }
@@ -357,23 +362,25 @@ namespace AlgoLib
                         node.keys[i] = kPrime;
                         Delete(predecessor, i, kPrime);
                     }
-                    //symmetrically, replace k by successor of k, then recursively delete successor of k
                     else
                     {
                         int successorIndex = i + 1;
                         Node successor = DiskReadNode(node.children[successorIndex]);
                         
+                        //symmetrically, replace k by successor of k, then recursively delete successor of k
                         if (successor.keys >= MIN_DEGREE)
                         {
                             int kPrime = successor.keys[0];
                             node.keys[i] = kPrime;
                             Delete(successor, successorIndex, kPrime);
                         }
+                        //merge succeeding node into preceding node, along with k (freeing succeeding node from disk), then recursively delete k from new merged child
+                        else                        
+                        {
+                            //xxx
+                            //DiskDeleteNode(index);
+                        }
                     }
-                    else
-                    {
-                        //xxx merge succeeding node into preceding node, along with k (freeing succeeding node from disk), then recursively delete k from new merged child
-                    }                    
                 }                
             }
             else if (node.leaf)
@@ -385,9 +392,12 @@ namespace AlgoLib
                 if (child.count < MIN_DEGREE)
                 {
                     //xxx give it one of current node's keys.
+                    
+                    //if root node will now become empty
                     if (node == RootNode && node.count == 0)
                     {
                         //delete root and replace it with its first child
+                        //DiskDeleteNode(index);
                         //xxx possibly special behaviour if deleting final key in tree - i.e. change rootindex and lastnodeindex to null constant
                     }
                 }
@@ -429,5 +439,15 @@ namespace AlgoLib
             fs.Seek(index * NODE_SIZE, SeekOrigin.Begin);
             fs.Write(arr, 0, NODE_SIZE);
         }
+        
+        //For the time being, if btree delete results in deletion of node, then write that node's position on disk as invalid data.
+        //more advanced would be some sort of manual or automatic garbage collection that shifts data to fill in these gaps, and then truncates the now unused space at the end of the file.
+        private void DiskDeleteNode(int index)
+        {
+            Node nullNode = Node.NewNode();
+            nullNode.count = NIL_POINTER;
+            DiskWriteNode(Node, index);
+        }
     }
 }
+
