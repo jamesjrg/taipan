@@ -16,7 +16,6 @@
 git change log:
 
 nowish:
-- loc count on cv
 - BTree: delete method, more unit tests
 - TestAlgoService tests still make a WCF web service start, can this be prevented?
 - countrysummary sheet needs testing, and also finishing

@@ -5,6 +5,8 @@ def main():
     with open("../time.txt") as f:
         for line in f:
             print line
+            if line.startswith('#'):
+                continue
             try:
                 time = float(line.split(":")[1].strip())
                 print "%.2f hours\n" % time
