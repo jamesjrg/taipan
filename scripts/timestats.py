@@ -2,7 +2,7 @@
 
 def main():
     total = 0.0
-    with open("time.txt") as f:
+    with open("../time.txt") as f:
         for line in f:
             print line
             try:

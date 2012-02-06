@@ -10,16 +10,10 @@ FateAndGuesswork
 If process ends, what do other processes do:
 All client processes should throw exception and end gracefully.
 
-////
-
 Trader
 
-Things it calculates:
-1. On basis of distance between ports and also predicted information on future shortage or surplus of a given commodity for a given company, they calculate the most profitable places to buy goods to warehouse in readiness to sell (i.e. somewhere nearby to and cheap for predicted future shortage, possibly the same port), or to organise a futures contract to buy goods in future in readiness to sell (i.e. at the actual port of the predicted future surplus). Then when price fluctuation actually happens, warehoused goods are sold to nearest place that has a demand for those goods, or otherwise futures contract is fufilled and goods become warehoused goods (inserted into db), for themselves being sold in most profitable way possible. Though unforseen variation and/or the error in the prediction by fate and guesswork could still lead to them losing money.
-2. it stores data on planned sale times of bought goods and settlement dates of futures. futures settlement dates also stored in db.
-Things it reads from database: distance between ports, which ports import/export a given commodity
 If process ends, what do clients do:
-1. End of decisions to buy goods/futures contract/sell goods/move goods does not bother others. acceptances of movement contracts don't matter because shipping companies assume refused if not acked, and once accepted they can be actioned with no further input from trader.
+End of decisions to buy goods/futures contract/sell goods/move goods does not bother others. acceptances of movement contracts don't matter because shipping companies assume refused if not acked, and once accepted they can be actioned with no further input from trader.
 
 ShippingCompany
 

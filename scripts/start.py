@@ -3,12 +3,13 @@
 import os
 import sys
 
+dirPrefix = '..\\'
 exeDir = '\\bin\\Debug\\'
-bankDir = 'Bank' + exeDir
-fateDir = 'FateAndGuesswork' + exeDir
-fxDir = 'FXServer' + exeDir
-traderDir = 'Trader' + exeDir
-shippingDir = 'ShippingCompany' + exeDir
+bankDir = dirPrefix + 'Bank' + exeDir
+fateDir = dirPrefix + 'FateAndGuesswork' + exeDir
+fxDir = dirPrefix + 'FXServer' + exeDir
+traderDir = dirPrefix + 'Trader' + exeDir
+shippingDir = dirPrefix + 'ShippingCompany' + exeDir
 
 nBank = 1
 nFate = 1
@@ -33,8 +34,10 @@ else:
     sys.exit(2)
     
 def startInNewConsole(process, dir):
-    print 'start ' + dir+process
-    os.system('start /D ' + dir + " " + dir+process)
+    exe = '%s%s'% (dir, process)
+    print 'start /D "%s" "%s"' % (dir, exe)
+    #start treats the first quoted parameter as a window title, so you need a quoted string before any quoted path
+    os.system('start "" /D "%s" "%s"' % (dir, exe))
 
 print 'starting requested processes'
 if nBank:

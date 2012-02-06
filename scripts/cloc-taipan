@@ -1,0 +1,3 @@
+cloc --by-file-by-lang --not-match-f=insert_data\.sql --exclude-dir=".git,odd bits,TestResults,web,xtunit,bin" --exclude-lang="DOS Batch,MSBuild scripts" ../
+
+echo also note something like 40 lines of Python files are actually SQL
