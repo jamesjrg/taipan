@@ -254,15 +254,17 @@ namespace AlgoLib
             newRight.leaf = child.leaf;
             newRight.count = MIN_KEYS;
 
+            //new right hand node copies MIN_KEYS largest keys from child
             for (int j = 0; j != MIN_KEYS; ++j)
                 newRight.keys[j] = child.keys[j + MIN_DEGREE];
-
+             child.count = MIN_KEYS;
+             
+            //if not a leaf node, then new right hand node copies MIN_DEGREE largest children from child
             if (!child.leaf)
             {
-                    for (int j = 0; j != MIN_DEGREE; ++j)
-                        newRight.children[j] = child.children[j + MIN_DEGREE];
-            }
-            child.count = MIN_KEYS;
+                for (int j = 0; j != MIN_DEGREE; ++j)
+                    newRight.children[j] = child.children[j + MIN_DEGREE];
+            }            
 
             LastNodeIndex++;
             //LastNodeIndex now has the index of newRight
@@ -275,7 +277,6 @@ namespace AlgoLib
             
             for (int j = parent.count - 1; j != whichChild - 1; --j)
                 parent.keys[j + 1] = parent.keys[j];
-            //xxx this line seriously screws up?
             parent.keys[whichChild] = child.keys[MIN_DEGREE - 1];
 
             parent.count += 1;
@@ -311,7 +312,7 @@ namespace AlgoLib
                 return null;
             else
             {
-                Node child = DiskReadNode(i);
+                Node child = DiskReadNode(node.children[i]);
                 return Search(ref child, k);
             }
         }
@@ -320,24 +321,79 @@ namespace AlgoLib
         {
             //empty tree?
             if (RootIndex == NIL_POINTER)
-                throw new Exception("empty tree");
-
-            Delete(ref RootNode, RootIndex);
+                throw new Exception("Called delete on empty tree");
+                
+            Delete(ref RootNode, RootIndex, k);
         }
 
-        private void Delete(ref Node node, int nodeIndex)
+        //walk down tree from root searching for k
+        private void Delete(ref Node node, int nodeIndex, int k)
         {
-            //walk down tree from root searching for k
-            //before recursively calling delete on any child, check that child has at least min keys + 1. if not, give it one of current nodes keys. if currentnode is root and this leaves root with 0 keys, then delete root and replace it with its first child
+            int i = 0;
+            while (i != node.count && k > node.keys[i])
+                i++;
 
-            //on reaching k:
-            //if given node is a leaf
-            //can now delete key
-            //if given node is an internal node
-            //if child that precedes key has at least t keys, then recursively delete predecessor of k, and move that predecessor to k's place
-            //else if child that succeeds key has at least t keys, try the same with successor-containing node
-            //else merge succeeding node into preceding node, along with k (freeing succeeding node from disk), then recursively delete k from new merged child
-            //possibly special behaviour if deleting final key in tree - i.e. change rootindex and lastnodeindex to null constant
+            if (i != node.count && k == node.keys[i])
+            {
+                if (node.leaf)
+                {
+                    //delete by shuffling keys leftwards
+                    while (i != node.count - 1)
+                    {
+                        node.keys[i] = node.keys[i + 1];
+                        i++;
+                    }
+                    node.count--;
+                    DiskWriteNode(ref node, nodeIndex);
+                }
+                else
+                {
+                    Node predecessor = DiskReadNode(node.children[i]);
+                    
+                    //replace k by predecessor of k, then recursively delete predecessor of k
+                    if (predecessor.keys >= MIN_DEGREE)
+                    {
+                        int kPrime = predecessor.keys[predecessor.count - 1];
+                        node.keys[i] = kPrime;
+                        Delete(predecessor, i, kPrime);
+                    }
+                    //symmetrically, replace k by successor of k, then recursively delete successor of k
+                    else
+                    {
+                        int successorIndex = i + 1;
+                        Node successor = DiskReadNode(node.children[successorIndex]);
+                        
+                        if (successor.keys >= MIN_DEGREE)
+                        {
+                            int kPrime = successor.keys[0];
+                            node.keys[i] = kPrime;
+                            Delete(successor, successorIndex, kPrime);
+                        }
+                    }
+                    else
+                    {
+                        //xxx merge succeeding node into preceding node, along with k (freeing succeeding node from disk), then recursively delete k from new merged child
+                    }                    
+                }                
+            }
+            else if (node.leaf)
+                throw new Exception("Key not found: " + k);
+            else
+            {
+                Node child = DiskReadNode(node.children[i]);
+                
+                if (child.count < MIN_DEGREE)
+                {
+                    //xxx give it one of current node's keys.
+                    if (node == RootNode && node.count == 0)
+                    {
+                        //delete root and replace it with its first child
+                        //xxx possibly special behaviour if deleting final key in tree - i.e. change rootindex and lastnodeindex to null constant
+                    }
+                }
+                
+                Delete(ref child, nodeIndex, k);
+            }
         }
 
         private Node DiskReadNode(int index)
@@ -356,7 +412,7 @@ namespace AlgoLib
 
             return node;
 
-            //for testing?
+            //for testing
             //UTF8Encoding temp = new UTF8Encoding(true);
             //while (fs.Read(b, 0, b.Length) > 0)
             //    Console.WriteLine(temp.GetString(b));

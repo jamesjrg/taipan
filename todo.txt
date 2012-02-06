@@ -1,8 +1,8 @@
 * finish spreadsheet summary sheets
 - est 1 days FT
 
-* finish all btree methods, and finish unit tests for all data structures
-- est 2 days FT
+* btree delete, and finish unit tests for all data structures
+- est 1.5 days FT
 
 * finish SOAP methods for data structure manipulation
 - est 1 days FT
