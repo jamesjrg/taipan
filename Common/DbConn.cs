@@ -18,12 +18,12 @@ namespace TaiPan.Common
 
         public DbConn()
         {
-            Init(true);
+            Open(true);
         }
 
         public DbConn(bool readOnly)
         {
-            Init(readOnly);
+            Open(readOnly);
         }
 
         public void Dispose()
@@ -79,7 +79,7 @@ namespace TaiPan.Common
             return dataSet;
         }
 
-        private void Init(bool readOnly)
+        public void Open(bool readOnly)
         {
             string connName = "taipan-rw";
             if (readOnly)

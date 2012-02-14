@@ -3,6 +3,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 
 using TaiPan.Common.NetContract;
+using System.Transactions;
 
 namespace TestTaiPan
 {   
@@ -10,6 +11,7 @@ namespace TestTaiPan
     public class BankDBLogicTest : TestTaiPanBase
     {
         private TestContext testContextInstance;
+        private TransactionScope scope; 
 
         /// <summary>
         ///Gets or sets the test context which provides
@@ -58,9 +60,24 @@ namespace TestTaiPan
         #endregion
 
         [ClassInitialize()]
-        public static void TestClassInitialize(TestContext testContext)
+        public static void ClassInitialize(TestContext testContext)
         {
             SetupForTests();
+        }
+
+        [TestInitialize()]
+        public void TestInitialize()
+        {
+            scope = new TransactionScope(TransactionScopeOption.RequiresNew);
+            conn.Open(false);
+        }
+        
+        [TestCleanup()]
+        public void TestCleanup()
+        {
+            if (scope != null)
+                scope.Dispose();
+            conn.Close();
         }
 
         [TestMethod()]

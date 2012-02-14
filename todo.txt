@@ -16,9 +16,7 @@
 git change log:
 
 nowish:
-- what to do about rollback with database integration tests? xtunit wasn't playing very well.
 - BTree: delete method, more unit tests
-- TestAlgoService tests still make a WCF web service start, can this be prevented?
 - countrysummary sheet needs testing, and also finishing
 - trader and shipping co summary sheets need doing
 - still some future requests are refused by bank for not being sufficently far into future. do some more profiling to find out why. it takes a second or two for a message to go from fandgw to trader, and another second or two to get to bank, a total of a about 3 sec from send to console print, when it should be more like 1-2 sec total. trader main loop is never more than about 0.5s, usually much less, bank main loop averages about 0.5s, plus maybe 0.5 sec of the various loops in diff threads and processes sleeping as not all in sync. maybe code run by network threads is slow?

@@ -356,11 +356,11 @@ namespace AlgoLib
                     Node predecessor = DiskReadNode(node.children[i]);
                     
                     //replace k by predecessor of k, then recursively delete predecessor of k
-                    if (predecessor.keys >= MIN_DEGREE)
+                    if (predecessor.keys.Length >= MIN_DEGREE)
                     {
                         int kPrime = predecessor.keys[predecessor.count - 1];
                         node.keys[i] = kPrime;
-                        Delete(predecessor, i, kPrime);
+                        Delete(ref predecessor, i, kPrime);
                     }
                     else
                     {
@@ -368,11 +368,11 @@ namespace AlgoLib
                         Node successor = DiskReadNode(node.children[successorIndex]);
                         
                         //symmetrically, replace k by successor of k, then recursively delete successor of k
-                        if (successor.keys >= MIN_DEGREE)
+                        if (successor.keys.Length >= MIN_DEGREE)
                         {
                             int kPrime = successor.keys[0];
                             node.keys[i] = kPrime;
-                            Delete(successor, successorIndex, kPrime);
+                            Delete(ref successor, successorIndex, kPrime);
                         }
                         //merge succeeding node into preceding node, along with k (freeing succeeding node from disk), then recursively delete k from new merged child
                         else                        
@@ -394,7 +394,7 @@ namespace AlgoLib
                     //xxx give it one of current node's keys.
                     
                     //if root node will now become empty
-                    if (node == RootNode && node.count == 0)
+                    if (node.Equals(RootNode) && node.count == 0)
                     {
                         //delete root and replace it with its first child
                         //DiskDeleteNode(index);
@@ -446,7 +446,7 @@ namespace AlgoLib
         {
             Node nullNode = Node.NewNode();
             nullNode.count = NIL_POINTER;
-            DiskWriteNode(Node, index);
+            DiskWriteNode(ref nullNode, index);
         }
     }
 }

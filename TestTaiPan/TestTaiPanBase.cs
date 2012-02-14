@@ -16,8 +16,8 @@ using System.IO;
 namespace TestTaiPan
 {
     [DeploymentItem("Common.config")]
-    [DeploymentItem("create_schema.sql")]
-    [DeploymentItem("insert_data.sql")]
+    [DeploymentItem("scripts/create_schema.sql")]
+    [DeploymentItem("scripts/insert_data.sql")]
     public abstract class TestTaiPanBase
     {
         static protected DbConn conn;
@@ -62,6 +62,8 @@ namespace TestTaiPan
                 cmd.Parameters.AddWithValue("CID", val.Item3);
                 conn.ExecuteNonQuery(cmd);
             }
+
+            conn.Close();
         }
 
         private static void SetGlobals()
